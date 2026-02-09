@@ -1,0 +1,138 @@
+package net.gsantner.markor.ui.components
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Label
+import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import net.gsantner.markor.domain.repository.FileInfo
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FileActionSheet(
+    file: FileInfo,
+    isPinned: Boolean,
+    onDismiss: () -> Unit,
+    onRename: () -> Unit,
+    onDelete: () -> Unit,
+    onShare: () -> Unit,
+    onInfo: () -> Unit,
+    onTogglePin: () -> Unit,
+    onEditLabels: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
+        dragHandle = { BottomSheetDefaults.DragHandle() },
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 48.dp)
+        ) {
+            Text(
+                text = file.name,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
+
+            ActionItem(
+                icon = Icons.Default.Edit,
+                label = "Rename",
+                onClick = {
+                    onDismiss()
+                    onRename()
+                }
+            )
+
+            ActionItem(
+                icon = Icons.Default.Share,
+                label = "Share",
+                onClick = {
+                    onDismiss()
+                    onShare()
+                }
+            )
+
+            ActionItem(
+                icon = Icons.Default.PushPin,
+                label = if (isPinned) "Unpin" else "Pin",
+                onClick = {
+                    onDismiss()
+                    onTogglePin()
+                }
+            )
+
+            ActionItem(
+                icon = Icons.Default.Label,
+                label = "Labels",
+                onClick = {
+                    onDismiss()
+                    onEditLabels()
+                }
+            )
+
+            ActionItem(
+                icon = Icons.Default.Delete,
+                label = "Delete",
+                color = MaterialTheme.colorScheme.error,
+                onClick = {
+                    onDismiss()
+                    onDelete()
+                }
+            )
+            
+             ActionItem(
+                icon = Icons.Default.Info,
+                label = "Properties",
+                onClick = {
+                    onDismiss()
+                    onInfo()
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ActionItem(
+    icon: ImageVector,
+    label: String,
+    color: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = color,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = color
+        )
+    }
+}
