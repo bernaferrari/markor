@@ -1,12 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-Maintained 2017-2025 by Gregor Santner <gsantner AT mailbox DOT org>
-
-To the extent possible under law, the person who associated CC0 with
-this file has waived all copyright and related or neighboring rights
-to the public domain.
-
-You should have received a copy of the CC0 legalcode along with this
-work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
--->
-<resources xmlns:tools="http://schemas.android.com/tools"></resources>
+<resources>
+    <string name="settings">Postavke</string>
+    <string name="light">Svijetlo</string>
+    <string name="dark">Tamno</string>
+    <string name="delete">Obriši</string>
+    <string name="appearance">Izgled</string>
+    <string name="rename">Preimenuj</string>
+    <string name="confirm_delete">Potvrdi brisanje</string>
+    <string name="do_you_really_want_to_delete_this_witharg">Želite li stvarno obrisati %s?</string>
+    <string name="confirm_overwrite">Potvrdi prepisivanje</string>
+    <string name="file_already_exists_overwerite">Datoteka već postoji, prepisati?</string>
+    <string name="browse_filesystem">Pregledaj datotečni sustav</string>
+    <string name="title">Naslov</string>
+    <string name="empty_directory">Prazna mapa</string>
+    <string name="enter_name_of_folder">Unesite naziv mape</string>
+    <string name="create_folder">Napravi mapu</string>
+    <string name="create_new_document">Napravi novi dokument</string>
+    <string name="move">Premjesti</string>
+    <string name="copy">Kopiraj</string>
+    <string name="info">Info</string>
+    <string name="edit">Uredi</string>
+    <string name="search_documents">Traži dokumente</string>
+    <string name="share">Dijeli</string>
+    <string name="search">Traži</string>
+    <string name="editor">Editor</string>
+    <string name="folders">Mape</string>
+    <string name="files">Datoteke</string>
+    <string name="document">Dokument</string>
+    <string name="documents">Dokumenti</string>
+    <string name="theme">Tema</string>
+    <string name="about">O aplikaciji</string>
+    <string name="file">Datoteka</string>
+    <string name="font_size">Veličina fonta</string>
+    <string name="last_modified">Zadnja izmjena</string>
+    <string name="select">Odaberi</string>
+    <string name="select_all">Odaberi sve</string>
+    <string name="create">Napravi</string>
+    <string name="name">Ime</string>
+    <string name="language">Jezik</string>
+    <string name="ok">U redu</string>
+    <string name="cancel">Odustani</string>
+    <string name="save">Spremi</string>
+</resources>

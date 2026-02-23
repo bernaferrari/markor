@@ -14,6 +14,8 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.StringResource
+import net.gsantner.markor.shared.generated.resources.*
 
 @Serializable
 sealed class Screen : NavKey {
@@ -37,7 +39,7 @@ sealed class Screen : NavKey {
 
 data class BottomNavItem(
     val screen: Screen,
-    val title: String,
+    val title: StringResource,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 )
@@ -45,25 +47,25 @@ data class BottomNavItem(
 val bottomNavItems = listOf(
     BottomNavItem(
         screen = Screen.Notebook,
-        title = "Notebook",
+        title = Res.string.notebook,
         selectedIcon = Icons.Filled.Description,
         unselectedIcon = Icons.Outlined.Description
     ),
     BottomNavItem(
         screen = Screen.Todo,
-        title = "Todo",
+        title = Res.string.todo,
         selectedIcon = Icons.Filled.CheckCircle,
         unselectedIcon = Icons.Outlined.CheckCircle
     ),
     BottomNavItem(
         screen = Screen.QuickNote,
-        title = "QuickNote",
+        title = Res.string.quicknote,
         selectedIcon = Icons.Filled.Add,
         unselectedIcon = Icons.Outlined.Add
     ),
     BottomNavItem(
         screen = Screen.Settings,
-        title = "Settings",
+        title = Res.string.settings,
         selectedIcon = Icons.Filled.Settings,
         unselectedIcon = Icons.Outlined.Settings
     )

@@ -30,6 +30,8 @@ import net.gsantner.markor.ui.viewmodel.ThemeModeOption
 import net.gsantner.markor.ui.viewmodel.ThemePaletteOption
 import net.gsantner.markor.ui.components.RenameDialog
 import net.gsantner.markor.ui.theme.MarkorTheme
+import org.jetbrains.compose.resources.stringResource
+import net.gsantner.markor.shared.generated.resources.*
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +67,7 @@ fun SettingsScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = "Settings",
+                            text = stringResource(Res.string.settings),
                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                         )
                     },
@@ -73,7 +75,7 @@ fun SettingsScreen(
                         IconButton(onClick = onNavigateBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back"
+                                contentDescription = stringResource(Res.string.back)
                             )
                         }
                     }
@@ -94,7 +96,7 @@ fun SettingsScreen(
                 ),
             verticalArrangement = Arrangement.spacedBy(MarkorTheme.spacing.medium)
         ) {
-            SettingsSection(title = "Appearance", icon = Icons.Default.Palette) {
+            SettingsSection(title = stringResource(Res.string.appearance), icon = Icons.Default.Palette) {
                 ThemeModeSettingItem(
                     selectedMode = themeMode,
                     onSelectMode = viewModel::setThemeMode,
@@ -108,24 +110,24 @@ fun SettingsScreen(
             }
 
             // Editor Section
-            SettingsSection(title = "Editor", icon = Icons.Default.Edit) {
+            SettingsSection(title = stringResource(Res.string.editor), icon = Icons.Default.Edit) {
                 SwitchSettingItem(
-                    title = "Line Numbers",
-                    subtitle = "Display line numbers",
+                    title = stringResource(Res.string.line_numbers),
+                    subtitle = stringResource(Res.string.display_line_numbers),
                     checked = showLineNumbers,
                     onCheckedChange = { viewModel.setShowLineNumbers(it) },
                     position = SettingItemPosition.First
                 )
                 SwitchSettingItem(
-                    title = "Word Wrap",
-                    subtitle = "Wrap text to fit screen",
+                    title = stringResource(Res.string.word_wrap),
+                    subtitle = stringResource(Res.string.wrap_text_to_fit_screen),
                     checked = wordWrap,
                     onCheckedChange = { viewModel.setWordWrap(it) },
                     position = SettingItemPosition.Middle
                 )
                 SwitchSettingItem(
-                    title = "Auto Format",
-                    subtitle = "Format while typing",
+                    title = stringResource(Res.string.auto_format),
+                    subtitle = stringResource(Res.string.format_while_typing),
                     checked = autoFormat,
                     onCheckedChange = { viewModel.setAutoFormat(it) },
                     position = SettingItemPosition.Middle
@@ -157,13 +159,13 @@ fun SettingsScreen(
 
             if (showProjectLicenseDialog) {
                 LicenseDialog(
-                    title = "Project License",
+                    title = stringResource(Res.string.project_license),
                     body = PROJECT_LICENSE_TEXT,
                     onDismiss = { showProjectLicenseDialog = false }
                 )
             }
 
-            SettingsSection(title = "Storage", icon = Icons.Default.SdStorage) {
+            SettingsSection(title = stringResource(Res.string.storage), icon = Icons.Default.SdStorage) {
                 if (supportsSharedStorage) {
                     StorageModeSettingItem(
                         isExternalStorageEnabled = isExternalStorageEnabled,
@@ -172,14 +174,14 @@ fun SettingsScreen(
                     )
                 } else {
                     InfoSettingItem(
-                        title = "Storage Mode",
+                        title = stringResource(Res.string.storage_mode),
                         value = "Private (iOS)",
                         position = SettingItemPosition.First
                     )
                 }
 
                 ClickableSettingItem(
-                    title = "Notebook Directory",
+                    title = stringResource(Res.string.notebook_directory),
                     subtitle = notebookDirectory.ifEmpty { "Default (Documents/Markor)" },
                     onClick = { 
                         editingStorageKey = "notebook"
@@ -190,14 +192,14 @@ fun SettingsScreen(
             }
              
             // About Section
-            SettingsSection(title = "About", icon = Icons.Default.Info) {
+            SettingsSection(title = stringResource(Res.string.about), icon = Icons.Default.Info) {
                 InfoSettingItem(
-                    title = "Version",
+                    title = stringResource(Res.string.version),
                     value = "2.15.2-Expressive",
                     position = SettingItemPosition.First
                 )
                 ClickableSettingItem(
-                    title = "Project License",
+                    title = stringResource(Res.string.project_license),
                     subtitle = "Apache License 2.0",
                     onClick = { showProjectLicenseDialog = true },
                     position = SettingItemPosition.Last
@@ -406,7 +408,7 @@ private fun FontSizeSettingItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Font Size",
+                    text = stringResource(Res.string.font_size),
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -440,7 +442,7 @@ private fun StorageModeSettingItem(
     SettingsItemContainer(position = position) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Text(
-                text = "Storage Mode",
+                text = stringResource(Res.string.storage_mode),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -452,7 +454,7 @@ private fun StorageModeSettingItem(
                 FilterChip(
                     selected = !isExternalStorageEnabled,
                     onClick = { onSwitchMode(false) },
-                    label = { Text("Private") },
+                    label = { Text(stringResource(Res.string.private)) },
                     leadingIcon = {
                         Icon(
                             imageVector = if (!isExternalStorageEnabled) Icons.Filled.Lock else Icons.Outlined.Lock,
@@ -464,7 +466,7 @@ private fun StorageModeSettingItem(
                 FilterChip(
                     selected = isExternalStorageEnabled,
                     onClick = { onSwitchMode(true) },
-                    label = { Text("Shared") },
+                    label = { Text(stringResource(Res.string.shared)) },
                     leadingIcon = {
                         Icon(
                             imageVector = if (isExternalStorageEnabled) Icons.Filled.FolderShared else Icons.Outlined.Folder,
@@ -487,7 +489,7 @@ private fun ThemeModeSettingItem(
     SettingsItemContainer(position = position) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Text(
-                text = "Theme Mode",
+                text = stringResource(Res.string.theme_mode),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -499,7 +501,7 @@ private fun ThemeModeSettingItem(
                     shape = SegmentedButtonDefaults.itemShape(index = 0, count = 3),
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Auto", textAlign = TextAlign.Center)
+                    Text(stringResource(Res.string.auto), textAlign = TextAlign.Center)
                 }
                 SegmentedButton(
                     selected = selectedMode == ThemeModeOption.LIGHT,
@@ -507,7 +509,7 @@ private fun ThemeModeSettingItem(
                     shape = SegmentedButtonDefaults.itemShape(index = 1, count = 3),
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Light", textAlign = TextAlign.Center)
+                    Text(stringResource(Res.string.light), textAlign = TextAlign.Center)
                 }
                 SegmentedButton(
                     selected = selectedMode == ThemeModeOption.DARK,
@@ -515,7 +517,7 @@ private fun ThemeModeSettingItem(
                     shape = SegmentedButtonDefaults.itemShape(index = 2, count = 3),
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Dark", textAlign = TextAlign.Center)
+                    Text(stringResource(Res.string.dark), textAlign = TextAlign.Center)
                 }
             }
         }
@@ -529,17 +531,17 @@ private fun ThemeColorSettingItem(
     position: SettingItemPosition
 ) {
     val paletteOptions = listOf(
-        Triple(ThemePaletteOption.MARKOR, "Markor", Color(0xFF4A6FA5)),
-        Triple(ThemePaletteOption.RED, "Red", Color(0xFFB3261E)),
-        Triple(ThemePaletteOption.ORANGE, "Orange", Color(0xFFB35A00)),
-        Triple(ThemePaletteOption.GREEN, "Green", Color(0xFF2E7D32)),
-        Triple(ThemePaletteOption.TEAL, "Teal", Color(0xFF006A6A))
+        Triple(ThemePaletteOption.MARKOR, stringResource(Res.string.markor), Color(0xFF4A6FA5)),
+        Triple(ThemePaletteOption.RED, stringResource(Res.string.red), Color(0xFFB3261E)),
+        Triple(ThemePaletteOption.ORANGE, stringResource(Res.string.orange), Color(0xFFB35A00)),
+        Triple(ThemePaletteOption.GREEN, stringResource(Res.string.green), Color(0xFF2E7D32)),
+        Triple(ThemePaletteOption.TEAL, stringResource(Res.string.teal), Color(0xFF006A6A))
     )
 
     SettingsItemContainer(position = position) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Text(
-                text = "Theme Color",
+                text = stringResource(Res.string.theme_color),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -595,7 +597,7 @@ private fun LicenseDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Close")
+                Text(stringResource(Res.string.close))
             }
         }
     )
