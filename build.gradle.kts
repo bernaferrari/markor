@@ -28,7 +28,7 @@ tasks.register<Delete>("clean") {
 }
 
 tasks.register<Copy>("copyRepoFiles") {
-    from(listOf("README.md", "CHANGELOG.md", "CONTRIBUTORS.md", "LICENSE.txt", "LICENSE.md", "LICENSE"))
+    from(listOf("README.md", "CHANGELOG.md", "LICENSE.txt"))
     into("app/src/main/res/raw")
     rename { fileName -> fileName.lowercase() }
 }
