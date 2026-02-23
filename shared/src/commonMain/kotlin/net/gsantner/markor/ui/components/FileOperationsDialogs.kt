@@ -2,6 +2,9 @@ package net.gsantner.markor.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -13,9 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import kotlinx.coroutines.delay
 import net.gsantner.markor.ui.theme.MarkorTheme
 
 @Composable
@@ -105,6 +110,7 @@ fun DeleteDialog(
 }
 
 @Composable
+@OptIn(ExperimentalComposeUiApi::class)
 private fun PremiumInputDialog(
     title: String,
     icon: ImageVector,
@@ -115,6 +121,16 @@ private fun PremiumInputDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(Unit) {
+        // Dialog attach can be one frame late; delay avoids dropped focus/IME requests.
+        delay(120)
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
+
     Dialog(onDismissRequest = onDismiss) {
         Card(
             shape = MaterialTheme.shapes.extraLarge,
@@ -149,7 +165,9 @@ private fun PremiumInputDialog(
                     label = { Text(label) },
                     singleLine = true,
                     shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester)
                 )
                 
                 Spacer(modifier = Modifier.height(24.dp))

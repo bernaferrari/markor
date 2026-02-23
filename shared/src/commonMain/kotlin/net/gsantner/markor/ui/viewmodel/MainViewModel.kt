@@ -12,10 +12,8 @@ class MainViewModel(
     private val appSettings: AppSettings,
     private val defaultNotebookPath: String
 ) : ViewModel() {
-
     val notebookDirectory: StateFlow<String> = appSettings.getNotebookDirectory
-        .map { it.ifEmpty { defaultNotebookPath } }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), defaultNotebookPath)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
     val quickNotePath: StateFlow<String> = appSettings.getQuickNoteFilePath
         .map { 

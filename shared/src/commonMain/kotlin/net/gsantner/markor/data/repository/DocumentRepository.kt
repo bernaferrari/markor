@@ -1,16 +1,16 @@
 package net.gsantner.markor.data.repository
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import net.gsantner.markor.data.local.AppSettings
 import net.gsantner.markor.data.local.db.NoteMetadataRepository
 import net.gsantner.markor.domain.model.Document
 import net.gsantner.markor.domain.repository.IDocumentRepository
+import net.gsantner.markor.util.nowMillis
 import okio.FileSystem
+import okio.SYSTEM
 import okio.IOException
 import okio.Path
 import okio.Path.Companion.toPath
@@ -21,9 +21,9 @@ class DocumentRepository(
 ) : IDocumentRepository {
 
     private val documentCache = MutableStateFlow<Map<String, Document>>(emptyMap())
-    private val fileSystem = FileSystem.SYSTEM
+    private val fileSystem = FileSystem.Companion.SYSTEM
 
-    override suspend fun loadDocument(path: Path): Document? = withContext(Dispatchers.IO) {
+    override suspend fun loadDocument(path: Path): Document? = withContext(Dispatchers.Default) {
         try {
             if (!fileSystem.exists(path)) return@withContext null
             val metadata = fileSystem.metadata(path)
@@ -44,14 +44,15 @@ class DocumentRepository(
         }
     }
 
-    override suspend fun saveDocument(document: Document, content: String): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun saveDocument(document: Document, content: String): Boolean = withContext(Dispatchers.Default) {
         try {
             fileSystem.write(document.path) {
                 writeUtf8(content)
             }
+            val timestamp = nowMillis()
             val updated = document.copy(
                 content = content,
-                lastModified = Clock.System.now().toEpochMilliseconds()
+                lastModified = timestamp
             )
             updateCache(updated)
             noteMetadataRepository.upsertFromContent(
@@ -65,22 +66,24 @@ class DocumentRepository(
         }
     }
 
-    override suspend fun createDocument(path: Path, content: String): Document? = withContext(Dispatchers.IO) {
+    override suspend fun createDocument(path: Path, content: String): Document? = withContext(Dispatchers.Default) {
         try {
-            path.parent?.let { parent ->
+            val parent = path.parent ?: ".".toPath()
+            parent.let {
                 if (!fileSystem.exists(parent)) {
                     fileSystem.createDirectories(parent)
                 }
             }
-            fileSystem.write(path) {
+            val actualPath = resolveUniquePath(parent, path.name)
+            fileSystem.write(actualPath) {
                 writeUtf8(content)
             }
             
-            val metadata = fileSystem.metadata(path)
-            val document = Document.fromPath(path).copy(content = content, lastModified = metadata.lastModifiedAtMillis ?: 0L)
+            val metadata = fileSystem.metadata(actualPath)
+            val document = Document.fromPath(actualPath).copy(content = content, lastModified = metadata.lastModifiedAtMillis ?: 0L)
             updateCache(document)
             noteMetadataRepository.upsertFromContent(
-                path = path.toString(),
+                path = actualPath.toString(),
                 content = content,
                 nowMillis = document.lastModified
             )
@@ -90,7 +93,7 @@ class DocumentRepository(
         }
     }
 
-    override suspend fun deleteDocument(path: Path): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun deleteDocument(path: Path): Boolean = withContext(Dispatchers.Default) {
         try {
             fileSystem.delete(path)
             removeFromCache(path)
@@ -101,22 +104,22 @@ class DocumentRepository(
         }
     }
 
-    override suspend fun renameDocument(document: Document, newName: String): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun renameDocument(document: Document, newName: String): Path? = withContext(Dispatchers.Default) {
         try {
             val oldPath = document.path
-            val newPath = (oldPath.parent ?: ".".toPath()) / newName
+            val parent = oldPath.parent ?: ".".toPath()
+            val newPath = resolveUniquePath(parent, newName, excludePath = oldPath)
+            if (newPath == oldPath) return@withContext oldPath
             fileSystem.atomicMove(oldPath, newPath)
             removeFromCache(oldPath)
             noteMetadataRepository.updatePath(
                 oldPath = oldPath.toString(),
                 newPath = newPath.toString(),
-                nowMillis = Clock.System.now().toEpochMilliseconds()
+                nowMillis = nowMillis()
             )
-            // Update cache with new document?
-            // For now just invalidate old one.
-            true
+            newPath
         } catch (e: IOException) {
-            false
+            null
         }
     }
 
@@ -124,11 +127,11 @@ class DocumentRepository(
         return MutableStateFlow(documentCache.value[path.toString()])
     }
 
-    override suspend fun documentExists(path: Path): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun documentExists(path: Path): Boolean = withContext(Dispatchers.Default) {
         fileSystem.exists(path)
     }
 
-    override suspend fun readContent(path: Path): String? = withContext(Dispatchers.IO) {
+    override suspend fun readContent(path: Path): String? = withContext(Dispatchers.Default) {
         try {
             fileSystem.read(path) {
                 readUtf8()
@@ -144,5 +147,31 @@ class DocumentRepository(
 
     private fun removeFromCache(path: Path) {
         documentCache.value = documentCache.value - path.toString()
+    }
+
+    private fun resolveUniquePath(parent: Path, requestedName: String, excludePath: Path? = null): Path {
+        val normalizedName = requestedName.trim().ifBlank { "Untitled" }
+        val (baseName, extension) = splitBaseAndExtension(normalizedName)
+        var index = 0
+
+        while (true) {
+            val candidateName = if (index == 0) {
+                normalizedName
+            } else {
+                "$baseName ($index)$extension"
+            }
+            val candidatePath = parent / candidateName
+            if (excludePath != null && candidatePath == excludePath) return candidatePath
+            if (!fileSystem.exists(candidatePath)) return candidatePath
+            index++
+        }
+    }
+
+    private fun splitBaseAndExtension(fileName: String): Pair<String, String> {
+        val dotIndex = fileName.lastIndexOf('.')
+        if (dotIndex <= 0 || dotIndex == fileName.length - 1) {
+            return fileName to ""
+        }
+        return fileName.substring(0, dotIndex) to fileName.substring(dotIndex)
     }
 }

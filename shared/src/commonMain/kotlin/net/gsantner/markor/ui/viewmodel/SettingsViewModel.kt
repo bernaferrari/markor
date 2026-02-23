@@ -3,12 +3,32 @@ package net.gsantner.markor.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import net.gsantner.markor.data.local.AppSettings
+import net.gsantner.markor.domain.repository.IFileRepository
+import okio.Path.Companion.toPath
+
+enum class ThemeModeOption(val token: String) {
+    AUTO("auto"),
+    LIGHT("light"),
+    DARK("dark")
+}
+
+enum class ThemePaletteOption(val token: String) {
+    MARKOR("markor"),
+    RED("red"),
+    ORANGE("orange"),
+    GREEN("green"),
+    TEAL("teal")
+}
 
 class SettingsViewModel(
-    private val appSettings: AppSettings
+    private val appSettings: AppSettings,
+    private val fileRepository: IFileRepository,
+    private val sharedNotebookPath: String,
+    private val privateNotebookPath: String
 ) : ViewModel() {
 
     val showLineNumbers = appSettings.isShowLineNumbers
@@ -20,8 +40,16 @@ class SettingsViewModel(
     val autoFormat = appSettings.isEditorAutoFormat
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
-    val darkMode = appSettings.getAppTheme // This might need mapping if it's a string
+    val appTheme = appSettings.getAppTheme
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "markor")
+
+    val themeMode = appSettings.getAppTheme
+        .map { parseThemeSelection(it).second }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ThemeModeOption.AUTO)
+
+    val themePalette = appSettings.getAppTheme
+        .map { parseThemeSelection(it).first }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ThemePaletteOption.MARKOR)
 
     // File Browser
     val fileBrowserShowHidden = appSettings.isFileBrowserShowHiddenFiles
@@ -40,6 +68,8 @@ class SettingsViewModel(
     // Storage
     val notebookDirectory = appSettings.getNotebookDirectory
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
+    val isExternalStorageEnabled = appSettings.isExternalStorageEnabled
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     val quickNotePath = appSettings.getQuickNoteFilePath
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
     val todoFilePath = appSettings.getTodoFilePath
@@ -87,5 +117,61 @@ class SettingsViewModel(
 
     fun setTodoFilePath(value: String) {
         viewModelScope.launch { appSettings.setTodoFilePath(value) }
+    }
+
+    fun setThemeMode(mode: ThemeModeOption) {
+        viewModelScope.launch {
+            val palette = themePalette.value
+            appSettings.setAppTheme("${palette.token} ${mode.token}")
+        }
+    }
+
+    fun setThemePalette(palette: ThemePaletteOption) {
+        viewModelScope.launch {
+            val mode = themeMode.value
+            appSettings.setAppTheme("${palette.token} ${mode.token}")
+        }
+    }
+
+    fun switchStorageMode(useSharedStorage: Boolean) {
+        viewModelScope.launch {
+            val notebookDir = if (useSharedStorage) sharedNotebookPath else privateNotebookPath
+            val notebookPath = notebookDir.toPath()
+            val parent = notebookPath.parent ?: notebookPath
+
+            appSettings.setExternalStorageEnabled(useSharedStorage)
+            appSettings.setNotebookDirectory(notebookDir)
+            appSettings.setTodoFilePath("$notebookDir/todo.txt")
+            appSettings.setQuickNoteFilePath("$notebookDir/quicknote.md")
+
+            fileRepository.createDirectory(parent, notebookPath.name)
+        }
+    }
+
+    private fun parseThemeSelection(rawValue: String): Pair<ThemePaletteOption, ThemeModeOption> {
+        if (rawValue.isBlank()) return ThemePaletteOption.MARKOR to ThemeModeOption.AUTO
+
+        var palette = ThemePaletteOption.MARKOR
+        var mode = ThemeModeOption.AUTO
+        val tokens = rawValue
+            .trim()
+            .lowercase()
+            .split(Regex("[\\s_\\-|]+"))
+            .filter { it.isNotBlank() }
+
+        tokens.forEach { token ->
+            when (token) {
+                "red" -> palette = ThemePaletteOption.RED
+                "orange" -> palette = ThemePaletteOption.ORANGE
+                "green" -> palette = ThemePaletteOption.GREEN
+                "teal", "cyan" -> palette = ThemePaletteOption.TEAL
+                "markor", "default", "blue" -> palette = ThemePaletteOption.MARKOR
+                "light" -> mode = ThemeModeOption.LIGHT
+                "dark" -> mode = ThemeModeOption.DARK
+                "system", "auto" -> mode = ThemeModeOption.AUTO
+            }
+        }
+
+        return palette to mode
     }
 }

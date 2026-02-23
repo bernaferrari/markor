@@ -1,91 +1,122 @@
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package net.gsantner.markor.ui.components
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.Icons
-import net.gsantner.markor.ui.theme.MarkorTheme
 import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
-import androidx.compose.material.icons.automirrored.filled.Redo
-import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 enum class EditorAction {
     BOLD, ITALIC, STRIKETHROUGH, CODE,
-    LINK, HEADER,
+    LINK, IMAGE, HEADER,
     LIST_BULLET, LIST_NUMBERED, LIST_TASK,
     QUOTE, HORIZONTAL_RULE,
     UNDO, REDO, SEARCH
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormatToolbar(
     onAction: (EditorAction) -> Unit
 ) {
+    val cookieShape = MaterialShapes.ClamShell.toShape()
+    val bottomInset = WindowInsets.navigationBars
+        .union(WindowInsets.ime)
+        .asPaddingValues()
+        .calculateBottomPadding()
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.ime)
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(vertical = MarkorTheme.spacing.medium),
-        contentAlignment = Alignment.Center
+            .padding(top = 8.dp),
+        contentAlignment = Alignment.BottomCenter
     ) {
         Surface(
             color = MaterialTheme.colorScheme.surfaceContainer,
-            tonalElevation = MarkorTheme.elevation.level2,
-            shadowElevation = MarkorTheme.elevation.level2,
-            shape = MaterialTheme.shapes.large,
-            modifier = Modifier.wrapContentHeight()
+            tonalElevation = 0.dp,
+            shadowElevation = 0.dp,
+            shape = RectangleShape,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Column(
-                modifier = Modifier.padding(vertical = MarkorTheme.spacing.small, horizontal = MarkorTheme.spacing.extraSmall),
-                verticalArrangement = Arrangement.spacedBy(MarkorTheme.spacing.small),
+                modifier = Modifier.padding(
+                    top = 0.dp,
+                    bottom = 8.dp + bottomInset,
+                    start = 6.dp,
+                    end = 6.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Row 1: Text Styling & Structure
+                // Primary actions: taller and expressive.
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState())
-                        .padding(horizontal = MarkorTheme.spacing.small),
-                    horizontalArrangement = Arrangement.spacedBy(MarkorTheme.spacing.small),
+                        .padding(horizontal = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ToolbarIconButton(Icons.Default.FormatBold, "Bold", onAction, EditorAction.BOLD)
-                    ToolbarIconButton(Icons.Default.FormatItalic, "Italic", onAction, EditorAction.ITALIC)
-                    ToolbarIconButton(Icons.Default.FormatStrikethrough, "Strike", onAction, EditorAction.STRIKETHROUGH)
-                    ToolbarIconButton(Icons.Default.Code, "Code", onAction, EditorAction.CODE)
-                    
-                    VerticalDivider(modifier = Modifier.height(20.dp).padding(horizontal = 2.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
-                    
-                    ToolbarIconButton(Icons.Default.Title, "Header", onAction, EditorAction.HEADER)
-                    ToolbarIconButton(Icons.Default.FormatQuote, "Quote", onAction, EditorAction.QUOTE)
-                    ToolbarIconButton(Icons.Default.Link, "Link", onAction, EditorAction.LINK)
+                    ExpressiveActionButton(
+                        symbol = "B",
+                        description = "Bold",
+                        action = EditorAction.BOLD,
+                        onAction = onAction,
+                        shape = cookieShape,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                    ExpressiveActionButton(
+                        symbol = "I",
+                        description = "Italic",
+                        action = EditorAction.ITALIC,
+                        onAction = onAction,
+                        shape = cookieShape,
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    ExpressiveActionButton(
+                        symbol = "—",
+                        description = "Horizontal rule",
+                        action = EditorAction.HORIZONTAL_RULE,
+                        onAction = onAction,
+                        shape = cookieShape
+                    )
+                    ExpressiveActionButton(
+                        icon = Icons.Default.Link,
+                        description = "Link",
+                        action = EditorAction.LINK,
+                        onAction = onAction,
+                        shape = cookieShape
+                    )
                 }
-                
-                // Row 2: Lists & Structure
+
+                // Secondary actions: compact and quick.
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState())
-                        .padding(horizontal = MarkorTheme.spacing.small),
-                    horizontalArrangement = Arrangement.spacedBy(MarkorTheme.spacing.small),
+                        .padding(horizontal = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ToolbarIconButton(Icons.AutoMirrored.Filled.FormatListBulleted, "Bullet", onAction, EditorAction.LIST_BULLET)
-                    ToolbarIconButton(Icons.Default.FormatListNumbered, "Numbered", onAction, EditorAction.LIST_NUMBERED)
-                    ToolbarIconButton(Icons.Default.CheckBox, "Task", onAction, EditorAction.LIST_TASK)
-                    ToolbarIconButton(Icons.Default.Remove, "Horizontal Rule", onAction, EditorAction.HORIZONTAL_RULE)
+                    CompactActionButton(Icons.Default.FormatStrikethrough, "Strike", onAction, EditorAction.STRIKETHROUGH)
+                    CompactActionButton(Icons.Default.Code, "Code", onAction, EditorAction.CODE)
+                    CompactActionButton(Icons.Default.Title, "Header", onAction, EditorAction.HEADER)
+                    CompactActionButton(Icons.Default.FormatQuote, "Quote", onAction, EditorAction.QUOTE)
+                    CompactActionButton(Icons.Default.Image, "Image", onAction, EditorAction.IMAGE)
+                    CompactActionButton(Icons.AutoMirrored.Filled.FormatListBulleted, "Bullet list", onAction, EditorAction.LIST_BULLET)
+                    CompactActionButton(Icons.Default.FormatListNumbered, "Numbered list", onAction, EditorAction.LIST_NUMBERED)
+                    CompactActionButton(Icons.Default.CheckBox, "Task list", onAction, EditorAction.LIST_TASK)
                 }
             }
         }
@@ -93,7 +124,47 @@ fun FormatToolbar(
 }
 
 @Composable
-private fun ToolbarIconButton(
+private fun ExpressiveActionButton(
+    description: String,
+    action: EditorAction,
+    onAction: (EditorAction) -> Unit,
+    shape: Shape,
+    symbol: String? = null,
+    icon: ImageVector? = null,
+    fontWeight: FontWeight = FontWeight.Medium,
+    fontStyle: FontStyle = FontStyle.Normal
+) {
+    val hapticHelper = rememberHapticHelper()
+
+    FilledTonalIconButton(
+        onClick = {
+            hapticHelper.performLightClick()
+            onAction(action)
+        },
+        shape = shape,
+        colors = IconButtonDefaults.filledTonalIconButtonColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.65f),
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
+        modifier = Modifier
+            .widthIn(min = 58.dp)
+            .height(50.dp)
+    ) {
+        when {
+            symbol != null -> Text(
+                text = symbol,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = fontWeight,
+                    fontStyle = fontStyle
+                )
+            )
+            icon != null -> Icon(icon, description, modifier = Modifier.size(22.dp))
+        }
+    }
+}
+
+@Composable
+private fun CompactActionButton(
     icon: ImageVector,
     description: String,
     onAction: (EditorAction) -> Unit,
@@ -106,13 +177,13 @@ private fun ToolbarIconButton(
             hapticHelper.performLightClick()
             onAction(action)
         },
+        shape = MaterialTheme.shapes.small,
         colors = IconButtonDefaults.filledTonalIconButtonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f),
-            contentColor = MaterialTheme.colorScheme.onSurface
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.65f),
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
-        modifier = Modifier.size(38.dp) // Slightly smaller to fit better
+        modifier = Modifier.size(40.dp)
     ) {
         Icon(icon, description, modifier = Modifier.size(20.dp))
     }
 }
-

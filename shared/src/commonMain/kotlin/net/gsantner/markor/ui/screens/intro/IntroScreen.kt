@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import net.gsantner.markor.ui.components.supportsSharedStorageMode
 import net.gsantner.markor.ui.theme.MarkorTheme
 import net.gsantner.markor.ui.viewmodel.IntroViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -35,7 +36,9 @@ fun IntroScreen(
     systemInternalFilesDir: String,
     viewModel: IntroViewModel = koinViewModel()
 ) {
-    val pagerState = rememberPagerState { 5 }
+    val supportsSharedStorage = remember { supportsSharedStorageMode() }
+    val pageCount = if (supportsSharedStorage) 4 else 3
+    val pagerState = rememberPagerState { pageCount }
     val scope = rememberCoroutineScope()
     var requestPermissions by remember { mutableStateOf(false) }
 
@@ -43,9 +46,11 @@ fun IntroScreen(
     net.gsantner.markor.ui.components.HandleStoragePermissions(
         onRequest = requestPermissions,
         onGranted = {
-            viewModel.setStorageMode(isExternal = true, internalPath = systemInternalFilesDir) 
-            viewModel.markIntroSeen()
-            onIntroFinished()
+            scope.launch {
+                viewModel.setStorageMode(isExternal = true, internalPath = systemInternalFilesDir)
+                onIntroFinished()
+                requestPermissions = false
+            }
         },
         onDenied = {
              requestPermissions = false
@@ -76,12 +81,13 @@ fun IntroScreen(
                     state = pagerState,
                     modifier = Modifier.weight(1f)
                 ) { page ->
-                    if (page == 4) {
+                    if (supportsSharedStorage && page == pageCount - 1) {
                         StorageSelectionPage(
                             onPrivateSelected = {
-                                viewModel.setStorageMode(isExternal = false, internalPath = systemInternalFilesDir)
-                                viewModel.markIntroSeen()
-                                onIntroFinished()
+                                scope.launch {
+                                    viewModel.setStorageMode(isExternal = false, internalPath = systemInternalFilesDir)
+                                    onIntroFinished()
+                                }
                             },
                             onSharedSelected = {
                                 requestPermissions = true
@@ -92,15 +98,29 @@ fun IntroScreen(
                     }
                 }
 
-                // Bottom Controls (Hidden on last page to force selection)
-                if (pagerState.currentPage < 4) {
+                // Bottom controls:
+                // - shared-capable platforms: hide on final page to force explicit storage selection
+                // - iOS/private-only: show and finish setup on the last page
+                val showBottomBar = if (supportsSharedStorage) {
+                    pagerState.currentPage < pageCount - 1
+                } else {
+                    true
+                }
+                if (showBottomBar) {
                     IntroBottomBar(
                         pagerState = pagerState,
                         onBack = {
                             scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
                         },
                         onNext = {
-                            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+                            scope.launch {
+                                if (!supportsSharedStorage && pagerState.currentPage == pageCount - 1) {
+                                    viewModel.setStorageMode(isExternal = false, internalPath = systemInternalFilesDir)
+                                    onIntroFinished()
+                                } else {
+                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                }
+                            }
                         }
                     )
                 }
@@ -204,28 +224,26 @@ private fun StorageOptionCard(
             }
             
             Column(modifier = Modifier.padding(start = 16.dp).weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = if (recommended) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
-                    )
-                    if (recommended) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-                        ) {
-                            Text(
-                                text = "RECOMMENDED",
-                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = if (recommended) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                )
+                if (recommended) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                    ) {
+                        Text(
+                            text = "Recommended",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
                     }
                 }
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodySmall,
@@ -245,10 +263,21 @@ private fun StorageOptionCard(
 @Composable
 private fun IntroPage(page: Int) {
     val (data, color) = when (page) {
-        0 -> Triple("Welcome to Markor", "The best markdown editor for Android. Powerful, open-source, and offline-first.", Icons.Filled.Edit) to MaterialTheme.colorScheme.primary
-        1 -> Triple("Notebook", "Notebook is the home of your files. Markor loads this folder by default when the app is started.", Icons.Filled.Folder) to MaterialTheme.colorScheme.secondary
-        2 -> Triple("QuickNote", "The fastest way to write down notes. Automatically saved in Markdown format.", Icons.Filled.FlashOn) to MaterialTheme.colorScheme.tertiary
-        3 -> Triple("To-Do List", "Manage your tasks with todo.txt format. Simple, flexible, and portable.", Icons.Filled.CheckCircle) to MaterialTheme.colorScheme.primary
+        0 -> Triple(
+            "Welcome to Markor",
+            "A fast, local-first markdown notes app. No account, no lock-in, just your files.",
+            Icons.Filled.Edit
+        ) to MaterialTheme.colorScheme.primary
+        1 -> Triple(
+            "Write Quickly",
+            "Create notes in seconds and keep everything auto-saved while you focus on writing.",
+            Icons.Default.NoteAdd
+        ) to MaterialTheme.colorScheme.secondary
+        2 -> Triple(
+            "Stay Organized",
+            "Use search, filters, favorites, labels, and pinning to keep important notes easy to find.",
+            Icons.Filled.Search
+        ) to MaterialTheme.colorScheme.tertiary
         else -> Triple("", "", Icons.Filled.Close) to Color.Gray
     }
     val (title, description, icon) = data
@@ -335,7 +364,7 @@ private fun IntroBottomBar(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            repeat(5) { index ->
+            repeat(pagerState.pageCount) { index ->
                 val active = pagerState.currentPage == index
                 val width by animateDpAsState(if (active) 24.dp else 8.dp, label = "indicatorWidth")
                 val alpha by animateFloatAsState(if (active) 1f else 0.3f, label = "indicatorAlpha")

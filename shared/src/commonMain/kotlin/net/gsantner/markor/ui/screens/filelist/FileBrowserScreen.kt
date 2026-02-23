@@ -3,6 +3,9 @@ package net.gsantner.markor.ui.screens.filelist
 import net.gsantner.markor.ui.components.RenameDialog
 import net.gsantner.markor.ui.components.CreateFolderDialog
 import net.gsantner.markor.ui.components.DeleteDialog
+import net.gsantner.markor.ui.components.AssetManagerSheet
+import net.gsantner.markor.ui.components.ShareDialog
+import net.gsantner.markor.domain.service.ImageAssetManager
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
@@ -10,6 +13,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -29,23 +33,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.ui.graphics.graphicsLayer
 import net.gsantner.markor.domain.repository.FileInfo
 import net.gsantner.markor.ui.components.*
 import net.gsantner.markor.ui.viewmodel.FileBrowserViewModel
 import net.gsantner.markor.ui.viewmodel.FileFilterMode
-import net.gsantner.markor.ui.viewmodel.FileTypeFilter
 import net.gsantner.markor.ui.theme.MarkorTheme
+import okio.FileSystem
+import okio.SYSTEM
 import okio.Path.Companion.toPath
 import androidx.compose.ui.input.key.*
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.koinInject
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Extracts the original filename from a trash filename.
@@ -60,10 +66,12 @@ private fun getOriginalPath(trashFileName: String): String {
     }
 }
 
+private const val BACK_ROW_RESHOW_DELAY_MS = 180L
+
 @Composable
 fun FileBrowserScreen(
     initialPath: String?,
-    onNavigateToEditor: (String) -> Unit,
+    onNavigateToEditor: (String, Boolean) -> Unit,
     onNavigateBack: () -> Unit,
     viewModel: FileBrowserViewModel = koinViewModel(),
     isGridView: Boolean = true
@@ -81,27 +89,23 @@ fun FileBrowserScreen(
 @Composable
 fun FileBrowserContent(
     initialPath: String?,
-    onNavigateToEditor: (String) -> Unit,
+    onNavigateToEditor: (String, Boolean) -> Unit,
     onNavigateBack: () -> Unit,
     viewModel: FileBrowserViewModel = koinViewModel(),
     isGridView: Boolean,
     modifier: Modifier = Modifier
 ) {
-    var currentPath by remember { mutableStateOf(initialPath) }
+    var currentPath by remember { mutableStateOf<String?>(null) }
+    var rootPath by remember { mutableStateOf<String?>(null) }
+    fun normalizePath(path: String?): String? = path?.trimEnd('/')
     val files by viewModel.files.collectAsState()
     val selectedFiles by viewModel.selectedFiles.collectAsState()
     val isSelectionMode by viewModel.isSelectionMode.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
-    val recentFiles by viewModel.recentFiles.collectAsState()
     val filterMode by viewModel.filterMode.collectAsState()
     val noteMetadataByPath by viewModel.noteMetadataByPath.collectAsState()
     var isLoading by remember { mutableStateOf(false) }
-    
-    // Checkbox mode (Google Keep style) - always show checkboxes for easier selection
-    var isCheckboxMode by remember { mutableStateOf(false) }
-    
-    // Track if we're at root for showing recent files
-    val isAtRoot = currentPath == initialPath
+    var isNavigatingUp by remember { mutableStateOf(false) }
     val haptic = rememberHapticHelper()
 
     // Dialog & Sheet States
@@ -111,6 +115,28 @@ fun FileBrowserContent(
     var showCreateFolderDialog by remember { mutableStateOf(false) }
     var showLabelsDialog by remember { mutableStateOf(false) }
     var labelsInitial by remember { mutableStateOf<List<String>>(emptyList()) }
+    var showAssetManager by remember { mutableStateOf(false) }
+    var showShareDialog by remember { mutableStateOf(false) }
+    
+    // Asset manager - loaded async to avoid blocking
+    val assetManager: ImageAssetManager = koinInject()
+    var hasAssets by remember { mutableStateOf(false) }
+    var fileContent by remember { mutableStateOf("") }
+    
+    // Load file content and check for assets async
+    LaunchedEffect(selectedFileForAction) {
+        if (selectedFileForAction != null && !selectedFileForAction!!.isDirectory) {
+            hasAssets = assetManager.hasAssetsFolder(selectedFileForAction!!.path)
+            fileContent = try {
+                FileSystem.Companion.SYSTEM.read(selectedFileForAction!!.path) { readUtf8() }
+            } catch (e: Exception) {
+                ""
+            }
+        } else {
+            hasAssets = false
+            fileContent = ""
+        }
+    }
 
     if (showCreateFolderDialog) {
         CreateFolderDialog(
@@ -164,55 +190,155 @@ fun FileBrowserContent(
         FileActionSheet(
             file = selectedFileForAction!!,
             isPinned = noteMetadataByPath[selectedFileForAction!!.path.toString()]?.note?.pinned == true,
+            hasAssets = hasAssets,
             onDismiss = { selectedFileForAction = null },
             onRename = { showRenameDialog = true },
             onDelete = { showDeleteDialog = true },
-            onShare = { /* TODO: Implement platform share */ },
+            onShare = { showShareDialog = true },
             onInfo = { /* TODO */ },
             onTogglePin = { viewModel.togglePin(selectedFileForAction!!.path) },
             onEditLabels = {
                 labelsInitial = noteMetadataByPath[selectedFileForAction!!.path.toString()]?.labels?.map { it.name } ?: emptyList()
                 showLabelsDialog = true
+            },
+            onManageAssets = { showAssetManager = true }
+        )
+    }
+    
+    // Share Dialog
+    if (showShareDialog && selectedFileForAction != null) {
+        ShareDialog(
+            filePath = selectedFileForAction!!.path,
+            hasAssets = hasAssets,
+            assetManager = assetManager,
+            onDismiss = { showShareDialog = false }
+        )
+    }
+    
+    // Asset Manager Sheet - uses pre-loaded fileContent
+    if (showAssetManager && selectedFileForAction != null) {
+        AssetManagerSheet(
+            filePath = selectedFileForAction!!.path,
+            content = fileContent,
+            assetManager = assetManager,
+            onDismiss = { showAssetManager = false },
+            onAssetsDeleted = {
+                // Could refresh UI if needed
             }
         )
     }
 
     LaunchedEffect(currentPath) {
         isLoading = true
-        val path = viewModel.loadFiles(currentPath)
-        if (currentPath == null) {
-            currentPath = path
+        val loadedPath = viewModel.loadFiles(currentPath)
+        val normalizedCurrent = normalizePath(currentPath)
+        val normalizedLoaded = normalizePath(loadedPath)
+
+        // Keep local path state in sync with repository-resolved path
+        // (e.g. migration from stale "/Notebook" subpaths).
+        if (normalizedCurrent != normalizedLoaded) {
+            if (normalizePath(rootPath) == normalizedCurrent || rootPath == null) {
+                rootPath = loadedPath
+            }
+            currentPath = loadedPath
+            isLoading = false
+            return@LaunchedEffect
+        }
+        if (rootPath == null) {
+            rootPath = loadedPath
         }
         isLoading = false
+        if (isNavigatingUp) {
+            delay(BACK_ROW_RESHOW_DELAY_MS)
+            isNavigatingUp = false
+        }
+    }
+
+    LaunchedEffect(initialPath) {
+        val normalizedInitial = normalizePath(initialPath) ?: return@LaunchedEffect
+        val normalizedRoot = normalizePath(rootPath)
+
+        // Handle external root changes (e.g. user switched storage mode in Settings).
+        if (normalizedRoot != null && normalizedInitial != normalizedRoot) {
+            currentPath = normalizedInitial
+            rootPath = normalizedInitial
+        }
     }
 
     // View Mode State passed from parent
     val displayedFiles = viewModel.getFilteredFiles()
+    var cachedDisplayedFiles by remember { mutableStateOf<List<FileInfo>>(emptyList()) }
+    LaunchedEffect(displayedFiles) {
+        if (displayedFiles.isNotEmpty()) {
+            cachedDisplayedFiles = displayedFiles
+        }
+    }
+    val visibleFiles = if (displayedFiles.isEmpty() && isLoading && cachedDisplayedFiles.isNotEmpty()) {
+        cachedDisplayedFiles
+    } else {
+        displayedFiles
+    }
     
     // Keyboard navigation state
     var keyboardSelectedIndex by remember { mutableStateOf(-1) }
+
+    val canNavigateToParent = remember(currentPath, rootPath) {
+        val current = normalizePath(currentPath)
+        val root = normalizePath(rootPath)
+        current != null && root != null && current != root
+    }
+
+    val parentDirectoryLabel = remember(currentPath) {
+        runCatching {
+            normalizePath(currentPath)
+                ?.toPath()
+                ?.parent
+                ?.name
+                ?.ifBlank { "Notebook" }
+                ?: "Notebook"
+        }.getOrDefault("Notebook")
+    }
+    var displayedParentDirectoryLabel by remember { mutableStateOf(parentDirectoryLabel) }
+    LaunchedEffect(parentDirectoryLabel, isNavigatingUp) {
+        if (!isNavigatingUp) {
+            displayedParentDirectoryLabel = parentDirectoryLabel
+        }
+    }
+
+    fun navigateToParentDirectory() {
+        val current = normalizePath(currentPath) ?: return
+        isNavigatingUp = true
+        val root = normalizePath(rootPath)
+        val parent = runCatching {
+            current.toPath().parent?.toString()?.trimEnd('/')
+        }.getOrNull()
+
+        when {
+            parent.isNullOrEmpty() -> {
+                if (root != null) currentPath = root else onNavigateBack()
+            }
+            root == null -> currentPath = parent
+            parent.length < root.length || !parent.startsWith(root) -> currentPath = root
+            else -> currentPath = parent
+        }
+    }
+
+    BackHandler(enabled = canNavigateToParent) {
+        navigateToParentDirectory()
+    }
     
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .onPreviewKeyEvent { event ->
                 
                 when {
-                    // Space bar toggles selection in checkbox mode
-                    event.key == Key.Spacebar && event.type == KeyEventType.KeyDown && isCheckboxMode -> {
-                        if (keyboardSelectedIndex in displayedFiles.indices) {
-                            val file = displayedFiles[keyboardSelectedIndex]
-                            viewModel.toggleSelection(file.path)
-                            haptic.performLightClick()
-                        }
-                        true
-                    }
                     // Arrow Down
                     event.key == Key.DirectionDown && event.type == KeyEventType.KeyDown -> {
-                        keyboardSelectedIndex = if (keyboardSelectedIndex < displayedFiles.size - 1) {
-                            haptic.performLightClick()
-                            keyboardSelectedIndex + 1
-                        } else keyboardSelectedIndex
+                            keyboardSelectedIndex = if (keyboardSelectedIndex < visibleFiles.size - 1) {
+                                haptic.performLightClick()
+                                keyboardSelectedIndex + 1
+                            } else keyboardSelectedIndex
                         true
                     }
                     // Arrow Up
@@ -225,13 +351,13 @@ fun FileBrowserContent(
                     }
                     // Enter to open file
                     event.key == Key.Enter && event.type == KeyEventType.KeyDown -> {
-                        if (keyboardSelectedIndex in displayedFiles.indices) {
-                            val file = displayedFiles[keyboardSelectedIndex]
+                        if (keyboardSelectedIndex in visibleFiles.indices) {
+                            val file = visibleFiles[keyboardSelectedIndex]
                             if (file.isDirectory) {
                                 currentPath = file.path.toString()
                             } else {
                                 viewModel.recordFileAccess(file.path.toString())
-                                onNavigateToEditor(file.path.toString())
+                                onNavigateToEditor(file.path.toString(), false)
                             }
                         }
                         true
@@ -264,195 +390,86 @@ fun FileBrowserContent(
                     trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
                 )
             }
-            
-            // Search bar
-            SearchBar(
-                query = viewModel.searchQuery.collectAsState().value,
-                onQueryChange = { viewModel.setSearchQuery(it) },
-                onSearch = { },
-                active = false,
-                onActiveChange = { },
-                placeholder = { Text("Search files...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                trailingIcon = {
-                    if (viewModel.searchQuery.collectAsState().value.isNotEmpty()) {
-                        IconButton(onClick = { viewModel.setSearchQuery("") }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Clear")
-                        }
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) { }
-            
-            // Search in content toggle
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
+
+            AnimatedVisibility(
+                visible = canNavigateToParent && filterMode != FileFilterMode.TRASH && !isNavigatingUp,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
             ) {
-                val searchInContent by viewModel.searchInContent.collectAsState()
-                
-                Text(
-                    text = "Search in content",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                FilterChip(
-                    selected = searchInContent,
-                    onClick = {
-                        haptic.performLightClick()
-                        viewModel.setSearchInContent(!searchInContent)
-                    },
-                    label = { Text("Content", style = MaterialTheme.typography.labelSmall) },
-                    leadingIcon = if (searchInContent) {
-                        { Icon(Icons.Default.Check, null, Modifier.size(16.dp)) }
-                    } else null
-                )
-            }
-            
-            // Recent Files Carousel (only at root)
-            if (!isLoading && isAtRoot && recentFiles.isNotEmpty() && !isSelectionMode) {
-                RecentFilesCarousel(
-                    recentFiles = recentFiles,
-                    onFileClick = { filePath ->
-                        viewModel.recordFileAccess(filePath)
-                        onNavigateToEditor(filePath)
-                    }
-                )
-            }
-            
-            // Checkbox mode toggle and keyboard shortcut hint
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (isCheckboxMode) "Checkbox mode on - tap to select" else "Long-press or press Space to select",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                
-                FilterChip(
-                    selected = isCheckboxMode,
-                    onClick = { 
-                        haptic.performLightClick()
-                        isCheckboxMode = !isCheckboxMode
-                    },
-                    label = { Text("Checkboxes", style = MaterialTheme.typography.labelSmall) },
-                    leadingIcon = {
-                        Icon(
-                            if (isCheckboxMode) Icons.Default.CheckBox else Icons.Default.CheckBoxOutlineBlank,
-                            null,
-                            Modifier.size(16.dp)
-                        )
-                    }
-                )
-            }
-            
-            // Filter chips (All | Favorites | Trash)
-            if (!isLoading && !isSelectionMode && (files.isNotEmpty() || viewModel.trashFiles.collectAsState().value.isNotEmpty())) {
-                Row(
+                val backRowShape = MaterialTheme.shapes.large
+                val backRowInteraction = remember { MutableInteractionSource() }
+                Surface(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    shape = backRowShape,
+                    color = MaterialTheme.colorScheme.surfaceContainerLow
                 ) {
-                    FilterChip(
-                        selected = filterMode == FileFilterMode.ALL,
-                        onClick = { viewModel.setFilterMode(FileFilterMode.ALL) },
-                        label = { Text("All") },
-                        leadingIcon = if (filterMode == FileFilterMode.ALL) {
-                            { Icon(Icons.Default.Check, null, Modifier.size(18.dp)) }
-                        } else null
-                    )
-                    FilterChip(
-                        selected = filterMode == FileFilterMode.FAVORITES,
-                        onClick = { viewModel.setFilterMode(FileFilterMode.FAVORITES) },
-                        label = { Text("Favorites") },
-                        leadingIcon = {
-                            Icon(
-                                if (filterMode == FileFilterMode.FAVORITES) Icons.Filled.Star else Icons.Outlined.StarOutline,
-                                null,
-                                Modifier.size(18.dp)
-                            )
-                        }
-                    )
-                    FilterChip(
-                        selected = filterMode == FileFilterMode.TRASH,
-                        onClick = { viewModel.setFilterMode(FileFilterMode.TRASH) },
-                        label = { Text("Trash") },
-                        leadingIcon = {
-                            Icon(
-                                if (filterMode == FileFilterMode.TRASH) Icons.Default.DeleteForever else Icons.Default.Delete,
-                                null,
-                                Modifier.size(18.dp)
-                            )
-                        }
-                    )
-                }
-                
-                // File type filter chips
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    FileTypeFilter.entries.forEach { filter ->
-                        FilterChip(
-                            selected = viewModel.fileTypeFilter.collectAsState().value == filter,
-                            onClick = {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(backRowShape)
+                            .clickable(
+                                interactionSource = backRowInteraction,
+                                indication = ripple()
+                            ) {
                                 haptic.performLightClick()
-                                viewModel.setFileTypeFilter(filter)
-                            },
-                            label = { Text(filter.displayName, style = MaterialTheme.typography.labelSmall) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer
-                            ),
-                            border = FilterChipDefaults.filterChipBorder(
-                                borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                                selectedBorderColor = MaterialTheme.colorScheme.outline,
-                                enabled = true,
-                                selected = true
-                            )
+                                navigateToParentDirectory()
+                            }
+                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = "Back to $displayedParentDirectoryLabel",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
                         )
                     }
                 }
             }
             
-            // Filtered files based on current mode
-            val displayedFiles = viewModel.getFilteredFiles()
+            // Filtered files based on current mode - use displayedFiles from parent scope
             val trashFiles by viewModel.trashFiles.collectAsState()
             
-            if (isLoading) {
+            if (isLoading && visibleFiles.isEmpty()) {
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     // Content is empty during loading (indicator at top)
                 }
-            } else if (displayedFiles.isEmpty()) {
-                when {
-                    filterMode == FileFilterMode.FAVORITES && files.isNotEmpty() -> {
-                        EmptyState(
-                            title = "No favorites yet",
-                            subtitle = "Swipe right on any file to add it to your favorites.",
-                            icon = Icons.Outlined.StarOutline
-                        )
-                    }
-                    filterMode == FileFilterMode.TRASH && trashFiles.isEmpty() -> {
-                        EmptyState(
-                            title = "Trash is empty",
-                            subtitle = "Deleted files will appear here for 30 days.",
-                            icon = Icons.Default.Delete
-                        )
-                    }
-                    else -> {
-                        EmptyListState()
+            } else if (visibleFiles.isEmpty()) {
+                val shouldOffsetForBottomActions = !isSelectionMode && filterMode != FileFilterMode.TRASH
+                val emptyStateBottomOffset = if (shouldOffsetForBottomActions) 120.dp else 0.dp
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+                        .padding(bottom = emptyStateBottomOffset)
+                ) {
+                    when {
+                        filterMode == FileFilterMode.FAVORITES && files.isNotEmpty() -> {
+                            EmptyState(
+                                title = "No favorites yet",
+                                subtitle = "Swipe right on any file to add it to your favorites.",
+                                icon = Icons.Outlined.StarOutline
+                            )
+                        }
+                        filterMode == FileFilterMode.TRASH && trashFiles.isEmpty() -> {
+                            EmptyState(
+                                title = "Trash is empty",
+                                subtitle = "Deleted files will appear here for 30 days.",
+                                icon = Icons.Default.Delete
+                            )
+                        }
+                        else -> {
+                            EmptyListState()
+                        }
                     }
                 }
             } else {
@@ -460,6 +477,7 @@ fun FileBrowserContent(
                     LazyVerticalStaggeredGrid(
                         columns = StaggeredGridCells.Adaptive(150.dp),
                         contentPadding = PaddingValues(
+                            top = 12.dp,
                             start = 16.dp, 
                             end = 16.dp, 
                             bottom = 120.dp
@@ -468,57 +486,45 @@ fun FileBrowserContent(
                         verticalItemSpacing = 12.dp,
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        itemsIndexed(displayedFiles) { index, file ->
+                        itemsIndexed(visibleFiles) { _, file ->
                             val isSelected = selectedFiles.contains(file.path)
                             val isFavorite = favorites.contains(file.path.toString())
-                            
-                            // Staggered reveal animation
-                            var isVisible by remember { mutableStateOf(false) }
-                            LaunchedEffect(Unit) {
-                                delay(index * 30L)
-                                isVisible = true
-                            }
-
-                            AnimatedVisibility(
-                                visible = isVisible,
-                                enter = slideInVertically { it / 2 } + fadeIn(animationSpec = tween(300)),
-                                label = "ItemStagger"
-                            ) {
-                                Box {
-                                    FileGridItem(
-                                        file = file,
-                                        isSelected = isSelected,
-                                        selectionMode = isSelectionMode,
-                                        onClick = {
-                                            if (isSelectionMode) {
-                                                viewModel.toggleSelection(file.path)
+                            Box {
+                                val noteLabels = noteMetadataByPath[file.path.toString()]?.labels?.map { it.name } ?: emptyList()
+                                FileGridItem(
+                                    file = file,
+                                    isSelected = isSelected,
+                                    selectionMode = isSelectionMode,
+                                    onClick = {
+                                        if (isSelectionMode) {
+                                            viewModel.toggleSelection(file.path)
+                                        } else {
+                                            if (file.isDirectory) {
+                                                currentPath = file.path.toString()
                                             } else {
-                                                if (file.isDirectory) {
-                                                    currentPath = file.path.toString()
-                                                } else {
-                                                    viewModel.recordFileAccess(file.path.toString())
-                                                    onNavigateToEditor(file.path.toString())
-                                                }
-                                            }
-                                        },
-                                        isPinned = noteMetadataByPath[file.path.toString()]?.note?.pinned == true,
-                                        color = noteMetadataByPath[file.path.toString()]?.note?.color,
-                                        imagePreviewUrl = noteMetadataByPath[file.path.toString()]?.note?.imagePreviewUrl,
-                                        onLongClick = {
-                                            if (!isSelectionMode) {
-                                                viewModel.enterSelectionMode(file.path)
+                                                viewModel.recordFileAccess(file.path.toString())
+                                                onNavigateToEditor(file.path.toString(), false)
                                             }
                                         }
-                                    )
-                                    // Favorite indicator
-                                    if (isFavorite && !isSelectionMode) {
-                                        FavoriteIndicator(
-                                            isFavorite = true,
-                                            modifier = Modifier
-                                                .align(Alignment.TopEnd)
-                                                .padding(8.dp)
-                                        )
+                                    },
+                                    isPinned = noteMetadataByPath[file.path.toString()]?.note?.pinned == true,
+                                    color = noteMetadataByPath[file.path.toString()]?.note?.color,
+                                    imagePreviewUrl = noteMetadataByPath[file.path.toString()]?.note?.imagePreviewUrl,
+                                    labels = noteLabels,
+                                    onLongClick = {
+                                        if (!isSelectionMode) {
+                                            viewModel.enterSelectionMode(file.path)
+                                        }
                                     }
+                                )
+                                // Favorite indicator
+                                if (isFavorite && !isSelectionMode) {
+                                    FavoriteIndicator(
+                                        isFavorite = true,
+                                        modifier = Modifier
+                                            .align(Alignment.TopEnd)
+                                            .padding(8.dp)
+                                    )
                                 }
                             }
                         }
@@ -526,6 +532,7 @@ fun FileBrowserContent(
                 } else {
                     LazyColumn(
                         contentPadding = PaddingValues(
+                            top = 12.dp,
                             bottom = 120.dp, 
                             start = 16.dp, 
                             end = 16.dp
@@ -533,102 +540,84 @@ fun FileBrowserContent(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        itemsIndexed(displayedFiles) { index, file ->
+                        itemsIndexed(visibleFiles) { index, file ->
                             val isSelected = selectedFiles.contains(file.path)
                             val isFavorite = favorites.contains(file.path.toString())
-                            
-                            // Staggered reveal animation
-                            var isVisible by remember { mutableStateOf(false) }
-                            LaunchedEffect(Unit) {
-                                delay(index * 30L)
-                                isVisible = true
-                            }
-
-                            AnimatedVisibility(
-                                visible = isVisible,
-                                enter = slideInVertically { it / 2 } + fadeIn(animationSpec = tween(300)),
-                                label = "ItemStagger"
-                            ) {
-                                // Wrap with swipe actions (not in selection mode)
-                                if (!isSelectionMode && !file.isDirectory) {
-                                    SwipeableFileCard(
-                                        isFavorite = isFavorite,
-                                        onToggleFavorite = {
-                                            viewModel.toggleFavorite(file.path.toString())
-                                        },
-                                        onDelete = {
-                                            selectedFileForAction = file
-                                            showDeleteDialog = true
-                                        }
-                                    ) {
-                                        FileItem(
-                                            file = file,
-                                            isSelected = isSelected,
-                                            selectionMode = isSelectionMode,
-                                            isFavorite = isFavorite,
-                                            onClick = {
-                                                viewModel.recordFileAccess(file.path.toString())
-                                                onNavigateToEditor(file.path.toString())
-                                            },
-                                            onLongClick = {
-                                                viewModel.enterSelectionMode(file.path)
-                                            },
-                                            onMoreClick = {
-                                                selectedFileForAction = file
-                                            },
-                                            isCheckboxMode = isCheckboxMode,
-                                            isKeyboardSelected = index == keyboardSelectedIndex,
-                                            onCheckboxClick = {
-                                                viewModel.toggleSelection(file.path)
-                                            }
-                                        )
+                            // Wrap with swipe actions (not in selection mode)
+                            if (!isSelectionMode && !file.isDirectory) {
+                                SwipeableFileCard(
+                                    isFavorite = isFavorite,
+                                    onToggleFavorite = {
+                                        viewModel.toggleFavorite(file.path.toString())
+                                    },
+                                    onDelete = {
+                                        selectedFileForAction = file
+                                        showDeleteDialog = true
                                     }
-                                } else {
-                                    val isTrashMode = filterMode == FileFilterMode.TRASH
-                                    
+                                ) {
                                     FileItem(
                                         file = file,
                                         isSelected = isSelected,
                                         selectionMode = isSelectionMode,
-                                        isFavorite = false,
+                                        isFavorite = isFavorite,
+                                        noteColor = noteMetadataByPath[file.path.toString()]?.note?.color,
+                                        preview = noteMetadataByPath[file.path.toString()]?.note?.preview,
                                         onClick = {
-                                            if (isSelectionMode) {
-                                                viewModel.toggleSelection(file.path)
-                                            } else if (isTrashMode) {
-                                                // Restore file from trash
-                                                viewModel.restoreFile(file.path, getOriginalPath(file.name).toPath())
-                                            } else {
-                                                if (file.isDirectory) {
-                                                    currentPath = file.path.toString()
-                                                } else {
-                                                    viewModel.recordFileAccess(file.path.toString())
-                                                    onNavigateToEditor(file.path.toString())
-                                                }
-                                            }
+                                            viewModel.recordFileAccess(file.path.toString())
+                                            onNavigateToEditor(file.path.toString(), false)
                                         },
                                         onLongClick = {
-                                            if (!isSelectionMode) {
-                                                viewModel.enterSelectionMode(file.path)
-                                            }
+                                            viewModel.enterSelectionMode(file.path)
                                         },
                                         onMoreClick = {
                                             selectedFileForAction = file
                                         },
-                                        isTrashMode = isTrashMode,
-                                        onRestore = {
-                                            viewModel.restoreFile(file.path, getOriginalPath(file.name).toPath())
-                                        },
-                                        onDeletePermanently = {
-                                            selectedFileForAction = file
-                                            showDeleteDialog = true
-                                        },
-                                        isCheckboxMode = isCheckboxMode,
-                                        isKeyboardSelected = index == keyboardSelectedIndex,
-                                        onCheckboxClick = {
-                                            viewModel.toggleSelection(file.path)
-                                        }
+                                        isKeyboardSelected = index == keyboardSelectedIndex
                                     )
                                 }
+                            } else {
+                                val isTrashMode = filterMode == FileFilterMode.TRASH
+                                
+                                FileItem(
+                                    file = file,
+                                    isSelected = isSelected,
+                                    selectionMode = isSelectionMode,
+                                    isFavorite = false,
+                                    noteColor = noteMetadataByPath[file.path.toString()]?.note?.color,
+                                    preview = noteMetadataByPath[file.path.toString()]?.note?.preview,
+                                    onClick = {
+                                        if (isSelectionMode) {
+                                            viewModel.toggleSelection(file.path)
+                                        } else if (isTrashMode) {
+                                            // Restore file from trash
+                                            viewModel.restoreFile(file.path, getOriginalPath(file.name).toPath())
+                                        } else {
+                                            if (file.isDirectory) {
+                                                currentPath = file.path.toString()
+                                            } else {
+                                                viewModel.recordFileAccess(file.path.toString())
+                                                onNavigateToEditor(file.path.toString(), false)
+                                            }
+                                        }
+                                    },
+                                    onLongClick = {
+                                        if (!isSelectionMode) {
+                                            viewModel.enterSelectionMode(file.path)
+                                        }
+                                    },
+                                    onMoreClick = {
+                                        selectedFileForAction = file
+                                    },
+                                    isTrashMode = isTrashMode,
+                                    onRestore = {
+                                        viewModel.restoreFile(file.path, getOriginalPath(file.name).toPath())
+                                    },
+                                    onDeletePermanently = {
+                                        selectedFileForAction = file
+                                        showDeleteDialog = true
+                                    },
+                                    isKeyboardSelected = index == keyboardSelectedIndex
+                                )
                             }
                         }
                     }
@@ -636,94 +625,119 @@ fun FileBrowserContent(
             }
         }
         
-        // M3 Expressive-Style: FAB with manual animation
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 16.dp, end = 24.dp)
-        ) {
-            val haptic = rememberHapticHelper()
-            val trashFiles by viewModel.trashFiles.collectAsState()
-            val isTrashMode = filterMode == FileFilterMode.TRASH
-            
-            if (isTrashMode && trashFiles.isNotEmpty()) {
-                // Empty Trash FAB
-                ExtendedFloatingActionButton(
-                    onClick = {
-                        haptic.performHeavyClick()
-                        viewModel.emptyTrash()
-                    },
-                    icon = { Icon(Icons.Default.DeleteForever, "Empty Trash") },
-                    text = { Text("Empty Trash", fontWeight = FontWeight.Bold) },
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 2.dp, pressedElevation = 6.dp)
-                )
-            } else if (!isTrashMode) {
-                // Regular Add FAB
-                var showAddMenu by remember { mutableStateOf(false) }
-                
-                val rotation by animateFloatAsState(
-                    targetValue = if (showAddMenu) 45f else 0f,
-                    animationSpec = spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessLow),
-                    label = "FAB Rotation"
-                )
-
-                ExtendedFloatingActionButton(
-                    onClick = {
-                        haptic.performHeavyClick()
-                        showAddMenu = !showAddMenu
-                    },
-                    icon = { 
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = if (showAddMenu) "Close" else "New",
-                            modifier = Modifier.rotate(rotation)
+        // M3 Expressive: Bottom-center extended FAB
+        val trashFiles by viewModel.trashFiles.collectAsState()
+        val isTrashMode = filterMode == FileFilterMode.TRASH
+        
+        if (!isSelectionMode) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding()
+                    .padding(bottom = 32.dp, start = 24.dp, end = 24.dp)
+            ) {
+                if (isTrashMode && trashFiles.isNotEmpty()) {
+                    // Empty Trash Button
+                    FilledTonalButton(
+                        onClick = {
+                            haptic.performHeavyClick()
+                            viewModel.emptyTrash()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = ButtonDefaults.filledTonalButtonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer
                         )
-                    },
-                    text = { 
-                        AnimatedVisibility(
-                            visible = !showAddMenu,
-                            enter = fadeIn() + expandHorizontally(),
-                            exit = fadeOut() + shrinkHorizontally()
-                        ) {
-                            Text("New", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                    ) {
+                        Icon(Icons.Default.DeleteForever, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Empty Trash", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                    }
+                } else if (!isTrashMode) {
+                    // Split action: primary creates note, trailing opens extra actions.
+                    var showAddMenu by remember { mutableStateOf(false) }
+                    val scope = rememberCoroutineScope()
+                    val createNote = {
+                        scope.launch {
+                            haptic.performSuccess()
+                            val effectivePath = currentPath
+                                ?: initialPath
+                                ?: viewModel.loadFiles(null).also { loadedPath ->
+                                    currentPath = loadedPath
+                                }
+                            val noteName = "new_note_${kotlin.random.Random.nextInt(1000, 9999)}.md"
+                            viewModel.createNewFile(
+                                parent = effectivePath.toPath(),
+                                name = noteName,
+                                onCreated = { createdPath ->
+                                    onNavigateToEditor(createdPath.toString(), true)
+                                }
+                            )
                         }
-                    },
-                    expanded = !showAddMenu,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 2.dp, pressedElevation = 6.dp)
-                )
+                    }
 
-                DropdownMenu(
-                    expanded = showAddMenu,
-                    onDismissRequest = { showAddMenu = false },
-                    offset = DpOffset(0.dp, (-8).dp),
-                    shape = MaterialTheme.shapes.large,
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("New Note", fontWeight = FontWeight.Medium) },
-                        leadingIcon = { Icon(Icons.Default.Description, null) },
-                        onClick = {
-                            haptic.performSuccess()
-                            val effectivePath = currentPath ?: initialPath
-                            if (effectivePath != null) {
-                               viewModel.createNewFile(effectivePath.toPath())
+                    Row(
+                        modifier = Modifier
+                            .height(56.dp),
+                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                haptic.performHeavyClick()
+                                createNote()
+                            },
+                            modifier = Modifier.height(56.dp),
+                            shape = RoundedCornerShape(topStart = 28.dp, bottomStart = 28.dp, topEnd = 10.dp, bottomEnd = 10.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "New note"
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                "New Note",
+                                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
+
+                        FilledTonalButton(
+                            onClick = {
+                                haptic.performLightClick()
+                                showAddMenu = !showAddMenu
+                            },
+                            shape = RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp, topEnd = 28.dp, bottomEnd = 28.dp),
+                            contentPadding = PaddingValues(0.dp),
+                            modifier = Modifier
+                                .width(56.dp)
+                                .height(56.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowUp,
+                                contentDescription = "More create options"
+                            )
+                        }
+                    }
+
+                    DropdownMenu(
+                        expanded = showAddMenu,
+                        onDismissRequest = { showAddMenu = false },
+                        offset = DpOffset(0.dp, (-8).dp),
+                        shape = MaterialTheme.shapes.large,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("New Folder", fontWeight = FontWeight.Medium) },
+                            leadingIcon = { Icon(Icons.Default.Folder, null) },
+                            onClick = {
+                                haptic.performSuccess()
+                                showCreateFolderDialog = true
+                                showAddMenu = false
                             }
-                            showAddMenu = false
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("New Folder", fontWeight = FontWeight.Medium) },
-                        leadingIcon = { Icon(Icons.Default.Folder, null) },
-                        onClick = {
-                            haptic.performSuccess()
-                            showCreateFolderDialog = true
-                            showAddMenu = false
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
@@ -746,6 +760,8 @@ private fun FileItem(
     isSelected: Boolean,
     selectionMode: Boolean,
     isFavorite: Boolean = false,
+    noteColor: Int? = null,
+    preview: String? = null,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     onMoreClick: () -> Unit,
@@ -753,232 +769,234 @@ private fun FileItem(
     isTrashMode: Boolean = false,
     onRestore: (() -> Unit)? = null,
     onDeletePermanently: (() -> Unit)? = null,
-    // Checkbox mode params
-    isCheckboxMode: Boolean = false,
-    isKeyboardSelected: Boolean = false,
-    onCheckboxClick: (() -> Unit)? = null
+    isKeyboardSelected: Boolean = false
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     val containerColor = when {
-        isSelected -> MaterialTheme.colorScheme.primaryContainer
-        isKeyboardSelected -> MaterialTheme.colorScheme.secondaryContainer
-        isTrashMode -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)
-        file.isDirectory -> MaterialTheme.colorScheme.surface
-        else -> MaterialTheme.colorScheme.surfaceContainerLow
+        isSelected -> colorScheme.primaryContainer
+        isKeyboardSelected -> colorScheme.secondaryContainer
+        isTrashMode -> colorScheme.errorContainer.copy(alpha = 0.3f)
+        file.isDirectory -> colorScheme.surface
+        noteColor != null -> resolveNoteSurfaceColor(noteColor, colorScheme, fallback = colorScheme.surfaceContainerLow)
+        else -> colorScheme.surfaceContainerLow
+    }
+    val effectiveBackground = containerColor.compositeOver(colorScheme.surface)
+    val previewPalette = remember(effectiveBackground, colorScheme) {
+        resolveMarkdownColorPalette(colorScheme, effectiveBackground)
     }
 
-    // Expressive Motion: Scale on Click
     val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.96f else 1f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow),
-        label = "ItemScale"
-    )
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            }
-            .combinedClickable(
-                onClick = {
-                    haptic.performHeavyClick()
-                    onClick()
-                },
-                onLongClick = {
-                    haptic.performHeavyClick()
-                    onLongClick()
-                },
-                interactionSource = interactionSource,
-                indication = ripple()
-            ),
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(containerColor = containerColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = when {
-            isSelected -> BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-            isKeyboardSelected -> BorderStroke(2.dp, MaterialTheme.colorScheme.secondary)
-            else -> null
-        },
-    ) {
-      val content = @Composable {
-        Row(
+    val card = @Composable {
+        val cardShape = MaterialTheme.shapes.medium
+        Card(
             modifier = Modifier
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxWidth()
+                .clip(cardShape)
+                .combinedClickable(
+                    onClick = {
+                        haptic.performHeavyClick()
+                        onClick()
+                    },
+                    onLongClick = {
+                        haptic.performHeavyClick()
+                        onLongClick()
+                    },
+                    interactionSource = interactionSource,
+                    indication = ripple()
+                ),
+            shape = cardShape,
+            colors = CardDefaults.cardColors(containerColor = containerColor),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            border = when {
+                isSelected -> BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                isKeyboardSelected -> BorderStroke(2.dp, MaterialTheme.colorScheme.secondary)
+                else -> null
+            },
         ) {
-            // Icon Container
-            Box(
+            Row(
                 modifier = Modifier
-                    .size(52.dp)
-                    .clip(MaterialTheme.shapes.large)
-                    .background(
-                        if (file.isDirectory) 
-                            MaterialTheme.colorScheme.primaryContainer
-                        else 
-                            MaterialTheme.colorScheme.secondaryContainer
-                    ),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = if (file.isDirectory) Icons.Default.Folder else Icons.Default.Description,
-                    contentDescription = null,
-                    tint = if (file.isDirectory) 
-                        MaterialTheme.colorScheme.primary 
-                    else 
-                        MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-            
-            Column(
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .weight(1f)
-            ) {
-                // Show filename with extension in reduced opacity
-                if (file.isDirectory) {
-                    Text(
-                        text = file.name,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            letterSpacing = 0.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = "Folder",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                    )
-                } else {
-                    val baseName = file.name.substringBeforeLast(".")
-                    val ext = if (file.name.contains(".")) ".${file.extension}" else ""
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        SharedElementContainer(
-                            key = SharedTransitionKeys.fileTitle(file.path.toString()),
-                            isSource = true
-                        ) {
+                    // Icon Container
+                    Box(
+                        modifier = Modifier
+                            .size(52.dp)
+                            .clip(MaterialTheme.shapes.large)
+                            .background(
+                                if (file.isDirectory)
+                                    MaterialTheme.colorScheme.primaryContainer
+                                else
+                                    MaterialTheme.colorScheme.secondaryContainer
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (file.isDirectory) Icons.Default.Folder else Icons.Default.Description,
+                            contentDescription = null,
+                            tint = if (file.isDirectory)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .weight(1f)
+                    ) {
+                        // Show filename with extension in reduced opacity
+                        if (file.isDirectory) {
                             Text(
-                                text = baseName,
+                                text = file.name,
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.SemiBold,
                                     letterSpacing = 0.sp
                                 ),
                                 color = MaterialTheme.colorScheme.onSurface
                             )
-                        }
-                        Text(
-                            text = ext,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Normal,
-                                letterSpacing = 0.sp
-                            ),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                        )
-                    }
-                    if (!file.preview.isNullOrEmpty()) {
-                        val colorScheme = MaterialTheme.colorScheme
-                        val previewText = remember(file.preview, colorScheme) {
-                            renderGridMarkdown(file.preview, colorScheme)
-                        }
-                        Text(
-                            text = previewText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                        )
-                    }
-                }
-            }
-            
-            if (selectionMode || isCheckboxMode) {
-                Checkbox(
-                    checked = isSelected,
-                    onCheckedChange = {
-                        haptic.performLightClick()
-                        onCheckboxClick?.invoke()
-                    },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = MaterialTheme.colorScheme.primary,
-                        uncheckedColor = MaterialTheme.colorScheme.outline
-                    )
-                )
-            } else if (isTrashMode) {
-                // Trash mode: show restore and delete permanently actions
-                Row {
-                    IconButton(
-                        onClick = {
-                            haptic.performSuccess()
-                            onRestore?.invoke()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Restore,
-                            contentDescription = "Restore",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    IconButton(
-                        onClick = {
-                            haptic.performHeavyClick()
-                            onDeletePermanently?.invoke()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.DeleteForever,
-                            contentDescription = "Delete Permanently",
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
-            } else {
-                Row {
-                    // Favorite star indicator
-                    if (isFavorite) {
-                        Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = "Favorite",
-                            tint = MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickable {
-                                    haptic.performHeavyClick()
-                                    // Toggle favorite handled by parent
+                            Text(
+                                text = "Folder",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            )
+                        } else {
+                            val baseName = file.name.substringBeforeLast(".")
+                            val ext = if (file.name.contains(".")) ".${file.extension}" else ""
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                SharedElementContainer(
+                                    key = SharedTransitionKeys.fileTitle(file.path.toString()),
+                                    isSource = true
+                                ) {
+                                    Text(
+                                        text = baseName,
+                                        style = MaterialTheme.typography.titleMedium.copy(
+                                            fontWeight = FontWeight.SemiBold,
+                                            letterSpacing = 0.sp
+                                        ),
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
                                 }
-                        )
-                        Spacer(Modifier.width(4.dp))
-                    }
-                    IconButton(
-                        onClick = {
-                            haptic.performHeavyClick()
-                            onMoreClick()
+                                Text(
+                                    text = ext,
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Normal,
+                                        letterSpacing = 0.sp
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                )
+                            }
+
+                            val effectivePreview = preview?.takeIf { it.isNotBlank() }
+                                ?: file.preview?.takeIf { it.isNotBlank() }
+                            if (!effectivePreview.isNullOrEmpty()) {
+                                val previewText = remember(effectivePreview, colorScheme, effectiveBackground) {
+                                    renderGridMarkdown(
+                                        effectivePreview,
+                                        colorScheme,
+                                        backgroundColor = effectiveBackground
+                                    )
+                                }
+                                Text(
+                                    text = previewText,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = previewPalette.body,
+                                    maxLines = 2,
+                                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                )
+                            }
                         }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = "More",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(24.dp)
+                    }
+
+                    if (selectionMode) {
+                        Checkbox(
+                            checked = isSelected,
+                            onCheckedChange = {
+                                haptic.performLightClick()
+                                onClick()
+                            },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = MaterialTheme.colorScheme.primary,
+                                uncheckedColor = MaterialTheme.colorScheme.outline
+                            )
                         )
+                    } else if (isTrashMode) {
+                        // Trash mode: show restore and delete permanently actions
+                        Row {
+                            IconButton(
+                                onClick = {
+                                    haptic.performSuccess()
+                                    onRestore?.invoke()
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Restore,
+                                    contentDescription = "Restore",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    haptic.performHeavyClick()
+                                    onDeletePermanently?.invoke()
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.DeleteForever,
+                                    contentDescription = "Delete Permanently",
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
+                    } else {
+                        Row {
+                            // Favorite star indicator
+                            if (isFavorite) {
+                                Icon(
+                                    imageVector = Icons.Filled.Star,
+                                    contentDescription = "Favorite",
+                                    tint = MaterialTheme.colorScheme.tertiary,
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .clickable {
+                                            haptic.performHeavyClick()
+                                            // Toggle favorite handled by parent
+                                        }
+                                )
+                                Spacer(Modifier.width(4.dp))
+                            }
+                            IconButton(
+                                onClick = {
+                                    haptic.performHeavyClick()
+                                    onMoreClick()
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = "More",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
                     }
                 }
-            }
         }
-      }
-      
-      if (!file.isDirectory) {
-          SharedElementContainer(
-              key = SharedTransitionKeys.fileCard(file.path.toString()),
-              isSource = true
-          ) {
-              content()
-          }
-      } else {
-          content()
-      }
+    }
+    
+    if (!file.isDirectory) {
+        SharedElementContainer(
+            key = SharedTransitionKeys.fileCard(file.path.toString()),
+            isSource = true,
+            useSharedBounds = true
+        ) {
+            card()
+        }
+    } else {
+        card()
     }
 }

@@ -2,18 +2,28 @@ package net.gsantner.markor.ui.screens.main
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import kotlinx.coroutines.launch
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import net.gsantner.markor.ui.screens.editor.EditorScreen
 import net.gsantner.markor.ui.screens.filelist.FileBrowserContent
@@ -27,6 +37,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import net.gsantner.markor.ui.components.CreateFileDialog
 import okio.Path
 import okio.Path.Companion.toPath
+import net.gsantner.markor.ui.viewmodel.FileFilterMode
 
 enum class LeftPanelContent {
     FILE_BROWSER,
@@ -37,15 +48,11 @@ enum class LeftPanelContent {
 @Composable
 fun MainScreen(
     currentTab: Int = 0,
-    onNavigateToEditor: (String) -> Unit,
+    onNavigateToEditor: (String, Boolean) -> Unit,
     onNavigateToSettings: () -> Unit,
     viewModel: MainViewModel = koinViewModel(),
     fileBrowserViewModel: FileBrowserViewModel = koinViewModel()
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    
-    val quickNotePath by viewModel.quickNotePath.collectAsState()
-    val todoFilePath by viewModel.todoFilePath.collectAsState()
     val notebookDirectory by viewModel.notebookDirectory.collectAsState()
 
     val isSelectionMode by fileBrowserViewModel.isSelectionMode.collectAsState()
@@ -53,7 +60,6 @@ fun MainScreen(
     
     var showDeleteDialog by remember { mutableStateOf(false) }
     var isGridView by remember { mutableStateOf(true) }
-    var showSettings by remember { mutableStateOf(false) }
     var showCreateFileDialog by remember { mutableStateOf(false) }
     
     // Adaptive layout info
@@ -107,7 +113,7 @@ fun MainScreen(
             leftPanelContent = leftPanelContent,
             onFileSelected = { path -> 
                 selectedFileForDetail = path 
-                onNavigateToEditor(path)
+                onNavigateToEditor(path, false)
             },
             onClearSelection = { fileBrowserViewModel.clearSelection() },
             onSelectAll = { fileBrowserViewModel.selectAll() },
@@ -121,77 +127,109 @@ fun MainScreen(
             },
             onNavigateToEditor = onNavigateToEditor
         )
-    } else if (showSettings) {
-        SettingsScreen(onNavigateBack = { showSettings = false })
     } else {
-        // Phone: Standard Scaffold with Drawer
-        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-        val scope = rememberCoroutineScope()
-        
-        // Observe filter mode
+        // Phone: Standard Scaffold (no drawer)
         val filterMode by fileBrowserViewModel.filterMode.collectAsState()
-        val labels by fileBrowserViewModel.labels.collectAsState()
-        val currentLabel by fileBrowserViewModel.currentLabel.collectAsState()
+        val sortOrder by fileBrowserViewModel.sortOrder.collectAsState()
 
-        net.gsantner.markor.ui.components.MainNavigationDrawer(
-            drawerState = drawerState,
+        PhoneLayout(
+            isSelectionMode = isSelectionMode,
+            selectedFiles = selectedFiles,
+            fileBrowserViewModel = fileBrowserViewModel,
+            notebookDirectory = notebookDirectory,
+            isGridView = isGridView,
             currentFilterMode = filterMode,
-            labels = labels,
-            currentLabel = currentLabel,
-            onSelectFilterMode = { mode -> 
-                fileBrowserViewModel.setFilterMode(mode)
-            },
-            onSelectLabel = { label ->
-                fileBrowserViewModel.setLabelFilter(label)
-            },
-            onNavigateToSettings = { showSettings = true }
-        ) {
-            PhoneLayout(
-                scrollBehavior = scrollBehavior,
-                isSelectionMode = isSelectionMode,
-                selectedFiles = selectedFiles,
-                fileBrowserViewModel = fileBrowserViewModel,
-                notebookDirectory = notebookDirectory,
-                isGridView = isGridView,
-                quickNotePath = quickNotePath,
-                todoFilePath = todoFilePath,
-                currentFilterMode = filterMode,
-                currentLabel = currentLabel,
-                onClearSelection = { fileBrowserViewModel.clearSelection() },
-                onSelectAll = { fileBrowserViewModel.selectAll() },
-                onDeleteSelected = { showDeleteDialog = true },
-                onToggleGridView = { isGridView = !isGridView },
-                onOpenDrawer = { scope.launch { drawerState.open() } },
-                onShowCreateFileDialog = { showCreateFileDialog = true },
-                onNavigateToEditor = onNavigateToEditor
-            )
-        }
+            currentSortOrder = sortOrder,
+            onClearSelection = { fileBrowserViewModel.clearSelection() },
+            onSelectAll = { fileBrowserViewModel.selectAll() },
+            onDeleteSelected = { showDeleteDialog = true },
+            onToggleGridView = { isGridView = !isGridView },
+            onOpenSettings = onNavigateToSettings,
+            onFilterModeChange = { fileBrowserViewModel.setFilterMode(it) },
+            onSortOrderChange = { fileBrowserViewModel.setSortOrder(it) },
+            onNavigateToEditor = onNavigateToEditor
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PhoneLayout(
-    scrollBehavior: TopAppBarScrollBehavior,
     isSelectionMode: Boolean,
     selectedFiles: Set<Path>,
     fileBrowserViewModel: FileBrowserViewModel,
     notebookDirectory: String,
     isGridView: Boolean,
-    quickNotePath: String,
-    todoFilePath: String,
-    currentFilterMode: net.gsantner.markor.ui.viewmodel.FileFilterMode,
-    currentLabel: String? = null,
+    currentFilterMode: FileFilterMode,
+    currentSortOrder: String,
     onClearSelection: () -> Unit,
     onSelectAll: () -> Unit,
     onDeleteSelected: () -> Unit,
     onToggleGridView: () -> Unit,
-    onOpenDrawer: () -> Unit,
-    onShowCreateFileDialog: () -> Unit,
-    onNavigateToEditor: (String) -> Unit
+    onOpenSettings: () -> Unit,
+    onFilterModeChange: (FileFilterMode) -> Unit,
+    onSortOrderChange: (String) -> Unit,
+    onNavigateToEditor: (String, Boolean) -> Unit
 ) {
+    val files by fileBrowserViewModel.files.collectAsState()
+    val trashFiles by fileBrowserViewModel.trashFiles.collectAsState()
+    var isSearchScreenOpen by rememberSaveable { mutableStateOf(false) }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+
+    val searchableFiles = remember(files, trashFiles) {
+        (files + trashFiles).filter { !it.isDirectory }
+    }
+    val searchResults = remember(searchableFiles, searchQuery) {
+        val query = searchQuery.trim().lowercase()
+        if (query.isBlank()) {
+            searchableFiles
+                .sortedByDescending { it.lastModified }
+                .take(40)
+        } else {
+            searchableFiles
+                .mapNotNull { file ->
+                    val name = file.name.lowercase()
+                    val preview = file.preview.orEmpty().lowercase()
+                    val score = when {
+                        name.startsWith(query) -> 0
+                        name.contains(query) -> 1
+                        preview.contains(query) -> 2
+                        else -> return@mapNotNull null
+                    }
+                    score to file
+                }
+                .sortedWith(compareBy<Pair<Int, net.gsantner.markor.domain.repository.FileInfo>> { it.first }
+                    .thenByDescending { it.second.lastModified })
+                .map { it.second }
+                .take(80)
+        }
+    }
+
+    BackHandler(enabled = isSearchScreenOpen) {
+        searchQuery = ""
+        isSearchScreenOpen = false
+    }
+
+    if (isSearchScreenOpen && !isSelectionMode) {
+        SearchScreen(
+            query = searchQuery,
+            results = searchResults,
+            onQueryChange = { searchQuery = it },
+            onClose = {
+                searchQuery = ""
+                isSearchScreenOpen = false
+            },
+            onOpenNote = { path ->
+                searchQuery = ""
+                isSearchScreenOpen = false
+                onNavigateToEditor(path, false)
+            }
+        )
+        return
+    }
+
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        // Draw content behind the bottom system bar for a true edge-to-edge main surface.
         contentWindowInsets = WindowInsets.statusBars,
         topBar = {
             if (isSelectionMode) {
@@ -203,28 +241,14 @@ private fun PhoneLayout(
                 )
             } else {
                 StandardTopBar(
-                    scrollBehavior = scrollBehavior,
                     isGridView = isGridView,
-                    title = when(currentFilterMode) {
-                        net.gsantner.markor.ui.viewmodel.FileFilterMode.TRASH -> "Trash"
-                        net.gsantner.markor.ui.viewmodel.FileFilterMode.ARCHIVE -> "Archive"
-                        net.gsantner.markor.ui.viewmodel.FileFilterMode.FAVORITES -> "Favorites"
-                        net.gsantner.markor.ui.viewmodel.FileFilterMode.LABEL -> currentLabel ?: "Label"
-                        else -> "Markor"
-                    },
+                    currentFilterMode = currentFilterMode,
+                    currentSortOrder = currentSortOrder,
+                    onFilterModeChange = onFilterModeChange,
+                    onSortOrderChange = onSortOrderChange,
                     onToggleGridView = onToggleGridView,
-                    onOpenDrawer = onOpenDrawer
-                )
-            }
-        },
-        floatingActionButton = {
-            if (!isSelectionMode && quickNotePath.isNotEmpty() && todoFilePath.isNotEmpty()) {
-                ExtendedFloatingActionButton(
-                    onClick = onShowCreateFileDialog,
-                    icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                    text = { Text("New", fontWeight = FontWeight.Bold) },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    onOpenSettings = onOpenSettings,
+                    onOpenSearch = { isSearchScreenOpen = true }
                 )
             }
         }
@@ -264,7 +288,7 @@ private fun ListDetailLayout(
     onToggleGridView: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToFileBrowser: () -> Unit,
-    onNavigateToEditor: (String) -> Unit
+    onNavigateToEditor: (String, Boolean) -> Unit
 ) {
     // Track detail content path
     var detailPath by remember { mutableStateOf<String?>(null) }
@@ -276,55 +300,81 @@ private fun ListDetailLayout(
                 .weight(adaptiveInfo.listPaneWeight)
                 .fillMaxHeight()
         ) {
-            when (leftPanelContent) {
-                LeftPanelContent.FILE_BROWSER -> {
-                    if (isSelectionMode) {
-                        SelectionTopBar(
-                            selectedCount = selectedFiles.size,
-                            onClearSelection = onClearSelection,
-                            onSelectAll = onSelectAll,
-                            onDelete = onDeleteSelected
-                        )
+            AnimatedContent(
+                targetState = leftPanelContent,
+                label = "leftPanelContentTransition",
+                transitionSpec = {
+                    if (targetState == LeftPanelContent.SETTINGS) {
+                        (slideInHorizontally(
+                            animationSpec = tween(durationMillis = 220, easing = LinearOutSlowInEasing),
+                            initialOffsetX = { width -> width }
+                        ) + fadeIn(animationSpec = tween(durationMillis = 180))) togetherWith
+                            (slideOutHorizontally(
+                                animationSpec = tween(durationMillis = 180, easing = FastOutLinearInEasing),
+                                targetOffsetX = { width -> -width / 6 }
+                            ) + fadeOut(animationSpec = tween(durationMillis = 140)))
                     } else {
-                        TopAppBar(
-                            title = { Text("Notebook", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)) },
-                            actions = {
-                                IconButton(onClick = onToggleGridView) {
-                                    Icon(
-                                        if (isGridView) Icons.AutoMirrored.Filled.List else Icons.Default.GridView,
-                                        "Toggle View"
-                                    )
-                                }
-                                IconButton(onClick = onNavigateToSettings) {
-                                    Icon(Icons.Default.Settings, "Settings")
-                                }
+                        (slideInHorizontally(
+                            animationSpec = tween(durationMillis = 220, easing = LinearOutSlowInEasing),
+                            initialOffsetX = { width -> -width / 6 }
+                        ) + fadeIn(animationSpec = tween(durationMillis = 180))) togetherWith
+                            (slideOutHorizontally(
+                                animationSpec = tween(durationMillis = 180, easing = FastOutLinearInEasing),
+                                targetOffsetX = { width -> width }
+                            ) + fadeOut(animationSpec = tween(durationMillis = 140)))
+                    }
+                }
+            ) { panelContent ->
+                when (panelContent) {
+                    LeftPanelContent.FILE_BROWSER -> {
+                        if (isSelectionMode) {
+                            SelectionTopBar(
+                                selectedCount = selectedFiles.size,
+                                onClearSelection = onClearSelection,
+                                onSelectAll = onSelectAll,
+                                onDelete = onDeleteSelected
+                            )
+                        } else {
+                            TopAppBar(
+                                title = { Text("Notebook", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)) },
+                                actions = {
+                                    IconButton(onClick = onToggleGridView) {
+                                        Icon(
+                                            if (isGridView) Icons.AutoMirrored.Filled.List else Icons.Default.GridView,
+                                            "Toggle View"
+                                        )
+                                    }
+                                    IconButton(onClick = onNavigateToSettings) {
+                                        Icon(Icons.Default.Settings, "Settings")
+                                    }
+                                },
+                                colors = TopAppBarDefaults.topAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                                )
+                            )
+                        }
+
+                        FileBrowserContent(
+                            initialPath = notebookDirectory.ifEmpty { null },
+                            onNavigateToEditor = { path, autoOpenKeyboard ->
+                                detailPath = path
+                                onNavigateToEditor(path, autoOpenKeyboard)
                             },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer
-                            ),
-                            modifier = Modifier.clip(MaterialTheme.shapes.extraLarge)
+                            onNavigateBack = { },
+                            viewModel = fileBrowserViewModel,
+                            isGridView = isGridView,
+                            modifier = Modifier.weight(1f)
                         )
                     }
-
-                    FileBrowserContent(
-                        initialPath = notebookDirectory.ifEmpty { null },
-                        onNavigateToEditor = { path ->
-                            detailPath = path
-                            onNavigateToEditor(path)
-                        },
-                        onNavigateBack = { },
-                        viewModel = fileBrowserViewModel,
-                        isGridView = isGridView,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                LeftPanelContent.SETTINGS -> {
-                    SettingsTopBar(
-                        onNavigateBack = onNavigateToFileBrowser
-                    )
-                    SettingsScreen(
-                        onNavigateBack = onNavigateToFileBrowser
-                    )
+                    LeftPanelContent.SETTINGS -> {
+                        SettingsTopBar(
+                            onNavigateBack = onNavigateToFileBrowser
+                        )
+                        SettingsScreen(
+                            onNavigateBack = onNavigateToFileBrowser,
+                            showTopBar = false
+                        )
+                    }
                 }
             }
         }
@@ -388,13 +438,12 @@ private fun SettingsTopBar(
         title = { Text("Settings", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)) },
         navigationIcon = {
             IconButton(onClick = onNavigateBack) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        modifier = Modifier.clip(MaterialTheme.shapes.extraLarge)
+        )
     )
 }
 
@@ -438,38 +487,278 @@ private fun SelectionTopBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StandardTopBar(
-    scrollBehavior: TopAppBarScrollBehavior,
     isGridView: Boolean,
-    title: String,
+    currentFilterMode: FileFilterMode,
+    currentSortOrder: String,
+    onFilterModeChange: (FileFilterMode) -> Unit,
+    onSortOrderChange: (String) -> Unit,
     onToggleGridView: () -> Unit,
-    onOpenDrawer: () -> Unit
+    onOpenSettings: () -> Unit,
+    onOpenSearch: () -> Unit
 ) {
-    TopAppBar(
-        title = {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+    var showSortMenu by remember { mutableStateOf(false) }
+
+    Column {
+        TopAppBar(
+            title = {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onOpenSearch),
+                    shape = MaterialTheme.shapes.large,
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "Search notes",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
+                        )
+                    }
+                }
+            },
+            actions = {
+                IconButton(onClick = onToggleGridView) {
+                    Icon(
+                        if (isGridView) Icons.AutoMirrored.Filled.List else Icons.Default.GridView,
+                        contentDescription = if (isGridView) "Switch to list view" else "Switch to grid view"
+                    )
+                }
+                Box {
+                    IconButton(onClick = { showSortMenu = true }) {
+                        Icon(Icons.AutoMirrored.Filled.Sort, contentDescription = "Sort")
+                    }
+                    DropdownMenu(
+                        expanded = showSortMenu,
+                        onDismissRequest = { showSortMenu = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Recent first") },
+                            leadingIcon = {
+                                if (currentSortOrder == "date") Icon(Icons.Default.Check, contentDescription = null)
+                            },
+                            onClick = {
+                                onSortOrderChange("date")
+                                showSortMenu = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Oldest first") },
+                            leadingIcon = {
+                                if (currentSortOrder == "oldest") Icon(Icons.Default.Check, contentDescription = null)
+                            },
+                            onClick = {
+                                onSortOrderChange("oldest")
+                                showSortMenu = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Name") },
+                            leadingIcon = {
+                                if (currentSortOrder == "name") Icon(Icons.Default.Check, contentDescription = null)
+                            },
+                            onClick = {
+                                onSortOrderChange("name")
+                                showSortMenu = false
+                            }
+                        )
+                    }
+                }
+                IconButton(onClick = onOpenSettings) {
+                    Icon(Icons.Default.Settings, contentDescription = "Settings")
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
             )
-        },
-        navigationIcon = {
-            IconButton(onClick = onOpenDrawer) {
-                Icon(Icons.Default.Menu, contentDescription = "Open Menu")
-            }
-        },
-        actions = {
-            IconButton(onClick = onToggleGridView) {
-                Icon(
-                    imageVector = if (isGridView) Icons.AutoMirrored.Filled.List else Icons.Default.GridView,
-                    contentDescription = if (isGridView) "Switch to List" else "Switch to Grid"
+        )
+
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            tonalElevation = 0.dp
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                FilterChip(
+                    selected = currentFilterMode == FileFilterMode.ALL,
+                    onClick = { onFilterModeChange(FileFilterMode.ALL) },
+                    label = { Text("All") }
+                )
+                FilterChip(
+                    selected = currentFilterMode == FileFilterMode.FAVORITES,
+                    onClick = { onFilterModeChange(FileFilterMode.FAVORITES) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = if (currentFilterMode == FileFilterMode.FAVORITES) {
+                                Icons.Filled.Star
+                            } else {
+                                Icons.Outlined.StarOutline
+                            },
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    },
+                    label = { Text("Favorites") }
+                )
+                FilterChip(
+                    selected = currentFilterMode == FileFilterMode.ARCHIVE,
+                    onClick = { onFilterModeChange(FileFilterMode.ARCHIVE) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = if (currentFilterMode == FileFilterMode.ARCHIVE) {
+                                Icons.Filled.Archive
+                            } else {
+                                Icons.Outlined.Archive
+                            },
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    },
+                    label = { Text("Archive") }
+                )
+                FilterChip(
+                    selected = currentFilterMode == FileFilterMode.TRASH,
+                    onClick = { onFilterModeChange(FileFilterMode.TRASH) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = if (currentFilterMode == FileFilterMode.TRASH) {
+                                Icons.Filled.Delete
+                            } else {
+                                Icons.Outlined.Delete
+                            },
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    },
+                    label = { Text("Trash") }
                 )
             }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        scrollBehavior = scrollBehavior,
-        modifier = Modifier.clip(MaterialTheme.shapes.extraLarge)
-    )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchScreen(
+    query: String,
+    results: List<net.gsantner.markor.domain.repository.FileInfo>,
+    onQueryChange: (String) -> Unit,
+    onClose: () -> Unit,
+    onOpenNote: (String) -> Unit
+) {
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    Scaffold(
+        contentWindowInsets = WindowInsets.systemBars,
+        topBar = {
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = onClose) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                title = {
+                    TextField(
+                        value = query,
+                        onValueChange = onQueryChange,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester)
+                            .padding(vertical = 4.dp),
+                        placeholder = { Text("Search notes") },
+                        singleLine = true,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        )
+                    )
+                },
+                actions = {
+                    if (query.isNotEmpty()) {
+                        IconButton(onClick = { onQueryChange("") }) {
+                            Icon(Icons.Default.Close, contentDescription = "Clear query")
+                        }
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
+            )
+        }
+    ) { paddingValues ->
+        if (results.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                EmptyState(
+                    title = if (query.isBlank()) "No notes yet" else "No matches",
+                    subtitle = if (query.isBlank()) "Create a note to start searching" else "Try a different search term",
+                    icon = Icons.Default.SearchOff
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                items(
+                    items = results,
+                    key = { it.path.toString() }
+                ) { file ->
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = file.name,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
+                        supportingContent = {
+                            val preview = file.preview?.trim().orEmpty()
+                            if (preview.isNotEmpty()) {
+                                Text(
+                                    text = preview,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onOpenNote(file.path.toString()) }
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable

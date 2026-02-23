@@ -26,7 +26,7 @@ sealed class Screen : NavKey {
     @Serializable
     data object More : Screen()
     @Serializable
-    data class Editor(val filePath: String) : Screen()
+    data class Editor(val filePath: String, val autoOpenKeyboard: Boolean = false) : Screen()
     @Serializable
     data object Settings : Screen()
     @Serializable

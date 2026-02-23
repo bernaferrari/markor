@@ -334,6 +334,45 @@
                 android:resource="@xml/markor_notes_widget_info" />
         </receiver>
 
+        <!-- Quick Note Widget -->
+        <receiver
+            android:name=".widget.QuickNoteWidgetReceiver"
+            android:exported="true"
+            android:label="@string/quicknote">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/quick_note_widget_info" />
+        </receiver>
+
+        <!-- Todo Widget -->
+        <receiver
+            android:name=".widget.TodoWidgetReceiver"
+            android:exported="true"
+            android:label="@string/todo">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/todo_widget_info" />
+        </receiver>
+
+        <!-- Recent Files Widget -->
+        <receiver
+            android:name=".widget.RecentFilesWidgetReceiver"
+            android:exported="true"
+            android:label="@string/recent_files">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recent_files_widget_info" />
+        </receiver>
+
     </application>
 
     <queries>

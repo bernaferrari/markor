@@ -36,25 +36,14 @@ fun SwipeableFileCard(
     val hapticHelper = rememberHapticHelper()
     
     val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            when (value) {
-                SwipeToDismissBoxValue.StartToEnd -> {
-                    // Swipe right = favorite
-                    hapticHelper.performHeavyClick()
-                    onToggleFavorite()
-                    false // Don't dismiss, just toggle
-                }
-                SwipeToDismissBoxValue.EndToStart -> {
-                    // Swipe left = delete (confirm first)
-                    hapticHelper.performHeavyClick()
-                    onDelete()
-                    false // Don't auto-dismiss, let parent handle
-                }
-                SwipeToDismissBoxValue.Settled -> false
-            }
-        },
         positionalThreshold = { it * 0.3f } // 30% threshold
     )
+
+    LaunchedEffect(dismissState.settledValue) {
+        if (dismissState.settledValue != SwipeToDismissBoxValue.Settled) {
+            dismissState.reset()
+        }
+    }
 
     SwipeToDismissBox(
         state = dismissState,
@@ -116,6 +105,21 @@ fun SwipeableFileCard(
                     }
                     else -> {}
                 }
+            }
+        },
+        onDismiss = { value ->
+            when (value) {
+                SwipeToDismissBoxValue.StartToEnd -> {
+                    // Swipe right = favorite
+                    hapticHelper.performHeavyClick()
+                    onToggleFavorite()
+                }
+                SwipeToDismissBoxValue.EndToStart -> {
+                    // Swipe left = delete
+                    hapticHelper.performHeavyClick()
+                    onDelete()
+                }
+                SwipeToDismissBoxValue.Settled -> {}
             }
         },
         content = { content() },

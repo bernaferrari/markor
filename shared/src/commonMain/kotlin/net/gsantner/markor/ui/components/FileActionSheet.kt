@@ -6,8 +6,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Label
+import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
@@ -24,19 +25,21 @@ import net.gsantner.markor.domain.repository.FileInfo
 fun FileActionSheet(
     file: FileInfo,
     isPinned: Boolean,
+    hasAssets: Boolean = false,
     onDismiss: () -> Unit,
     onRename: () -> Unit,
     onDelete: () -> Unit,
     onShare: () -> Unit,
     onInfo: () -> Unit,
     onTogglePin: () -> Unit,
-    onEditLabels: () -> Unit
+    onEditLabels: () -> Unit,
+    onManageAssets: (() -> Unit)? = null
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = { BottomSheetDefaults.DragHandle() },
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
     ) {
         Column(
             modifier = Modifier
@@ -78,13 +81,25 @@ fun FileActionSheet(
             )
 
             ActionItem(
-                icon = Icons.Default.Label,
+                icon = Icons.AutoMirrored.Filled.Label,
                 label = "Labels",
                 onClick = {
                     onDismiss()
                     onEditLabels()
                 }
             )
+            
+            // Manage Assets - only show if file has assets
+            if (hasAssets && onManageAssets != null) {
+                ActionItem(
+                    icon = Icons.Default.Image,
+                    label = "Manage Images",
+                    onClick = {
+                        onDismiss()
+                        onManageAssets()
+                    }
+                )
+            }
 
             ActionItem(
                 icon = Icons.Default.Delete,

@@ -2,21 +2,30 @@ package net.gsantner.markor.ui.components
  
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalConfiguration
+
+/**
+ * Screen dimensions for adaptive layout calculations.
+ */
+data class ScreenDimensions(
+    val widthDp: Int,
+    val heightDp: Int
+)
+
+/**
+ * Expect function to get screen dimensions - platform-specific implementation.
+ */
+@Composable
+expect fun rememberScreenDimensions(): ScreenDimensions
 
 /**
  * Check if we're on a large screen (tablet) without needing WindowSizeClass.
- * Uses Configuration directly which is simpler and works everywhere.
  */
 @Composable
 fun isLargeScreen(): Boolean {
-    val configuration = LocalConfiguration.current
-    return remember(configuration) {
-        val screenWidthDp = configuration.screenWidthDp
-        val screenHeightDp = configuration.screenHeightDp
-        
+    val dimensions = rememberScreenDimensions()
+    return remember(dimensions) {
         // Consider large screen if width >= 600dp (standard tablet threshold)
-        screenWidthDp >= 600 && screenHeightDp >= 400
+        dimensions.widthDp >= 600 && dimensions.heightDp >= 400
     }
 }
 
@@ -25,10 +34,10 @@ fun isLargeScreen(): Boolean {
  */
 @Composable
 fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
-    val configuration = LocalConfiguration.current
-    return remember(configuration) {
-        val screenWidthDp = configuration.screenWidthDp
-        val isLandscape = configuration.screenWidthDp > configuration.screenHeightDp
+    val dimensions = rememberScreenDimensions()
+    return remember(dimensions) {
+        val screenWidthDp = dimensions.widthDp
+        val isLandscape = dimensions.widthDp > dimensions.heightDp
         
         AdaptiveLayoutInfo(
             isLargeScreen = screenWidthDp >= 600,

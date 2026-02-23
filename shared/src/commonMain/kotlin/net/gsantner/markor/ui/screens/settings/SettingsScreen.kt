@@ -1,23 +1,33 @@
 package net.gsantner.markor.ui.screens.settings
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import net.gsantner.markor.ui.components.BackHandler
+import net.gsantner.markor.ui.components.supportsSharedStorageMode
 import net.gsantner.markor.ui.viewmodel.SettingsViewModel
+import net.gsantner.markor.ui.viewmodel.ThemeModeOption
+import net.gsantner.markor.ui.viewmodel.ThemePaletteOption
 import net.gsantner.markor.ui.components.RenameDialog
 import net.gsantner.markor.ui.theme.MarkorTheme
 import org.koin.compose.viewmodel.koinViewModel
@@ -26,128 +36,111 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SettingsScreen(
     onNavigateBack: () -> Unit,
+    showTopBar: Boolean = true,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val showLineNumbers by viewModel.showLineNumbers.collectAsState()
     val wordWrap by viewModel.wordWrap.collectAsState()
     val autoFormat by viewModel.autoFormat.collectAsState()
     val editorFontSize by viewModel.editorFontSize.collectAsState()
-    
-    val fileBrowserShowHidden by viewModel.fileBrowserShowHidden.collectAsState()
-    val fileBrowserShowExt by viewModel.fileBrowserShowExt.collectAsState()
-    val fileBrowserSortOrder by viewModel.fileBrowserSortOrder.collectAsState()
-    val fileBrowserFolderFirst by viewModel.fileBrowserFolderFirst.collectAsState()
-    
-    val notebookDirectory by viewModel.notebookDirectory.collectAsState()
-    val quickNotePath by viewModel.quickNotePath.collectAsState()
-    val todoFilePath by viewModel.todoFilePath.collectAsState()
+    val themeMode by viewModel.themeMode.collectAsState()
+    val themePalette by viewModel.themePalette.collectAsState()
 
-    // Simplified content for embedding in MainScreen tab
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(MarkorTheme.spacing.large),
-        verticalArrangement = Arrangement.spacedBy(MarkorTheme.spacing.extraLarge)
-    ) {
-            // File Browser Section
-            SettingsSection(title = "File Browser", icon = Icons.Default.FolderOpen) {
-                SwitchSettingItem(
-                    title = "Show Hidden Files",
-                    subtitle = "Files starting with .",
-                    checked = fileBrowserShowHidden,
-                    onCheckedChange = { viewModel.setFileBrowserShowHidden(it) }
-                )
-                SwitchSettingItem(
-                    title = "Folders First",
-                    subtitle = "Show folders before files",
-                    checked = fileBrowserFolderFirst,
-                    onCheckedChange = { viewModel.setFileBrowserFolderFirst(it) }
-                )
-                
-                // Sort Order - Segmented Button
-                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-                    Text(
-                        text = "Sort By",
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                        SegmentedButton(
-                            selected = fileBrowserSortOrder == "name",
-                            onClick = { viewModel.setFileBrowserSortOrder("name") },
-                            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
-                        ) {
-                            Text("Name")
-                        }
-                        SegmentedButton(
-                            selected = fileBrowserSortOrder == "date",
-                            onClick = { viewModel.setFileBrowserSortOrder("date") },
-                            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
-                        ) {
-                            Text("Date")
+    val notebookDirectory by viewModel.notebookDirectory.collectAsState()
+    val isExternalStorageEnabled by viewModel.isExternalStorageEnabled.collectAsState()
+    val supportsSharedStorage = remember { supportsSharedStorageMode() }
+
+    LaunchedEffect(supportsSharedStorage, isExternalStorageEnabled) {
+        if (!supportsSharedStorage && isExternalStorageEnabled) {
+            viewModel.switchStorageMode(useSharedStorage = false)
+        }
+    }
+
+    BackHandler(onBack = onNavigateBack)
+
+    Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        topBar = {
+            if (showTopBar) {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = "Settings",
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back"
+                            )
                         }
                     }
-                }
+                )
             }
-            
+        }
+    ) { contentPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding)
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+                .verticalScroll(rememberScrollState())
+                .padding(
+                    start = MarkorTheme.spacing.large,
+                    end = MarkorTheme.spacing.large,
+                    top = MarkorTheme.spacing.large
+                ),
+            verticalArrangement = Arrangement.spacedBy(MarkorTheme.spacing.medium)
+        ) {
+            SettingsSection(title = "Appearance", icon = Icons.Default.Palette) {
+                ThemeModeSettingItem(
+                    selectedMode = themeMode,
+                    onSelectMode = viewModel::setThemeMode,
+                    position = SettingItemPosition.First
+                )
+                ThemeColorSettingItem(
+                    selectedPalette = themePalette,
+                    onSelectPalette = viewModel::setThemePalette,
+                    position = SettingItemPosition.Last
+                )
+            }
+
             // Editor Section
             SettingsSection(title = "Editor", icon = Icons.Default.Edit) {
                 SwitchSettingItem(
                     title = "Line Numbers",
                     subtitle = "Display line numbers",
                     checked = showLineNumbers,
-                    onCheckedChange = { viewModel.setShowLineNumbers(it) }
+                    onCheckedChange = { viewModel.setShowLineNumbers(it) },
+                    position = SettingItemPosition.First
                 )
                 SwitchSettingItem(
                     title = "Word Wrap",
                     subtitle = "Wrap text to fit screen",
                     checked = wordWrap,
-                    onCheckedChange = { viewModel.setWordWrap(it) }
+                    onCheckedChange = { viewModel.setWordWrap(it) },
+                    position = SettingItemPosition.Middle
                 )
                 SwitchSettingItem(
                     title = "Auto Format",
                     subtitle = "Format while typing",
                     checked = autoFormat,
-                    onCheckedChange = { viewModel.setAutoFormat(it) }
+                    onCheckedChange = { viewModel.setAutoFormat(it) },
+                    position = SettingItemPosition.Middle
                 )
-                
-                // Font Size - Slider
-                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Font Size",
-                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = "${editorFontSize}sp",
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Slider(
-                        value = editorFontSize.toFloat(),
-                        onValueChange = { viewModel.setEditorFontSize(it.toInt()) },
-                        valueRange = 12f..24f,
-                        steps = 5,
-                        colors = SliderDefaults.colors(
-                            thumbColor = MaterialTheme.colorScheme.primary,
-                            activeTrackColor = MaterialTheme.colorScheme.primary
-                        )
-                    )
-                }
+                FontSizeSettingItem(
+                    value = editorFontSize,
+                    onValueChange = { viewModel.setEditorFontSize(it.toInt()) },
+                    position = SettingItemPosition.Last
+                )
             }
 
             // Storage Section
             var editingStorageKey by remember { mutableStateOf<String?>(null) }
             var currentStorageValue by remember { mutableStateOf("") }
+            var showProjectLicenseDialog by remember { mutableStateOf(false) }
 
             if (editingStorageKey != null) {
                 RenameDialog(
@@ -156,38 +149,43 @@ fun SettingsScreen(
                     onConfirm = { newValue ->
                         when(editingStorageKey) {
                             "notebook" -> viewModel.setNotebookDirectory(newValue)
-                            "quicknote" -> viewModel.setQuickNotePath(newValue)
-                            "todo" -> viewModel.setTodoFilePath(newValue)
                         }
                         editingStorageKey = null
                     }
                 )
             }
 
+            if (showProjectLicenseDialog) {
+                LicenseDialog(
+                    title = "Project License",
+                    body = PROJECT_LICENSE_TEXT,
+                    onDismiss = { showProjectLicenseDialog = false }
+                )
+            }
+
             SettingsSection(title = "Storage", icon = Icons.Default.SdStorage) {
+                if (supportsSharedStorage) {
+                    StorageModeSettingItem(
+                        isExternalStorageEnabled = isExternalStorageEnabled,
+                        onSwitchMode = { viewModel.switchStorageMode(it) },
+                        position = SettingItemPosition.First
+                    )
+                } else {
+                    InfoSettingItem(
+                        title = "Storage Mode",
+                        value = "Private (iOS)",
+                        position = SettingItemPosition.First
+                    )
+                }
+
                 ClickableSettingItem(
                     title = "Notebook Directory",
                     subtitle = notebookDirectory.ifEmpty { "Default (Documents/Markor)" },
                     onClick = { 
                         editingStorageKey = "notebook"
                         currentStorageValue = notebookDirectory
-                    }
-                )
-                ClickableSettingItem(
-                    title = "QuickNote Path",
-                    subtitle = quickNotePath.ifEmpty { "Default (QuickNote.md)" },
-                    onClick = { 
-                        editingStorageKey = "quicknote"
-                        currentStorageValue = quickNotePath
-                    }
-                )
-                ClickableSettingItem(
-                    title = "Todo Path",
-                    subtitle = todoFilePath.ifEmpty { "Default (todo.txt)" },
-                    onClick = { 
-                        editingStorageKey = "todo"
-                        currentStorageValue = todoFilePath
-                    }
+                    },
+                    position = SettingItemPosition.Last
                 )
             }
              
@@ -195,14 +193,39 @@ fun SettingsScreen(
             SettingsSection(title = "About", icon = Icons.Default.Info) {
                 InfoSettingItem(
                     title = "Version",
-                    value = "2.15.2-Expressive"
+                    value = "2.15.2-Expressive",
+                    position = SettingItemPosition.First
+                )
+                ClickableSettingItem(
+                    title = "Project License",
+                    subtitle = "Apache License 2.0",
+                    onClick = { showProjectLicenseDialog = true },
+                    position = SettingItemPosition.Last
                 )
             }
             
-            // Add extra spacer to ensure last item is visible above bottom bar
-            Spacer(modifier = Modifier.height(80.dp))
+            // Keep final items above gesture/navigation area while preserving edge-to-edge.
+            Spacer(modifier = Modifier.height(MarkorTheme.spacing.small))
+            Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
         }
     }
+}
+
+private const val PROJECT_LICENSE_TEXT = """
+Markor Compose Port
+
+Copyright 2017-2025 Gregor Santner
+
+Licensed under the Apache License, Version 2.0.
+You may obtain a copy of the License at:
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied.
+
+See LICENSE.txt in the project root for the full license text.
+"""
 
 @Composable
 private fun SettingsSection(
@@ -239,17 +262,54 @@ private fun SettingsSection(
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
-        ElevatedCard(
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ),
-            elevation = CardDefaults.elevatedCardElevation(defaultElevation = MarkorTheme.elevation.level0),
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            content()
+        }
+    }
+}
+
+private enum class SettingItemPosition {
+    Single, First, Middle, Last
+}
+
+private fun settingItemShape(position: SettingItemPosition): Shape = when (position) {
+    SettingItemPosition.Single -> RoundedCornerShape(22.dp)
+    SettingItemPosition.First -> RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
+    SettingItemPosition.Middle -> RoundedCornerShape(8.dp)
+    SettingItemPosition.Last -> RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 22.dp, bottomEnd = 22.dp)
+}
+
+@Composable
+private fun SettingsItemContainer(
+    position: SettingItemPosition,
+    onClick: (() -> Unit)? = null,
+    content: @Composable () -> Unit
+) {
+    val shape = settingItemShape(position)
+
+    if (onClick != null) {
+        Surface(
+            onClick = onClick,
+            shape = shape,
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            tonalElevation = 0.dp,
+            shadowElevation = 0.dp,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(vertical = MarkorTheme.spacing.medium)) {
-                content()
-            }
+            content()
+        }
+    } else {
+        Surface(
+            shape = shape,
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            tonalElevation = 0.dp,
+            shadowElevation = 0.dp,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            content()
         }
     }
 }
@@ -259,64 +319,284 @@ private fun SwitchSettingItem(
     title: String,
     subtitle: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    position: SettingItemPosition
 ) {
-    ListItem(
-        headlineContent = { 
-            Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)) 
-        },
-        supportingContent = { 
-            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) 
-        },
-        trailingContent = {
-            Switch(
-                checked = checked,
-                onCheckedChange = onCheckedChange,
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                    checkedTrackColor = MaterialTheme.colorScheme.primary
+    SettingsItemContainer(position = position) {
+        ListItem(
+            headlineContent = {
+                Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+            },
+            supportingContent = {
+                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            },
+            trailingContent = {
+                Switch(
+                    checked = checked,
+                    onCheckedChange = onCheckedChange,
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                        checkedTrackColor = MaterialTheme.colorScheme.primary
+                    )
                 )
-            )
-        },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-    )
+            },
+            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+        )
+    }
 }
 
 @Composable
 private fun InfoSettingItem(
     title: String,
-    value: String
+    value: String,
+    position: SettingItemPosition
 ) {
-    ListItem(
-        headlineContent = { 
-            Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)) 
-        },
-        supportingContent = { 
-            Text(
-                value, 
-                style = MaterialTheme.typography.bodySmall, 
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1
-            ) 
-        },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-    )
+    SettingsItemContainer(position = position) {
+        ListItem(
+            headlineContent = {
+                Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+            },
+            supportingContent = {
+                Text(
+                    value,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1
+                )
+            },
+            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+        )
+    }
 }
 
 @Composable
 private fun ClickableSettingItem(
     title: String,
     subtitle: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    position: SettingItemPosition
 ) {
-    ListItem(
-        headlineContent = { 
-            Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)) 
+    SettingsItemContainer(
+        position = position,
+        onClick = onClick
+    ) {
+        ListItem(
+            headlineContent = {
+                Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+            },
+            supportingContent = {
+                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            },
+            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+        )
+    }
+}
+
+@Composable
+private fun FontSizeSettingItem(
+    value: Int,
+    onValueChange: (Float) -> Unit,
+    position: SettingItemPosition
+) {
+    SettingsItemContainer(position = position) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Font Size",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "${value}sp",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Slider(
+                value = value.toFloat(),
+                onValueChange = onValueChange,
+                valueRange = 12f..24f,
+                steps = 5,
+                colors = SliderDefaults.colors(
+                    thumbColor = MaterialTheme.colorScheme.primary,
+                    activeTrackColor = MaterialTheme.colorScheme.primary
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun StorageModeSettingItem(
+    isExternalStorageEnabled: Boolean,
+    onSwitchMode: (Boolean) -> Unit,
+    position: SettingItemPosition
+) {
+    SettingsItemContainer(position = position) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+            Text(
+                text = "Storage Mode",
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                FilterChip(
+                    selected = !isExternalStorageEnabled,
+                    onClick = { onSwitchMode(false) },
+                    label = { Text("Private") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = if (!isExternalStorageEnabled) Icons.Filled.Lock else Icons.Outlined.Lock,
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                )
+                FilterChip(
+                    selected = isExternalStorageEnabled,
+                    onClick = { onSwitchMode(true) },
+                    label = { Text("Shared") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = if (isExternalStorageEnabled) Icons.Filled.FolderShared else Icons.Outlined.Folder,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ThemeModeSettingItem(
+    selectedMode: ThemeModeOption,
+    onSelectMode: (ThemeModeOption) -> Unit,
+    position: SettingItemPosition
+) {
+    SettingsItemContainer(position = position) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+            Text(
+                text = "Theme Mode",
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                SegmentedButton(
+                    selected = selectedMode == ThemeModeOption.AUTO,
+                    onClick = { onSelectMode(ThemeModeOption.AUTO) },
+                    shape = SegmentedButtonDefaults.itemShape(index = 0, count = 3),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Auto", textAlign = TextAlign.Center)
+                }
+                SegmentedButton(
+                    selected = selectedMode == ThemeModeOption.LIGHT,
+                    onClick = { onSelectMode(ThemeModeOption.LIGHT) },
+                    shape = SegmentedButtonDefaults.itemShape(index = 1, count = 3),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Light", textAlign = TextAlign.Center)
+                }
+                SegmentedButton(
+                    selected = selectedMode == ThemeModeOption.DARK,
+                    onClick = { onSelectMode(ThemeModeOption.DARK) },
+                    shape = SegmentedButtonDefaults.itemShape(index = 2, count = 3),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Dark", textAlign = TextAlign.Center)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ThemeColorSettingItem(
+    selectedPalette: ThemePaletteOption,
+    onSelectPalette: (ThemePaletteOption) -> Unit,
+    position: SettingItemPosition
+) {
+    val paletteOptions = listOf(
+        Triple(ThemePaletteOption.MARKOR, "Markor", Color(0xFF4A6FA5)),
+        Triple(ThemePaletteOption.RED, "Red", Color(0xFFB3261E)),
+        Triple(ThemePaletteOption.ORANGE, "Orange", Color(0xFFB35A00)),
+        Triple(ThemePaletteOption.GREEN, "Green", Color(0xFF2E7D32)),
+        Triple(ThemePaletteOption.TEAL, "Teal", Color(0xFF006A6A))
+    )
+
+    SettingsItemContainer(position = position) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+            Text(
+                text = "Theme Color",
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                paletteOptions.forEach { (option, label, dotColor) ->
+                    FilterChip(
+                        selected = selectedPalette == option,
+                        onClick = { onSelectPalette(option) },
+                        label = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(12.dp)
+                                        .background(dotColor, CircleShape)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(label)
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LicenseDialog(
+    title: String,
+    body: String,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 360.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = body.trimIndent(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         },
-        supportingContent = { 
-            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) 
-        },
-        modifier = Modifier.clickable(onClick = onClick),
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Close")
+            }
+        }
     )
 }

@@ -57,7 +57,7 @@ class AppSettings(private val dataStore: DataStore<Preferences>) {
     }
 
     val getFileBrowserSortOrder: Flow<String> = dataStore.data.map { prefs ->
-        prefs[PrefsKeys.FILE_BROWSER_SORT_ORDER] ?: "name"
+        prefs[PrefsKeys.FILE_BROWSER_SORT_ORDER] ?: "date"
     }
 
     val isFileBrowserFolderFirst: Flow<Boolean> = dataStore.data.map { prefs ->

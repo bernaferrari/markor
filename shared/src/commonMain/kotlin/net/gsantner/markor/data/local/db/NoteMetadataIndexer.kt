@@ -9,7 +9,7 @@ class NoteMetadataIndexer(
     private val fileRepository: IFileRepository,
     private val metadataRepository: NoteMetadataRepository
 ) {
-    suspend fun indexDirectory(path: Path, nowMillis: Long) = withContext(Dispatchers.IO) {
+    suspend fun indexDirectory(path: Path, nowMillis: Long) = withContext(Dispatchers.Default) {
         val files = fileRepository.listFilesRecursively(path)
         files.filter { isIndexable(it.path.name) }.forEach { fileInfo ->
             val content = fileRepository.readText(fileInfo.path)

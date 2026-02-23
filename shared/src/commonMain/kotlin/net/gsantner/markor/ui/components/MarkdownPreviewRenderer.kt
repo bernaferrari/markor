@@ -1,6 +1,7 @@
 package net.gsantner.markor.ui.components
 
 import androidx.compose.material3.ColorScheme
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -13,23 +14,37 @@ import androidx.compose.ui.unit.sp
  * Render markdown for Grid/List preview.
  * Uses the same rendering as view mode for consistency.
  */
-fun renderGridMarkdown(text: String, colorScheme: ColorScheme): AnnotatedString {
-    return renderMarkdown(text, colorScheme, isGridPreview = true)
+fun renderGridMarkdown(
+    text: String,
+    colorScheme: ColorScheme,
+    backgroundColor: Color = colorScheme.surface
+): AnnotatedString {
+    return renderMarkdown(text, colorScheme, isGridPreview = true, backgroundColor = backgroundColor)
 }
 
 /**
  * Render clean markdown for View Mode (editor preview).
  */
-fun renderCleanMarkdown(text: String, colorScheme: ColorScheme): AnnotatedString {
-    return renderMarkdown(text, colorScheme, isGridPreview = false)
+fun renderCleanMarkdown(
+    text: String,
+    colorScheme: ColorScheme,
+    backgroundColor: Color = colorScheme.surface
+): AnnotatedString {
+    return renderMarkdown(text, colorScheme, isGridPreview = false, backgroundColor = backgroundColor)
 }
 
 /**
  * Unified markdown renderer that properly strips markers.
  */
-private fun renderMarkdown(text: String, colorScheme: ColorScheme, isGridPreview: Boolean): AnnotatedString {
+private fun renderMarkdown(
+    text: String,
+    colorScheme: ColorScheme,
+    isGridPreview: Boolean,
+    backgroundColor: Color
+): AnnotatedString {
     val builder = AnnotatedString.Builder()
     val lines = text.split("\n")
+    val palette = resolveMarkdownColorPalette(colorScheme, backgroundColor)
     
     lines.forEachIndexed { index, line ->
         if (index > 0) builder.append("\n")
@@ -48,14 +63,14 @@ private fun renderMarkdown(text: String, colorScheme: ColorScheme, isGridPreview
                 3 -> if (isGridPreview) 12.sp else 20.sp
                 else -> if (isGridPreview) 11.sp else 18.sp
             }
-            lineStyle = SpanStyle(fontWeight = FontWeight.Bold, fontSize = fontSize, color = colorScheme.primary)
+            lineStyle = SpanStyle(fontWeight = FontWeight.Bold, fontSize = fontSize, color = palette.accent)
         }
         
         // Blockquotes - strip >
         val quoteMatch = Regex("^>\\s*(.*)$").find(content)
         if (quoteMatch != null) {
             content = quoteMatch.groupValues[1]
-            lineStyle = SpanStyle(fontStyle = FontStyle.Italic, color = colorScheme.onSurfaceVariant)
+            lineStyle = SpanStyle(fontStyle = FontStyle.Italic, color = palette.subtle)
         }
         
         // Lists - replace markers with bullet
@@ -82,7 +97,7 @@ private fun renderMarkdown(text: String, colorScheme: ColorScheme, isGridPreview
         if (content.isEmpty()) return@forEachIndexed
         
         // Process inline styles and build clean string
-        val cleanResult = processInlineStyles(content, colorScheme)
+        val cleanResult = processInlineStyles(content, palette)
         
         val start = builder.length
         builder.append(cleanResult.text)
@@ -110,7 +125,7 @@ private data class InlineResult(
  * Process inline markdown and return clean text with style ranges.
  * This properly removes markers instead of making them transparent.
  */
-private fun processInlineStyles(text: String, colorScheme: ColorScheme): InlineResult {
+private fun processInlineStyles(text: String, palette: MarkdownColorPalette): InlineResult {
     val styles = mutableListOf<Pair<SpanStyle, IntRange>>()
     var result = text
     var offset = 0
@@ -162,11 +177,10 @@ private fun processInlineStyles(text: String, colorScheme: ColorScheme): InlineR
         
         styles.add(SpanStyle(
             fontFamily = FontFamily.Monospace,
-            background = colorScheme.surfaceVariant.copy(alpha = 0.5f),
-            color = colorScheme.onSurfaceVariant
+            background = palette.codeBackground,
+            color = palette.codeText
         ) to (startPos..endPos))
     }
     
     return InlineResult(result, styles)
 }
-

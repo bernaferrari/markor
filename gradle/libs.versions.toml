@@ -1,66 +1,45 @@
 [versions]
-agp = "9.0.0"
-kotlin = "2.3.0"
-composeCompiler = "2.3.0"
+agp = "9.0.1"
+kotlin = "2.3.10"
 coreKtx = "1.17.0"
-lifecycle = "2.10.0-alpha07"
-activityCompose = "1.12.2"
-composeBom = "2025.12.01"
-navigation = "2.9.1"
-navigation3 = "1.1.0-alpha01"
-datastore = "1.1.1"
-coroutines = "1.10.1"
+lifecycle = "2.9.6"
+activityCompose = "1.12.4"
+navigation3ui = "1.1.0-alpha02"
+datastore = "1.2.0"
+coroutines = "1.10.2"
 flexmark = "0.64.8"
-opencsv = "5.10"
-gson = "2.11.0"
-commonsIo = "2.18.0"
+opencsv = "5.12.0"
+commonsIo = "2.21.0"
 junit = "4.13.2"
-assertj = "3.27.3"
-kotlinxSerializationJson = "1.8.0"
-appcompat = "1.7.0"
-material3 = "1.5.0-alpha11"
-material = "1.12.0"
-multidex = "2.0.1"
-browser = "1.8.0"
+assertj = "3.27.7"
+kotlinxSerializationJson = "1.10.0"
+appcompat = "1.7.1"
+browser = "1.9.0"
 appintro = "6.1.0"
 colorpicker = "3.0.1"
 geneRate = "v1.1.8"
 epubParser = "1.0.95"
-okio = "3.10.2"
-kotlinxDatetime = "0.6.0"
-koin = "4.0.0"
-composeMultiplatform = "1.11.0-alpha01"
+okio = "3.16.4"
+kotlinxDatetime = "0.7.1"
+koin = "4.1.1"
+composeMultiplatform = "1.11.0-alpha02"
 glance = "1.1.1"
 glanceAppwidget = "1.1.1"
 room = "2.8.4"
 sqlite = "2.6.2"
-coil = "3.0.0"
-ktor = "3.0.0"
+coil = "3.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
-androidx-material3-window = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "material3" }
-androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-androidx-navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
-androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation3" }
-androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3" }
+androidx-navigation3-ui = { group = "org.jetbrains.androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3ui" }
+lifecycle-viewmodel-navigation3 = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "lifecycle" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatform" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
@@ -89,7 +68,6 @@ colorpicker = { group = "com.github.martin-stone", name = "hsv-alpha-color-picke
 geneRate = { group = "com.github.Pixplicity", name = "gene-rate", version.ref = "geneRate" }
 material-kolor = { group = "com.materialkolor", name = "material-kolor", version = "4.0.0" }
 epubParser = { group = "com.github.mertakdut", name = "EpubParser", version.ref = "epubParser" }
-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 commons-io = { group = "commons-io", name = "commons-io", version.ref = "commonsIo" }
 androidx-glance = { group = "androidx.glance", name = "glance", version.ref = "glance" }
 androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glanceAppwidget" }
@@ -119,24 +97,7 @@ compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMu
 androidx-room = { id = "androidx.room", version.ref = "room" }
 
 [bundles]
-androidx-core = [
-    "androidx-core-ktx",
-    "androidx-lifecycle-runtime-ktx",
-    "androidx-lifecycle-runtime-compose",
-    "androidx-lifecycle-viewmodel-compose",
-    "androidx-activity-compose",
-    "androidx-appcompat",
-]
-compose = [
-    "androidx-ui",
-    "androidx-ui-graphics",
-    "androidx-ui-tooling-preview",
-    "androidx-material3",
-    "androidx-material3-window",
-    "androidx-material-icons-extended",
-    "androidx-navigation3-runtime",
-    "androidx-navigation3-ui",
-]
+
 flexmark = [
     "flexmark-core",
     "flexmark-util",

@@ -25,6 +25,13 @@ actual val platformModule: Module = module {
         }
         documentsDir.absolutePath
     }
+    single(org.koin.core.qualifier.named("internal_notebook_path")) {
+        val notebookDir = File(System.getProperty("user.home"), ".markor/Notebook")
+        if (!notebookDir.exists()) {
+            notebookDir.mkdirs()
+        }
+        notebookDir.absolutePath
+    }
     single { getNoteMetadataDatabase(getNoteMetadataDatabaseBuilder()) }
     single { get<NoteMetadataDatabase>().noteMetadataDao() }
     single { NoteMetadataRepository(get()) }

@@ -9,22 +9,25 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.text.font.FontFamily
 
 class MarkdownVisualTransformation(
-    private val colorScheme: androidx.compose.material3.ColorScheme
+    private val colorScheme: androidx.compose.material3.ColorScheme,
+    private val backgroundColor: Color = colorScheme.surface
 ) : VisualTransformation {
 
     override fun filter(text: AnnotatedString): TransformedText {
-        return TransformedText(markdownToAnnotatedString(text.text, colorScheme), OffsetMapping.Identity)
+        return TransformedText(markdownToAnnotatedString(text.text, colorScheme, backgroundColor), OffsetMapping.Identity)
     }
 }
 
-fun markdownToAnnotatedString(text: String, colorScheme: androidx.compose.material3.ColorScheme): AnnotatedString {
+fun markdownToAnnotatedString(
+    text: String,
+    colorScheme: androidx.compose.material3.ColorScheme,
+    backgroundColor: Color = colorScheme.surface
+): AnnotatedString {
     val builder = AnnotatedString.Builder(text)
+    val palette = resolveMarkdownColorPalette(colorScheme, backgroundColor)
 
     // Bold (**text** or __text__)
     val boldRegex = Regex("(\\*\\*|__)(.*?)\\1")
@@ -60,7 +63,7 @@ fun markdownToAnnotatedString(text: String, colorScheme: androidx.compose.materi
             style = SpanStyle(
                 fontWeight = FontWeight.Bold,
                 fontSize = fontSize,
-                color = colorScheme.primary
+                color = palette.accent
             ),
             start = match.range.first,
             end = match.range.last + 1
@@ -71,7 +74,7 @@ fun markdownToAnnotatedString(text: String, colorScheme: androidx.compose.materi
     val linkRegex = Regex("\\[([^\\[\\]]+)\\]\\(([^\\)]+)\\)")
     linkRegex.findAll(text).forEach { match ->
         builder.addStyle(
-            style = SpanStyle(color = colorScheme.primary, textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline),
+            style = SpanStyle(color = palette.accent, textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline),
             start = match.range.first,
             end = match.range.last + 1
         )
@@ -83,8 +86,8 @@ fun markdownToAnnotatedString(text: String, colorScheme: androidx.compose.materi
         builder.addStyle(
             style = SpanStyle(
                 fontFamily = FontFamily.Monospace,
-                background = colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                color = colorScheme.onSurfaceVariant
+                background = palette.codeBackground,
+                color = palette.codeText
             ),
             start = match.range.first,
             end = match.range.last + 1
@@ -97,7 +100,7 @@ fun markdownToAnnotatedString(text: String, colorScheme: androidx.compose.materi
         builder.addStyle(
             style = SpanStyle(
                 fontStyle = FontStyle.Italic,
-                color = colorScheme.onSurfaceVariant
+                color = palette.subtle
             ),
             start = match.range.first,
             end = match.range.last + 1

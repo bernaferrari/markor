@@ -1,11 +1,3 @@
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.TimeZone
-
-buildscript {
-    dependencies {
-    }
-}
 
 plugins {
     alias(libs.plugins.android.application) apply false
@@ -16,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.compose.multiplatform) apply false
 }
 
 val gitHash: String by lazy {

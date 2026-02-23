@@ -1,5 +1,6 @@
 package net.gsantner.markor.di
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import net.gsantner.markor.data.local.createDataStore
 import net.gsantner.markor.data.local.db.*
 import net.gsantner.markor.domain.service.*
@@ -9,6 +10,7 @@ import org.koin.dsl.module
 import org.koin.core.module.dsl.singleOf
 
 actual val platformModule: Module = module {
+    @OptIn(ExperimentalForeignApi::class)
     single {
         createDataStore {
              // iOS path
@@ -24,6 +26,7 @@ actual val platformModule: Module = module {
     }
     
     // Default notebook path for iOS
+    @OptIn(ExperimentalForeignApi::class)
     single(org.koin.core.qualifier.named("default_notebook_path")) {
         val documentDirectory = platform.Foundation.NSFileManager.defaultManager.URLForDirectory(
              directory = platform.Foundation.NSDocumentDirectory,
@@ -33,6 +36,17 @@ actual val platformModule: Module = module {
              error = null
          )
          requireNotNull(documentDirectory).path + "/Notebook"
+    }
+    @OptIn(ExperimentalForeignApi::class)
+    single(org.koin.core.qualifier.named("internal_notebook_path")) {
+        val documentDirectory = platform.Foundation.NSFileManager.defaultManager.URLForDirectory(
+            directory = platform.Foundation.NSDocumentDirectory,
+            inDomain = platform.Foundation.NSUserDomainMask,
+            appropriateForURL = null,
+            create = false,
+            error = null
+        )
+        requireNotNull(documentDirectory).path + "/NotebookPrivate"
     }
 
     // Database

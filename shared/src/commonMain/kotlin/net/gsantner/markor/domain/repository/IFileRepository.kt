@@ -18,7 +18,7 @@ interface IFileRepository {
     suspend fun emptyTrash(): Boolean
     suspend fun listTrash(): List<FileInfo>
     suspend fun getTrashPath(): Path
-    suspend fun renameFile(path: Path, newName: String): Boolean
+    suspend fun renameFile(path: Path, newName: String): Path?
     suspend fun copyFile(source: Path, destination: Path): Boolean
     suspend fun moveFile(source: Path, destination: Path): Boolean
     fun observeFiles(directory: Path): Flow<List<Path>>

@@ -1,29 +1,43 @@
 package net.gsantner.markor.data.repository
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import net.gsantner.markor.data.local.AppSettings
 import net.gsantner.markor.domain.repository.FileInfo
 import net.gsantner.markor.domain.repository.IFileRepository
+import net.gsantner.markor.ui.components.Result
+import net.gsantner.markor.util.nowMillis
 import okio.FileSystem
+import okio.SYSTEM
 import okio.IOException
 import okio.Path
 import okio.Path.Companion.toPath
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class FileRepository(
     private val appSettings: AppSettings
 ) : IFileRepository {
 
-    private val fileSystem = FileSystem.SYSTEM
+    private val fileSystem = FileSystem.Companion.SYSTEM
 
     private val trashDirectoryName = ".trash"
+    
+    // Error tracking
+    private val _lastError = MutableStateFlow<String?>(null)
+    val lastError: Flow<String?> = _lastError
+    
+    private fun setError(message: String) {
+        _lastError.value = message
+    }
+    
+    private fun clearError() {
+        _lastError.value = null
+    }
 
     override suspend fun getTrashPath(): Path {
         val notebookDir = appSettings.getNotebookDirectory.first()
@@ -34,11 +48,18 @@ class FileRepository(
         }
     }
 
-    override suspend fun listFiles(directory: Path): List<FileInfo> = withContext(Dispatchers.IO) {
+    override suspend fun listFiles(directory: Path): List<FileInfo> = withContext(Dispatchers.Default) {
         try {
-            if (!fileSystem.exists(directory)) return@withContext emptyList()
+            clearError()
+            if (!fileSystem.exists(directory)) {
+                setError("Directory does not exist: ${directory.name}")
+                return@withContext emptyList()
+            }
             val metadata = fileSystem.metadata(directory)
-            if (!metadata.isDirectory) return@withContext emptyList()
+            if (!metadata.isDirectory) {
+                setError("Not a directory: ${directory.name}")
+                return@withContext emptyList()
+            }
 
             val showHidden = appSettings.isFileBrowserShowHiddenFiles.first()
             val sortOrder = appSettings.getFileBrowserSortOrder.first()
@@ -59,16 +80,21 @@ class FileRepository(
                             compareBy<FileInfo> { !it.isDirectory }.thenBy { it.name.lowercase() }
                         )
                         "date" -> fileInfos.sortedByDescending { it.lastModified }
+                        "oldest" -> fileInfos.sortedBy { it.lastModified }
                         "size" -> fileInfos.sortedByDescending { it.size }
                         else -> fileInfos
                     }
                 }
         } catch (e: IOException) {
+            setError("Failed to list files: ${e.message}")
+            emptyList()
+        } catch (e: Exception) {
+            setError("Permission denied or access error: ${directory.name}")
             emptyList()
         }
     }
 
-    override suspend fun listFilesRecursively(directory: Path): List<FileInfo> = withContext(Dispatchers.IO) {
+    override suspend fun listFilesRecursively(directory: Path): List<FileInfo> = withContext(Dispatchers.Default) {
         try {
              fileSystem.listRecursively(directory).toList()
                 .filter { path ->
@@ -81,7 +107,7 @@ class FileRepository(
         }
     }
 
-    override suspend fun searchFiles(directory: Path, query: String, recursive: Boolean): List<FileInfo> = withContext(Dispatchers.IO) {
+    override suspend fun searchFiles(directory: Path, query: String, recursive: Boolean): List<FileInfo> = withContext(Dispatchers.Default) {
         try {
             val fileList = if (recursive) {
                 fileSystem.listRecursively(directory).toList()
@@ -98,7 +124,7 @@ class FileRepository(
         }
     }
 
-    override suspend fun getFileInfo(path: Path): FileInfo? = withContext(Dispatchers.IO) {
+    override suspend fun getFileInfo(path: Path): FileInfo? = withContext(Dispatchers.Default) {
         try {
             if (!fileSystem.exists(path)) return@withContext null
             val metadata = fileSystem.metadata(path)
@@ -133,12 +159,12 @@ class FileRepository(
         }
     }
 
-    override suspend fun createFile(parent: Path, name: String): Path? = withContext(Dispatchers.IO) {
+    override suspend fun createFile(parent: Path, name: String): Path? = withContext(Dispatchers.Default) {
         try {
             if (!fileSystem.exists(parent)) {
                 fileSystem.createDirectories(parent)
             }
-            val filePath = parent / name
+            val filePath = resolveUniquePath(parent, name)
             fileSystem.write(filePath) {
             }
             filePath
@@ -147,12 +173,12 @@ class FileRepository(
         }
     }
 
-    override suspend fun createFileWithContent(parent: Path, name: String, content: String): Path? = withContext(Dispatchers.IO) {
+    override suspend fun createFileWithContent(parent: Path, name: String, content: String): Path? = withContext(Dispatchers.Default) {
         try {
             if (!fileSystem.exists(parent)) {
                 fileSystem.createDirectories(parent)
             }
-            val filePath = parent / name
+            val filePath = resolveUniquePath(parent, name)
             fileSystem.write(filePath) {
                 writeUtf8(content)
             }
@@ -162,9 +188,9 @@ class FileRepository(
         }
     }
 
-    override suspend fun createDirectory(parent: Path, name: String): Path? = withContext(Dispatchers.IO) {
+    override suspend fun createDirectory(parent: Path, name: String): Path? = withContext(Dispatchers.Default) {
         try {
-            val dirPath = parent / name
+            val dirPath = resolveUniquePath(parent, name)
             fileSystem.createDirectories(dirPath)
             dirPath
         } catch (e: IOException) {
@@ -172,7 +198,7 @@ class FileRepository(
         }
     }
 
-    override suspend fun deleteFile(path: Path): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun deleteFile(path: Path): Boolean = withContext(Dispatchers.Default) {
         try {
             val metadata = fileSystem.metadata(path)
             if (metadata.isDirectory) {
@@ -186,7 +212,7 @@ class FileRepository(
         }
     }
 
-    override suspend fun moveToTrash(path: Path): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun moveToTrash(path: Path): Boolean = withContext(Dispatchers.Default) {
         try {
             val trashPath = getTrashPath()
             if (!fileSystem.exists(trashPath)) {
@@ -194,7 +220,7 @@ class FileRepository(
             }
 
             val fileName = path.name
-            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+            val timestamp = formatTimestampForTrash(nowMillis())
             val trashFileName = "${timestamp}_$fileName"
             val destination = trashPath / trashFileName
 
@@ -204,8 +230,19 @@ class FileRepository(
             false
         }
     }
+    
+    private fun formatTimestampForTrash(epochMillis: Long): String {
+        val datetime = kotlin.time.Instant.fromEpochMilliseconds(epochMillis)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+        return "${datetime.year}" +
+            "${(datetime.month.ordinal + 1).toString().padStart(2, '0')}" +
+            "${datetime.day.toString().padStart(2, '0')}_" +
+            "${datetime.hour.toString().padStart(2, '0')}" +
+            "${datetime.minute.toString().padStart(2, '0')}" +
+            "${datetime.second.toString().padStart(2, '0')}"
+    }
 
-    override suspend fun restoreFromTrash(path: Path, originalPath: Path): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun restoreFromTrash(path: Path, originalPath: Path): Boolean = withContext(Dispatchers.Default) {
         try {
             // Create parent directories if needed
             val parent = originalPath.parent
@@ -219,7 +256,7 @@ class FileRepository(
         }
     }
 
-    override suspend fun emptyTrash(): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun emptyTrash(): Boolean = withContext(Dispatchers.Default) {
         try {
             val trashPath = getTrashPath()
             if (fileSystem.exists(trashPath)) {
@@ -232,7 +269,7 @@ class FileRepository(
         }
     }
 
-    override suspend fun listTrash(): List<FileInfo> = withContext(Dispatchers.IO) {
+    override suspend fun listTrash(): List<FileInfo> = withContext(Dispatchers.Default) {
         try {
             val trashPath = getTrashPath()
             if (!fileSystem.exists(trashPath)) return@withContext emptyList()
@@ -251,7 +288,7 @@ class FileRepository(
         }
     }
 
-    override suspend fun searchContent(directory: Path, query: String, recursive: Boolean): List<FileInfo> = withContext(Dispatchers.IO) {
+    override suspend fun searchContent(directory: Path, query: String, recursive: Boolean): List<FileInfo> = withContext(Dispatchers.Default) {
         try {
             val fileList = if (recursive) {
                 fileSystem.listRecursively(directory).toList()
@@ -282,7 +319,7 @@ class FileRepository(
         return extension in setOf("md", "txt", "markdown", "org", "todo", " rst", "adoc")
     }
 
-    override suspend fun readText(path: Path): String = withContext(Dispatchers.IO) {
+    override suspend fun readText(path: Path): String = withContext(Dispatchers.Default) {
         try {
             fileSystem.read(path) {
                 readUtf8()
@@ -292,17 +329,19 @@ class FileRepository(
         }
     }
 
-    override suspend fun renameFile(path: Path, newName: String): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun renameFile(path: Path, newName: String): Path? = withContext(Dispatchers.Default) {
         try {
-            val dest = (path.parent ?: ".".toPath()) / newName
+            val parent = path.parent ?: ".".toPath()
+            val dest = resolveUniquePath(parent, newName, excludePath = path)
+            if (dest == path) return@withContext path
             fileSystem.atomicMove(path, dest)
-            true
+            dest
         } catch (e: IOException) {
-            false
+            null
         }
     }
 
-    override suspend fun copyFile(source: Path, destination: Path): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun copyFile(source: Path, destination: Path): Boolean = withContext(Dispatchers.Default) {
         try {
             fileSystem.copy(source, destination)
             true
@@ -311,7 +350,7 @@ class FileRepository(
         }
     }
 
-    override suspend fun moveFile(source: Path, destination: Path): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun moveFile(source: Path, destination: Path): Boolean = withContext(Dispatchers.Default) {
         try {
             fileSystem.atomicMove(source, destination)
             true
@@ -324,7 +363,7 @@ class FileRepository(
         return MutableStateFlow(emptyList())
     }
 
-    override suspend fun isDirectory(path: Path): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun isDirectory(path: Path): Boolean = withContext(Dispatchers.Default) {
         try {
             fileSystem.metadata(path).isDirectory
         } catch (e: IOException) {
@@ -332,11 +371,37 @@ class FileRepository(
         }
     }
 
-    override suspend fun isFile(path: Path): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun isFile(path: Path): Boolean = withContext(Dispatchers.Default) {
         try {
             fileSystem.metadata(path).isRegularFile
         } catch (e: IOException) {
             false
         }
+    }
+
+    private fun resolveUniquePath(parent: Path, requestedName: String, excludePath: Path? = null): Path {
+        val normalizedName = requestedName.trim().ifBlank { "Untitled" }
+        val (baseName, extension) = splitBaseAndExtension(normalizedName)
+        var index = 0
+
+        while (true) {
+            val candidateName = if (index == 0) {
+                normalizedName
+            } else {
+                "$baseName ($index)$extension"
+            }
+            val candidatePath = parent / candidateName
+            if (excludePath != null && candidatePath == excludePath) return candidatePath
+            if (!fileSystem.exists(candidatePath)) return candidatePath
+            index++
+        }
+    }
+
+    private fun splitBaseAndExtension(fileName: String): Pair<String, String> {
+        val dotIndex = fileName.lastIndexOf('.')
+        if (dotIndex <= 0 || dotIndex == fileName.length - 1) {
+            return fileName to ""
+        }
+        return fileName.substring(0, dotIndex) to fileName.substring(dotIndex)
     }
 }
