@@ -1,153 +1,95 @@
-# Markor Compose Port (2026)
+# Re-Markor (Compose + KMP + M3)
 
-A modern, local-first, Markdown notes app inspired by the original Markor and rebuilt with Kotlin Multiplatform + Compose.
+<p align="center">
+  <img src="assets/more.png" alt="Re-Markor overview" width="980">
+</p>
 
-This project respects Markor’s core philosophy: plain files, no lock-in, fast editing, and offline-first workflows.
-It also brings a major leap in UX, architecture, and cross-platform consistency.
+<p align="center">
+  <strong>Local-first, Markdown-centric, Multiplatform notes.</strong><br>
+  Built with Kotlin Multiplatform and Compose Multiplatform.
+</p>
 
-## Why This Exists
+<p align="center">
+  <a href="https://kotlinlang.org/"><img src="https://img.shields.io/badge/Kotlin-2.3.10-blue.svg?logo=kotlin" alt="Kotlin 2.1.0"></a>
+  <a href="https://www.jetbrains.com/lp/compose-multiplatform/"><img src="https://img.shields.io/badge/Compose%20Multiplatform-1.11.0-orange.svg?logo=jetpackcompose" alt="Compose Multiplatform 1.7.1"></a>
+  <a href="LICENSE.txt"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-lightgrey.svg" alt="Platforms"></a>
+</p>
 
-Classic Markor is still excellent at what it does.
-This port focuses on what a 2026-grade Markor experience can look like:
+---
 
-- cleaner architecture
-- modern Material 3 UI
-- smoother navigation and transitions
-- richer note metadata and organization
-- stronger multi-platform foundation (Android + iOS + JVM)
+Re-Markor is a modern, cross-platform port of the original [Markor](https://github.com/gsantner/markor) project. It preserves the core philosophy—plain text files, offline-first workflow, and no account lock-in—while leveraging **Kotlin Multiplatform (KMP)** to bring a unified experience to Android and iOS.
 
-## What Stays True To Original Markor
+## 🚀 Key Features
 
-- Local files first
-- Markdown-first editing
-- Privacy by default (no account required)
-- Fast note-taking and folder-based organization
-- Lightweight behavior over cloud-heavy complexity
+- 📝 **Markdown-First:** Fast editing with live preview and syntax highlighting.
+- 🌍 **Multiplatform:** Shared business logic and UI across Android, iOS, and JVM.
+- 📂 **Local-First:** Your data stays on your device in plain text files.
+- 🏷️ **Smart Organization:** Pinned notes, archive, labels, trash, and recents.
+- 🎨 **Modern UX:** A complete redesign using Material 3 and Compose Multiplatform.
+- 🖼️ **Asset Aware:** Built-in support for images and attachments within your notes.
 
-## What Is Better In This Port
+## 📸 Screenshots
 
-## Design Notes and Inspirations
+| Home | Editor |
+| :---: | :---: |
+| ![Home](assets/home.png) | ![Editor](assets/editor.png) |
+| **Onboarding** | **Settings** |
+| ![Onboarding](assets/onboarding.png) | ![Settings](assets/settings.png) |
 
-This app may look similar to Google Keep in a few places, but most of that overlap was accidental:
+## 🛠️ Tech Stack
 
-- Similarities like shared transitions, no bottom navigation, and colorful note cards were coincidence during iteration.
-- The inline title row at the top of the editor was intentionally inspired by Google Keep.
-- The colored-note border treatment was intentionally inspired by Craft.
+This project is a showcase of modern Kotlin Multiplatform development:
 
-### Product and UX
+- **UI:** [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/) (Material 3)
+- **Database:** [Room](https://developer.android.com/kotlin/multiplatform/room) (KMP)
+- **Dependency Injection:** [Koin](https://insert-koin.io/)
+- **Navigation:** [Navigation 3](https://developer.android.com/jetpack/compose/navigation)
+- **Preferences:** [DataStore](https://developer.android.com/topic/libraries/architecture/datastore) (KMP)
+- **Concurrency:** [Kotlinx Coroutines](https://github.com/Kotlin/kotlinx.coroutines)
+- **Serialization:** [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization)
+- **Images:** [Coil3](https://coil-kt.github.io/coil/) (KMP)
+- **Theming:** [Material Kolor](https://github.com/jordond/MaterialKolor) (Dynamic Color)
 
-- Reimagined notebook home (grid/list, pinned-first sorting, filters, better previews)
-- Search-first interactions integrated into the top app bar flow
-- Split create action:
-  - one tap to create and open a note
-  - secondary action for folder creation
-- Visual parent-folder navigation in the browser (not only OS back)
-- Better empty states, safe-inset handling, and edge-to-edge behavior
+## 🏗️ Project Structure
 
-### Navigation and Motion
+The project follows a standard KMP layout:
 
-- Typed Navigation 3 screen model
-- Settings in back stack with proper slide-in behavior
-- Shared transitions from home cards to editor (title + container/background)
-- Cleaner transitions with reduced bounce/jank patterns
+- `shared/`: The heart of the app. Contains common UI (Compose), business logic, and data layers (Room, DataStore).
+- `app/`: Android-specific entry point and resources.
+- `iosApp/`: iOS-specific Xcode project and Swift entry point.
+- `metadata/`: App store metadata and screenshots.
 
-### Editing Experience
+## 🏁 Getting Started
 
-- Improved Compose editor with autosave and undo/redo history
-- Rich markdown preview mode
-- Tap preview to return to edit mode quickly
-- Smart Enter behavior for list/task workflows
-- Slash command insertion menu
-- Outline panel from headings
-- Expressive formatting toolbar styling
+### Prerequisites
 
-### Organization and Metadata
+- **JDK 17** or higher.
+- **Android Studio** (Koala or newer) with the KMP plugin.
+- **Xcode 15+** (for iOS development).
+- **CocoaPods** (if applicable) or Swift Package Manager.
 
-- Favorites, archive, labels, and trash workflow
-- Recent tracking
-- Pinned notes on top
-- Metadata indexing for preview/title/image references
-- Better sort/filter controls for daily use
+### Build & Run
 
-### Color and Theming
-
-- Modern Material 3 theming
-- Better dark/light behavior for note colors and markdown preview contrast
-- Improved theme consistency across editor and home previews
-
-### Image and Asset Pipeline
-
-- Local image insertion (Android/JVM)
-- Per-note asset folder management
-- Image-aware note previews
-- Asset manager sheet for cleanup/orphan handling
-- Share/export flows including markdown + assets ZIP
-
-## Platform Behavior
-
-| Capability | Android | iOS | JVM |
-|---|---|---|---|
-| Storage mode | Private + Shared | Private only | Private + Shared |
-| Storage chooser in onboarding | Yes | No | Yes |
-| Storage mode toggle in Settings | Yes | No (private-only display) | Yes |
-| Image picker | Supported | Not implemented yet | Supported |
-
-Notes:
-- iOS intentionally skips storage mode choice (private only).
-- iOS Settings intentionally does not show shared/private toggle.
-
-## Architecture (High Level)
-
-- `shared/` contains shared domain/data/UI/navigation logic
-- Compose UI in `commonMain`
-- Platform source sets for Android/iOS/JVM specifics
-- DataStore-backed app settings
-- Koin DI across shared + platform modules
-- Room KMP metadata storage
-
-## Project Structure
-
-- `app/` Android host app
-- `shared/` KMP shared module
-- `iosApp/` iOS host app project
-
-## Build and Run
-
-## Prerequisites
-
-- JDK 17
-- Android Studio (Android)
-- Xcode 15+ (iOS)
-
-## Android
-
+#### Android
 ```bash
-./gradlew :app:assembleFlavorDefaultDebug
 ./gradlew :app:installFlavorDefaultDebug
 ```
 
-## Shared Compile Checks
+#### iOS
+1. Open `iosApp/iosApp.xcodeproj` in Xcode.
+2. Select a simulator or device.
+3. Click **Run**.
 
+Alternatively, via CLI:
 ```bash
-./gradlew :shared:compileCommonMainKotlinMetadata
-./gradlew :shared:compileAndroidMain
-./gradlew :shared:compileIosMainKotlinMetadata
+./gradlew :shared:embedAndSignAppleFrameworkForXcode
 ```
 
-## iOS
+## 📜 Credits & License
 
-- Open `iosApp/iosApp.xcodeproj`
-- Build and run in Xcode
+- **Original Project:** [Markor](https://github.com/gsantner/markor) by Gregor Santner.
+- **License:** Apache License 2.0. See [LICENSE.txt](LICENSE.txt) for details.
 
-## Known Gaps
-
-- iOS image picker integration is still pending (PHPicker bridge not finished).
-- Some legacy, format-specific classic Markor behaviors are intentionally not 1:1.
-
-## Original Project
-
-Original Markor: https://github.com/gsantner/markor
-
-## License
-
-See `LICENSE.txt`.
+---
+<p align="center">Made with ❤️ using Kotlin Multiplatform</p>
