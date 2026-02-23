@@ -22,13 +22,15 @@ abstract class NoteMetadataDatabase : RoomDatabase() {
 }
 
 @Suppress("KotlinNoActualForExpect")
-expect object NoteMetadataDatabaseConstructor : RoomDatabaseConstructor<NoteMetadataDatabase>
+expect object NoteMetadataDatabaseConstructor : RoomDatabaseConstructor<NoteMetadataDatabase> {
+    override fun initialize(): NoteMetadataDatabase
+}
 
 fun getNoteMetadataDatabase(
     builder: RoomDatabase.Builder<NoteMetadataDatabase>
 ): NoteMetadataDatabase {
     return builder
         .setDriver(BundledSQLiteDriver())
-        .setQueryCoroutineContext(Dispatchers.IO)
+        .setQueryCoroutineContext(Dispatchers.Default)
         .build()
 }

@@ -8,6 +8,11 @@ import net.gsantner.markor.domain.model.BlockType
  * Parses markdown text into a BlockDocument for block-based editing.
  */
 object BlockParser {
+
+    private val taskListRegex = Regex("^(\\s*)- \\[([ xX])\\] (.*)$")
+    private val bulletListRegex = Regex("^(\\s*)[-*+] (.*)$")
+    private val numberedListRegex = Regex("^(\\s*)\\d+\\. (.*)$")
+    private val imageRegex = Regex("^!\\[(.*)\\]\\((.*)\\)$")
     
     /**
      * Parse markdown text into a BlockDocument.
@@ -24,6 +29,10 @@ object BlockParser {
         while (i < lines.size) {
             val line = lines[i]
             val trimmed = line.trim()
+            val taskListMatch = taskListRegex.find(trimmed)
+            val bulletListMatch = bulletListRegex.find(trimmed)
+            val numberedListMatch = numberedListRegex.find(trimmed)
+            val imageMatch = imageRegex.find(trimmed)
             
             when {
                 // Code block (fenced)
@@ -86,42 +95,48 @@ object BlockParser {
                 }
                 
                 // Task list
-                Regex("^(\\s*)- \\[([ xX])\\] (.*)$").find(trimmed)?.let { match ->
+                taskListMatch != null -> {
+                    val match = taskListMatch
                     val indent = (line.length - line.trimStart().length) / 2
                     val checked = match.groupValues[2].lowercase() == "x"
                     val content = match.groupValues[3]
-                    blocks.add(Block(
-                        type = BlockType.TASK_LIST,
-                        content = content,
-                        indent = indent,
-                        checked = checked
-                    ))
-                    null // Return null to continue
-                } != null -> { /* Handled above */ }
+                    blocks.add(
+                        Block(
+                            type = BlockType.TASK_LIST,
+                            content = content,
+                            indent = indent,
+                            checked = checked
+                        )
+                    )
+                }
                 
                 // Bullet list
-                Regex("^(\\s*)[-*+] (.*)$").find(trimmed)?.let { match ->
+                bulletListMatch != null -> {
+                    val match = bulletListMatch
                     val indent = (line.length - line.trimStart().length) / 2
                     val content = match.groupValues[2]
-                    blocks.add(Block(
-                        type = BlockType.BULLET_LIST,
-                        content = content,
-                        indent = indent
-                    ))
-                    null
-                } != null -> { /* Handled above */ }
+                    blocks.add(
+                        Block(
+                            type = BlockType.BULLET_LIST,
+                            content = content,
+                            indent = indent
+                        )
+                    )
+                }
                 
                 // Numbered list
-                Regex("^(\\s*)\\d+\\. (.*)$").find(trimmed)?.let { match ->
+                numberedListMatch != null -> {
+                    val match = numberedListMatch
                     val indent = (line.length - line.trimStart().length) / 2
                     val content = match.groupValues[2]
-                    blocks.add(Block(
-                        type = BlockType.NUMBERED_LIST,
-                        content = content,
-                        indent = indent
-                    ))
-                    null
-                } != null -> { /* Handled above */ }
+                    blocks.add(
+                        Block(
+                            type = BlockType.NUMBERED_LIST,
+                            content = content,
+                            indent = indent
+                        )
+                    )
+                }
                 
                 // Quote
                 trimmed.startsWith(">") -> {
@@ -132,13 +147,13 @@ object BlockParser {
                 }
                 
                 // Image
-                Regex("^!\\[(.*)\\]\\((.*)\\)$").find(trimmed)?.let { match ->
+                imageMatch != null -> {
+                    val match = imageMatch
                     blocks.add(Block(
                         type = BlockType.IMAGE,
                         content = match.groupValues[1] // Alt text
                     ))
-                    null
-                } != null -> { /* Handled above */ }
+                }
                 
                 // Empty line - skip or merge with previous
                 trimmed.isEmpty() -> {

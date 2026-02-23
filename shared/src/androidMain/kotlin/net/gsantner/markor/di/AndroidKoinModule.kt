@@ -17,8 +17,14 @@ actual val platformModule: Module = module {
         }
     }
     single(org.koin.core.qualifier.named("default_notebook_path")) {
-        // Use external documents directory or similar standard on Android
-        val path = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOCUMENTS).resolve("Markor")
+        val path = android.os.Environment
+            .getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOCUMENTS)
+            .resolve("Markor")
+        if (!path.exists()) path.mkdirs()
+        path.absolutePath
+    }
+    single(org.koin.core.qualifier.named("internal_notebook_path")) {
+        val path = androidContext().filesDir.resolve("Notebook")
         if (!path.exists()) path.mkdirs()
         path.absolutePath
     }

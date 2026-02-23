@@ -4,13 +4,14 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import kotlinx.coroutines.launch
 
 /**
  * Local provider for shared transition scope.
@@ -45,120 +46,70 @@ data class SharedElementState(
 val LocalSharedElementState = compositionLocalOf { SharedElementState() }
 
 /**
- * A shared element container that simulates shared element transitions using
- * position and size animation when native SharedTransitionScope is not available.
+ * A shared element container.
  *
- * Navigation 3 doesn't provide LocalSharedTransitionScope/LocalAnimatedVisibilityScope
- * like Navigation 2 does, so this fallback creates a convincing shared element effect
- * using bounds animation with proper easing.
+ * If native shared transitions are unavailable in the current navigation host,
+ * fallback rendering is static to avoid spring/jump artifacts.
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedElementContainer(
     key: String,
     isSource: Boolean,
+    useSharedBounds: Boolean = false,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     val sharedScope = LocalSharedTransitionScope.current
     val animatedScope = LocalAnimatedVisibilityScope.current
-    val coroutineScope = rememberCoroutineScope()
-
-    var targetOffset by remember(key) { mutableStateOf(IntOffset.Zero) }
-    var targetSize by remember(key) { mutableStateOf(IntSize.Zero) }
-    var sourceOffset by remember(key) { mutableStateOf(IntOffset.Zero) }
-    var sourceSize by remember(key) { mutableStateOf(IntSize.Zero) }
-    var startPosition by remember(key) { mutableStateOf(false) }
-
-    val offsetAnim = animateIntOffsetAsState(
-        targetValue = if (startPosition && !isSource) targetOffset else sourceOffset,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "shared_offset"
-    )
-
-    val sizeAnim = animateIntSizeAsState(
-        targetValue = if (startPosition && !isSource) targetSize else sourceSize,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "shared_size"
-    )
-
-    val scale by animateFloatAsState(
-        targetValue = when {
-            !startPosition -> 1f
-            isSource -> 0.95f
-            else -> 1f
-        },
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "shared_scale"
-    )
-
-    val alpha by animateFloatAsState(
-        targetValue = when {
-            !startPosition -> 1f
-            isSource -> 0.8f
-            else -> 1f
-        },
-        animationSpec = tween(200),
-        label = "shared_alpha"
-    )
-
-    LaunchedEffect(key, isSource) {
-        if (!isSource) {
-            kotlinx.coroutines.delay(50)
-            startPosition = true
-        } else {
-            startPosition = false
-        }
-    }
 
     if (sharedScope != null && animatedScope != null) {
         with(sharedScope) {
+            val sharedContentState = rememberSharedContentState(key = key)
             Box(
-                modifier = modifier.sharedElement(
-                    rememberSharedContentState(key = key),
-                    animatedScope
-                )
+                modifier = if (useSharedBounds) {
+                    modifier.sharedBounds(
+                        sharedContentState = sharedContentState,
+                        animatedVisibilityScope = animatedScope,
+                        enter = fadeIn(
+                            animationSpec = tween(
+                                durationMillis = 90,
+                                easing = LinearOutSlowInEasing
+                            )
+                        ),
+                        exit = fadeOut(
+                            animationSpec = tween(
+                                durationMillis = 90,
+                                easing = FastOutLinearInEasing
+                            )
+                        ),
+                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(
+                            contentScale = ContentScale.FillBounds,
+                            alignment = Alignment.Center
+                        )
+                    )
+                } else {
+                    modifier.sharedElement(
+                        sharedContentState = sharedContentState,
+                        animatedVisibilityScope = animatedScope
+                    )
+                }
             ) {
                 content()
             }
         }
     } else {
+        // Navigation 3 currently doesn't provide AnimatedVisibilityScope here,
+        // so keep fallback static to avoid bounce/jump artifacts on list/grid relayout.
         Box(
             modifier = modifier
                 .onGloballyPositioned { coordinates ->
-                    if (isSource) {
-                        sourceOffset = coordinates.positionInRoot().let { IntOffset(it.x.toInt(), it.y.toInt()) }
-                        sourceSize = coordinates.size.let { IntSize(it.width, it.height) }
-                    } else {
-                        targetOffset = coordinates.positionInRoot().let { IntOffset(it.x.toInt(), it.y.toInt()) }
-                        targetSize = coordinates.size.let { IntSize(it.width, it.height) }
-                    }
-                }
-                .graphicsLayer {
-                    translationX = (offsetAnim.value.x - sourceOffset.x).toFloat()
-                    translationY = (offsetAnim.value.y - sourceOffset.y).toFloat()
-                    scaleX = scale
-                    scaleY = scale
-                    this.alpha = alpha
+                    // Keep this so we can reintroduce real fallback transitions later.
+                    coordinates.positionInRoot()
+                    coordinates.size
                 }
         ) {
-            Box(
-                modifier = Modifier.graphicsLayer {
-                    scaleX = if (isSource && startPosition) 1f / scale else 1f
-                    scaleY = if (isSource && startPosition) 1f / scale else 1f
-                }
-            ) {
-                content()
-            }
+            content()
         }
     }
 }
@@ -202,4 +153,3 @@ fun SimpleSharedElement(
         content()
     }
 }
-

@@ -3,19 +3,8 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-configurations.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "org.jetbrains.kotlinx" && requested.name == "kotlinx-metadata-jvm") {
-            useVersion("2.1.0")
-        }
-    }
-}
-
-
 plugins {
     alias(libs.plugins.android.application)
-    // alias(libs.plugins.kotlin.android) // Built-in with AGP 9.0
-
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.multiplatform)
@@ -28,7 +17,7 @@ android {
         resValue("string", "manifest_package_id", "net.gsantner.markor")
         applicationId = "net.gsantner.markor"
         versionName = "2.15.2"
-        versionCode = 161
+        versionCode = 1
         minSdk = 26
         targetSdk = 36
 
@@ -109,7 +98,6 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
-        viewBinding = false
         resValues = true
     }
 
@@ -151,7 +139,6 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
@@ -162,13 +149,10 @@ dependencies {
     implementation(compose.ui)
     implementation(compose.uiTooling)
     implementation(compose.preview)
-    implementation(compose.material3)
+    implementation(libs.compose.material3)
     implementation(compose.materialIconsExtended)
-    implementation(libs.androidx.material3.window)
-    
+
     // Navigation
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     
     debugImplementation(compose.uiTooling)
@@ -196,7 +180,6 @@ dependencies {
     implementation(libs.epubParser)
 
     implementation(libs.material.kolor)
-    implementation(libs.gson)
     implementation(libs.commons.io)
     implementation(libs.koin.android)
 }

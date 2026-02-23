@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -49,7 +50,7 @@ val slashCommands = listOf(
     SlashCommand("Heading 3", "h3", Icons.Default.Title, "Small heading", "### ", 0),
     
     // Lists
-    SlashCommand("Bullet List", "bullet", Icons.Default.FormatListBulleted, "Unordered list item", "- ", 0),
+    SlashCommand("Bullet List", "bullet", Icons.AutoMirrored.Filled.FormatListBulleted, "Unordered list item", "- ", 0),
     SlashCommand("Numbered List", "num", Icons.Default.FormatListNumbered, "Ordered list item", "1. ", 0),
     SlashCommand("Task List", "task", Icons.Default.CheckBox, "Checkbox item", "- [ ] ", 0),
     

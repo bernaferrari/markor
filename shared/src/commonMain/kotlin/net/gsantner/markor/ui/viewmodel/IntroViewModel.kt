@@ -17,36 +17,31 @@ class IntroViewModel(
 
     val isFirstRun = appSettings.isFirstRun
 
-    fun setStorageMode(isExternal: Boolean, internalPath: String) {
-        viewModelScope.launch {
-            appSettings.setExternalStorageEnabled(isExternal)
-            
-            val basePath = if (isExternal) {
-                 "/storage/emulated/0/Documents/Markor"
-            } else {
-                internalPath
-            }
-            
-            val notebookDir = "$basePath/Notebook"
-            val todoPath = "$basePath/todo.txt"
-            val quicknotePath = "$basePath/quicknote.md"
-            
-            appSettings.setNotebookDirectory(notebookDir)
-            appSettings.setTodoFilePath(todoPath)
-            appSettings.setQuickNoteFilePath(quicknotePath)
-            
-            initializeDefaultFiles(notebookDir.toPath(), todoPath, quicknotePath)
+    suspend fun setStorageMode(isExternal: Boolean, internalPath: String) {
+        appSettings.setExternalStorageEnabled(isExternal)
+
+        val notebookDir = if (isExternal) {
+            "/storage/emulated/0/Documents/Markor"
+        } else {
+            "$internalPath/Notebook"
         }
+        val todoPath = "$notebookDir/todo.txt"
+        val quicknotePath = "$notebookDir/quicknote.md"
+
+        appSettings.setNotebookDirectory(notebookDir)
+        appSettings.setTodoFilePath(todoPath)
+        appSettings.setQuickNoteFilePath(quicknotePath)
+
+        initializeDefaultFiles(notebookDir.toPath(), todoPath, quicknotePath)
     }
 
     private suspend fun initializeDefaultFiles(notebookDir: Path, todoPath: String, quicknotePath: String) {
-        fileRepository.createFile(notebookDir, "Notebook")
-        
-        val parentPath = notebookDir.parent ?: notebookDir
+        val notebookParent = notebookDir.parent ?: notebookDir
+        fileRepository.createDirectory(notebookParent, notebookDir.name)
         
         val todoFilePath = fileRepository.createFileWithContent(
-            parentPath,
-            "todo.txt",
+            notebookDir,
+            todoPath.toPath().name,
             """# Todo List
 
 ## Inbox
@@ -60,8 +55,8 @@ class IntroViewModel(
         )
         
         val quicknoteFilePath = fileRepository.createFileWithContent(
-            parentPath,
-            "quicknote.md",
+            notebookDir,
+            quicknotePath.toPath().name,
             """# Quick Note
 
 Welcome to Markor! This is your quick note file for jotting down thoughts.

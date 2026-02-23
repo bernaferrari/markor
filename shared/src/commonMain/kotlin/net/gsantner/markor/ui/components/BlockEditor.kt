@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -529,14 +530,14 @@ private fun AddBlockButton(onClick: () -> Unit) {
 }
 
 private fun getBlockTypeIcon(type: BlockType): ImageVector = when (type) {
-    BlockType.PARAGRAPH -> Icons.Default.Notes
+    BlockType.PARAGRAPH -> Icons.AutoMirrored.Filled.Notes
     BlockType.HEADING1 -> Icons.Default.Title
     BlockType.HEADING2 -> Icons.Default.Title
     BlockType.HEADING3 -> Icons.Default.Title
     BlockType.HEADING4 -> Icons.Default.Title
     BlockType.HEADING5 -> Icons.Default.Title
     BlockType.HEADING6 -> Icons.Default.Title
-    BlockType.BULLET_LIST -> Icons.Default.FormatListBulleted
+    BlockType.BULLET_LIST -> Icons.AutoMirrored.Filled.FormatListBulleted
     BlockType.NUMBERED_LIST -> Icons.Default.FormatListNumbered
     BlockType.TASK_LIST -> Icons.Default.CheckBox
     BlockType.QUOTE -> Icons.Default.FormatQuote

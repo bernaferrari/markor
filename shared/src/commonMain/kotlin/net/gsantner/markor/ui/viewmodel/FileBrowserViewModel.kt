@@ -16,9 +16,10 @@ import net.gsantner.markor.data.local.db.NoteMetadataRepository
 import net.gsantner.markor.domain.repository.FavoritesRepository
 import net.gsantner.markor.domain.repository.FileInfo
 import net.gsantner.markor.domain.repository.IFileRepository
+import net.gsantner.markor.ui.components.UserMessageManager
+import net.gsantner.markor.util.nowMillis
 import okio.Path
 import okio.Path.Companion.toPath
-import kotlinx.datetime.Clock
 
 enum class FileFilterMode {
     ALL, FAVORITES, ARCHIVE, LABEL, TRASH
@@ -40,6 +41,17 @@ class FileBrowserViewModel(
     private val noteMetadataIndexer: NoteMetadataIndexer,
     private val defaultNotebookPath: String
 ) : ViewModel() {
+
+    // User message management
+    val messageManager = UserMessageManager()
+    
+    // Loading state
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    
+    // Error state
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
     private val _files = MutableStateFlow<List<FileInfo>>(emptyList())
     val files: StateFlow<List<FileInfo>> = _files.asStateFlow()
@@ -73,6 +85,9 @@ class FileBrowserViewModel(
     val recentFiles: StateFlow<List<String>> = favoritesRepository.recentFiles
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
+    val sortOrder: StateFlow<String> = appSettings.getFileBrowserSortOrder
+        .stateIn(viewModelScope, SharingStarted.Lazily, "date")
+
     val noteMetadataByPath: StateFlow<Map<String, net.gsantner.markor.data.local.db.NoteWithLabels>> =
         noteMetadataRepository.observeNotes()
             .map { notes -> notes.associateBy { it.note.path } }
@@ -99,6 +114,9 @@ class FileBrowserViewModel(
     private var didRunIndexer = false
 
     suspend fun loadFiles(path: String?): String {
+        _isLoading.value = true
+        _errorMessage.value = null
+        
         val targetPathString = if (path.isNullOrEmpty()) {
             val notebookDir = appSettings.getNotebookDirectory.first()
             if (notebookDir.isEmpty()) {
@@ -109,18 +127,49 @@ class FileBrowserViewModel(
         } else {
             path
         }
-        
-        currentPathString = targetPathString
-        refreshFiles()
 
+        val resolvedPathString = resolveNotebookPath(targetPathString)
+        currentPathString = resolvedPathString
+        
+        try {
+            refreshFiles()
+        } catch (e: Exception) {
+            _errorMessage.value = "Failed to load files: ${e.message}"
+            messageManager.error("Failed to load files")
+        } finally {
+            _isLoading.value = false
+        }
 
         if (!didRunIndexer) {
             didRunIndexer = true
             viewModelScope.launch {
-                noteMetadataIndexer.indexDirectory(targetPathString.toPath(), Clock.System.now().toEpochMilliseconds())
+                try {
+                    noteMetadataIndexer.indexDirectory(resolvedPathString.toPath(), nowMillis())
+                } catch (e: Exception) {
+                    messageManager.error("Failed to index files")
+                }
             }
         }
-        return targetPathString
+        return resolvedPathString
+    }
+
+    private suspend fun resolveNotebookPath(pathString: String): String {
+        val path = pathString.toPath()
+        val parent = path.parent
+
+        if (fileRepository.isDirectory(path)) {
+            return pathString
+        }
+
+        // Try creating the target folder if parent is accessible.
+        if (parent != null && fileRepository.isDirectory(parent)) {
+            fileRepository.createDirectory(parent, path.name)
+            if (fileRepository.isDirectory(path)) {
+                return pathString
+            }
+        }
+
+        return pathString
     }
 
     private suspend fun refreshFiles() {
@@ -141,43 +190,139 @@ class FileBrowserViewModel(
 
     fun deleteFile(path: Path) {
         viewModelScope.launch {
-            fileRepository.moveToTrash(path)
-            noteMetadataRepository.deleteByPath(path.toString())
-            refreshFiles()
+            try {
+                val pathString = path.toString()
+                val isTrashMode = _filterMode.value == FileFilterMode.TRASH
+                val isDirectory = fileRepository.isDirectory(path)
+
+                if (isTrashMode) {
+                    // Permanent delete from trash should remove instantly from UI.
+                    _trashFiles.value = _trashFiles.value.filterNot { it.path == path }
+                    val success = fileRepository.deleteFile(path)
+                    if (success) {
+                        messageManager.success("Deleted permanently")
+                    } else {
+                        messageManager.error("Failed to delete permanently")
+                    }
+                } else {
+                    // Optimistic update: hide entry immediately while move runs.
+                    _files.value = _files.value.filterNot { it.path == path }
+                    val success = fileRepository.moveToTrash(path)
+                    if (success) {
+                        if (isDirectory) {
+                            noteMetadataRepository.deleteByPathRecursively(pathString)
+                        } else {
+                            noteMetadataRepository.deleteByPath(pathString)
+                        }
+                        messageManager.success("Moved to trash")
+                    } else {
+                        messageManager.error("Failed to move file to trash")
+                    }
+                }
+                refreshFiles()
+            } catch (e: Exception) {
+                messageManager.error("Failed to delete: ${e.message}")
+            }
         }
     }
 
     fun restoreFile(path: Path, originalPath: Path) {
         viewModelScope.launch {
-            fileRepository.restoreFromTrash(path, originalPath)
-            refreshFiles()
-            loadTrashFiles()
+            try {
+                val success = fileRepository.restoreFromTrash(path, originalPath)
+                if (success) {
+                    messageManager.success("File restored")
+                } else {
+                    messageManager.error("Failed to restore file")
+                }
+                refreshFiles()
+                loadTrashFiles()
+            } catch (e: Exception) {
+                messageManager.error("Failed to restore: ${e.message}")
+            }
         }
     }
 
     fun emptyTrash() {
         viewModelScope.launch {
-            fileRepository.emptyTrash()
-            loadTrashFiles()
+            try {
+                val success = fileRepository.emptyTrash()
+                if (success) {
+                    messageManager.success("Trash emptied")
+                } else {
+                    messageManager.error("Failed to empty trash")
+                }
+                loadTrashFiles()
+            } catch (e: Exception) {
+                messageManager.error("Failed to empty trash: ${e.message}")
+            }
         }
     }
 
     fun deleteSelectedFiles() {
         viewModelScope.launch {
-            _selectedFiles.value.forEach { path ->
-                fileRepository.moveToTrash(path)
-                noteMetadataRepository.deleteByPath(path.toString())
+            val selected = _selectedFiles.value.toList()
+            if (selected.isEmpty()) {
+                clearSelection()
+                return@launch
             }
+
+            val isTrashMode = _filterMode.value == FileFilterMode.TRASH
+            var failures = 0
+
+            if (isTrashMode) {
+                // Permanent delete in trash mode.
+                val selectedSet = selected.toSet()
+                _trashFiles.value = _trashFiles.value.filterNot { it.path in selectedSet }
+                selected.forEach { path ->
+                    val success = fileRepository.deleteFile(path)
+                    if (!success) failures++
+                }
+            } else {
+                // Move to trash in regular mode.
+                val selectedSet = selected.toSet()
+                _files.value = _files.value.filterNot { it.path in selectedSet }
+                selected.forEach { path ->
+                    val isDirectory = fileRepository.isDirectory(path)
+                    val success = fileRepository.moveToTrash(path)
+                    if (success) {
+                        if (isDirectory) {
+                            noteMetadataRepository.deleteByPathRecursively(path.toString())
+                        } else {
+                            noteMetadataRepository.deleteByPath(path.toString())
+                        }
+                    } else {
+                        failures++
+                    }
+                }
+            }
+
             clearSelection()
             refreshFiles()
+
+            if (failures > 0) {
+                messageManager.error("Some items could not be deleted")
+            } else if (isTrashMode) {
+                messageManager.success("Deleted permanently")
+            } else {
+                messageManager.success("Moved to trash")
+            }
         }
     }
 
-    fun createNewFile(parent: Path, name: String = "NewFile_${kotlin.random.Random.nextInt(1000)}.md") {
+    fun createNewFile(
+        parent: Path,
+        name: String = "NewFile_${kotlin.random.Random.nextInt(1000)}.md",
+        onCreated: ((Path) -> Unit)? = null
+    ) {
         viewModelScope.launch {
+            if (currentPathString == null) {
+                currentPathString = parent.toString()
+            }
             val created = fileRepository.createFile(parent, name)
             if (created != null) {
-                noteMetadataRepository.upsertFromPath(created.toString(), System.currentTimeMillis())
+                noteMetadataRepository.upsertFromPath(created.toString(), nowMillis())
+                onCreated?.invoke(created)
             }
             refreshFiles()
         }
@@ -185,20 +330,22 @@ class FileBrowserViewModel(
 
     fun createNewFolder(parent: Path, name: String) {
         viewModelScope.launch {
-             fileRepository.createDirectory(parent, name)
-              refreshFiles()
+            if (currentPathString == null) {
+                currentPathString = parent.toString()
+            }
+            fileRepository.createDirectory(parent, name)
+            refreshFiles()
         }
     }
 
     fun renameFile(path: Path, newName: String) {
         viewModelScope.launch {
-            val success = fileRepository.renameFile(path, newName)
-            if (success) {
-                val newPath = (path.parent ?: ".".toPath()) / newName
+            val renamedPath = fileRepository.renameFile(path, newName)
+            if (renamedPath != null) {
                 noteMetadataRepository.updatePath(
                     oldPath = path.toString(),
-                    newPath = newPath.toString(),
-                    nowMillis = System.currentTimeMillis()
+                    newPath = renamedPath.toString(),
+                    nowMillis = nowMillis()
                 )
             }
             refreshFiles()
@@ -271,6 +418,13 @@ class FileBrowserViewModel(
     fun setFilterMode(mode: FileFilterMode) {
         _filterMode.value = mode
         viewModelScope.launch {
+            refreshFiles()
+        }
+    }
+
+    fun setSortOrder(order: String) {
+        viewModelScope.launch {
+            appSettings.setFileBrowserSortOrder(order)
             refreshFiles()
         }
     }
@@ -370,9 +524,16 @@ class FileBrowserViewModel(
             }
         }
         
+        val contentSortComparator = when (sortOrder.value) {
+            "name" -> compareBy<FileInfo> { it.name.lowercase() }
+            "size" -> compareByDescending<FileInfo> { it.size }
+            "oldest" -> compareBy<FileInfo> { it.lastModified }
+            else -> compareByDescending<FileInfo> { it.lastModified } // "date" => recent first
+        }
+
         return result.sortedWith(
             compareByDescending<FileInfo> { metadata[it.path.toString()]?.note?.pinned == true }
-                .thenByDescending { it.lastModified }
+                .then(contentSortComparator)
         )
     }
     
@@ -387,7 +548,7 @@ class FileBrowserViewModel(
     fun togglePin(path: Path) {
         viewModelScope.launch {
             val existing = noteMetadataRepository.getNoteByPath(path.toString())
-            val now = Clock.System.now().toEpochMilliseconds()
+            val now = nowMillis()
             if (existing == null) {
                 val note = net.gsantner.markor.data.local.db.NoteMetadataMapper
                     .buildNoteEntityFromPath(path.toString(), null, now)
@@ -401,7 +562,7 @@ class FileBrowserViewModel(
 
     fun setLabels(path: String, labels: List<String>) {
         viewModelScope.launch {
-            val now = Clock.System.now().toEpochMilliseconds()
+            val now = nowMillis()
             // Ensure note exists
             val existing = noteMetadataRepository.getNoteByPath(path)
             if (existing == null) {

@@ -42,6 +42,10 @@ class NoteMetadataRepository(
         dao.deleteNoteByPath(path)
     }
 
+    suspend fun deleteByPathRecursively(path: String) {
+        dao.deleteNotesByPathOrPrefix(path, "$path/%")
+    }
+
     suspend fun setLabelsForNote(noteId: Long, labels: List<String>) {
         dao.clearLabelsForNote(noteId)
         labels.distinct().forEach { labelName ->
