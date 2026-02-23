@@ -24,6 +24,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import org.jetbrains.compose.resources.stringResource
+import net.gsantner.markor.shared.generated.resources.*
 import androidx.compose.ui.unit.dp
 import net.gsantner.markor.ui.screens.editor.EditorScreen
 import net.gsantner.markor.ui.screens.filelist.FileBrowserContent
@@ -543,7 +545,7 @@ private fun StandardTopBar(
                         onDismissRequest = { showSortMenu = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Recent first") },
+                            text = { Text(stringResource(Res.string.recent_first)) },
                             leadingIcon = {
                                 if (currentSortOrder == "date") Icon(Icons.Default.Check, contentDescription = null)
                             },
@@ -553,7 +555,7 @@ private fun StandardTopBar(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Oldest first") },
+                            text = { Text(stringResource(Res.string.oldest_first)) },
                             leadingIcon = {
                                 if (currentSortOrder == "oldest") Icon(Icons.Default.Check, contentDescription = null)
                             },
@@ -563,7 +565,7 @@ private fun StandardTopBar(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Name") },
+                            text = { Text(stringResource(Res.string.name)) },
                             leadingIcon = {
                                 if (currentSortOrder == "name") Icon(Icons.Default.Check, contentDescription = null)
                             },
@@ -575,7 +577,7 @@ private fun StandardTopBar(
                     }
                 }
                 IconButton(onClick = onOpenSettings) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    Icon(Icons.Default.Settings, contentDescription = stringResource(Res.string.settings))
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
@@ -597,7 +599,7 @@ private fun StandardTopBar(
                 FilterChip(
                     selected = currentFilterMode == FileFilterMode.ALL,
                     onClick = { onFilterModeChange(FileFilterMode.ALL) },
-                    label = { Text("All") }
+                    label = { Text(stringResource(Res.string.all)) }
                 )
                 FilterChip(
                     selected = currentFilterMode == FileFilterMode.FAVORITES,
@@ -613,7 +615,7 @@ private fun StandardTopBar(
                             modifier = Modifier.size(16.dp)
                         )
                     },
-                    label = { Text("Favorites") }
+                    label = { Text(stringResource(Res.string.favorites)) }
                 )
                 FilterChip(
                     selected = currentFilterMode == FileFilterMode.ARCHIVE,
@@ -629,7 +631,7 @@ private fun StandardTopBar(
                             modifier = Modifier.size(16.dp)
                         )
                     },
-                    label = { Text("Archive") }
+                    label = { Text(stringResource(Res.string.archive)) }
                 )
                 FilterChip(
                     selected = currentFilterMode == FileFilterMode.TRASH,
@@ -645,7 +647,7 @@ private fun StandardTopBar(
                             modifier = Modifier.size(16.dp)
                         )
                     },
-                    label = { Text("Trash") }
+                    label = { Text(stringResource(Res.string.trash)) }
                 )
             }
         }
@@ -672,7 +674,7 @@ private fun SearchScreen(
             TopAppBar(
                 navigationIcon = {
                     IconButton(onClick = onClose) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back))
                     }
                 },
                 title = {
@@ -683,7 +685,7 @@ private fun SearchScreen(
                             .fillMaxWidth()
                             .focusRequester(focusRequester)
                             .padding(vertical = 4.dp),
-                        placeholder = { Text("Search notes") },
+                        placeholder = { Text(stringResource(Res.string.search_notes)) },
                         singleLine = true,
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -698,7 +700,7 @@ private fun SearchScreen(
                 actions = {
                     if (query.isNotEmpty()) {
                         IconButton(onClick = { onQueryChange("") }) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear query")
+                            Icon(Icons.Default.Close, contentDescription = stringResource(Res.string.clear_query))
                         }
                     }
                 },
@@ -716,8 +718,8 @@ private fun SearchScreen(
                 contentAlignment = Alignment.Center
             ) {
                 EmptyState(
-                    title = if (query.isBlank()) "No notes yet" else "No matches",
-                    subtitle = if (query.isBlank()) "Create a note to start searching" else "Try a different search term",
+                    title = if (query.isBlank()) stringResource(Res.string.no_notes_yet) else stringResource(Res.string.no_matches),
+                    subtitle = if (query.isBlank()) stringResource(Res.string.create_note_to_start_searching) else stringResource(Res.string.try_different_search_term),
                     icon = Icons.Default.SearchOff
                 )
             }
