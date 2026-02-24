@@ -307,10 +307,10 @@
 
         <activity-alias
             android:name="AliasDocumentProcessText"
-            android:label="@string/app_name"
+            android:enabled="false"
             android:exported="true"
-            android:targetActivity=".activity.DocumentActivity"
-            android:enabled="false">
+            android:label="@string/app_name"
+            android:targetActivity=".activity.DocumentActivity">
 
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

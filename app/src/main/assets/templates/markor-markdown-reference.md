@@ -1,10 +1,16 @@
 # Markdown Reference
-Automatically generate _table of contents_ by checking the option here: `Settings > Format > Markdown`.
+
+Automatically generate _table of contents_ by checking the option here:
+`Settings > Format > Markdown`.
 
 ## H2 Header
+
 ### H3 header
+
 #### H4 Header
+
 ##### H5 Header
+
 ###### H6 Header
 
 <!-- --------------- -->
@@ -17,7 +23,7 @@ Automatically generate _table of contents_ by checking the option here: `Setting
 
 ~~Strikethrough~~
 
-Break line (two spaces at end of line)  
+Break line (two spaces at end of line)
 
 > Block quote
 
@@ -30,8 +36,9 @@ awesome
 ```
 
 <!-- --------------- -->
- 
+
 ## Lists
+
 ### Ordered & unordered
 
 * Unordered list
@@ -67,6 +74,7 @@ awesome
         2. Test 2
 
 ### Checklist
+
 * [ ] Salad
 * [x] Potatoes
 
@@ -76,6 +84,7 @@ awesome
 <!-- --------------- -->
 
 ## Links
+
 [Link](https://duckduckgo.com/)
 
 [File in same folder as the document.](markor-markdown-reference.md) Use %20 for spaces!
@@ -85,23 +94,25 @@ awesome
 ## Tables
 
 | Left aligned | Middle aligned | Right aligned |
-| :--------------- | :------------------: | -----------------: |
-| Test                 | Test                      | Test                    |
-| Test                 | Test                      | Test                    |
+|:-------------|:--------------:|--------------:|
+| Test         |      Test      |          Test |
+| Test         |      Test      |          Test |
 
 ÷÷÷÷
 
-Shorter | Table | Syntax
-:---: | ---: | :---
-Test | Test | Test
-Test | Test | Test
+ Shorter | Table | Syntax 
+:-------:|------:|:-------
+  Test   |  Test | Test   
+  Test   |  Test | Test   
 
 <!-- Comment: Not visibile in view. Can also span across multiple lines. End with:-->
 
 <!-- ------------- -->
 
 ## Math (KaTeX)
-See [reference](https://katex.org/docs/supported.html) & [examples](https://github.com/waylonflinn/markdown-it-katex/blob/master/README.md). Enable by checking Math at `Settings > Markdown`.
+
+See [reference](https://katex.org/docs/supported.html) & [examples](https://github.com/waylonflinn/markdown-it-katex/blob/master/README.md).
+Enable by checking Math at `Settings > Markdown`.
 
 ### Math inline
 
@@ -112,14 +123,13 @@ $ I = \frac V R $
 $$\begin{array}{rcl}
 \nabla \cdot \vec{\mathbf{E}}
 & = & 4 \pi \rho,
-\\\nabla \cdot \vec{\mathbf{B}} 
+\\\nabla \cdot \vec{\mathbf{B}}
 & = & 0,
-\\\nabla \times \vec{\mathbf{E}} + \frac1c \frac{\partial\vec{\mathbf{B}}}{\partial t} 
+\\\nabla \times \vec{\mathbf{E}} + \frac1c \frac{\partial\vec{\mathbf{B}}}{\partial t}
 & = & \vec{\mathbf{0}},
-\\\nabla \times \vec{\mathbf{B}} - \frac1c \frac{\partial\vec{\mathbf{E}}}{\partial t} 
+\\\nabla \times \vec{\mathbf{B}} - \frac1c \frac{\partial\vec{\mathbf{E}}}{\partial t}
 & = & \frac{4\pi}{c}\vec{\mathbf{J}}
 \end{array}$$
-
 
 $$\frac{k_t}{k_e} = \sqrt{2}$$
 
@@ -133,8 +143,9 @@ $$\frac{k_t}{k_e} = \sqrt{2}$$
 
 <span style='color:#3333ff;'>Text foreground color</span>
 
-<span style='text-shadow: 0px 0px 2px #FF0000;'>Text with colored outline</span> / <span style='text-shadow: 0px 0px 2px #0000FF; color: white'>Text with colored outline</span>
-
+<span style='text-shadow: 0px 0px 2px #FF0000;'>Text with colored
+outline</span> / <span style='text-shadow: 0px 0px 2px #0000FF; color: white'>Text with colored
+outline</span>
 
 ### Text sub & superscript
 
@@ -145,6 +156,7 @@ The <sub>Subway</sub> sandwich was <sup>super</sup>
 Super special characters: ⁰ ¹ ² ³ ⁴ ⁵ ⁶ ⁷ ⁸ ⁹ ⁺ ⁻ ⁼ ⁽ ⁾ ⁿ ™ ® ℠
 
 ### Text positioning
+
 <div markdown='1' align='right'>
 
 text on the **right**
@@ -169,12 +181,13 @@ lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
 
 <details markdown='1'><summary>Click to Expand/Collapse</summary>
 
-Expanded content. Shows up and keeps visible when clicking expand. Hide again by clicking the dropdown button again.
+Expanded content. Shows up and keeps visible when clicking expand. Hide again by clicking the
+dropdown button again.
 
 </details>
 
-
 ### Break page
+
 To break the page (/start a new page), put the div below into a own line.
 Relevant for creating printable pages from the document (Print / PDF).
 
@@ -186,9 +199,11 @@ Relevant for creating printable pages from the document (Print / PDF).
 ## Multimedia
 
 ### Images
+
 ![Image](file:///android_asset/img/schindelpattern.jpg)
 
 ### Videos
+
 **Youtube** [Welcome to Upper Austria](https://www.youtube.com/watch?v=RJREFH7Lmm8)
 <iframe width='360' height='200' src='https://www.youtube.com/embed/RJREFH7Lmm8'> </iframe>
 
@@ -198,6 +213,7 @@ Relevant for creating printable pages from the document (Print / PDF).
 <!-- **Local video** <div><video controls><source src='voice-parrot.mp4' </source></video></div> -->
 
 ### Audio & Music
+
 **Web audio** [Guifrog - Xia Yu](https://www.freemusicarchive.org/music/Guifrog/Xia_Yu)
 <audio controls src='https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Guifrog/Xia_Yu/Guifrog_-_Xia_Yu.mp3'></audio>
 
@@ -205,6 +221,7 @@ Relevant for creating printable pages from the document (Print / PDF).
 <audio controls src='../Music/mp3/Yellowcard/[2007]%20Paper%20Walls/Yellowcard%20-%2005%20-%20Light%20Up%20the%20Sky.mp3'></audio>
 
 ## Charts / Graphs / Diagrams (mermaidjs)
+
 Pie, flow, sequence, class, state, ER  
 See also: mermaidjs [live editor](https://mermaid-js.github.io/mermaid-live-editor/).
 
@@ -216,27 +233,31 @@ graph LR
     C --> D
 ```
 
-
-
 ## Admonition Extension
+
 Create block-styled side content.  
-Use one of these qualifiers to select the icon and the block color: abstract, summary, tldr, bug, danger, error, example, snippet, failure, fail, missing, question, help, faq, info, todo, note, seealso, quote, cite, success, check, done, tip, hint, important, warning, caution, attention.
+Use one of these qualifiers to select the icon and the block color: abstract, summary, tldr, bug,
+danger, error, example, snippet, failure, fail, missing, question, help, faq, info, todo, note,
+seealso, quote, cite, success, check, done, tip, hint, important, warning, caution, attention.
 
 !!! warning 'Optional Title'
-    Block-Styled Side Content with **Markdown support**
+Block-Styled Side Content with **Markdown support**
 
 !!! info ''
-    No-Heading Content
+No-Heading Content
 
 ??? bug 'Collapsed by default'
-    Collapsible Block-Styled Side Content
+Collapsible Block-Styled Side Content
 
 ???+ example 'Open by default'
-     Collapsible Block-Styled Side Content
+Collapsible Block-Styled Side Content
 
 ------------------
 
-This Markdown reference file was created for the [Markor](https://github.com/gsantner/markor) project by [Gregor Santner](https://github.com/gsanter) and is licensed [Creative Commons Zero 1.0](https://creativecommons.org/publicdomain/zero/1.0/legalcode) (public domain). File revision 3.
+This Markdown reference file was created for the [Markor](https://github.com/gsantner/markor)
+project by [Gregor Santner](https://github.com/gsanter) and is
+licensed [Creative Commons Zero 1.0](https://creativecommons.org/publicdomain/zero/1.0/legalcode) (
+public domain). File revision 3.
 
 ------------------
 

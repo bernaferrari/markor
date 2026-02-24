@@ -1,7 +1,7 @@
-import java.util.Date
-import java.text.SimpleDateFormat
-import java.util.Locale
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 plugins {
     alias(libs.plugins.android.application)
@@ -29,7 +29,9 @@ android {
         create("flavorAtest") {
             applicationId = "net.gsantner.markor_test"
             versionCode = SimpleDateFormat("yyMMdd", Locale.US).format(Date()).toInt()
-            versionName = "${android.defaultConfig.versionName}-${SimpleDateFormat("HHmm", Locale.US).format(Date())}"
+            versionName = "${android.defaultConfig.versionName}-${
+                SimpleDateFormat("HHmm", Locale.US).format(Date())
+            }"
         }
         create("flavorDefault") {}
         create("flavorGplay") {

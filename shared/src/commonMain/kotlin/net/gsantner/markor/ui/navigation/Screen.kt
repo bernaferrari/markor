@@ -4,18 +4,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.notebook
+import markor.shared.generated.resources.quicknote
+import markor.shared.generated.resources.settings
+import markor.shared.generated.resources.todo
 import org.jetbrains.compose.resources.StringResource
-import markor.shared.generated.resources.*
 
 @Serializable
 sealed class Screen : NavKey {

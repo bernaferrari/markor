@@ -15,7 +15,7 @@ import java.util.Date
 import java.util.Locale
 
 object AppUtils {
-    
+
     fun getFileExtension(file: File): String {
         return file.extension.lowercase()
     }
@@ -84,7 +84,8 @@ object AppUtils {
 
     fun getMimeType(file: File): String {
         val extension = getFileExtension(file)
-        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: "application/octet-stream"
+        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+            ?: "application/octet-stream"
     }
 
     fun formatDate(timestamp: Long, pattern: String = "yyyy-MM-dd HH:mm"): String {
@@ -110,6 +111,6 @@ object AppUtils {
     }
 
     fun shareFile(context: Context, path: Path, title: String = "Share") {
-         shareFile(context, File(path.toString()), title)
+        shareFile(context, File(path.toString()), title)
     }
 }
