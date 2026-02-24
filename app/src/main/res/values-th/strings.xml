@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="about">About</string>
     <string name="action_order">Action order</string>
     <string name="actionbutton_spacing">ActionButton spacing</string>
@@ -22,7 +22,7 @@
     <string name="appdata_private">AppData (private)</string>
     <string name="appdata_public">AppData (public)</string>
     <string name="appdata_sdcard">AppData (SD Card)</string>
-    <string name="appearance"/>
+    <string name="appearance" />
     <string name="append_contexts_and_projects">Append contexts and projects</string>
     <string name="append_contexts_and_projects_on_end_of_task">Append contexts and projects at the end of a task when using the appropriate text action</string>
     <string name="append_human_readable_uuid_to_new_tasks">Append human readable UUID to new tasks</string>
@@ -102,7 +102,7 @@
     <string name="created">Created</string>
     <string name="current">Current</string>
     <string name="current_date">Current date</string>
-    <string name="dark"/>
+    <string name="dark" />
     <string name="date">Date</string>
     <string name="date_and_time">Date and time</string>
     <string name="default_">Default</string>

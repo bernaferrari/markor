@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="about">Tentang Kami</string>
     <string name="action_order">Perintah tindakan</string>
     <string name="actionbutton_spacing">Penjarakkan TombolAksi</string>

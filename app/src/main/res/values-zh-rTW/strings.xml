@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="about">說明</string>
     <string name="action_order">動作順序</string>
     <string name="actionbutton_spacing">ActionButtons 間距</string>

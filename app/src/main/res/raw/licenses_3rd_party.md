@@ -1,25 +1,25 @@
-**The MIT License (MIT)**  
+**The MIT License (MIT)**
+
 * KaTex
-~° Copyright KaTex authors
+  ~° Copyright KaTex authors
 
 * writeily and writeily-pro
-~° Copyright (c) 2014 Jeff Martin  
-~° Copyright (c) 2015 Pedro Lafuente   
-~° Markor was initally forked from writeily-pro
-~° but most parts were completly rewritten.
-~° Parts that were not modified / rewitten
-~° from scratch are placed in the
-~° thirdparty directory and MIT licensed.
+  ~° Copyright (c) 2014 Jeff Martin  
+  ~° Copyright (c) 2015 Pedro Lafuente   
+  ~° Markor was initally forked from writeily-pro
+  ~° but most parts were completly rewritten.
+  ~° Parts that were not modified / rewitten
+  ~° from scratch are placed in the
+  ~° thirdparty directory and MIT licensed.
 
 * Mermaid
-~° Copyright Mermaid authors
+  ~° Copyright Mermaid authors
 
 * asciidoctor.js
-~° Copyright asciidoctor.js authors
+  ~° Copyright asciidoctor.js authors
 
 * asciidoctor-skins
-~° Copyright asciidoctor-skins authors
-
+  ~° Copyright asciidoctor-skins authors
 
 `---------------`  
 <small>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,29 +40,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.</small>  
 `---------------`
-  
-  
-**Apache License**  
-Version 2.0, January 2004  
 
+**Apache License**  
+Version 2.0, January 2004
 
 * Material design icons
-~° Copyright Google
+  ~° Copyright Google
 
 * Android support library / appcompat
-~° Copyright (C) 2011 The Android Open Source Project
+  ~° Copyright (C) 2011 The Android Open Source Project
 
 * adapter-kit
-~° Copyright 2013 Mobs & Geeks
+  ~° Copyright 2013 Mobs & Geeks
 
 * commons-io, commons-lang3
-~° Copyright Apache Foundation
+  ~° Copyright Apache Foundation
 
 * OpenCsv
-~° Copyright Bytecode Pty Ltd.
+  ~° Copyright Bytecode Pty Ltd.
 
 * gene-rate
-~° Copyright 2017 Pixplicity
+  ~° Copyright 2017 Pixplicity
 
 `---------------`  
 <small>Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,14 +75,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.</small>  
 `---------------`
-  
-  
+
 **BSD 2-clause "Simplified"**  
 &nbsp;
 
 * flexmark-java
-~° Copyright (c) 2015-2016 Atlassian and others
-~° Copyright (c) 2016-2018, Vladimir Schneider
+  ~° Copyright (c) 2015-2016 Atlassian and others
+  ~° Copyright (c) 2016-2018, Vladimir Schneider
 
 `---------------`  
 <small>

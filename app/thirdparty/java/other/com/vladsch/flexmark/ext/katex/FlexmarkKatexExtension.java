@@ -72,6 +72,12 @@ import java.util.regex.Pattern;
  */
 public class FlexmarkKatexExtension {
 
+    public static interface KatexVisitor {
+        void visit(final KatexInlineMath node);
+
+        void visit(final KatexDisplayMath node);
+    }
+
     /**
      * Extension for KaTeX
      */
@@ -116,12 +122,6 @@ public class FlexmarkKatexExtension {
                 //rendererBuilder.nodeRendererFactory(new KatexJiraRenderer.Factory());
             }
         }
-    }
-
-    public static interface KatexVisitor {
-        void visit(final KatexInlineMath node);
-
-        void visit(final KatexDisplayMath node);
     }
 
     public static class KatexDisplayMath extends Node implements DelimitedNode {

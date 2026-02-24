@@ -222,15 +222,6 @@ public class JavaPasswordbasedCryption {
     }
 
     /**
-     * Something which goes wrong at encryption.
-     */
-    public static final class EncryptionFailedException extends RuntimeException {
-        EncryptionFailedException(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
-
-    /**
      * Version of encryption.
      * Version which starts with an U are Versions which are unsecure compared to a V-Version.
      */
@@ -266,6 +257,15 @@ public class JavaPasswordbasedCryption {
             this.keySaltLength = keySaltLength;
             this.cipher = cipher;
             this.nonceLenth = nonceLenth;
+        }
+    }
+
+    /**
+     * Something which goes wrong at encryption.
+     */
+    public static final class EncryptionFailedException extends RuntimeException {
+        EncryptionFailedException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
 

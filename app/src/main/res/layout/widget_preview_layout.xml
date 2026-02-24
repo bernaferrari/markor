@@ -15,14 +15,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_launcher_foreground"
-                android:contentDescription="@string/app_name" />
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_launcher_foreground" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -44,15 +44,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/widget_button_background"
-            android:padding="16dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:padding="16dp">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_add"
                 android:contentDescription="@string/create_new_document"
+                android:src="@drawable/ic_add"
                 app:tint="@android:color/white" />
 
             <TextView
@@ -73,10 +73,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:alpha="0.9"
             android:text="@string/widget_preview_recent_notes"
             android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:alpha="0.9" />
+            android:textSize="14sp" />
 
         <Space
             android:layout_width="match_parent"
@@ -87,8 +87,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/widget_button_background"
-            android:padding="12dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="12dp">
 
             <FrameLayout
                 android:layout_width="36dp"
@@ -109,8 +109,8 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginStart="12dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -124,20 +124,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:alpha="0.7"
                     android:text="@string/widget_preview_shopping_list_content"
                     android:textColor="@android:color/white"
-                    android:textSize="11sp"
-                    android:alpha="0.7" />
+                    android:textSize="11sp" />
 
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:alpha="0.6"
                 android:text="2h ago"
                 android:textColor="@android:color/white"
-                android:textSize="10sp"
-                android:alpha="0.6" />
+                android:textSize="10sp" />
 
         </LinearLayout>
 
@@ -149,8 +149,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/widget_button_background"
-            android:padding="12dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="12dp">
 
             <FrameLayout
                 android:layout_width="36dp"
@@ -171,8 +171,8 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginStart="12dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -186,20 +186,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:alpha="0.7"
                     android:text="@string/widget_preview_meeting_notes_content"
                     android:textColor="@android:color/white"
-                    android:textSize="11sp"
-                    android:alpha="0.7" />
+                    android:textSize="11sp" />
 
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:alpha="0.6"
                 android:text="5h ago"
                 android:textColor="@android:color/white"
-                android:textSize="10sp"
-                android:alpha="0.6" />
+                android:textSize="10sp" />
 
         </LinearLayout>
 
