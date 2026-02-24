@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.viewmodel
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.getString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -134,8 +136,8 @@ class FileBrowserViewModel(
         try {
             refreshFiles()
         } catch (e: Exception) {
-            _errorMessage.value = "Failed to load files: ${e.message}"
-            messageManager.error("Failed to load files")
+            _errorMessage.value = getString(Res.string.failed_to_load_files_with_arg, e.message ?: "")
+            messageManager.error(getString(Res.string.failed_to_load_files))
         } finally {
             _isLoading.value = false
         }
@@ -146,7 +148,7 @@ class FileBrowserViewModel(
                 try {
                     noteMetadataIndexer.indexDirectory(resolvedPathString.toPath(), nowMillis())
                 } catch (e: Exception) {
-                    messageManager.error("Failed to index files")
+                    messageManager.error(getString(Res.string.failed_to_index_files))
                 }
             }
         }
@@ -200,9 +202,9 @@ class FileBrowserViewModel(
                     _trashFiles.value = _trashFiles.value.filterNot { it.path == path }
                     val success = fileRepository.deleteFile(path)
                     if (success) {
-                        messageManager.success("Deleted permanently")
+                        messageManager.success(getString(Res.string.deleted_permanently))
                     } else {
-                        messageManager.error("Failed to delete permanently")
+                        messageManager.error(getString(Res.string.failed_to_delete_permanently))
                     }
                 } else {
                     // Optimistic update: hide entry immediately while move runs.
@@ -214,14 +216,14 @@ class FileBrowserViewModel(
                         } else {
                             noteMetadataRepository.deleteByPath(pathString)
                         }
-                        messageManager.success("Moved to trash")
+                        messageManager.success(getString(Res.string.moved_to_trash))
                     } else {
-                        messageManager.error("Failed to move file to trash")
+                        messageManager.error(getString(Res.string.failed_to_move_to_trash))
                     }
                 }
                 refreshFiles()
             } catch (e: Exception) {
-                messageManager.error("Failed to delete: ${e.message}")
+                messageManager.error(getString(Res.string.failed_to_delete_with_arg, e.message ?: ""))
             }
         }
     }
@@ -231,14 +233,14 @@ class FileBrowserViewModel(
             try {
                 val success = fileRepository.restoreFromTrash(path, originalPath)
                 if (success) {
-                    messageManager.success("File restored")
+                    messageManager.success(getString(Res.string.file_restored))
                 } else {
-                    messageManager.error("Failed to restore file")
+                    messageManager.error(getString(Res.string.failed_to_restore_file))
                 }
                 refreshFiles()
                 loadTrashFiles()
             } catch (e: Exception) {
-                messageManager.error("Failed to restore: ${e.message}")
+                messageManager.error(getString(Res.string.failed_to_restore_with_arg, e.message ?: ""))
             }
         }
     }
@@ -248,13 +250,13 @@ class FileBrowserViewModel(
             try {
                 val success = fileRepository.emptyTrash()
                 if (success) {
-                    messageManager.success("Trash emptied")
+                    messageManager.success(getString(Res.string.trash_emptied))
                 } else {
-                    messageManager.error("Failed to empty trash")
+                    messageManager.error(getString(Res.string.failed_to_empty_trash))
                 }
                 loadTrashFiles()
             } catch (e: Exception) {
-                messageManager.error("Failed to empty trash: ${e.message}")
+                messageManager.error(getString(Res.string.failed_to_empty_trash_with_arg, e.message ?: ""))
             }
         }
     }
@@ -301,11 +303,11 @@ class FileBrowserViewModel(
             refreshFiles()
 
             if (failures > 0) {
-                messageManager.error("Some items could not be deleted")
+                messageManager.error(getString(Res.string.some_items_not_deleted))
             } else if (isTrashMode) {
-                messageManager.success("Deleted permanently")
+                messageManager.success(getString(Res.string.deleted_permanently))
             } else {
-                messageManager.success("Moved to trash")
+                messageManager.success(getString(Res.string.moved_to_trash))
             }
         }
     }

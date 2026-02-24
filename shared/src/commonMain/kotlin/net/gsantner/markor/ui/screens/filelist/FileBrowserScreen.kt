@@ -44,6 +44,8 @@ import net.gsantner.markor.ui.components.*
 import net.gsantner.markor.ui.viewmodel.FileBrowserViewModel
 import net.gsantner.markor.ui.viewmodel.FileFilterMode
 import net.gsantner.markor.ui.theme.MarkorTheme
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import okio.FileSystem
 import okio.SYSTEM
 import okio.Path.Companion.toPath
@@ -426,7 +428,7 @@ fun FileBrowserContent(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "Back to $displayedParentDirectoryLabel",
+                            text = stringResource(Res.string.back_to_with_arg, displayedParentDirectoryLabel),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1
@@ -455,15 +457,15 @@ fun FileBrowserContent(
                     when {
                         filterMode == FileFilterMode.FAVORITES && files.isNotEmpty() -> {
                             EmptyState(
-                                title = "No favorites yet",
-                                subtitle = "Swipe right on any file to add it to your favorites.",
+                                title = stringResource(Res.string.no_favorites_yet),
+                                subtitle = stringResource(Res.string.no_favorites_yet_description),
                                 icon = Icons.Outlined.StarOutline
                             )
                         }
                         filterMode == FileFilterMode.TRASH && trashFiles.isEmpty() -> {
                             EmptyState(
-                                title = "Trash is empty",
-                                subtitle = "Deleted files will appear here for 30 days.",
+                                title = stringResource(Res.string.trash_is_empty),
+                                subtitle = stringResource(Res.string.trash_is_empty_description),
                                 icon = Icons.Default.Delete
                             )
                         }
@@ -694,7 +696,7 @@ fun FileBrowserContent(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
-                                contentDescription = "New note"
+                                contentDescription = stringResource(Res.string.create_new)
                             )
                             Spacer(Modifier.width(8.dp))
                             Text(
@@ -716,7 +718,7 @@ fun FileBrowserContent(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.KeyboardArrowUp,
-                                contentDescription = "More create options"
+                                contentDescription = stringResource(Res.string.more_create_options)
                             )
                         }
                     }
@@ -747,8 +749,8 @@ fun FileBrowserContent(
 @Composable
 private fun EmptyListState() {
     EmptyState(
-        title = "Your notebook is empty",
-        subtitle = "Tap the + button to create a new note or folder and start your journey.",
+        title = stringResource(Res.string.notebook_is_empty),
+        subtitle = stringResource(Res.string.notebook_is_empty_description),
         icon = Icons.Default.FolderOpen
     )
 }
@@ -860,7 +862,7 @@ private fun FileItem(
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "Folder",
+                                text = stringResource(Res.string.folder),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                             )
@@ -935,7 +937,7 @@ private fun FileItem(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Restore,
-                                    contentDescription = "Restore",
+                                    contentDescription = stringResource(Res.string.restore),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -947,7 +949,7 @@ private fun FileItem(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.DeleteForever,
-                                    contentDescription = "Delete Permanently",
+                                    contentDescription = stringResource(Res.string.delete_permanently),
                                     tint = MaterialTheme.colorScheme.error
                                 )
                             }
@@ -958,7 +960,7 @@ private fun FileItem(
                             if (isFavorite) {
                                 Icon(
                                     imageVector = Icons.Filled.Star,
-                                    contentDescription = "Favorite",
+                                    contentDescription = stringResource(Res.string.favorite),
                                     tint = MaterialTheme.colorScheme.tertiary,
                                     modifier = Modifier
                                         .size(20.dp)
@@ -977,7 +979,7 @@ private fun FileItem(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.MoreVert,
-                                    contentDescription = "More",
+                                    contentDescription = stringResource(Res.string.more),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.size(24.dp)
                                 )

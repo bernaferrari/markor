@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -459,7 +461,7 @@ private fun BlockItem(
                     onDismissRequest = { showBlockMenu = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Delete") },
+                        text = { Text(stringResource(Res.string.delete)) },
                         leadingIcon = { Icon(Icons.Default.Delete, null, Modifier.size(18.dp)) },
                         onClick = {
                             onDelete()
@@ -521,7 +523,7 @@ private fun AddBlockButton(onClick: () -> Unit) {
             )
             Spacer(Modifier.width(12.dp))
             Text(
-                text = "Tap to add a block",
+                text = stringResource(Res.string.tap_to_add_block),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
             )

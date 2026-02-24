@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -98,7 +100,7 @@ fun AssetManagerSheet(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) {
-                    Text("Delete")
+                    Text(stringResource(Res.string.delete))
                 }
             },
             dismissButton = {
@@ -121,7 +123,7 @@ fun AssetManagerSheet(
         ) {
             // Header
             Text(
-                "Manage Images",
+                stringResource(Res.string.manage_images),
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -244,7 +246,7 @@ fun AssetManagerSheet(
                         ) {
                             Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Delete")
+                            Text(stringResource(Res.string.delete))
                         }
                     }
                 }
@@ -426,7 +428,7 @@ private fun AssetItem(
                 ) {
                     Icon(
                         Icons.Default.Check,
-                        contentDescription = "In use",
+                        contentDescription = stringResource(Res.string.in_use),
                         modifier = Modifier.padding(4.dp).size(16.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )

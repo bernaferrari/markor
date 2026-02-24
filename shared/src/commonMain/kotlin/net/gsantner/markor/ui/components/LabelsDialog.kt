@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Label
@@ -41,7 +43,7 @@ fun LabelsDialog(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Text(
-                    text = "Labels",
+                    text = stringResource(Res.string.labels),
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -49,7 +51,7 @@ fun LabelsDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 Text(
-                    text = "Separate labels with commas",
+                    text = stringResource(Res.string.separate_labels_with_commas),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

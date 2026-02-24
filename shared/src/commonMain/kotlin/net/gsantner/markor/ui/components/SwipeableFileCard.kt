@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -98,7 +100,7 @@ fun SwipeableFileCard(
                     SwipeToDismissBoxValue.EndToStart -> {
                         Icon(
                             imageVector = Icons.Filled.Delete,
-                            contentDescription = "Delete",
+                            contentDescription = stringResource(Res.string.delete),
                             tint = iconColor,
                             modifier = Modifier.scale(scale).size(28.dp)
                         )
@@ -146,7 +148,7 @@ fun FavoriteIndicator(
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Filled.Star,
-                    contentDescription = "Favorite",
+                    contentDescription = stringResource(Res.string.favorite),
                     tint = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier.size(14.dp)
                 )

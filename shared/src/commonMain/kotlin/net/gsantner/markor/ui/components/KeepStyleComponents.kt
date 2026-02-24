@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -32,7 +34,7 @@ fun KeepStyleSearchBar(
     onSearch: (String) -> Unit,
     modifier: Modifier = Modifier,
     placeholder: String = "Search notes...",
-    leadingIcon: @Composable () -> Unit = { Icon(Icons.Default.Search, contentDescription = "Search") },
+    leadingIcon: @Composable () -> Unit = { Icon(Icons.Default.Search, contentDescription = stringResource(Res.string.search)) },
     trailingIcon: @Composable () -> Unit = {},
     expanded: Boolean = false,
     onExpandedChange: (Boolean) -> Unit = {},
@@ -89,7 +91,7 @@ fun KeepStyleSearchBar(
                 ) {
                     Icon(
                         Icons.Default.Clear,
-                        contentDescription = "Clear search",
+                        contentDescription = stringResource(Res.string.clear_search),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -151,7 +153,7 @@ fun NoteColorPicker(
                 if (isSelected) {
                     Icon(
                         Icons.Default.Check,
-                        contentDescription = "Selected",
+                        contentDescription = stringResource(Res.string.selected),
                         tint = if (color != null) {
                             val c = Color(color)
                             // Simple contrast check - if color is light, use dark icon
@@ -242,7 +244,7 @@ fun QuickCreateFab(
         ) {
             Icon(
                 Icons.Default.Add,
-                contentDescription = "Create new",
+                contentDescription = stringResource(Res.string.create_new),
                 modifier = Modifier.size(28.dp)
             )
         }

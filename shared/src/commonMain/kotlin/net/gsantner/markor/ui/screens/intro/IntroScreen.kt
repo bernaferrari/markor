@@ -25,9 +25,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import markor.shared.generated.resources.*
 import net.gsantner.markor.ui.components.supportsSharedStorageMode
 import net.gsantner.markor.ui.theme.MarkorTheme
 import net.gsantner.markor.ui.viewmodel.IntroViewModel
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -151,7 +153,7 @@ private fun StorageSelectionPage(
         Spacer(modifier = Modifier.height(24.dp))
         
         Text(
-            text = "Choose Storage Location",
+            text = stringResource(Res.string.choose_storage_location),
             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
             textAlign = TextAlign.Center
         )
@@ -159,7 +161,7 @@ private fun StorageSelectionPage(
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "Select where you want to keep your notes.",
+            text = stringResource(Res.string.select_storage_location),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -168,8 +170,8 @@ private fun StorageSelectionPage(
         Spacer(modifier = Modifier.height(32.dp))
         
         StorageOptionCard(
-            title = "Private Storage",
-            description = "Notes are kept inside the app. No permissions required. Secure and simple.",
+            title = stringResource(Res.string.private_storage),
+            description = stringResource(Res.string.storage_internal_description),
             icon = Icons.Default.Lock,
             onClick = onPrivateSelected,
             recommended = true
@@ -178,8 +180,8 @@ private fun StorageSelectionPage(
         Spacer(modifier = Modifier.height(16.dp))
         
         StorageOptionCard(
-            title = "Shared Storage",
-            description = "Notes are stored in your Documents folder. Accessible by other apps and sync tools.",
+            title = stringResource(Res.string.shared_storage),
+            description = stringResource(Res.string.storage_external_description),
             icon = Icons.Default.FolderShared,
             onClick = onSharedSelected,
             recommended = false
@@ -236,7 +238,7 @@ private fun StorageOptionCard(
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
                     ) {
                         Text(
-                            text = "Recommended",
+                            text = stringResource(Res.string.recommended),
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -264,18 +266,18 @@ private fun StorageOptionCard(
 private fun IntroPage(page: Int) {
     val (data, color) = when (page) {
         0 -> Triple(
-            "Welcome to Markor",
-            "A fast, local-first markdown notes app. No account, no lock-in, just your files.",
+            stringResource(Res.string.welcome_to_markor),
+            stringResource(Res.string.intro_description),
             Icons.Filled.Edit
         ) to MaterialTheme.colorScheme.primary
         1 -> Triple(
-            "Write Quickly",
-            "Create notes in seconds and keep everything auto-saved while you focus on writing.",
+            stringResource(Res.string.write_quickly),
+            stringResource(Res.string.intro_description),
             Icons.Default.NoteAdd
         ) to MaterialTheme.colorScheme.secondary
         2 -> Triple(
-            "Stay Organized",
-            "Use search, filters, favorites, labels, and pinning to keep important notes easy to find.",
+            stringResource(Res.string.stay_organized),
+            stringResource(Res.string.stay_organized_description),
             Icons.Filled.Search
         ) to MaterialTheme.colorScheme.tertiary
         else -> Triple("", "", Icons.Filled.Close) to Color.Gray
@@ -352,7 +354,7 @@ private fun IntroBottomBar(
             if (pagerState.currentPage > 0) {
                 TextButton(onClick = onBack) {
                     Text(
-                        "Back",
+                        stringResource(Res.string.back),
                         style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                     )
                 }
@@ -385,7 +387,7 @@ private fun IntroBottomBar(
                 onClick = onNext,
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text("Next", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                Text(stringResource(Res.string.next), style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
             }
         }
     }

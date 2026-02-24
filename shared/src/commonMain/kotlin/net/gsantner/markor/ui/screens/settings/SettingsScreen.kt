@@ -31,7 +31,7 @@ import net.gsantner.markor.ui.viewmodel.ThemePaletteOption
 import net.gsantner.markor.ui.components.RenameDialog
 import net.gsantner.markor.ui.theme.MarkorTheme
 import org.jetbrains.compose.resources.stringResource
-import net.gsantner.markor.shared.generated.resources.*
+import markor.shared.generated.resources.*
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

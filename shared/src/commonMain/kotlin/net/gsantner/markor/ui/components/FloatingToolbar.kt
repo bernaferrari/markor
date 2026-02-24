@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -62,7 +64,7 @@ fun FloatingSelectionToolbar(
                 ) {
                     FloatingToolbarButton(
                         icon = Icons.Default.FormatBold,
-                        contentDescription = "Bold",
+                        contentDescription = stringResource(Res.string.bold),
                         onClick = {
                             hapticHelper.performLightClick()
                             onBold()
@@ -70,7 +72,7 @@ fun FloatingSelectionToolbar(
                     )
                     FloatingToolbarButton(
                         icon = Icons.Default.FormatItalic,
-                        contentDescription = "Italic",
+                        contentDescription = stringResource(Res.string.italic),
                         onClick = {
                             hapticHelper.performLightClick()
                             onItalic()

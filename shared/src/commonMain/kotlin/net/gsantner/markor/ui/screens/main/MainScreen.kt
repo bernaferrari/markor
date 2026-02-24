@@ -25,7 +25,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import org.jetbrains.compose.resources.stringResource
-import net.gsantner.markor.shared.generated.resources.*
+import markor.shared.generated.resources.*
 import androidx.compose.ui.unit.dp
 import net.gsantner.markor.ui.screens.editor.EditorScreen
 import net.gsantner.markor.ui.screens.filelist.FileBrowserContent
@@ -415,12 +415,12 @@ private fun ListDetailLayout(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            "Select a file",
+                            stringResource(Res.string.select_file),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            "Choose a file from the list to view or edit",
+                            stringResource(Res.string.choose_file_to_view_edit),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
@@ -521,7 +521,7 @@ private fun StandardTopBar(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Search notes",
+                            text = stringResource(Res.string.search_notes_label),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1
@@ -533,12 +533,12 @@ private fun StandardTopBar(
                 IconButton(onClick = onToggleGridView) {
                     Icon(
                         if (isGridView) Icons.AutoMirrored.Filled.List else Icons.Default.GridView,
-                        contentDescription = if (isGridView) "Switch to list view" else "Switch to grid view"
+                        contentDescription = if (isGridView) stringResource(Res.string.switch_to_list_view) else stringResource(Res.string.switch_to_grid_view)
                     )
                 }
                 Box {
                     IconButton(onClick = { showSortMenu = true }) {
-                        Icon(Icons.AutoMirrored.Filled.Sort, contentDescription = "Sort")
+                        Icon(Icons.AutoMirrored.Filled.Sort, contentDescription = stringResource(Res.string.sort))
                     }
                     DropdownMenu(
                         expanded = showSortMenu,
@@ -674,7 +674,7 @@ private fun SearchScreen(
             TopAppBar(
                 navigationIcon = {
                     IconButton(onClick = onClose) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back))
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 title = {

@@ -1,5 +1,7 @@
 package net.gsantner.markor.data.repository
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.getString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,12 +54,12 @@ class FileRepository(
         try {
             clearError()
             if (!fileSystem.exists(directory)) {
-                setError("Directory does not exist: ${directory.name}")
+                setError(getString(Res.string.directory_does_not_exist_with_arg, directory.name))
                 return@withContext emptyList()
             }
             val metadata = fileSystem.metadata(directory)
             if (!metadata.isDirectory) {
-                setError("Not a directory: ${directory.name}")
+                setError(getString(Res.string.not_a_directory_with_arg, directory.name))
                 return@withContext emptyList()
             }
 
@@ -86,10 +88,10 @@ class FileRepository(
                     }
                 }
         } catch (e: IOException) {
-            setError("Failed to list files: ${e.message}")
+            setError(getString(Res.string.failed_to_list_files_with_arg, e.message ?: ""))
             emptyList()
         } catch (e: Exception) {
-            setError("Permission denied or access error: ${directory.name}")
+            setError(getString(Res.string.permission_denied_with_arg, directory.name))
             emptyList()
         }
     }

@@ -1,5 +1,8 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -32,10 +35,10 @@ import androidx.compose.ui.window.PopupProperties
  * Represents a slash command that can format text.
  */
 data class SlashCommand(
-    val name: String,
+    val name: StringResource,
     val shortcut: String, // What user types after "/"
     val icon: ImageVector,
-    val description: String,
+    val description: StringResource,
     val insertText: String, // Text to insert (replaces /command)
     val cursorOffset: Int = 0 // How many chars from end to place cursor
 )
@@ -45,29 +48,29 @@ data class SlashCommand(
  */
 val slashCommands = listOf(
     // Headers
-    SlashCommand("Heading 1", "h1", Icons.Default.Title, "Large heading", "# ", 0),
-    SlashCommand("Heading 2", "h2", Icons.Default.Title, "Medium heading", "## ", 0),
-    SlashCommand("Heading 3", "h3", Icons.Default.Title, "Small heading", "### ", 0),
+    SlashCommand(Res.string.heading_1_label, "h1", Icons.Default.Title, Res.string.heading_1_description, "# ", 0),
+    SlashCommand(Res.string.heading_2_label, "h2", Icons.Default.Title, Res.string.heading_2_description, "## ", 0),
+    SlashCommand(Res.string.heading_3_label, "h3", Icons.Default.Title, Res.string.heading_3_description, "### ", 0),
     
     // Lists
-    SlashCommand("Bullet List", "bullet", Icons.AutoMirrored.Filled.FormatListBulleted, "Unordered list item", "- ", 0),
-    SlashCommand("Numbered List", "num", Icons.Default.FormatListNumbered, "Ordered list item", "1. ", 0),
-    SlashCommand("Task List", "task", Icons.Default.CheckBox, "Checkbox item", "- [ ] ", 0),
+    SlashCommand(Res.string.bullet_list, "bullet", Icons.AutoMirrored.Filled.FormatListBulleted, Res.string.bullet_list_description_label, "- ", 0),
+    SlashCommand(Res.string.numbered_list, "num", Icons.Default.FormatListNumbered, Res.string.numbered_list_description_label, "1. ", 0),
+    SlashCommand(Res.string.task_list_label, "task", Icons.Default.CheckBox, Res.string.task_list_description, "- [ ] ", 0),
     
     // Blocks
-    SlashCommand("Quote", "quote", Icons.Default.FormatQuote, "Block quote", "> ", 0),
-    SlashCommand("Code Block", "code", Icons.Default.Code, "Code snippet", "```\n\n```", 4),
-    SlashCommand("Inline Code", "inline", Icons.Default.Code, "Inline code", "`code`", 1),
+    SlashCommand(Res.string.quote_label, "quote", Icons.Default.FormatQuote, Res.string.quote_description, "> ", 0),
+    SlashCommand(Res.string.code_block_label, "code", Icons.Default.Code, Res.string.code_block_description, "```\n\n```", 4),
+    SlashCommand(Res.string.inline_code_label, "inline", Icons.Default.Code, Res.string.inline_code_description, "`code`", 1),
     
     // Structure
-    SlashCommand("Divider", "hr", Icons.Default.Remove, "Horizontal line", "\n---\n", 0),
-    SlashCommand("Link", "link", Icons.Default.Link, "Add a link", "[text](url)", 4),
-    SlashCommand("Image", "img", Icons.Default.Image, "Embed image", "![alt](url)", 4),
+    SlashCommand(Res.string.divider_label, "hr", Icons.Default.Remove, Res.string.divider_description, "\n---\n", 0),
+    SlashCommand(Res.string.link, "link", Icons.Default.Link, Res.string.link_description, "[text](url)", 4),
+    SlashCommand(Res.string.image_label, "img", Icons.Default.Image, Res.string.image_description, "![alt](url)", 4),
     
     // Text formatting
-    SlashCommand("Bold", "bold", Icons.Default.FormatBold, "Bold text", "**text**", 2),
-    SlashCommand("Italic", "italic", Icons.Default.FormatItalic, "Italic text", "*text*", 1),
-    SlashCommand("Strikethrough", "strike", Icons.Default.FormatStrikethrough, "Strikethrough", "~~text~~", 2),
+    SlashCommand(Res.string.bold_label, "bold", Icons.Default.FormatBold, Res.string.bold_description, "**text**", 2),
+    SlashCommand(Res.string.italic_label, "italic", Icons.Default.FormatItalic, Res.string.italic_description, "*text*", 1),
+    SlashCommand(Res.string.strikethrough_label, "strike", Icons.Default.FormatStrikethrough, Res.string.strikethrough_description, "~~text~~", 2),
 )
 
 /**
@@ -90,8 +93,7 @@ fun SlashCommandMenu(
             slashCommands
         } else {
             slashCommands.filter { 
-                it.shortcut.contains(query, ignoreCase = true) ||
-                it.name.contains(query, ignoreCase = true)
+                it.shortcut.contains(query, ignoreCase = true)
             }
         }
     }
@@ -121,7 +123,7 @@ fun SlashCommandMenu(
                     // Section header
                     item {
                         Text(
-                            text = "Commands",
+                            text = stringResource(Res.string.commands_label),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
@@ -143,7 +145,7 @@ fun SlashCommandMenu(
                     if (filteredCommands.isEmpty()) {
                         item {
                             Text(
-                                text = "No commands match \"$query\"",
+                                text = stringResource(Res.string.no_commands_match, query),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(16.dp)
@@ -193,7 +195,7 @@ private fun SlashCommandItem(
             
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = command.name,
+                    text = stringResource(command.name),
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                     color = MaterialTheme.colorScheme.onSurface
                 )

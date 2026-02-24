@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -52,14 +54,14 @@ fun ColorSelectionSheet(
                 .padding(bottom = 48.dp)
         ) {
             Text(
-                "Note Color",
+                stringResource(Res.string.note_color),
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             
             Text(
-                "Choose a color to personalize this note",
+                stringResource(Res.string.personalize_note_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(bottom = 24.dp)
@@ -90,14 +92,14 @@ fun ColorSelectionSheet(
                         if (colorInt == null) {
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = "Default",
+                                contentDescription = stringResource(Res.string.default_),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(24.dp).alpha(if (currentColor == null) 1f else 0f)
                             )
                         } else if (isSelected) {
                             Icon(
                                 imageVector = Icons.Default.Check,
-                                contentDescription = "Selected",
+                                contentDescription = stringResource(Res.string.selected),
                                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                 modifier = Modifier.size(28.dp)
                             )
