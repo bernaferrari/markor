@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -110,7 +112,7 @@ fun OutlinePanel(
                 Spacer(Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = "Document Outline",
+                        text = stringResource(Res.string.document_outline),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
                     Text(

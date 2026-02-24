@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.StringResource
-import net.gsantner.markor.shared.generated.resources.*
+import markor.shared.generated.resources.*
 
 @Serializable
 sealed class Screen : NavKey {

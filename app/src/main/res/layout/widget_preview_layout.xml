@@ -22,13 +22,13 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_launcher_foreground"
-                android:contentDescription="Markor" />
+                android:contentDescription="@string/app_name" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Markor"
+                android:text="@string/app_name"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -52,14 +52,14 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_add"
-                android:contentDescription="New note"
+                android:contentDescription="@string/create_new_document"
                 app:tint="@android:color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Tap to write a quick note..."
+                android:text="@string/widget_preview_tap_to_write"
                 android:textColor="@android:color/white"
                 android:textSize="14sp" />
 
@@ -73,7 +73,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Recent Notes"
+            android:text="@string/widget_preview_recent_notes"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:alpha="0.9" />
@@ -116,7 +116,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Shopping List"
+                    android:text="@string/widget_preview_shopping_list"
                     android:textColor="@android:color/white"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -124,7 +124,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Milk, Eggs, Bread..."
+                    android:text="@string/widget_preview_shopping_list_content"
                     android:textColor="@android:color/white"
                     android:textSize="11sp"
                     android:alpha="0.7" />
@@ -178,7 +178,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Meeting Notes"
+                    android:text="@string/widget_preview_meeting_notes"
                     android:textColor="@android:color/white"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -186,7 +186,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Discussed Q4 goals..."
+                    android:text="@string/widget_preview_meeting_notes_content"
                     android:textColor="@android:color/white"
                     android:textSize="11sp"
                     android:alpha="0.7" />

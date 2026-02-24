@@ -1,5 +1,9 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.StringResource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -24,6 +28,7 @@ import net.gsantner.markor.domain.service.ShareService
 import net.gsantner.markor.ui.theme.MarkorTheme
 import net.gsantner.markor.util.nowMillis
 import org.koin.compose.koinInject
+import kotlinx.coroutines.launch
 
 data class ExportOption(
     val title: String,
@@ -44,6 +49,7 @@ fun ExportDialog(
     shareService: ShareService = koinInject()
 ) {
     var isExporting by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
     
     val exportOptions = remember {
         listOf(
@@ -52,13 +58,20 @@ fun ExportDialog(
                 subtitle = "Share the raw markdown file",
                 icon = Icons.Default.Description,
                 onClick = {
-                    shareService.shareFile(
-                        fileName = fileName,
-                        content = markdownContent.encodeToByteArray(),
-                        title = "Share Markdown",
-                        mimeType = "text/markdown"
-                    )
-                    onShareMarkdown()
+                    scope.launch {
+                        isExporting = true
+                        try {
+                            shareService.shareFile(
+                                fileName = fileName,
+                                content = markdownContent.encodeToByteArray(),
+                                title = "Share as Markdown",
+                                mimeType = "text/markdown"
+                            )
+                            onShareMarkdown()
+                        } finally {
+                            isExporting = false
+                        }
+                    }
                 }
             ),
             ExportOption(
@@ -66,8 +79,15 @@ fun ExportDialog(
                 subtitle = "Share as plain text",
                 icon = Icons.AutoMirrored.Filled.TextSnippet,
                 onClick = {
-                    shareService.shareText(markdownContent, "Share Text")
-                    onShareMarkdown()
+                    scope.launch {
+                        isExporting = true
+                        try {
+                            shareService.shareText(markdownContent, "Share Text")
+                            onShareMarkdown()
+                        } finally {
+                            isExporting = false
+                        }
+                    }
                 }
             ),
             ExportOption(
@@ -75,7 +95,6 @@ fun ExportDialog(
                 subtitle = "Copy content to clipboard",
                 icon = Icons.Default.ContentCopy,
                 onClick = {
-                    // Clipboard is handled via platform-specific implementation
                     onShareMarkdown()
                 }
             )
@@ -101,13 +120,13 @@ fun ExportDialog(
                 ) {
                     Icon(
                         imageVector = Icons.Default.FileDownload,
-                        contentDescription = "Export",
+                        contentDescription = stringResource(Res.string.export),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "Export",
+                        text = stringResource(Res.string.export),
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
                     )
                 }

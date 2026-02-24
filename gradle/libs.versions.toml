@@ -7,18 +7,9 @@ activityCompose = "1.12.4"
 navigation3ui = "1.1.0-alpha02"
 datastore = "1.2.0"
 coroutines = "1.10.2"
-flexmark = "0.64.8"
-opencsv = "5.12.0"
-commonsIo = "2.21.0"
 junit = "4.13.2"
 assertj = "3.27.7"
 kotlinxSerializationJson = "1.10.0"
-appcompat = "1.7.1"
-browser = "1.9.0"
-appintro = "6.1.0"
-colorpicker = "3.0.1"
-geneRate = "v1.1.8"
-epubParser = "1.0.95"
 okio = "3.16.4"
 kotlinxDatetime = "0.7.1"
 koin = "4.1.1"
@@ -31,13 +22,9 @@ coil = "3.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
 androidx-navigation3-ui = { group = "org.jetbrains.androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3ui" }
-lifecycle-viewmodel-navigation3 = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "lifecycle" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatform" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -45,30 +32,7 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-flexmark-core = { group = "com.vladsch.flexmark", name = "flexmark", version.ref = "flexmark" }
-flexmark-util = { group = "com.vladsch.flexmark", name = "flexmark-util", version.ref = "flexmark" }
-flexmark-ext-emoji = { group = "com.vladsch.flexmark", name = "flexmark-ext-emoji", version.ref = "flexmark" }
-flexmark-ext-gfm-tasklist = { group = "com.vladsch.flexmark", name = "flexmark-ext-gfm-tasklist", version.ref = "flexmark" }
-flexmark-ext-superscript = { group = "com.vladsch.flexmark", name = "flexmark-ext-superscript", version.ref = "flexmark" }
-flexmark-ext-autolink = { group = "com.vladsch.flexmark", name = "flexmark-ext-autolink", version.ref = "flexmark" }
-flexmark-ext-toc = { group = "com.vladsch.flexmark", name = "flexmark-ext-toc", version.ref = "flexmark" }
-flexmark-ext-tables = { group = "com.vladsch.flexmark", name = "flexmark-ext-tables", version.ref = "flexmark" }
-flexmark-ext-jekyll-front-matter = { group = "com.vladsch.flexmark", name = "flexmark-ext-jekyll-front-matter", version.ref = "flexmark" }
-flexmark-ext-jekyll-tag = { group = "com.vladsch.flexmark", name = "flexmark-ext-jekyll-tag", version.ref = "flexmark" }
-flexmark-ext-anchorlink = { group = "com.vladsch.flexmark", name = "flexmark-ext-anchorlink", version.ref = "flexmark" }
-flexmark-ext-gfm-strikethrough = { group = "com.vladsch.flexmark", name = "flexmark-ext-gfm-strikethrough", version.ref = "flexmark" }
-flexmark-ext-yaml-front-matter = { group = "com.vladsch.flexmark", name = "flexmark-ext-yaml-front-matter", version.ref = "flexmark" }
-flexmark-ext-footnotes = { group = "com.vladsch.flexmark", name = "flexmark-ext-footnotes", version.ref = "flexmark" }
-flexmark-ext-gitlab = { group = "com.vladsch.flexmark", name = "flexmark-ext-gitlab", version.ref = "flexmark" }
-flexmark-ext-typographic = { group = "com.vladsch.flexmark", name = "flexmark-ext-typographic", version.ref = "flexmark" }
-flexmark-ext-admonition = { group = "com.vladsch.flexmark", name = "flexmark-ext-admonition", version.ref = "flexmark" }
-opencsv = { group = "com.opencsv", name = "opencsv", version.ref = "opencsv" }
-appintro = { group = "com.github.AppIntro", name = "AppIntro", version.ref = "appintro" }
-colorpicker = { group = "com.github.martin-stone", name = "hsv-alpha-color-picker-android", version.ref = "colorpicker" }
-geneRate = { group = "com.github.Pixplicity", name = "gene-rate", version.ref = "geneRate" }
 material-kolor = { group = "com.materialkolor", name = "material-kolor", version = "4.0.0" }
-epubParser = { group = "com.github.mertakdut", name = "EpubParser", version.ref = "epubParser" }
-commons-io = { group = "commons-io", name = "commons-io", version.ref = "commonsIo" }
 androidx-glance = { group = "androidx.glance", name = "glance", version.ref = "glance" }
 androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glanceAppwidget" }
 androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
@@ -86,9 +50,7 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
 android-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -97,24 +59,4 @@ compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMu
 androidx-room = { id = "androidx.room", version.ref = "room" }
 
 [bundles]
-
-flexmark = [
-    "flexmark-core",
-    "flexmark-util",
-    "flexmark-ext-emoji",
-    "flexmark-ext-gfm-tasklist",
-    "flexmark-ext-superscript",
-    "flexmark-ext-autolink",
-    "flexmark-ext-toc",
-    "flexmark-ext-tables",
-    "flexmark-ext-jekyll-front-matter",
-    "flexmark-ext-jekyll-tag",
-    "flexmark-ext-anchorlink",
-    "flexmark-ext-gfm-strikethrough",
-    "flexmark-ext-yaml-front-matter",
-    "flexmark-ext-footnotes",
-    "flexmark-ext-gitlab",
-    "flexmark-ext-typographic",
-    "flexmark-ext-admonition",
-]
 coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-android"]

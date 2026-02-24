@@ -1,4 +1,6 @@
 package net.gsantner.markor.ui.components
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import net.gsantner.markor.ui.theme.MarkorTheme
@@ -51,7 +53,7 @@ fun AdvancedSearchReplaceDialog(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Find",
+                        text = stringResource(Res.string.find),
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface
                     )

@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.viewmodel
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.getString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
@@ -87,7 +89,7 @@ class EditorViewModel(
             _hasUnsavedChanges.value = false
             return doc
         } catch (e: Exception) {
-            messageManager.error("Failed to load document: ${e.message}")
+            messageManager.error(getString(Res.string.failed_to_load_document_with_arg, e.message ?: ""))
             return null
         } finally {
             _isLoading.value = false
@@ -99,9 +101,9 @@ class EditorViewModel(
             try {
                 documentRepository.saveDocument(document, content)
                 _hasUnsavedChanges.value = false
-                messageManager.success("Saved")
+                messageManager.success(getString(Res.string.saved))
             } catch (e: Exception) {
-                messageManager.error("Failed to save: ${e.message}")
+                messageManager.error(getString(Res.string.failed_to_save) + ": ${e.message}")
             }
         }
     }
@@ -121,9 +123,9 @@ class EditorViewModel(
         viewModelScope.launch {
             try {
                 documentRepository.createDocument(path, content)
-                messageManager.success("Document created")
+                messageManager.success(getString(Res.string.document_created))
             } catch (e: Exception) {
-                messageManager.error("Failed to create document: ${e.message}")
+                messageManager.error(getString(Res.string.failed_to_create_document))
             }
         }
     }
@@ -132,13 +134,13 @@ class EditorViewModel(
         return try {
             val renamedPath = documentRepository.renameDocument(document, newName)
             if (renamedPath != null) {
-                messageManager.success("Renamed to ${renamedPath.name}")
+                messageManager.success(getString(Res.string.renamed_to_with_arg, renamedPath.name))
             } else {
-                messageManager.error("Failed to rename")
+                messageManager.error(getString(Res.string.failed_to_rename))
             }
             renamedPath
         } catch (e: Exception) {
-            messageManager.error("Failed to rename: ${e.message}")
+            messageManager.error(getString(Res.string.failed_to_rename_with_arg, e.message ?: ""))
             null
         }
     }

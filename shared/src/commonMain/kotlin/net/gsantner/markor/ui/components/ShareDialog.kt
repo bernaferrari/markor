@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -51,7 +53,7 @@ fun ShareDialog(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Text(
-                    text = "Share Note",
+                    text = stringResource(Res.string.share_note),
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -66,7 +68,7 @@ fun ShareDialog(
                     )
                 } else {
                     Text(
-                        text = "Choose how to share this note",
+                        text = stringResource(Res.string.choose_how_to_share),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -77,8 +79,8 @@ fun ShareDialog(
                 // Share as Markdown only
                 ShareOption(
                     icon = Icons.Default.Description,
-                    title = "Share as Markdown",
-                    subtitle = "Text file only, images won't be included",
+                    title = stringResource(Res.string.share_as_markdown),
+                    subtitle = stringResource(Res.string.share_text_only_description),
                     onClick = {
                         scope.launch {
                             isSharing = true
@@ -100,8 +102,8 @@ fun ShareDialog(
                     
                     ShareOption(
                         icon = Icons.Default.FolderZip,
-                        title = "Share with Images",
-                        subtitle = "Creates a ZIP with markdown and all images",
+                        title = stringResource(Res.string.share_with_images),
+                        subtitle = stringResource(Res.string.share_with_images_description),
                         onClick = {
                             scope.launch {
                                 isSharing = true
@@ -123,7 +125,7 @@ fun ShareDialog(
                 Spacer(modifier = Modifier.height(24.dp))
                 
                 TextButton(onClick = onDismiss, enabled = !isSharing) {
-                    Text("Cancel")
+                    Text(stringResource(Res.string.cancel))
                 }
             }
         }

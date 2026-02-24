@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,7 +57,7 @@ fun FileActionSheet(
 
             ActionItem(
                 icon = Icons.Default.Edit,
-                label = "Rename",
+                label = stringResource(Res.string.rename),
                 onClick = {
                     onDismiss()
                     onRename()
@@ -64,7 +66,7 @@ fun FileActionSheet(
 
             ActionItem(
                 icon = Icons.Default.Share,
-                label = "Share",
+                label = stringResource(Res.string.share),
                 onClick = {
                     onDismiss()
                     onShare()
@@ -82,7 +84,7 @@ fun FileActionSheet(
 
             ActionItem(
                 icon = Icons.AutoMirrored.Filled.Label,
-                label = "Labels",
+                label = stringResource(Res.string.labels),
                 onClick = {
                     onDismiss()
                     onEditLabels()
@@ -93,7 +95,7 @@ fun FileActionSheet(
             if (hasAssets && onManageAssets != null) {
                 ActionItem(
                     icon = Icons.Default.Image,
-                    label = "Manage Images",
+                    label = stringResource(Res.string.manage_images),
                     onClick = {
                         onDismiss()
                         onManageAssets()
@@ -103,7 +105,7 @@ fun FileActionSheet(
 
             ActionItem(
                 icon = Icons.Default.Delete,
-                label = "Delete",
+                label = stringResource(Res.string.delete),
                 color = MaterialTheme.colorScheme.error,
                 onClick = {
                     onDismiss()
@@ -113,7 +115,7 @@ fun FileActionSheet(
             
              ActionItem(
                 icon = Icons.Default.Info,
-                label = "Properties",
+                label = stringResource(Res.string.properties),
                 onClick = {
                     onDismiss()
                     onInfo()

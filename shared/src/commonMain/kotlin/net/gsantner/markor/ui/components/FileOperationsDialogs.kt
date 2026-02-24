@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -35,7 +37,7 @@ fun CreateFolderDialog(
         icon = Icons.Default.Folder,
         value = folderName,
         onValueChange = { folderName = it },
-        label = "Folder Name",
+        label = stringResource(Res.string.folder_name),
         confirmText = "Create",
         onDismiss = onDismiss,
         onConfirm = { onConfirm(folderName) }
@@ -51,12 +53,12 @@ fun RenameDialog(
     var newName by remember { mutableStateOf(currentName) }
 
     PremiumInputDialog(
-        title = "Rename",
+        title = stringResource(Res.string.rename),
         icon = Icons.Default.Edit,
         value = newName,
         onValueChange = { newName = it },
-        label = "Name",
-        confirmText = "Rename",
+        label = stringResource(Res.string.name),
+        confirmText = stringResource(Res.string.rename),
         onDismiss = onDismiss,
         onConfirm = { onConfirm(newName) }
     )
@@ -93,7 +95,7 @@ fun DeleteDialog(
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {
-                Text("Delete")
+                Text(stringResource(Res.string.delete))
             }
         },
         dismissButton = {
@@ -202,7 +204,7 @@ fun CreateFileDialog(
         icon = Icons.Default.Create,
         value = fileName,
         onValueChange = { fileName = it },
-        label = "File Name",
+        label = stringResource(Res.string.file_name),
         confirmText = "Create",
         onDismiss = onDismiss,
         onConfirm = { onConfirm(fileName) }

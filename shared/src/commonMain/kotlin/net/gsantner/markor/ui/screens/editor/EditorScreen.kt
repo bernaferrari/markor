@@ -1,5 +1,7 @@
 package net.gsantner.markor.ui.screens.editor
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.ui.draw.clip
@@ -480,7 +482,7 @@ fun EditorScreen(
                                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         ) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(Res.string.more_options))
                         }
                         
                         DropdownMenu(
@@ -532,7 +534,7 @@ fun EditorScreen(
                                 )
                                 HorizontalDivider()
                                 DropdownMenuItem(
-                                    text = { Text("Document Outline") },
+                                    text = { Text(stringResource(Res.string.document_outline)) },
                                     leadingIcon = { Icon(Icons.AutoMirrored.Filled.List, null) },
                                     onClick = {
                                         showOutlinePanel = true
@@ -542,7 +544,7 @@ fun EditorScreen(
                                 )
                                 HorizontalDivider()
                                 DropdownMenuItem(
-                                    text = { Text("Export") },
+                                    text = { Text(stringResource(Res.string.export)) },
                                     leadingIcon = { Icon(Icons.Default.Share, null) },
                                     onClick = {
                                         showExportDialog = true
@@ -1069,9 +1071,10 @@ private fun PreviewTab(
     val previewBlocks = remember(content, filePath) {
         buildPreviewBlocks(content, filePath)
     }
+    val emptyMessage = stringResource(Res.string.nothing_to_preview)
     val styledText = remember<AnnotatedString>(content, colorScheme, backgroundColor) {
         net.gsantner.markor.ui.components.renderCleanMarkdown(
-            if (content.isEmpty()) "Nothing to preview yet..." else content,
+            if (content.isEmpty()) emptyMessage else content,
             colorScheme,
             backgroundColor
         )

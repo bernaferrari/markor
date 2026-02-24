@@ -61,14 +61,14 @@ class MarkorNotesWidget : GlanceAppWidget() {
                     ) {
                         Image(
                             provider = ImageProvider(R.drawable.ic_launcher_foreground),
-                            contentDescription = "Markor",
+                            contentDescription = context.getString(R.string.app_name),
                             modifier = GlanceModifier
                                 .size(32.dp)
                                 .cornerRadius(8.dp)
                         )
                         Spacer(modifier = GlanceModifier.width(8.dp))
                         Text(
-                            text = "Markor",
+                            text = context.getString(R.string.app_name),
                             style = TextStyle(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp,
@@ -92,12 +92,12 @@ class MarkorNotesWidget : GlanceAppWidget() {
                         ) {
                             Image(
                                 provider = ImageProvider(R.drawable.ic_add),
-                                contentDescription = "New note",
+                                contentDescription = context.getString(R.string.create_new_document),
                                 modifier = GlanceModifier.size(24.dp)
                             )
                             Spacer(modifier = GlanceModifier.width(12.dp))
                             Text(
-                                text = "Tap to write a quick note...",
+                                text = context.getString(R.string.widget_preview_tap_to_write),
                                 style = TextStyle(
                                     fontWeight = FontWeight.Normal,
                                     fontSize = 14.sp,
@@ -111,7 +111,7 @@ class MarkorNotesWidget : GlanceAppWidget() {
 
                     // Recent notes section
                     Text(
-                        text = "Recent Notes",
+                        text = context.getString(R.string.widget_preview_recent_notes),
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
@@ -123,20 +123,20 @@ class MarkorNotesWidget : GlanceAppWidget() {
 
                     // Sample notes (in real implementation, would load from DataStore)
                     RecentNoteItem(
-                        title = "Shopping List",
-                        preview = "Milk, Eggs, Bread...",
+                        title = context.getString(R.string.widget_preview_shopping_list),
+                        preview = context.getString(R.string.widget_preview_shopping_list_content),
                         time = "2h ago"
                     )
                     Spacer(modifier = GlanceModifier.height(4.dp))
                     RecentNoteItem(
-                        title = "Meeting Notes",
-                        preview = "Discussed Q4 goals...",
+                        title = context.getString(R.string.widget_preview_meeting_notes),
+                        preview = context.getString(R.string.widget_preview_meeting_notes_content),
                         time = "5h ago"
                     )
                     Spacer(modifier = GlanceModifier.height(4.dp))
                     RecentNoteItem(
-                        title = "Ideas",
-                        text = "3 new ideas",
+                        title = context.getString(R.string.other),
+                        text = context.getString(R.string.items_selected_witharg, 3),
                         time = "Yesterday"
                     )
 
@@ -151,7 +151,7 @@ class MarkorNotesWidget : GlanceAppWidget() {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Open Markor",
+                            text = context.getString(R.string.open_with) + " " + context.getString(R.string.app_name),
                             style = TextStyle(
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 13.sp,

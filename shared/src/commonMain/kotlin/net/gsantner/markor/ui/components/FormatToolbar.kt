@@ -2,6 +2,8 @@
 
 package net.gsantner.markor.ui.components
 
+import markor.shared.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -70,7 +72,7 @@ fun FormatToolbar(
                 ) {
                     ExpressiveActionButton(
                         symbol = "B",
-                        description = "Bold",
+                        description = stringResource(Res.string.bold),
                         action = EditorAction.BOLD,
                         onAction = onAction,
                         shape = cookieShape,
@@ -78,7 +80,7 @@ fun FormatToolbar(
                     )
                     ExpressiveActionButton(
                         symbol = "I",
-                        description = "Italic",
+                        description = stringResource(Res.string.italic),
                         action = EditorAction.ITALIC,
                         onAction = onAction,
                         shape = cookieShape,
@@ -87,7 +89,7 @@ fun FormatToolbar(
                     )
                     ExpressiveActionButton(
                         symbol = "—",
-                        description = "Horizontal rule",
+                        description = stringResource(Res.string.horizontal_rule),
                         action = EditorAction.HORIZONTAL_RULE,
                         onAction = onAction,
                         shape = cookieShape
@@ -114,9 +116,9 @@ fun FormatToolbar(
                     CompactActionButton(Icons.Default.Title, "Header", onAction, EditorAction.HEADER)
                     CompactActionButton(Icons.Default.FormatQuote, "Quote", onAction, EditorAction.QUOTE)
                     CompactActionButton(Icons.Default.Image, "Image", onAction, EditorAction.IMAGE)
-                    CompactActionButton(Icons.AutoMirrored.Filled.FormatListBulleted, "Bullet list", onAction, EditorAction.LIST_BULLET)
-                    CompactActionButton(Icons.Default.FormatListNumbered, "Numbered list", onAction, EditorAction.LIST_NUMBERED)
-                    CompactActionButton(Icons.Default.CheckBox, "Task list", onAction, EditorAction.LIST_TASK)
+                    CompactActionButton(Icons.AutoMirrored.Filled.FormatListBulleted, stringResource(Res.string.bullet_list_label), onAction, EditorAction.LIST_BULLET)
+                    CompactActionButton(Icons.Default.FormatListNumbered, stringResource(Res.string.numbered_list_label), onAction, EditorAction.LIST_NUMBERED)
+                    CompactActionButton(Icons.Default.CheckBox, stringResource(Res.string.task_list), onAction, EditorAction.LIST_TASK)
                 }
             }
         }
