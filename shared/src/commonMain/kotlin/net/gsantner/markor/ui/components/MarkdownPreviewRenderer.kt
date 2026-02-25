@@ -7,6 +7,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 
@@ -63,14 +64,21 @@ private fun renderMarkdown(
                 3 -> if (isGridPreview) 12.sp else 20.sp
                 else -> if (isGridPreview) 11.sp else 18.sp
             }
-            lineStyle = SpanStyle(fontWeight = FontWeight.Bold, fontSize = fontSize, color = palette.accent)
+            lineStyle = SpanStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = fontSize,
+                brush = SolidColor(palette.accent),
+            )
         }
         
         // Blockquotes - strip >
         val quoteMatch = Regex("^>\\s*(.*)$").find(content)
         if (quoteMatch != null) {
             content = quoteMatch.groupValues[1]
-            lineStyle = SpanStyle(fontStyle = FontStyle.Italic, color = palette.subtle)
+            lineStyle = SpanStyle(
+                fontStyle = FontStyle.Italic,
+                brush = SolidColor(palette.subtle),
+            )
         }
         
         // Lists - replace markers with bullet
@@ -178,7 +186,7 @@ private fun processInlineStyles(text: String, palette: MarkdownColorPalette): In
         styles.add(SpanStyle(
             fontFamily = FontFamily.Monospace,
             background = palette.codeBackground,
-            color = palette.codeText
+            brush = SolidColor(palette.codeText),
         ) to (startPos..endPos))
     }
     

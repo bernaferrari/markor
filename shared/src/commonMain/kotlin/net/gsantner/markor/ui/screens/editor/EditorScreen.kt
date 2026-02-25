@@ -9,9 +9,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -35,6 +35,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.input.key.*
@@ -63,6 +66,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import okio.Path
 import okio.Path.Companion.toPath
+import net.gsantner.markor.data.local.AppSettings
 
 /**
  * Platform-specific back handler.
@@ -92,6 +96,11 @@ fun EditorScreen(
     viewModel: EditorViewModel = koinViewModel(),
     shareService: net.gsantner.markor.domain.service.ShareService = org.koin.compose.koinInject()
 ) {
+    val appSettings: AppSettings = org.koin.compose.koinInject()
+    val showLineNumbers by appSettings.isShowLineNumbers.collectAsState(initial = false)
+    val editorFontSize by appSettings.getEditorFontSize.collectAsState(initial = 16)
+    val wordWrap by appSettings.isWordWrap.collectAsState(initial = true)
+
     val scope = rememberCoroutineScope()
     var isPreviewMode by remember { mutableStateOf(false) }
     var activeFilePath by remember(filePath) { mutableStateOf(filePath) }
@@ -128,7 +137,8 @@ fun EditorScreen(
         document = viewModel.loadDocument(activeFilePath)
         val text = document?.content ?: ""
         val loadedDocument = document
-        titleInput = loadedDocument?.title?.ifBlank { loadedDocument.name.substringBeforeLast(".") } ?: ""
+        titleInput =
+            loadedDocument?.title?.ifBlank { loadedDocument.name.substringBeforeLast(".") } ?: ""
         content = TextFieldValue(text)
         isLoading = false
     }
@@ -147,40 +157,40 @@ fun EditorScreen(
     val redoStack = remember { mutableStateListOf<TextFieldValue>() }
     var undoDebounceJob by remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
     var editorFocusNonce by remember { mutableIntStateOf(0) }
-    
+
     // Search State
     var showSearchDialog by remember { mutableStateOf(false) }
-    
+
     // Export Dialog State
     var showExportDialog by remember { mutableStateOf(false) }
 
     // Outline State
     var showOutlinePanel by remember { mutableStateOf(false) }
-    
+
     val outlineItems = remember(content.text) {
         net.gsantner.markor.ui.components.parseOutline(content.text)
     }
-    
+
     // NEW: Color Selection State
     var showColorSheet by remember { mutableStateOf(false) }
     val noteColor by viewModel.noteColor.collectAsState()
-    
+
     // Image picker and asset manager
     val assetManager: ImageAssetManager = org.koin.compose.koinInject()
     var pendingImageInsert by remember { mutableStateOf<PickedImage?>(null) }
-    
+
     val launchImagePicker = rememberImagePickerLauncher { pickedImage ->
         pendingImageInsert = pickedImage
     }
-    
+
     // Handle picked image
     LaunchedEffect(pendingImageInsert) {
         val image = pendingImageInsert ?: return@LaunchedEffect
         pendingImageInsert = null // Reset
-        
+
         val currentPath = activeFilePath.toPath()
         val relativePath = assetManager.addImage(currentPath, image.data, image.fileName)
-        
+
         if (relativePath != null) {
             // Insert markdown image syntax at cursor
             val imageMarkdown = "![]($relativePath)"
@@ -188,13 +198,16 @@ fun EditorScreen(
             hasUnsavedChanges = true
         }
     }
-    
+
     // NEW: Focus Mode State
     var isFocusMode by remember { mutableStateOf(false) }
     val currentParagraphIndex = remember(content.selection.start, content.text) {
-        net.gsantner.markor.ui.components.getCurrentParagraphIndex(content.text, content.selection.start)
+        net.gsantner.markor.ui.components.getCurrentParagraphIndex(
+            content.text,
+            content.selection.start
+        )
     }
-    
+
     // NEW: Slash Command State
     val slashCommandState = remember(content.text, content.selection) {
         net.gsantner.markor.ui.components.detectSlashCommand(content)
@@ -202,7 +215,7 @@ fun EditorScreen(
     val showSlashMenu = slashCommandState != null
     val slashQuery = slashCommandState?.second ?: ""
     val slashStartIndex = slashCommandState?.first ?: -1
-    
+
 
     // Helper to push to undo stack
     fun pushToUndo(value: TextFieldValue) {
@@ -212,7 +225,7 @@ fun EditorScreen(
             if (undoStack.size > 50) undoStack.removeAt(0) // Limit stack size
         }
     }
-    
+
     if (showSearchDialog) {
         net.gsantner.markor.ui.components.AdvancedSearchReplaceDialog(
             onDismiss = { showSearchDialog = false },
@@ -225,56 +238,72 @@ fun EditorScreen(
                     index = text.indexOf(query, 0, ignoreCase = true)
                 }
                 if (index != -1) {
-                    content = content.copy(selection = androidx.compose.ui.text.TextRange(index, index + query.length))
+                    content = content.copy(
+                        selection = androidx.compose.ui.text.TextRange(
+                            index,
+                            index + query.length
+                        )
+                    )
                 }
             },
             onReplace = { query, replacement ->
                 val text = content.text
                 val selection = content.selection
                 // Check if current selection matches query (simple verify before replace)
-                val selectedText = if (selection.min != selection.max) text.substring(selection.min, selection.max) else ""
-                
+                val selectedText = if (selection.min != selection.max) text.substring(
+                    selection.min,
+                    selection.max
+                ) else ""
+
                 if (selectedText.equals(query, ignoreCase = true)) {
                     // Replace selection
                     val newText = text.replaceRange(selection.min, selection.max, replacement)
                     pushToUndo(content)
                     content = content.copy(
-                         text = newText,
-                         selection = androidx.compose.ui.text.TextRange(selection.min + replacement.length)
+                        text = newText,
+                        selection = androidx.compose.ui.text.TextRange(selection.min + replacement.length)
                     )
                     hasUnsavedChanges = true
                 } else {
-                     // Try to find next and select
-                     val startIndex = content.selection.end
-                     var index = text.indexOf(query, startIndex, ignoreCase = true)
-                     if (index == -1) index = text.indexOf(query, 0, ignoreCase = true)
-                     
-                     if (index != -1) {
-                         // Select it so user can click replace again
-                         content = content.copy(selection = androidx.compose.ui.text.TextRange(index, index + query.length))
-                         // Optionally auto-replace? Standard behavior is "Find, then Replace".
-                         // Let's just find it first if not selected.
-                     }
+                    // Try to find next and select
+                    val startIndex = content.selection.end
+                    var index = text.indexOf(query, startIndex, ignoreCase = true)
+                    if (index == -1) index = text.indexOf(query, 0, ignoreCase = true)
+
+                    if (index != -1) {
+                        // Select it so user can click replace again
+                        content = content.copy(
+                            selection = androidx.compose.ui.text.TextRange(
+                                index,
+                                index + query.length
+                            )
+                        )
+                        // Optionally auto-replace? Standard behavior is "Find, then Replace".
+                        // Let's just find it first if not selected.
+                    }
                 }
             },
             onReplaceAll = { query, replacement ->
-                 val newText = content.text.replace(query, replacement, ignoreCase = true)
-                 if (newText != content.text) {
-                     pushToUndo(content)
-                     content = content.copy(text = newText)
-                     hasUnsavedChanges = true
-                 }
+                val newText = content.text.replace(query, replacement, ignoreCase = true)
+                if (newText != content.text) {
+                    pushToUndo(content)
+                    content = content.copy(text = newText)
+                    hasUnsavedChanges = true
+                }
             }
         )
     }
 
     // Flip Animation State
     val rotation = remember { Animatable(0f) }
-    
+
     LaunchedEffect(isPreviewMode) {
         rotation.animateTo(
             targetValue = if (isPreviewMode) 180f else 0f,
-            animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow)
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioLowBouncy,
+                stiffness = Spring.StiffnessLow
+            )
         )
     }
 
@@ -291,7 +320,10 @@ fun EditorScreen(
                 // Escape to close dialogs
                 if (event.key == Key.Escape && event.type == KeyEventType.KeyDown) {
                     when {
-                        showSearchDialog -> { showSearchDialog = false; true }
+                        showSearchDialog -> {
+                            showSearchDialog = false; true
+                        }
+
                         else -> false
                     }
                 }
@@ -307,6 +339,7 @@ fun EditorScreen(
                             }
                             true
                         }
+
                         Key.Z -> {
                             if (event.isShiftPressed) {
                                 // Redo
@@ -325,6 +358,7 @@ fun EditorScreen(
                             }
                             true
                         }
+
                         Key.Y -> { // Redo alternative
                             if (redoStack.isNotEmpty()) {
                                 undoStack.add(content)
@@ -333,59 +367,71 @@ fun EditorScreen(
                             }
                             true
                         }
+
                         Key.B -> {
                             pushToUndo(content)
                             content = wrapSelection(content, "**", "**")
                             hasUnsavedChanges = true
                             true
                         }
+
                         Key.I -> {
                             pushToUndo(content)
                             content = wrapSelection(content, "_", "_")
                             hasUnsavedChanges = true
                             true
                         }
+
                         Key.U -> {
                             pushToUndo(content)
                             content = wrapSelection(content, "`", "`")
                             hasUnsavedChanges = true
                             true
                         }
+
                         Key.K -> {
                             pushToUndo(content)
                             content = wrapSelection(content, "[", "](url)")
                             hasUnsavedChanges = true
                             true
                         }
+
                         Key.F -> {
                             showSearchDialog = true
                             true
                         }
+
                         Key.H -> {
                             // Find/Replace
                             showSearchDialog = true
                             true
                         }
+
                         Key.A -> {
                             // Select all
                             true // Let the text field handle it
                         }
+
                         Key.C -> {
                             // Copy - let system handle
                             false
                         }
+
                         Key.X -> {
                             // Cut - let system handle
                             false
                         }
+
                         Key.V -> {
                             // Paste - let system handle
                             false
                         }
+
                         Key.Enter -> {
                             // New line with potential smart behavior
                             false // Let default behavior handle
                         }
+
                         else -> false
                     }
                 }
@@ -396,8 +442,7 @@ fun EditorScreen(
                     content = content.copy(text = content.text + "\t")
                     hasUnsavedChanges = true
                     true
-                }
-                else false
+                } else false
             },
         containerColor = editorBackgroundColor,
         topBar = {
@@ -470,7 +515,7 @@ fun EditorScreen(
                     }
 
                     Spacer(modifier = Modifier.width(4.dp))
-                    
+
                     // Overflow menu remains available in both edit and preview modes.
                     var showOverflowMenu by remember { mutableStateOf(false) }
                     Box {
@@ -482,88 +527,91 @@ fun EditorScreen(
                                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         ) {
-                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(Res.string.more_options))
+                            Icon(
+                                Icons.Default.MoreVert,
+                                contentDescription = stringResource(Res.string.more_options)
+                            )
                         }
-                        
+
                         DropdownMenu(
                             expanded = showOverflowMenu,
                             onDismissRequest = { showOverflowMenu = false }
                         ) {
-                                DropdownMenuItem(
-                                    text = { Text("Archive") },
-                                    leadingIcon = { Icon(Icons.Default.Archive, null) },
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        viewModel.setArchived(activeFilePath, true)
-                                        onNavigateBack()
-                                    }
-                                )
+                            DropdownMenuItem(
+                                text = { Text("Archive") },
+                                leadingIcon = { Icon(Icons.Default.Archive, null) },
+                                onClick = {
+                                    showOverflowMenu = false
+                                    viewModel.setArchived(activeFilePath, true)
+                                    onNavigateBack()
+                                }
+                            )
 
-                                DropdownMenuItem(
-                                    text = { Text("Undo") },
-                                    leadingIcon = { Icon(Icons.AutoMirrored.Filled.Undo, null) },
-                                    onClick = {
-                                        if (undoStack.isNotEmpty()) {
-                                            redoStack.add(content)
-                                            content = undoStack.removeAt(undoStack.lastIndex)
-                                        }
-                                        showOverflowMenu = false
-                                    },
-                                    enabled = undoStack.isNotEmpty()
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Redo") },
-                                    leadingIcon = { Icon(Icons.AutoMirrored.Filled.Redo, null) },
-                                    onClick = {
-                                        if (redoStack.isNotEmpty()) {
-                                            undoStack.add(content)
-                                            content = redoStack.removeAt(redoStack.lastIndex)
-                                        }
-                                        showOverflowMenu = false
-                                    },
-                                    enabled = redoStack.isNotEmpty()
-                                )
-                                HorizontalDivider()
-                                DropdownMenuItem(
-                                    text = { Text("Find & Replace") },
-                                    leadingIcon = { Icon(Icons.Default.Search, null) },
-                                    onClick = {
-                                        showSearchDialog = true
-                                        showOverflowMenu = false
+                            DropdownMenuItem(
+                                text = { Text("Undo") },
+                                leadingIcon = { Icon(Icons.AutoMirrored.Filled.Undo, null) },
+                                onClick = {
+                                    if (undoStack.isNotEmpty()) {
+                                        redoStack.add(content)
+                                        content = undoStack.removeAt(undoStack.lastIndex)
                                     }
-                                )
-                                HorizontalDivider()
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(Res.string.document_outline)) },
-                                    leadingIcon = { Icon(Icons.AutoMirrored.Filled.List, null) },
-                                    onClick = {
-                                        showOutlinePanel = true
-                                        showOverflowMenu = false
-                                    },
-                                    enabled = outlineItems.isNotEmpty()
-                                )
-                                HorizontalDivider()
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(Res.string.export)) },
-                                    leadingIcon = { Icon(Icons.Default.Share, null) },
-                                    onClick = {
-                                        showExportDialog = true
-                                        showOverflowMenu = false
+                                    showOverflowMenu = false
+                                },
+                                enabled = undoStack.isNotEmpty()
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Redo") },
+                                leadingIcon = { Icon(Icons.AutoMirrored.Filled.Redo, null) },
+                                onClick = {
+                                    if (redoStack.isNotEmpty()) {
+                                        undoStack.add(content)
+                                        content = redoStack.removeAt(redoStack.lastIndex)
                                     }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text(if (isFocusMode) "Exit Focus Mode" else "Focus Mode") },
-                                    leadingIcon = { 
-                                        Icon(
-                                            Icons.Default.CenterFocusStrong,
-                                            null
-                                        ) 
-                                    },
-                                    onClick = { 
-                                        isFocusMode = !isFocusMode
-                                        showOverflowMenu = false
-                                    }
-                                )
+                                    showOverflowMenu = false
+                                },
+                                enabled = redoStack.isNotEmpty()
+                            )
+                            HorizontalDivider()
+                            DropdownMenuItem(
+                                text = { Text("Find & Replace") },
+                                leadingIcon = { Icon(Icons.Default.Search, null) },
+                                onClick = {
+                                    showSearchDialog = true
+                                    showOverflowMenu = false
+                                }
+                            )
+                            HorizontalDivider()
+                            DropdownMenuItem(
+                                text = { Text(stringResource(Res.string.document_outline)) },
+                                leadingIcon = { Icon(Icons.AutoMirrored.Filled.List, null) },
+                                onClick = {
+                                    showOutlinePanel = true
+                                    showOverflowMenu = false
+                                },
+                                enabled = outlineItems.isNotEmpty()
+                            )
+                            HorizontalDivider()
+                            DropdownMenuItem(
+                                text = { Text(stringResource(Res.string.export)) },
+                                leadingIcon = { Icon(Icons.Default.Share, null) },
+                                onClick = {
+                                    showExportDialog = true
+                                    showOverflowMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(if (isFocusMode) "Exit Focus Mode" else "Focus Mode") },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.CenterFocusStrong,
+                                        null
+                                    )
+                                },
+                                onClick = {
+                                    isFocusMode = !isFocusMode
+                                    showOverflowMenu = false
+                                }
+                            )
                         }
                     }
                 },
@@ -575,7 +623,7 @@ fun EditorScreen(
             )
         },
         bottomBar = {
-           if (!isPreviewMode) {
+            if (!isPreviewMode) {
                 FormatToolbar { action ->
                     // Capture state before change for Undo
                     if (action != EditorAction.UNDO && action != EditorAction.REDO && action != EditorAction.SEARCH) {
@@ -594,16 +642,23 @@ fun EditorScreen(
                         EditorAction.LIST_NUMBERED -> content = insertAtStartOfLine(content, "1. ")
                         EditorAction.LIST_TASK -> content = insertAtStartOfLine(content, "- [ ] ")
                         EditorAction.QUOTE -> content = insertAtStartOfLine(content, "> ")
-                        EditorAction.HORIZONTAL_RULE -> content = insertAtCursor(content, "\n---\n", "")
-                        EditorAction.UNDO -> { /* Handled in top bar now */ }
-                        EditorAction.REDO -> { /* Handled in top bar now */ }
-                        EditorAction.SEARCH -> { /* Handled in top bar now */ }
+                        EditorAction.HORIZONTAL_RULE -> content =
+                            insertAtCursor(content, "\n---\n", "")
+
+                        EditorAction.UNDO -> { /* Handled in top bar now */
+                        }
+
+                        EditorAction.REDO -> { /* Handled in top bar now */
+                        }
+
+                        EditorAction.SEARCH -> { /* Handled in top bar now */
+                        }
                     }
                     if (action != EditorAction.SEARCH && action != EditorAction.UNDO && action != EditorAction.REDO) {
                         hasUnsavedChanges = true
                     }
                 }
-           }
+            }
         }
     ) { paddingValues ->
         Box(
@@ -625,95 +680,99 @@ fun EditorScreen(
                         }
                     }
             ) {
-               if (isBack) {
+                if (isBack) {
                     // Preview (Clean Markdown)
-                     // Because we flipped the container 180, the content inside is reversed if we don't handle it?
-                     // Wait, we subtracted 180 when > 90.
-                     // 0->90: Front visible.
-                     // 90->180: Back visible. Back is rotated 180. We render Back rotated -180 rel to parent?
-                     // Logic:
-                     // 0: RotY=0. 
-                     // 180: RotY=180.
-                     // If we are at 180, the content is mirrored.
-                     // So when > 90, we should render content FLIPPED relative to the container, OR flip the container logic properly.
-                     // Common logic:
-                     // Modifier.graphicsLayer { rotationY = degrees }
-                     // Inside:
-                     // if (degrees <= 90) Front() else { Modifier.graphicsLayer { rotationY = 180f } Back() }
-                     // Let's rely on the conditional 'isBack' logic above:
-                     // IF isBack: rotationY = rotation.value - 180f (e.g., 180 - 180 = 0).
-                     // So at 180 (target), rotationY is 0. So Back is upright.
-                     // At 91: 91 - 180 = -89.
-                     // Front at 89 vs Back at -89. That connects seamlessly.
-                     
-                   PreviewTab(
-                       filePath = activeFilePath,
-                       title = titleInput,
-                       content = content.text,
-                       backgroundColor = editorContentSurfaceColor,
-                       onTapToEdit = {
-                           editorFocusNonce++
-                           isPreviewMode = false
-                       }
-                   )
-               } else {
-                   // Classic Editor
-                   EditorTab(
-                       filePath = activeFilePath,
-                       title = titleInput,
-                       content = content,
-                       surfaceColor = editorContentSurfaceColor,
-                       focusRequestNonce = editorFocusNonce,
-                       autoFocusOnStart = openKeyboardOnStart &&
-                           !initialAutoFocusConsumed &&
-                           !isLoading &&
-                           (document?.content?.isBlank() == true),
-                       onAutoFocusConsumed = { initialAutoFocusConsumed = true },
-                       onTitleChange = { titleInput = it },
-                       onTitleCommit = {
-                           scope.launch {
-                               val renameResult = commitTitleRenameIfNeeded(
-                                   titleInput = titleInput,
-                                   document = document,
-                                   renameDocument = viewModel::renameDocument
-                               )
-                               titleInput = renameResult.updatedTitleInput
-                               document = renameResult.document
-                               renameResult.updatedPath?.let { activeFilePath = it.toString() }
-                           }
-                       },
-                       onContentChange = { newContent ->
-                           // Smart Undo: Debounce logic to avoid cluttering history with every character
-                           // We push to undo stack only if:
-                           // 1. User pauses for 2 seconds (typing session ended)
-                           // 2. Significant change (Paste/Cut > 10 chars)
-                           // 3. Document save triggers (handled in autosave, but we track edit time here)
-                           
-                           val isSignificantChange = kotlin.math.abs(newContent.text.length - content.text.length) > 10
-                           
-                           if (isSignificantChange) {
-                               pushToUndo(content) // Save previous state immediately
-                           } else {
-                               // For normal typing, we rely on a debounce job to save state AFTER user stops typing
-                               // Cancel previous job -> user is still typing
-                               undoDebounceJob?.cancel()
-                               undoDebounceJob = scope.launch {
-                                   delay(2000) // 2 second pause = "commit"
-                                   pushToUndo(newContent)
-                               }
-                           }
-                           
-                           // If this is the FIRST character after a save/undo, we might want to ensure we have a base state?
-                           // pushToUndo checks for duplicates so it's safe.
-                           
-                           content = newContent
-                           hasUnsavedChanges = true
-                       }
-                   )
-               }
+                    // Because we flipped the container 180, the content inside is reversed if we don't handle it?
+                    // Wait, we subtracted 180 when > 90.
+                    // 0->90: Front visible.
+                    // 90->180: Back visible. Back is rotated 180. We render Back rotated -180 rel to parent?
+                    // Logic:
+                    // 0: RotY=0.
+                    // 180: RotY=180.
+                    // If we are at 180, the content is mirrored.
+                    // So when > 90, we should render content FLIPPED relative to the container, OR flip the container logic properly.
+                    // Common logic:
+                    // Modifier.graphicsLayer { rotationY = degrees }
+                    // Inside:
+                    // if (degrees <= 90) Front() else { Modifier.graphicsLayer { rotationY = 180f } Back() }
+                    // Let's rely on the conditional 'isBack' logic above:
+                    // IF isBack: rotationY = rotation.value - 180f (e.g., 180 - 180 = 0).
+                    // So at 180 (target), rotationY is 0. So Back is upright.
+                    // At 91: 91 - 180 = -89.
+                    // Front at 89 vs Back at -89. That connects seamlessly.
+
+                    PreviewTab(
+                        filePath = activeFilePath,
+                        title = titleInput,
+                        content = content.text,
+                        backgroundColor = editorContentSurfaceColor,
+                        onTapToEdit = {
+                            editorFocusNonce++
+                            isPreviewMode = false
+                        }
+                    )
+                } else {
+                    // Classic Editor
+                    EditorTab(
+                        filePath = activeFilePath,
+                        title = titleInput,
+                        content = content,
+                        showLineNumbers = showLineNumbers,
+                        editorFontSize = editorFontSize,
+                        wordWrap = wordWrap,
+                        surfaceColor = editorContentSurfaceColor,
+                        focusRequestNonce = editorFocusNonce,
+                        autoFocusOnStart = openKeyboardOnStart &&
+                                !initialAutoFocusConsumed &&
+                                !isLoading &&
+                                (document?.content?.isBlank() == true),
+                        onAutoFocusConsumed = { initialAutoFocusConsumed = true },
+                        onTitleChange = { titleInput = it },
+                        onTitleCommit = {
+                            scope.launch {
+                                val renameResult = commitTitleRenameIfNeeded(
+                                    titleInput = titleInput,
+                                    document = document,
+                                    renameDocument = viewModel::renameDocument
+                                )
+                                titleInput = renameResult.updatedTitleInput
+                                document = renameResult.document
+                                renameResult.updatedPath?.let { activeFilePath = it.toString() }
+                            }
+                        },
+                        onContentChange = { newContent ->
+                            // Smart Undo: Debounce logic to avoid cluttering history with every character
+                            // We push to undo stack only if:
+                            // 1. User pauses for 2 seconds (typing session ended)
+                            // 2. Significant change (Paste/Cut > 10 chars)
+                            // 3. Document save triggers (handled in autosave, but we track edit time here)
+
+                            val isSignificantChange =
+                                kotlin.math.abs(newContent.text.length - content.text.length) > 10
+
+                            if (isSignificantChange) {
+                                pushToUndo(content) // Save previous state immediately
+                            } else {
+                                // For normal typing, we rely on a debounce job to save state AFTER user stops typing
+                                // Cancel previous job -> user is still typing
+                                undoDebounceJob?.cancel()
+                                undoDebounceJob = scope.launch {
+                                    delay(2000) // 2 second pause = "commit"
+                                    pushToUndo(newContent)
+                                }
+                            }
+
+                            // If this is the FIRST character after a save/undo, we might want to ensure we have a base state?
+                            // pushToUndo checks for duplicates so it's safe.
+
+                            content = newContent
+                            hasUnsavedChanges = true
+                        }
+                    )
+                }
             }
         }
-        
+
         // Slash Command Menu (appears above keyboard when typing /)
         net.gsantner.markor.ui.components.SlashCommandMenu(
             visible = showSlashMenu && !isPreviewMode,
@@ -721,8 +780,8 @@ fun EditorScreen(
             onSelect = { command ->
                 // Apply the slash command to the content
                 val newContent = net.gsantner.markor.ui.components.applySlashCommand(
-                    content, 
-                    command, 
+                    content,
+                    command,
                     slashStartIndex
                 )
                 pushToUndo(content)
@@ -731,56 +790,56 @@ fun EditorScreen(
             },
             onDismiss = { /* Menu dismisses when user types something else */ }
         )
-        
+
         // Export Dialog
         if (showExportDialog && document != null) {
-        val doc = document!!
-        net.gsantner.markor.ui.components.ExportDialog(
-            filePath = activeFilePath,
-            fileName = doc.name,
-            markdownContent = content.text,
-            onDismiss = { showExportDialog = false },
-            onShareHtml = { showExportDialog = false },
-            onPrint = { showExportDialog = false },
-            onShareMarkdown = {
-                showExportDialog = false
-                val doc = document!!
-                shareService.shareFile(
-                    fileName = doc.name, 
-                    content = content.text.encodeToByteArray(),
-                    title = "Share Markdown",
-                    mimeType = "text/markdown"
-                )
-            },
-        )
-    }
-    
-    // Outline Panel (modal bottom sheet)
-    if (showOutlinePanel) {
-        net.gsantner.markor.ui.components.OutlinePanel(
-            items = outlineItems,
-            currentCharOffset = content.selection.start,
-            onItemClick = { item ->
-                // Navigate to the heading
-                content = content.copy(
-                    selection = androidx.compose.ui.text.TextRange(item.charOffset)
-                )
-            },
-            onDismiss = { showOutlinePanel = false }
-        )
-    }
+            val doc = document!!
+            net.gsantner.markor.ui.components.ExportDialog(
+                filePath = activeFilePath,
+                fileName = doc.name,
+                markdownContent = content.text,
+                onDismiss = { showExportDialog = false },
+                onShareHtml = { showExportDialog = false },
+                onPrint = { showExportDialog = false },
+                onShareMarkdown = {
+                    showExportDialog = false
+                    val doc = document!!
+                    shareService.shareFile(
+                        fileName = doc.name,
+                        content = content.text.encodeToByteArray(),
+                        title = "Share Markdown",
+                        mimeType = "text/markdown"
+                    )
+                },
+            )
+        }
 
-    if (showColorSheet) {
-        net.gsantner.markor.ui.components.ColorSelectionSheet(
-            currentColor = noteColor,
-            onColorSelected = { color ->
-                viewModel.setColor(activeFilePath, color)
-                showColorSheet = false
-            },
-            onDismiss = { showColorSheet = false }
-        )
+        // Outline Panel (modal bottom sheet)
+        if (showOutlinePanel) {
+            net.gsantner.markor.ui.components.OutlinePanel(
+                items = outlineItems,
+                currentCharOffset = content.selection.start,
+                onItemClick = { item ->
+                    // Navigate to the heading
+                    content = content.copy(
+                        selection = androidx.compose.ui.text.TextRange(item.charOffset)
+                    )
+                },
+                onDismiss = { showOutlinePanel = false }
+            )
+        }
+
+        if (showColorSheet) {
+            net.gsantner.markor.ui.components.ColorSelectionSheet(
+                currentColor = noteColor,
+                onColorSelected = { color ->
+                    viewModel.setColor(activeFilePath, color)
+                    showColorSheet = false
+                },
+                onDismiss = { showColorSheet = false }
+            )
+        }
     }
-}
 }
 
 private data class TitleRenameResult(
@@ -808,7 +867,10 @@ private suspend fun commitTitleRenameIfNeeded(
 
     val targetName = buildTargetName(trimmedTitle, document.name)
     if (targetName == document.name) {
-        return TitleRenameResult(document = document.copy(title = trimmedTitle), updatedTitleInput = trimmedTitle)
+        return TitleRenameResult(
+            document = document.copy(title = trimmedTitle),
+            updatedTitleInput = trimmedTitle
+        )
     }
 
     val renamedPath = renameDocument(document, targetName)
@@ -837,11 +899,94 @@ private fun buildTargetName(title: String, currentFileName: String): String {
     return "$sanitizedTitle.$currentExt"
 }
 
+private data class LineNumberMeta(
+    val number: Int?,
+    val lineHeightPx: Float = 0f
+)
+
+private fun darkenColor(color: Color, amount: Float): Color {
+    val factor = amount.coerceIn(0f, 1f)
+    return Color(
+        red = (color.red * factor).coerceIn(0f, 1f),
+        green = (color.green * factor).coerceIn(0f, 1f),
+        blue = (color.blue * factor).coerceIn(0f, 1f),
+        alpha = color.alpha
+    )
+}
+
+private fun buildLineNumberMetadata(text: String): List<LineNumberMeta> {
+    return buildLogicalLineNumberMetadata(text)
+}
+
+private fun buildWrappedLineNumberMetadata(
+    text: String,
+    layoutResult: TextLayoutResult
+): List<LineNumberMeta> {
+    if (text.isEmpty()) {
+        return listOf(LineNumberMeta(number = 1))
+    }
+    if (layoutResult.lineCount <= 0) {
+        return buildLogicalLineNumberMetadata(text)
+    }
+
+    val logicalLineMetadata = buildLogicalLineNumberMetadata(text)
+    val logicalLineStarts = buildLogicalLineStarts(text)
+    val usedLogicalLineIndexes = hashSetOf<Int>()
+    val result = MutableList(layoutResult.lineCount) { visualLine ->
+        LineNumberMeta(
+            number = null,
+            lineHeightPx = layoutResult.getLineBottom(visualLine) - layoutResult.getLineTop(visualLine)
+        )
+    }
+
+    for ((logicalLineIndex, lineStart) in logicalLineStarts.withIndex()) {
+        val logicalMeta = logicalLineMetadata.getOrNull(logicalLineIndex)
+            ?: continue
+
+        val visualLine = if (lineStart >= text.length && text.isNotEmpty()) {
+            layoutResult.lineCount - 1
+        } else {
+            layoutResult.getLineForOffset(lineStart)
+        }
+
+        if (!usedLogicalLineIndexes.contains(logicalLineIndex) && visualLine in result.indices) {
+            result[visualLine] = result[visualLine].copy(number = logicalMeta.number)
+            usedLogicalLineIndexes.add(logicalLineIndex)
+        }
+    }
+    return result.ifEmpty { listOf(LineNumberMeta(number = 1)) }
+}
+
+private fun buildLogicalLineNumberMetadata(text: String): List<LineNumberMeta> =
+    if (text.isEmpty()) listOf(LineNumberMeta(number = 1))
+    else text.split('\n').mapIndexed { index, line ->
+        LineNumberMeta(number = index + 1)
+    }
+
+private fun buildLogicalLineStarts(text: String): IntArray {
+    if (text.isEmpty()) return intArrayOf(0)
+
+    val lineCount = text.count { it == '\n' } + 1
+    val starts = IntArray(lineCount)
+    var currentLine = 0
+    starts[0] = 0
+    for (index in text.indices) {
+        if (text[index] == '\n' && currentLine + 1 < lineCount) {
+            currentLine++
+            starts[currentLine] = index + 1
+        }
+    }
+    return starts
+}
+
 @Composable
 private fun EditorTab(
     filePath: String,
     title: String,
     content: TextFieldValue,
+    showLineNumbers: Boolean,
+    editorFontSize: Int,
+    wordWrap: Boolean,
     surfaceColor: Color,
     focusRequestNonce: Int = 0,
     autoFocusOnStart: Boolean = false,
@@ -858,6 +1003,30 @@ private fun EditorTab(
     val focusRequester = remember(filePath) { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var didAutoFocus by remember(filePath) { mutableStateOf(false) }
+    val editorTextStyle = MaterialTheme.typography.bodyLarge.copy(
+        fontFamily = FontFamily.Monospace,
+        fontSize = editorFontSize.sp,
+        lineHeight = (editorFontSize * 1.45f).sp,
+        color = markdownPalette.body,
+        letterSpacing = 0.sp
+    )
+    val editorLineHeight = (editorFontSize * 1.45f).sp
+    val markdownTransform = remember(colorScheme, surfaceColor, editorFontSize) {
+        MarkdownVisualTransformation(
+            colorScheme = colorScheme,
+            backgroundColor = surfaceColor,
+            editorFontSize = editorFontSize
+        )
+    }
+                var lineNumberMetadata by remember(showLineNumbers, content.text) {
+                    mutableStateOf(
+                        if (showLineNumbers) {
+                            buildLineNumberMetadata(content.text)
+                        } else {
+                            emptyList()
+            }
+        )
+    }
 
     LaunchedEffect(autoFocusOnStart, didAutoFocus) {
         if (autoFocusOnStart && !didAutoFocus) {
@@ -883,12 +1052,21 @@ private fun EditorTab(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = MarkorTheme.spacing.large)
+                .padding(
+                    start = MarkorTheme.spacing.large,
+                    end = MarkorTheme.spacing.large,
+                    bottom = MarkorTheme.spacing.large
+                )
                 .background(
                     surfaceColor,
-                    MaterialTheme.shapes.large
+                    MaterialTheme.shapes.extraLarge
                 )
-                .padding(horizontal = MarkorTheme.spacing.small)
+                .padding(
+                    start = if (showLineNumbers) 0.dp else MarkorTheme.spacing.medium,
+                    end = MarkorTheme.spacing.medium,
+                    top = MarkorTheme.spacing.small,
+                    bottom = MarkorTheme.spacing.medium
+                )
         ) {
             val bodyMinHeight = (maxHeight - 88.dp).coerceAtLeast(220.dp)
 
@@ -897,91 +1075,149 @@ private fun EditorTab(
                     .fillMaxSize()
                     .verticalScroll(editorScrollState)
             ) {
-            SharedElementContainer(
-                key = SharedTransitionKeys.fileTitle(filePath),
-                isSource = false
-            ) {
-                TextField(
-                    value = title,
-                    onValueChange = onTitleChange,
-                    placeholder = {
-                        Text(
-                            text = "Title",
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                        )
-                    },
-                    singleLine = true,
-                    textStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Sentences,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            onTitleCommit()
-                            focusRequester.requestFocus()
-                            keyboardController?.show()
-                        }
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .onPreviewKeyEvent { event ->
-                            if (event.type == KeyEventType.KeyDown &&
-                                (event.key == Key.Enter || event.key == Key.NumPadEnter)
-                            ) {
+                SharedElementContainer(
+                    key = SharedTransitionKeys.fileTitle(filePath),
+                    isSource = false
+                ) {
+                    TextField(
+                        value = title,
+                        onValueChange = onTitleChange,
+                        placeholder = {
+                            Text(
+                                text = "Title",
+                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                            )
+                        },
+                        singleLine = true,
+                        textStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.Sentences,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
                                 onTitleCommit()
                                 focusRequester.requestFocus()
                                 keyboardController?.show()
-                                true
-                            } else {
+                            }
+                        ),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onPreviewKeyEvent { event ->
+                                if (event.type == KeyEventType.KeyDown &&
+                                    (event.key == Key.Enter || event.key == Key.NumPadEnter)
+                                ) {
+                                    onTitleCommit()
+                                    focusRequester.requestFocus()
+                                    keyboardController?.show()
+                                    true
+                                } else {
+                                    false
+                                }
+                            }
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    if (showLineNumbers) {
+                        val lineNumberBackground = darkenColor(surfaceColor, 0.90f)
+                        val density = LocalDensity.current
+                        val editorLineHeightPx = with(density) { editorLineHeight.toPx() }
+                        Column(
+                            modifier = Modifier
+                                .width(44.dp)
+                                .fillMaxHeight()
+                                .heightIn(min = bodyMinHeight)
+                                .background(
+                                    lineNumberBackground,
+                                    RoundedCornerShape(topStart = 0.dp, topEnd = 12.dp, bottomStart = 0.dp, bottomEnd = 12.dp)
+                                )
+                                .padding(end = MarkorTheme.spacing.small)
+                        ) {
+                            lineNumberMetadata.forEach { line ->
+                                val gutterLineHeightPx = if (line.lineHeightPx > 0f) {
+                                    line.lineHeightPx
+                                } else {
+                                    editorLineHeightPx
+                                }
+                                val gutterLineHeightDp = with(density) { gutterLineHeightPx.toDp() }
+                                val numberLineStyle = editorTextStyle.copy(
+                                    fontSize = editorFontSize.sp,
+                                    color = if (line.number == null) {
+                                        Color.Transparent
+                                    } else {
+                                        markdownPalette.subtle
+                                    },
+                                    textAlign = TextAlign.End
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(gutterLineHeightDp),
+                                    contentAlignment = Alignment.CenterEnd
+                                ) {
+                                    Text(
+                                        text = line.number?.toString().orEmpty(),
+                                        style = numberLineStyle,
+                                        maxLines = 1,
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        textAlign = TextAlign.End
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    BasicTextField(
+                        value = content,
+                        onValueChange = onContentChange,
+                        textStyle = editorTextStyle,
+                        cursorBrush = SolidColor(markdownPalette.accent),
+                        visualTransformation = markdownTransform,
+                        onTextLayout = { layoutResult ->
+                            if (showLineNumbers) {
+                                val updated = buildWrappedLineNumberMetadata(
+                                    text = content.text,
+                                    layoutResult = layoutResult
+                                )
+                                if (updated != lineNumberMetadata) {
+                                    lineNumberMetadata = updated
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .padding(start = if (showLineNumbers) MarkorTheme.spacing.small else 0.dp)
+                            .weight(1f)
+                            .focusRequester(focusRequester)
+                            .heightIn(min = bodyMinHeight)
+                            .onPreviewKeyEvent { event ->
+                                if (event.type == KeyEventType.KeyDown && (event.key == Key.Enter || event.key == Key.NumPadEnter)) {
+                                    if (handleSmartEnter(content, onContentChange)) {
+                                        return@onPreviewKeyEvent true
+                                    }
+                                }
                                 false
                             }
-                        }
-                )
-            }
-            BasicTextField(
-                value = content,
-                onValueChange = onContentChange,
-                textStyle = MaterialTheme.typography.bodyLarge.copy(
-                    fontFamily = FontFamily.Monospace,
-                    lineHeight = 28.sp,
-                    color = markdownPalette.body,
-                    letterSpacing = 0.sp
-                ),
-                cursorBrush = SolidColor(markdownPalette.accent),
-                visualTransformation = let {
-                    remember(colorScheme, surfaceColor) {
-                        MarkdownVisualTransformation(
-                            colorScheme = colorScheme,
-                            backgroundColor = surfaceColor
-                        )
-                    }
-                },
-                modifier = Modifier
-                    .focusRequester(focusRequester)
-                    .fillMaxWidth()
-                    .heightIn(min = bodyMinHeight)
-                    .padding(MarkorTheme.spacing.large)
-                    .onPreviewKeyEvent { event ->
-                        if (event.type == KeyEventType.KeyDown && (event.key == Key.Enter || event.key == Key.NumPadEnter)) {
-                            if (handleSmartEnter(content, onContentChange)) {
-                                return@onPreviewKeyEvent true
-                            }
-                        }
-                        false
-                    }
-            )
+                        ,
+                        singleLine = !wordWrap,
+                    )
+                }
             }
         }
     }
 }
+
 
 private fun handleSmartEnter(
     value: TextFieldValue,
@@ -1020,10 +1256,16 @@ private fun handleSmartEnter(
                 // Continue list
                 val insert = "\n$whitespace$marker [ ] "
                 val newText = text.replaceRange(selection.start, selection.start, insert)
-                onValueChange(value.copy(text = newText, selection = TextRange(selection.start + insert.length)))
+                onValueChange(
+                    value.copy(
+                        text = newText,
+                        selection = TextRange(selection.start + insert.length)
+                    )
+                )
             }
             true
         }
+
         bulletMatch != null -> {
             val whitespace = bulletMatch.groupValues[1]
             val marker = bulletMatch.groupValues[2]
@@ -1034,10 +1276,16 @@ private fun handleSmartEnter(
             } else {
                 val insert = "\n$whitespace$marker "
                 val newText = text.replaceRange(selection.start, selection.start, insert)
-                onValueChange(value.copy(text = newText, selection = TextRange(selection.start + insert.length)))
+                onValueChange(
+                    value.copy(
+                        text = newText,
+                        selection = TextRange(selection.start + insert.length)
+                    )
+                )
             }
             true
         }
+
         numberedMatch != null -> {
             val whitespace = numberedMatch.groupValues[1]
             val number = numberedMatch.groupValues[2].toInt()
@@ -1048,10 +1296,16 @@ private fun handleSmartEnter(
             } else {
                 val insert = "\n$whitespace${number + 1}. "
                 val newText = text.replaceRange(selection.start, selection.start, insert)
-                onValueChange(value.copy(text = newText, selection = TextRange(selection.start + insert.length)))
+                onValueChange(
+                    value.copy(
+                        text = newText,
+                        selection = TextRange(selection.start + insert.length)
+                    )
+                )
             }
             true
         }
+
         else -> false
     }
 }
@@ -1126,13 +1380,14 @@ private fun PreviewTab(
                             if (block.content.isBlank()) {
                                 Spacer(modifier = Modifier.height(8.dp))
                             } else {
-                                val lineText = remember(block.content, colorScheme, backgroundColor) {
-                                    net.gsantner.markor.ui.components.renderCleanMarkdown(
-                                        block.content,
-                                        colorScheme,
-                                        backgroundColor
-                                    )
-                                }
+                                val lineText =
+                                    remember(block.content, colorScheme, backgroundColor) {
+                                        net.gsantner.markor.ui.components.renderCleanMarkdown(
+                                            block.content,
+                                            colorScheme,
+                                            backgroundColor
+                                        )
+                                    }
                                 Text(
                                     text = lineText,
                                     style = MaterialTheme.typography.bodyLarge.copy(
@@ -1142,6 +1397,7 @@ private fun PreviewTab(
                                 )
                             }
                         }
+
                         is PreviewBlock.Image -> {
                             AsyncImage(
                                 model = ImageRequest.Builder(context)
@@ -1206,7 +1462,8 @@ private fun buildPreviewBlocks(content: String, filePath: String): List<PreviewB
 }
 
 private fun resolvePreviewImageSource(imagePath: String, filePath: String): String? {
-    val source = imagePath.trim().removeSurrounding("<", ">").takeIf { it.isNotEmpty() } ?: return null
+    val source =
+        imagePath.trim().removeSurrounding("<", ">").takeIf { it.isNotEmpty() } ?: return null
     if (
         source.startsWith("http://") ||
         source.startsWith("https://") ||
@@ -1227,19 +1484,19 @@ private fun wrapSelection(value: TextFieldValue, prefix: String, suffix: String)
     val before = value.text.substring(0, value.selection.start)
     val selected = value.text.substring(value.selection.start, value.selection.end)
     val after = value.text.substring(value.selection.end)
-    
+
     val newText = before + prefix + selected + suffix + after
-    val newCursor = value.selection.start + prefix.length + selected.length 
-    
+    val newCursor = value.selection.start + prefix.length + selected.length
+
     return value.copy(text = newText, selection = androidx.compose.ui.text.TextRange(newCursor))
 }
 
 private fun insertAtCursor(value: TextFieldValue, prefix: String, suffix: String): TextFieldValue {
-     val before = value.text.substring(0, value.selection.start)
-     val after = value.text.substring(value.selection.end)
-     val newText = before + prefix + suffix + after
-     val newCursor = value.selection.start + prefix.length
-     return value.copy(text = newText, selection = androidx.compose.ui.text.TextRange(newCursor))
+    val before = value.text.substring(0, value.selection.start)
+    val after = value.text.substring(value.selection.end)
+    val newText = before + prefix + suffix + after
+    val newCursor = value.selection.start + prefix.length
+    return value.copy(text = newText, selection = androidx.compose.ui.text.TextRange(newCursor))
 }
 
 private fun insertAtStartOfLine(value: TextFieldValue, textToInsert: String): TextFieldValue {
@@ -1249,10 +1506,10 @@ private fun insertAtStartOfLine(value: TextFieldValue, textToInsert: String): Te
     while (lineStart > 0 && text[lineStart - 1] != '\n') {
         lineStart--
     }
-    
+
     val before = text.substring(0, lineStart)
     val after = text.substring(lineStart)
-    
+
     val newText = before + textToInsert + after
     val newCursor = value.selection.start + textToInsert.length
     return value.copy(text = newText, selection = androidx.compose.ui.text.TextRange(newCursor))

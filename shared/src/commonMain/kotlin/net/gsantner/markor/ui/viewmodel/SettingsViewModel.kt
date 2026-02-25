@@ -9,19 +9,12 @@ import kotlinx.coroutines.launch
 import net.gsantner.markor.data.local.AppSettings
 import net.gsantner.markor.domain.repository.IFileRepository
 import okio.Path.Companion.toPath
+import net.gsantner.markor.ui.theme.ThemePaletteOption
 
 enum class ThemeModeOption(val token: String) {
     AUTO("auto"),
     LIGHT("light"),
     DARK("dark")
-}
-
-enum class ThemePaletteOption(val token: String) {
-    MARKOR("markor"),
-    RED("red"),
-    ORANGE("orange"),
-    GREEN("green"),
-    TEAL("teal")
 }
 
 class SettingsViewModel(
@@ -32,10 +25,10 @@ class SettingsViewModel(
 ) : ViewModel() {
 
     val showLineNumbers = appSettings.isShowLineNumbers
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     val wordWrap = appSettings.isWordWrap
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
     val autoFormat = appSettings.isEditorAutoFormat
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
@@ -49,7 +42,7 @@ class SettingsViewModel(
 
     val themePalette = appSettings.getAppTheme
         .map { parseThemeSelection(it).first }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ThemePaletteOption.MARKOR)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ThemePaletteOption.DYNAMIC)
 
     // File Browser
     val fileBrowserShowHidden = appSettings.isFileBrowserShowHiddenFiles
@@ -149,9 +142,9 @@ class SettingsViewModel(
     }
 
     private fun parseThemeSelection(rawValue: String): Pair<ThemePaletteOption, ThemeModeOption> {
-        if (rawValue.isBlank()) return ThemePaletteOption.MARKOR to ThemeModeOption.AUTO
+        if (rawValue.isBlank()) return ThemePaletteOption.DYNAMIC to ThemeModeOption.AUTO
 
-        var palette = ThemePaletteOption.MARKOR
+        var palette = ThemePaletteOption.DYNAMIC
         var mode = ThemeModeOption.AUTO
         val tokens = rawValue
             .trim()
@@ -160,12 +153,11 @@ class SettingsViewModel(
             .filter { it.isNotBlank() }
 
         tokens.forEach { token ->
+            ThemePaletteOption.fromToken(token)?.let {
+                palette = it
+            }
+
             when (token) {
-                "red" -> palette = ThemePaletteOption.RED
-                "orange" -> palette = ThemePaletteOption.ORANGE
-                "green" -> palette = ThemePaletteOption.GREEN
-                "teal", "cyan" -> palette = ThemePaletteOption.TEAL
-                "markor", "default", "blue" -> palette = ThemePaletteOption.MARKOR
                 "light" -> mode = ThemeModeOption.LIGHT
                 "dark" -> mode = ThemeModeOption.DARK
                 "system", "auto" -> mode = ThemeModeOption.AUTO

@@ -31,11 +31,7 @@ Re-Markor is a modern, cross-platform port of the original [Markor](https://gith
 
 ## 📸 Screenshots
 
-| Home | Editor |
-| :---: | :---: |
-| ![Home](assets/home.png) | ![Editor](assets/editor.png) |
-| **Onboarding** | **Settings** |
-| ![Onboarding](assets/onboarding.png) | ![Settings](assets/settings.png) |
+![Comparison](assets/comparison.png)
 
 ## 🛠️ Tech Stack
 

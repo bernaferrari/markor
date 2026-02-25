@@ -42,7 +42,7 @@ fun FormatToolbar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp),
+            .padding(top = 0.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
         Surface(

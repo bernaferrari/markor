@@ -5,26 +5,38 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.unit.sp
 
 class MarkdownVisualTransformation(
     private val colorScheme: androidx.compose.material3.ColorScheme,
-    private val backgroundColor: Color = colorScheme.surface
+    private val backgroundColor: Color = colorScheme.surface,
+    private val editorFontSize: Int = 16
 ) : VisualTransformation {
 
     override fun filter(text: AnnotatedString): TransformedText {
-        return TransformedText(markdownToAnnotatedString(text.text, colorScheme, backgroundColor), OffsetMapping.Identity)
+        return TransformedText(
+            markdownToAnnotatedString(
+                text.text,
+                colorScheme,
+                backgroundColor,
+                editorFontSize
+            ),
+            OffsetMapping.Identity
+        )
     }
 }
 
 fun markdownToAnnotatedString(
     text: String,
     colorScheme: androidx.compose.material3.ColorScheme,
-    backgroundColor: Color = colorScheme.surface
+    backgroundColor: Color = colorScheme.surface,
+    editorFontSize: Int = 16
 ): AnnotatedString {
     val builder = AnnotatedString.Builder(text)
     val palette = resolveMarkdownColorPalette(colorScheme, backgroundColor)
@@ -51,30 +63,42 @@ fun markdownToAnnotatedString(
 
     // Headers (# text)
     val headerRegex = Regex("^(#{1,6})[ \\t]+(.+)$", RegexOption.MULTILINE)
+    val baseLineHeight = kotlin.math.max(1, editorFontSize).sp * 1.45f
     headerRegex.findAll(text).forEach { match ->
-        val hashes = match.groupValues[1]
-        val fontSize = when (hashes.length) {
-            1 -> 24.sp
-            2 -> 22.sp
-            3 -> 20.sp
-            else -> 18.sp
+        val headingLevel = match.groupValues[1].length
+        val headingScale = when (headingLevel) {
+            1 -> 1.75f
+            2 -> 1.55f
+            3 -> 1.35f
+            4 -> 1.2f
+            5 -> 1.1f
+            6 -> 1.05f
+            else -> 1f
         }
-        builder.addStyle(
-            style = SpanStyle(
-                fontWeight = FontWeight.Bold,
-                fontSize = fontSize,
-                color = palette.accent
-            ),
-            start = match.range.first,
-            end = match.range.last + 1
-        )
+
+            builder.addStyle(
+                style = SpanStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = kotlin.math.max(1, editorFontSize).sp * headingScale,
+                    brush = SolidColor(palette.accent),
+                ),
+                start = match.range.first,
+                end = match.range.last + 1
+            )
+            builder.addStyle(
+                style = ParagraphStyle(
+                    lineHeight = baseLineHeight
+                ),
+                start = match.range.first,
+                end = match.range.last + 1
+            )
     }
 
     // Links ([text](url))
     val linkRegex = Regex("\\[([^\\[\\]]+)\\]\\(([^\\)]+)\\)")
     linkRegex.findAll(text).forEach { match ->
         builder.addStyle(
-            style = SpanStyle(color = palette.accent, textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline),
+            style = SpanStyle(textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline),
             start = match.range.first,
             end = match.range.last + 1
         )
@@ -87,7 +111,6 @@ fun markdownToAnnotatedString(
             style = SpanStyle(
                 fontFamily = FontFamily.Monospace,
                 background = palette.codeBackground,
-                color = palette.codeText
             ),
             start = match.range.first,
             end = match.range.last + 1
@@ -100,7 +123,6 @@ fun markdownToAnnotatedString(
         builder.addStyle(
             style = SpanStyle(
                 fontStyle = FontStyle.Italic,
-                color = palette.subtle
             ),
             start = match.range.first,
             end = match.range.last + 1
