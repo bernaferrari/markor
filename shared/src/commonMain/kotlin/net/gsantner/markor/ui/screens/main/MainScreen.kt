@@ -1,13 +1,15 @@
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package net.gsantner.markor.ui.screens.main
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -35,6 +37,7 @@ import net.gsantner.markor.ui.viewmodel.MainViewModel
 import net.gsantner.markor.ui.components.EmptyState
 import net.gsantner.markor.ui.components.rememberAdaptiveLayoutInfo
 import net.gsantner.markor.ui.components.BackHandler
+import net.gsantner.markor.ui.components.rememberHapticHelper
 import org.koin.compose.viewmodel.koinViewModel
 import net.gsantner.markor.ui.components.CreateFileDialog
 import okio.Path
@@ -104,6 +107,7 @@ fun MainScreen(
 
     if (adaptiveInfo.showDualPane) {
         // Tablet landscape: List-Detail layout with persistent left panel
+        val filterMode by fileBrowserViewModel.filterMode.collectAsState()
         ListDetailLayout(
             adaptiveInfo = adaptiveInfo,
             isSelectionMode = isSelectionMode,
@@ -113,6 +117,7 @@ fun MainScreen(
             isGridView = isGridView,
             selectedFileForDetail = selectedFileForDetail,
             leftPanelContent = leftPanelContent,
+            currentFilterMode = filterMode,
             onFileSelected = { path -> 
                 selectedFileForDetail = path 
                 onNavigateToEditor(path, false)
@@ -121,6 +126,7 @@ fun MainScreen(
             onSelectAll = { fileBrowserViewModel.selectAll() },
             onDeleteSelected = { showDeleteDialog = true },
             onToggleGridView = { isGridView = !isGridView },
+            onFilterModeChange = { fileBrowserViewModel.setFilterMode(it) },
             onNavigateToSettings = { 
                 leftPanelContent = LeftPanelContent.SETTINGS
             },
@@ -237,9 +243,12 @@ private fun PhoneLayout(
             if (isSelectionMode) {
                 SelectionTopBar(
                     selectedCount = selectedFiles.size,
+                    currentFilterMode = currentFilterMode,
+                    onFilterModeChange = onFilterModeChange,
                     onClearSelection = onClearSelection,
                     onSelectAll = onSelectAll,
-                    onDelete = onDeleteSelected
+                    onDelete = onDeleteSelected,
+                    showFilterChips = true
                 )
             } else {
                 StandardTopBar(
@@ -283,11 +292,13 @@ private fun ListDetailLayout(
     isGridView: Boolean,
     selectedFileForDetail: String?,
     leftPanelContent: LeftPanelContent,
+    currentFilterMode: FileFilterMode,
     onFileSelected: (String) -> Unit,
     onClearSelection: () -> Unit,
     onSelectAll: () -> Unit,
     onDeleteSelected: () -> Unit,
     onToggleGridView: () -> Unit,
+    onFilterModeChange: (FileFilterMode) -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToFileBrowser: () -> Unit,
     onNavigateToEditor: (String, Boolean) -> Unit
@@ -332,22 +343,33 @@ private fun ListDetailLayout(
                         if (isSelectionMode) {
                             SelectionTopBar(
                                 selectedCount = selectedFiles.size,
+                                currentFilterMode = currentFilterMode,
+                                onFilterModeChange = onFilterModeChange,
                                 onClearSelection = onClearSelection,
                                 onSelectAll = onSelectAll,
-                                onDelete = onDeleteSelected
+                                onDelete = onDeleteSelected,
+                                showFilterChips = true
                             )
                         } else {
                             TopAppBar(
-                                title = { Text("Notebook", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)) },
+                                title = {
+                                    Text(
+                                        stringResource(Res.string.notebook),
+                                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                                    )
+                                },
                                 actions = {
                                     IconButton(onClick = onToggleGridView) {
                                         Icon(
                                             if (isGridView) Icons.AutoMirrored.Filled.List else Icons.Default.GridView,
-                                            "Toggle View"
+                                            contentDescription = null
                                         )
                                     }
                                     IconButton(onClick = onNavigateToSettings) {
-                                        Icon(Icons.Default.Settings, "Settings")
+                                        Icon(
+                                            Icons.Default.Settings,
+                                            contentDescription = stringResource(Res.string.settings)
+                                        )
                                     }
                                 },
                                 colors = TopAppBarDefaults.topAppBarColors(
@@ -437,10 +459,18 @@ private fun SettingsTopBar(
     onNavigateBack: () -> Unit
 ) {
     TopAppBar(
-        title = { Text("Settings", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)) },
+        title = {
+            Text(
+                stringResource(Res.string.settings),
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+            )
+        },
         navigationIcon = {
             IconButton(onClick = onNavigateBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(Res.string.back)
+                )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -453,37 +483,137 @@ private fun SettingsTopBar(
 @Composable
 private fun SelectionTopBar(
     selectedCount: Int,
+    currentFilterMode: FileFilterMode = FileFilterMode.ALL,
+    onFilterModeChange: (FileFilterMode) -> Unit = {},
     onClearSelection: () -> Unit,
     onSelectAll: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    showFilterChips: Boolean = false
 ) {
-    TopAppBar(
-        title = {
-            Text(
-                text = "$selectedCount Selected",
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+    Column {
+        TopAppBar(
+            title = {
+                Text(
+                    text = "$selectedCount ${stringResource(Res.string.selected)}",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                )
+            },
+            navigationIcon = {
+                IconButton(onClick = onClearSelection) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(Res.string.clear_selection)
+                    )
+                }
+            },
+            actions = {
+                IconButton(onClick = onSelectAll) {
+                    Icon(
+                        Icons.Default.SelectAll,
+                        contentDescription = stringResource(Res.string.select_all)
+                    )
+                }
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = stringResource(Res.string.delete)
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                actionIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                navigationIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
             )
-        },
-        navigationIcon = {
-            IconButton(onClick = onClearSelection) {
-                Icon(Icons.Default.Close, contentDescription = "Clear Selection")
-            }
-        },
-        actions = {
-            IconButton(onClick = onSelectAll) {
-                Icon(Icons.Default.SelectAll, contentDescription = "Select All")
-            }
-            IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete")
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-            actionIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-            navigationIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        )
+
+        if (showFilterChips) {
+            FilterTabRow(
+                currentFilterMode = currentFilterMode,
+                onFilterModeChange = onFilterModeChange
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilterTabRow(
+    currentFilterMode: FileFilterMode,
+    onFilterModeChange: (FileFilterMode) -> Unit
+) {
+    val hapticHelper = rememberHapticHelper()
+
+    val filters = listOf(
+        Triple(
+            FileFilterMode.ALL,
+            Res.string.all,
+            Icons.Outlined.List to Icons.Default.List
+        ),
+        Triple(
+            FileFilterMode.FAVORITES,
+            Res.string.favorites,
+            Icons.Outlined.StarOutline to Icons.Default.Star
+        ),
+        Triple(
+            FileFilterMode.ARCHIVE,
+            Res.string.archive,
+            Icons.Outlined.Archive to Icons.Default.Archive
+        ),
+        Triple(
+            FileFilterMode.TRASH,
+            Res.string.trash,
+            Icons.Outlined.Delete to Icons.Default.Delete
         )
     )
+
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        tonalElevation = 0.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 12.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            filters.forEachIndexed { index, (mode, labelRes, icons) ->
+                val isSelected = mode == currentFilterMode
+                ToggleButton(
+                    checked = isSelected,
+                    onCheckedChange = { checked ->
+                        if (checked && mode != currentFilterMode) {
+                            hapticHelper.performLightClick()
+                            onFilterModeChange(mode)
+                        }
+                    },
+                    shapes = when (index) {
+                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                        filters.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                    },
+                    colors = ToggleButtonDefaults.toggleButtonColors(
+                        checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
+                ) {
+                    Icon(
+                        imageVector = if (isSelected) icons.second else icons.first,
+                        contentDescription = null,
+                        modifier = Modifier.size(ToggleButtonDefaults.IconSize),
+                    )
+                    Spacer(modifier = Modifier.size(ToggleButtonDefaults.IconSpacing))
+                    Text(
+                        text = stringResource(labelRes),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -585,72 +715,10 @@ private fun StandardTopBar(
             )
         )
 
-        Surface(
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            tonalElevation = 0.dp
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                FilterChip(
-                    selected = currentFilterMode == FileFilterMode.ALL,
-                    onClick = { onFilterModeChange(FileFilterMode.ALL) },
-                    label = { Text(stringResource(Res.string.all)) }
-                )
-                FilterChip(
-                    selected = currentFilterMode == FileFilterMode.FAVORITES,
-                    onClick = { onFilterModeChange(FileFilterMode.FAVORITES) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = if (currentFilterMode == FileFilterMode.FAVORITES) {
-                                Icons.Filled.Star
-                            } else {
-                                Icons.Outlined.StarOutline
-                            },
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    },
-                    label = { Text(stringResource(Res.string.favorites)) }
-                )
-                FilterChip(
-                    selected = currentFilterMode == FileFilterMode.ARCHIVE,
-                    onClick = { onFilterModeChange(FileFilterMode.ARCHIVE) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = if (currentFilterMode == FileFilterMode.ARCHIVE) {
-                                Icons.Filled.Archive
-                            } else {
-                                Icons.Outlined.Archive
-                            },
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    },
-                    label = { Text(stringResource(Res.string.archive)) }
-                )
-                FilterChip(
-                    selected = currentFilterMode == FileFilterMode.TRASH,
-                    onClick = { onFilterModeChange(FileFilterMode.TRASH) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = if (currentFilterMode == FileFilterMode.TRASH) {
-                                Icons.Filled.Delete
-                            } else {
-                                Icons.Outlined.Delete
-                            },
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    },
-                    label = { Text(stringResource(Res.string.trash)) }
-                )
-            }
-        }
+        FilterTabRow(
+            currentFilterMode = currentFilterMode,
+            onFilterModeChange = onFilterModeChange
+        )
     }
 }
 
@@ -674,7 +742,10 @@ private fun SearchScreen(
             TopAppBar(
                 navigationIcon = {
                     IconButton(onClick = onClose) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.back)
+                        )
                     }
                 },
                 title = {

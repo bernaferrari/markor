@@ -13,6 +13,37 @@ import androidx.compose.ui.graphics.Color
 import com.materialkolor.dynamicColorScheme as kolorDynamicColorScheme
 import kotlinx.coroutines.flow.Flow
 
+enum class ThemePaletteOption(val token: String, val seedColor: Color?) {
+    DYNAMIC("markor", null),
+    BLUE("blue", BlueSeedColor),
+    RED("red", RedSeedColor),
+    ORANGE("orange", OrangeSeedColor),
+    PURPLE("purple", PurpleSeedColor),
+    GREEN("green", GreenSeedColor),
+    AMBER("amber", AmberSeedColor),
+    TEAL("teal", TealSeedColor),
+    PINK("pink", PinkSeedColor),
+    INDIGO("indigo", IndigoSeedColor),
+    LIME("lime", LimeSeedColor);
+
+    companion object {
+        fun fromToken(token: String): ThemePaletteOption? = when (token) {
+            "markor", "default" -> DYNAMIC
+            "blue" -> BLUE
+            "red" -> RED
+            "orange" -> ORANGE
+            "purple" -> PURPLE
+            "green" -> GREEN
+            "amber" -> AMBER
+            "teal", "cyan" -> TEAL
+            "pink" -> PINK
+            "indigo" -> INDIGO
+            "lime" -> LIME
+            else -> null
+        }
+    }
+}
+
 /**
  * Theme mode options.
  */
@@ -32,23 +63,15 @@ enum class ThemeMode {
     }
 }
 
-private enum class ThemePalette {
-    MARKOR,
-    RED,
-    ORANGE,
-    GREEN,
-    TEAL
-}
-
 private data class ThemeSelection(
-    val palette: ThemePalette,
+    val palette: ThemePaletteOption,
     val mode: ThemeMode
 )
 
 private fun parseThemeSelection(rawValue: String): ThemeSelection {
-    if (rawValue.isBlank()) return ThemeSelection(ThemePalette.MARKOR, ThemeMode.SYSTEM)
+    if (rawValue.isBlank()) return ThemeSelection(ThemePaletteOption.DYNAMIC, ThemeMode.SYSTEM)
 
-    var palette = ThemePalette.MARKOR
+    var palette = ThemePaletteOption.DYNAMIC
     var mode = ThemeMode.SYSTEM
     val tokens = rawValue
         .trim()
@@ -57,12 +80,10 @@ private fun parseThemeSelection(rawValue: String): ThemeSelection {
         .filter { it.isNotBlank() }
 
     tokens.forEach { token ->
+        ThemePaletteOption.fromToken(token)?.let {
+            palette = it
+        }
         when (token) {
-            "red" -> palette = ThemePalette.RED
-            "orange" -> palette = ThemePalette.ORANGE
-            "green" -> palette = ThemePalette.GREEN
-            "teal", "cyan" -> palette = ThemePalette.TEAL
-            "markor", "default", "blue" -> palette = ThemePalette.MARKOR
             "light" -> mode = ThemeMode.LIGHT
             "dark" -> mode = ThemeMode.DARK
             "system", "auto" -> mode = ThemeMode.SYSTEM
@@ -144,42 +165,16 @@ private val LightColorScheme = lightColorScheme(
     scrim = md_theme_light_scrim
 )
 
-private val RedLightColorScheme = LightColorScheme.copy(
-    primary = Color(0xFFB3261E),
-    onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFFFFDAD6),
-    onPrimaryContainer = Color(0xFF410002),
-    secondary = Color(0xFF775651),
-    onSecondary = Color(0xFFFFFFFF),
-    secondaryContainer = Color(0xFFFFDAD6),
-    onSecondaryContainer = Color(0xFF2C1512),
-    tertiary = Color(0xFF705C2E),
-    onTertiary = Color(0xFFFFFFFF),
-    tertiaryContainer = Color(0xFFFADFA6),
-    onTertiaryContainer = Color(0xFF251A00),
-    inversePrimary = Color(0xFFFFB4AB)
-)
-
-private val RedDarkColorScheme = DarkColorScheme.copy(
-    primary = Color(0xFFFFB4AB),
-    onPrimary = Color(0xFF690005),
-    primaryContainer = Color(0xFF93000A),
-    onPrimaryContainer = Color(0xFFFFDAD6),
-    secondary = Color(0xFFE7BDB7),
-    onSecondary = Color(0xFF442926),
-    secondaryContainer = Color(0xFF5D3F3A),
-    onSecondaryContainer = Color(0xFFFFDAD6),
-    tertiary = Color(0xFFDDC48C),
-    onTertiary = Color(0xFF3E2E04),
-    tertiaryContainer = Color(0xFF564419),
-    onTertiaryContainer = Color(0xFFFADFA6),
-    inversePrimary = Color(0xFFB3261E)
-)
-
-private val RedSeedColor = Color(0xFFB3261E)
-private val OrangeSeedColor = Color(0xFFB35A00)
-private val GreenSeedColor = Color(0xFF2E7D32)
-private val TealSeedColor = Color(0xFF006A6A)
+private val BlueSeedColor = Color(0xFF0D73F6)
+private val RedSeedColor = Color(0xFFDF5353)
+private val OrangeSeedColor = Color(0xFFED7F2A)
+private val PurpleSeedColor = Color(0xFF8E4BFF)
+private val GreenSeedColor = Color(0xFF30B67A)
+private val AmberSeedColor = Color(0xFFFFB84D)
+private val TealSeedColor = Color(0xFF17A6A6)
+private val PinkSeedColor = Color(0xFFEE5588)
+private val IndigoSeedColor = Color(0xFF5C6BC0)
+private val LimeSeedColor = Color(0xFF9CBF37)
 
 /**
  * Markor Material 3 Expressive Theme with dynamic color and motion support.
@@ -225,30 +220,24 @@ fun MarkorTheme(
         else -> systemDarkTheme
     }
 
-    val palette = selection?.palette ?: ThemePalette.MARKOR
+    val palette = selection?.palette ?: ThemePaletteOption.DYNAMIC
     val kolorSeed = when (palette) {
-        ThemePalette.RED -> RedSeedColor
-        ThemePalette.ORANGE -> OrangeSeedColor
-        ThemePalette.GREEN -> GreenSeedColor
-        ThemePalette.TEAL -> TealSeedColor
-        ThemePalette.MARKOR -> null
+        ThemePaletteOption.DYNAMIC -> null
+        else -> palette.seedColor
     }
 
     val staticColorScheme = when (palette) {
-        ThemePalette.RED,
-        ThemePalette.ORANGE,
-        ThemePalette.GREEN,
-        ThemePalette.TEAL -> requireNotNull(kolorSeed).let { seed ->
+        ThemePaletteOption.DYNAMIC -> if (effectiveDarkTheme) DarkColorScheme else LightColorScheme
+        else -> requireNotNull(kolorSeed).let { seed ->
             kolorDynamicColorScheme(
                 seedColor = seed,
                 isDark = effectiveDarkTheme
             )
         }
-        ThemePalette.MARKOR -> if (effectiveDarkTheme) DarkColorScheme else LightColorScheme
     }
 
     // Dynamic color should not override explicit accent palettes.
-    val dynamicScheme = if (dynamicColor && palette == ThemePalette.MARKOR) {
+    val dynamicScheme = if (dynamicColor && palette == ThemePaletteOption.DYNAMIC) {
         dynamicColorScheme(effectiveDarkTheme)
     } else {
         null

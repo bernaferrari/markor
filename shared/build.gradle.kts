@@ -31,6 +31,7 @@ kotlin {
         namespace = "net.gsantner.markor.shared"
         compileSdk = 36
         minSdk = 26
+        androidResources.enable = true
         
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)

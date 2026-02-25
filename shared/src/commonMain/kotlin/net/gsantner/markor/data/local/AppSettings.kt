@@ -65,11 +65,11 @@ class AppSettings(private val dataStore: DataStore<Preferences>) {
     }
 
     val isShowLineNumbers: Flow<Boolean> = dataStore.data.map { prefs ->
-        prefs[PrefsKeys.SHOW_LINE_NUMBERS] ?: true
+        prefs[PrefsKeys.SHOW_LINE_NUMBERS] ?: false
     }
 
     val isWordWrap: Flow<Boolean> = dataStore.data.map { prefs ->
-        prefs[PrefsKeys.WORD_WRAP] ?: false
+        prefs[PrefsKeys.WORD_WRAP] ?: true
     }
 
     val isEditorAutoFormat: Flow<Boolean> = dataStore.data.map { prefs ->

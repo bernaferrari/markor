@@ -1,12 +1,18 @@
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package net.gsantner.markor.ui.screens.settings
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
@@ -16,20 +22,32 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import net.gsantner.markor.ui.components.BackHandler
+import net.gsantner.markor.ui.components.rememberHapticHelper
 import net.gsantner.markor.ui.components.supportsSharedStorageMode
 import net.gsantner.markor.ui.viewmodel.SettingsViewModel
 import net.gsantner.markor.ui.viewmodel.ThemeModeOption
-import net.gsantner.markor.ui.viewmodel.ThemePaletteOption
 import net.gsantner.markor.ui.components.RenameDialog
+import net.gsantner.markor.ui.theme.dynamicColorScheme
 import net.gsantner.markor.ui.theme.MarkorTheme
+import net.gsantner.markor.ui.theme.ThemePaletteOption
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.graphics.vector.ImageVector
+import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.stringResource
 import markor.shared.generated.resources.*
 import org.koin.compose.viewmodel.koinViewModel
@@ -96,21 +114,20 @@ fun SettingsScreen(
                 ),
             verticalArrangement = Arrangement.spacedBy(MarkorTheme.spacing.medium)
         ) {
-            SettingsSection(title = stringResource(Res.string.appearance), icon = Icons.Default.Palette) {
+            SettingsSection(title = stringResource(Res.string.appearance)) {
                 ThemeModeSettingItem(
                     selectedMode = themeMode,
-                    onSelectMode = viewModel::setThemeMode,
-                    position = SettingItemPosition.First
+                    onSelectMode = viewModel::setThemeMode
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 ThemeColorSettingItem(
                     selectedPalette = themePalette,
-                    onSelectPalette = viewModel::setThemePalette,
-                    position = SettingItemPosition.Last
+                    onSelectPalette = viewModel::setThemePalette
                 )
             }
 
             // Editor Section
-            SettingsSection(title = stringResource(Res.string.editor), icon = Icons.Default.Edit) {
+            SettingsSection(title = stringResource(Res.string.editor)) {
                 SwitchSettingItem(
                     title = stringResource(Res.string.line_numbers),
                     subtitle = stringResource(Res.string.display_line_numbers),
@@ -138,6 +155,7 @@ fun SettingsScreen(
                     position = SettingItemPosition.Last
                 )
             }
+            Spacer(modifier = Modifier.height(MarkorTheme.spacing.small))
 
             // Storage Section
             var editingStorageKey by remember { mutableStateOf<String?>(null) }
@@ -165,7 +183,7 @@ fun SettingsScreen(
                 )
             }
 
-            SettingsSection(title = stringResource(Res.string.storage), icon = Icons.Default.SdStorage) {
+            SettingsSection(title = stringResource(Res.string.storage)) {
                 if (supportsSharedStorage) {
                     StorageModeSettingItem(
                         isExternalStorageEnabled = isExternalStorageEnabled,
@@ -190,9 +208,10 @@ fun SettingsScreen(
                     position = SettingItemPosition.Last
                 )
             }
+            Spacer(modifier = Modifier.height(MarkorTheme.spacing.small))
              
             // About Section
-            SettingsSection(title = stringResource(Res.string.about), icon = Icons.Default.Info) {
+            SettingsSection(title = stringResource(Res.string.about)) {
                 InfoSettingItem(
                     title = stringResource(Res.string.version),
                     value = "2.15.2-Expressive",
@@ -232,7 +251,8 @@ See LICENSE.txt in the project root for the full license text.
 @Composable
 private fun SettingsSection(
     title: String,
-    icon: ImageVector,
+    icon: ImageVector? = null,
+    titleColor: Color = MaterialTheme.colorScheme.onSurface,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column {
@@ -240,28 +260,32 @@ private fun SettingsSection(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(start = MarkorTheme.spacing.medium, bottom = MarkorTheme.spacing.medium)
         ) {
-            Surface(
-                color = MaterialTheme.colorScheme.primaryContainer,
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.size(28.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(16.dp)
-                    )
+            icon?.let {
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.size(28.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = it,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
                 }
             }
-            Spacer(modifier = Modifier.width(MarkorTheme.spacing.medium))
+            if (icon != null) {
+                Spacer(modifier = Modifier.width(MarkorTheme.spacing.medium))
+            }
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.5.sp
                 ),
-                color = MaterialTheme.colorScheme.onSurface
+                color = titleColor
             )
         }
         Column(
@@ -324,7 +348,15 @@ private fun SwitchSettingItem(
     onCheckedChange: (Boolean) -> Unit,
     position: SettingItemPosition
 ) {
-    SettingsItemContainer(position = position) {
+    val hapticHelper = rememberHapticHelper()
+
+    SettingsItemContainer(
+        position = position,
+        onClick = {
+            hapticHelper.performLightClick()
+            onCheckedChange(!checked)
+        }
+    ) {
         ListItem(
             headlineContent = {
                 Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
@@ -335,7 +367,10 @@ private fun SwitchSettingItem(
             trailingContent = {
                 Switch(
                     checked = checked,
-                    onCheckedChange = onCheckedChange,
+                    onCheckedChange = {
+                        hapticHelper.performLightClick()
+                        onCheckedChange(it)
+                    },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
                         checkedTrackColor = MaterialTheme.colorScheme.primary
@@ -439,6 +474,8 @@ private fun StorageModeSettingItem(
     onSwitchMode: (Boolean) -> Unit,
     position: SettingItemPosition
 ) {
+    val hapticHelper = rememberHapticHelper()
+
     SettingsItemContainer(position = position) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Text(
@@ -447,34 +484,66 @@ private fun StorageModeSettingItem(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Row(
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
-                FilterChip(
-                    selected = !isExternalStorageEnabled,
-                    onClick = { onSwitchMode(false) },
-                    label = { Text(stringResource(Res.string.private)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = if (!isExternalStorageEnabled) Icons.Filled.Lock else Icons.Outlined.Lock,
-                            contentDescription = null,
-                            modifier = Modifier.size(14.dp)
-                        )
-                    }
-                )
-                FilterChip(
-                    selected = isExternalStorageEnabled,
-                    onClick = { onSwitchMode(true) },
-                    label = { Text(stringResource(Res.string.shared)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = if (isExternalStorageEnabled) Icons.Filled.FolderShared else Icons.Outlined.Folder,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                )
+                ToggleButton(
+                    checked = !isExternalStorageEnabled,
+                    onCheckedChange = { isChecked ->
+                        if (isChecked && isExternalStorageEnabled) {
+                            hapticHelper.performLightClick()
+                            onSwitchMode(false)
+                        }
+                    },
+                    shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
+                    colors = ToggleButtonDefaults.toggleButtonColors(
+                        checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
+                ) {
+                    Icon(
+                        imageVector = if (isExternalStorageEnabled) Icons.Outlined.Lock else Icons.Default.Lock,
+                        contentDescription = null,
+                        modifier = Modifier.size(ToggleButtonDefaults.IconSize),
+                    )
+                    Spacer(modifier = Modifier.size(ToggleButtonDefaults.IconSpacing))
+                    Text(
+                        text = stringResource(Res.string.private),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
+
+                ToggleButton(
+                    checked = isExternalStorageEnabled,
+                    onCheckedChange = { isChecked ->
+                        if (isChecked && !isExternalStorageEnabled) {
+                            hapticHelper.performLightClick()
+                            onSwitchMode(true)
+                        }
+                    },
+                    shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
+                    colors = ToggleButtonDefaults.toggleButtonColors(
+                        checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
+                ) {
+                    Icon(
+                        imageVector = if (!isExternalStorageEnabled) Icons.Outlined.Folder else Icons.Default.Folder,
+                        contentDescription = null,
+                        modifier = Modifier.size(ToggleButtonDefaults.IconSize),
+                    )
+                    Spacer(modifier = Modifier.size(ToggleButtonDefaults.IconSpacing))
+                    Text(
+                        text = stringResource(Res.string.shared),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
             }
         }
     }
@@ -483,41 +552,54 @@ private fun StorageModeSettingItem(
 @Composable
 private fun ThemeModeSettingItem(
     selectedMode: ThemeModeOption,
-    onSelectMode: (ThemeModeOption) -> Unit,
-    position: SettingItemPosition
+    onSelectMode: (ThemeModeOption) -> Unit
 ) {
-    SettingsItemContainer(position = position) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-            Text(
-                text = stringResource(Res.string.theme_mode),
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                SegmentedButton(
-                    selected = selectedMode == ThemeModeOption.AUTO,
-                    onClick = { onSelectMode(ThemeModeOption.AUTO) },
-                    shape = SegmentedButtonDefaults.itemShape(index = 0, count = 3),
-                    modifier = Modifier.weight(1f)
+    val hapticHelper = rememberHapticHelper()
+
+    val modeOptions = listOf(
+        Triple(ThemeModeOption.AUTO, Res.string.auto, Icons.Default.BrightnessAuto),
+        Triple(ThemeModeOption.LIGHT, Res.string.light, Icons.Default.LightMode),
+        Triple(ThemeModeOption.DARK, Res.string.dark, Icons.Default.DarkMode)
+    )
+
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 0.dp)) {
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement =
+            Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            verticalArrangement = Arrangement.spacedBy(0.dp),
+        ) {
+            modeOptions.forEachIndexed { index, (mode, label, icon) ->
+                ToggleButton(
+                    checked = mode == selectedMode,
+                    onCheckedChange = { isChecked ->
+                        if (isChecked && mode != selectedMode) {
+                            hapticHelper.performLightClick()
+                            onSelectMode(mode)
+                        }
+                    },
+                    shapes = when (index) {
+                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                        modeOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                    },
+                    colors = ToggleButtonDefaults.toggleButtonColors(
+                        checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
                 ) {
-                    Text(stringResource(Res.string.auto), textAlign = TextAlign.Center)
-                }
-                SegmentedButton(
-                    selected = selectedMode == ThemeModeOption.LIGHT,
-                    onClick = { onSelectMode(ThemeModeOption.LIGHT) },
-                    shape = SegmentedButtonDefaults.itemShape(index = 1, count = 3),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(stringResource(Res.string.light), textAlign = TextAlign.Center)
-                }
-                SegmentedButton(
-                    selected = selectedMode == ThemeModeOption.DARK,
-                    onClick = { onSelectMode(ThemeModeOption.DARK) },
-                    shape = SegmentedButtonDefaults.itemShape(index = 2, count = 3),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(stringResource(Res.string.dark), textAlign = TextAlign.Center)
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(ToggleButtonDefaults.IconSize),
+                    )
+                    Spacer(modifier = Modifier.size(ToggleButtonDefaults.IconSpacing))
+                    Text(
+                        text = stringResource(label),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
                 }
             }
         }
@@ -528,45 +610,183 @@ private fun ThemeModeSettingItem(
 private fun ThemeColorSettingItem(
     selectedPalette: ThemePaletteOption,
     onSelectPalette: (ThemePaletteOption) -> Unit,
-    position: SettingItemPosition
 ) {
-    val paletteOptions = listOf(
-        Triple(ThemePaletteOption.MARKOR, stringResource(Res.string.markor), Color(0xFF4A6FA5)),
-        Triple(ThemePaletteOption.RED, stringResource(Res.string.red), Color(0xFFB3261E)),
-        Triple(ThemePaletteOption.ORANGE, stringResource(Res.string.orange), Color(0xFFB35A00)),
-        Triple(ThemePaletteOption.GREEN, stringResource(Res.string.green), Color(0xFF2E7D32)),
-        Triple(ThemePaletteOption.TEAL, stringResource(Res.string.teal), Color(0xFF006A6A))
-    )
+    val hapticHelper = rememberHapticHelper()
 
-    SettingsItemContainer(position = position) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-            Text(
-                text = stringResource(Res.string.theme_color),
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                paletteOptions.forEach { (option, label, dotColor) ->
-                    FilterChip(
-                        selected = selectedPalette == option,
-                        onClick = { onSelectPalette(option) },
-                        label = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(12.dp)
-                                        .background(dotColor, CircleShape)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(label)
-                            }
+    val paletteChoices = listOf(
+        ThemePaletteOption.DYNAMIC,
+        ThemePaletteOption.BLUE,
+        ThemePaletteOption.PURPLE,
+        ThemePaletteOption.INDIGO,
+        ThemePaletteOption.TEAL,
+        ThemePaletteOption.GREEN,
+        ThemePaletteOption.LIME,
+        ThemePaletteOption.AMBER,
+        ThemePaletteOption.ORANGE,
+        ThemePaletteOption.RED,
+        ThemePaletteOption.PINK
+    )
+    val dynamicColor = dynamicColorScheme(isSystemInDarkTheme())?.primary
+        ?: MaterialTheme.colorScheme.primary
+
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 0.dp)) {
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterHorizontally),
+            verticalArrangement = Arrangement.spacedBy(0.dp)
+        ) {
+            paletteChoices.forEach { choice ->
+                ThemeSwatch(
+                    theme = choice.token,
+                    seedColor = choice.seedColor,
+                    isDynamic = choice == ThemePaletteOption.DYNAMIC,
+                    isSelected = selectedPalette == choice,
+                    isEnabled = true,
+                    dynamicColor = if (choice == ThemePaletteOption.DYNAMIC) dynamicColor else MaterialTheme.colorScheme.primary,
+                    onClick = {
+                        if (selectedPalette != choice) {
+                            hapticHelper.performLightClick()
+                            onSelectPalette(choice)
+                        }
+                    },
+                    contentDescription = stringResource(
+                        when (choice) {
+                            ThemePaletteOption.DYNAMIC -> Res.string.dynamic
+                            ThemePaletteOption.BLUE -> Res.string.blue
+                            ThemePaletteOption.RED -> Res.string.red
+                            ThemePaletteOption.ORANGE -> Res.string.orange
+                            ThemePaletteOption.PURPLE -> Res.string.purple
+                            ThemePaletteOption.AMBER -> Res.string.amber
+                            ThemePaletteOption.GREEN -> Res.string.green
+                            ThemePaletteOption.TEAL -> Res.string.teal
+                            ThemePaletteOption.PINK -> Res.string.pink
+                            ThemePaletteOption.INDIGO -> Res.string.indigo
+                            ThemePaletteOption.LIME -> Res.string.lime
                         }
                     )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ThemeSwatch(
+    theme: String,
+    seedColor: Color?,
+    isDynamic: Boolean,
+    isSelected: Boolean,
+    isEnabled: Boolean,
+    dynamicColor: Color,
+    contentDescription: String,
+    onClick: () -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val baseColor = seedColor ?: dynamicColor
+    val displayColor = if (isEnabled) baseColor else baseColor.copy(alpha = 0.42f)
+    val tokenSize = 50.dp
+    val glowSize = 56.dp
+    val orbSize = 40.dp
+
+    val orbCornerFraction by animateFloatAsState(
+        targetValue = if (isSelected) 0.5f else 0.26f,
+        animationSpec = spring(dampingRatio = 0.7f, stiffness = 520f),
+        label = "orbCorner_$theme"
+    )
+    val orbShape = RoundedCornerShape(percent = (orbCornerFraction * 100).roundToInt())
+
+    val orbScale by animateFloatAsState(
+        targetValue = if (isSelected) 1.02f else 0.86f,
+        animationSpec = spring(dampingRatio = 0.56f, stiffness = 600f),
+        label = "orbScale_$theme"
+    )
+    val orbRotation by animateFloatAsState(
+        targetValue = if (isSelected) 8f else 0f,
+        animationSpec = spring(dampingRatio = 0.66f, stiffness = 420f),
+        label = "orbRotation_$theme"
+    )
+    val glowAlpha by animateFloatAsState(
+        targetValue = if (isSelected) 1f else 0f,
+        animationSpec = tween(durationMillis = 240, easing = FastOutSlowInEasing),
+        label = "glow_$theme"
+    )
+    val iconAlpha by animateFloatAsState(
+        targetValue = if (isSelected || isDynamic) 1f else 0f,
+        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing),
+        label = "icon_$theme"
+    )
+    val overallAlpha = if (isEnabled) 1f else 0.52f
+
+    Box(
+        modifier = Modifier
+            .size(tokenSize)
+            .graphicsLayer { alpha = overallAlpha }
+            .clickable(
+                enabled = isEnabled,
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
+            )
+            .semantics {
+                role = Role.RadioButton
+                this.contentDescription = contentDescription
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .size(glowSize)
+                .graphicsLayer {
+                    alpha = glowAlpha
                 }
+                .drawBehind {
+                    drawCircle(
+                        color = displayColor.copy(alpha = 0.44f),
+                        radius = size.minDimension * 0.5f
+                    )
+                }
+        )
+
+        Box(
+            modifier = Modifier
+                .size(orbSize)
+                .graphicsLayer {
+                    scaleX = orbScale
+                    scaleY = orbScale
+                    rotationZ = orbRotation
+                }
+                .clip(orbShape)
+                .background(displayColor),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(Color.White.copy(alpha = 0.28f), Color.Transparent),
+                            start = Offset.Zero,
+                            end = Offset(60f, 60f),
+                        ),
+                    ),
+            )
+
+            if (isSelected || isDynamic) {
+                Icon(
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(if (isSelected) 18.dp else 16.dp)
+                        .graphicsLayer {
+                            alpha = iconAlpha
+                            rotationZ = -orbRotation
+                        },
+                    imageVector = when {
+                        isSelected -> Icons.Default.Check
+                        isDynamic -> Icons.Default.Palette
+                        else -> Icons.Default.Check
+                    },
+                    tint = Color.White.copy(alpha = 1f),
+                )
             }
         }
     }
