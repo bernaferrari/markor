@@ -17,7 +17,8 @@ data class MarkdownColorPalette(
 
 fun resolveMarkdownColorPalette(
     colorScheme: ColorScheme,
-    backgroundColor: Color
+    backgroundColor: Color,
+    accentColorOverride: Color? = null
 ): MarkdownColorPalette {
     val bodyFallback = bestContrastColor(
         backgroundColor,
@@ -30,12 +31,13 @@ fun resolveMarkdownColorPalette(
         minRatio = 4.5f
     )
 
+    val preferredAccent = accentColorOverride ?: colorScheme.primary
     val accentFallback = bestContrastColor(
         backgroundColor,
-        listOf(colorScheme.primary, colorScheme.tertiary, body, Color.White, Color.Black)
+        listOf(preferredAccent, colorScheme.primary, colorScheme.tertiary, body, Color.White, Color.Black)
     )
     val accent = ensureMinContrast(
-        preferred = colorScheme.primary,
+        preferred = preferredAccent,
         background = backgroundColor,
         fallback = accentFallback,
         minRatio = 3.0f

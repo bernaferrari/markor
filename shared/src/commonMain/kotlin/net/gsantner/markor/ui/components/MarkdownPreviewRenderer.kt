@@ -18,9 +18,16 @@ import androidx.compose.ui.unit.sp
 fun renderGridMarkdown(
     text: String,
     colorScheme: ColorScheme,
-    backgroundColor: Color = colorScheme.surface
+    backgroundColor: Color = colorScheme.surface,
+    accentColorOverride: Color? = null
 ): AnnotatedString {
-    return renderMarkdown(text, colorScheme, isGridPreview = true, backgroundColor = backgroundColor)
+    return renderMarkdown(
+        text = text,
+        colorScheme = colorScheme,
+        isGridPreview = true,
+        backgroundColor = backgroundColor,
+        accentColorOverride = accentColorOverride
+    )
 }
 
 /**
@@ -29,9 +36,16 @@ fun renderGridMarkdown(
 fun renderCleanMarkdown(
     text: String,
     colorScheme: ColorScheme,
-    backgroundColor: Color = colorScheme.surface
+    backgroundColor: Color = colorScheme.surface,
+    accentColorOverride: Color? = null
 ): AnnotatedString {
-    return renderMarkdown(text, colorScheme, isGridPreview = false, backgroundColor = backgroundColor)
+    return renderMarkdown(
+        text = text,
+        colorScheme = colorScheme,
+        isGridPreview = false,
+        backgroundColor = backgroundColor,
+        accentColorOverride = accentColorOverride
+    )
 }
 
 /**
@@ -41,11 +55,16 @@ private fun renderMarkdown(
     text: String,
     colorScheme: ColorScheme,
     isGridPreview: Boolean,
-    backgroundColor: Color
+    backgroundColor: Color,
+    accentColorOverride: Color? = null
 ): AnnotatedString {
     val builder = AnnotatedString.Builder()
     val lines = text.split("\n")
-    val palette = resolveMarkdownColorPalette(colorScheme, backgroundColor)
+    val palette = resolveMarkdownColorPalette(
+        colorScheme = colorScheme,
+        backgroundColor = backgroundColor,
+        accentColorOverride = accentColorOverride
+    )
     
     lines.forEachIndexed { index, line ->
         if (index > 0) builder.append("\n")

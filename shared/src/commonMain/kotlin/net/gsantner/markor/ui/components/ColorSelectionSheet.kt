@@ -12,20 +12,22 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColorSelectionSheet(
     currentColor: Int?,
+    showCurrentSelection: Boolean = true,
     onColorSelected: (Int?) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -74,7 +76,7 @@ fun ColorSelectionSheet(
             ) {
                 items(colors) { colorInt ->
                     val color = if (colorInt != null) Color(colorInt) else MaterialTheme.colorScheme.surfaceVariant
-                    val isSelected = currentColor == colorInt
+                    val isSelected = showCurrentSelection && currentColor == colorInt
                     
                     Box(
                         modifier = Modifier
@@ -91,16 +93,16 @@ fun ColorSelectionSheet(
                     ) {
                         if (colorInt == null) {
                             Icon(
-                                imageVector = Icons.Default.Check,
+                                imageVector = if (isSelected) Icons.Default.Check else Icons.Default.Palette,
                                 contentDescription = stringResource(Res.string.default_),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(24.dp).alpha(if (currentColor == null) 1f else 0f)
+                                tint = if (isSelected) selectionIconTint(color) else MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(24.dp)
                             )
                         } else if (isSelected) {
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = stringResource(Res.string.selected),
-                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                tint = selectionIconTint(color),
                                 modifier = Modifier.size(28.dp)
                             )
                         }
@@ -108,5 +110,13 @@ fun ColorSelectionSheet(
                 }
             }
         }
+    }
+}
+
+private fun selectionIconTint(background: Color): Color {
+    return if (background.luminance() > 0.55f) {
+        Color(0xFF1A1A1A)
+    } else {
+        Color.White
     }
 }

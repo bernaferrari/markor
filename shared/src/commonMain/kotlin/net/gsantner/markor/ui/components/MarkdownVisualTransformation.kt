@@ -16,7 +16,9 @@ import androidx.compose.ui.unit.sp
 class MarkdownVisualTransformation(
     private val colorScheme: androidx.compose.material3.ColorScheme,
     private val backgroundColor: Color = colorScheme.surface,
-    private val editorFontSize: Int = 16
+    private val editorFontSize: Int = 16,
+    private val editorLineHeightMultiplier: Float = 1.45f,
+    private val accentColorOverride: Color? = null
 ) : VisualTransformation {
 
     override fun filter(text: AnnotatedString): TransformedText {
@@ -25,7 +27,9 @@ class MarkdownVisualTransformation(
                 text.text,
                 colorScheme,
                 backgroundColor,
-                editorFontSize
+                editorFontSize,
+                editorLineHeightMultiplier,
+                accentColorOverride
             ),
             OffsetMapping.Identity
         )
@@ -36,10 +40,16 @@ fun markdownToAnnotatedString(
     text: String,
     colorScheme: androidx.compose.material3.ColorScheme,
     backgroundColor: Color = colorScheme.surface,
-    editorFontSize: Int = 16
+    editorFontSize: Int = 16,
+    editorLineHeightMultiplier: Float = 1.45f,
+    accentColorOverride: Color? = null
 ): AnnotatedString {
     val builder = AnnotatedString.Builder(text)
-    val palette = resolveMarkdownColorPalette(colorScheme, backgroundColor)
+    val palette = resolveMarkdownColorPalette(
+        colorScheme = colorScheme,
+        backgroundColor = backgroundColor,
+        accentColorOverride = accentColorOverride
+    )
 
     // Bold (**text** or __text__)
     val boldRegex = Regex("(\\*\\*|__)(.*?)\\1")
@@ -63,7 +73,6 @@ fun markdownToAnnotatedString(
 
     // Headers (# text)
     val headerRegex = Regex("^(#{1,6})[ \\t]+(.+)$", RegexOption.MULTILINE)
-    val baseLineHeight = kotlin.math.max(1, editorFontSize).sp * 1.45f
     headerRegex.findAll(text).forEach { match ->
         val headingLevel = match.groupValues[1].length
         val headingScale = when (headingLevel) {
@@ -75,11 +84,12 @@ fun markdownToAnnotatedString(
             6 -> 1.05f
             else -> 1f
         }
+        val headingFontSize = kotlin.math.max(1, editorFontSize).sp * headingScale
 
             builder.addStyle(
                 style = SpanStyle(
                     fontWeight = FontWeight.Bold,
-                    fontSize = kotlin.math.max(1, editorFontSize).sp * headingScale,
+                    fontSize = headingFontSize,
                     brush = SolidColor(palette.accent),
                 ),
                 start = match.range.first,
@@ -87,7 +97,7 @@ fun markdownToAnnotatedString(
             )
             builder.addStyle(
                 style = ParagraphStyle(
-                    lineHeight = baseLineHeight
+                    lineHeight = headingFontSize * editorLineHeightMultiplier
                 ),
                 start = match.range.first,
                 end = match.range.last + 1

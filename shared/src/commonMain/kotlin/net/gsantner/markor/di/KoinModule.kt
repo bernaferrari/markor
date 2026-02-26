@@ -16,12 +16,12 @@ import net.gsantner.markor.ui.viewmodel.SettingsViewModel
 import net.gsantner.markor.ui.viewmodel.IntroViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
-import org.koin.core.qualifier.named
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import org.koin.compose.viewmodel.dsl.viewModel
 
 expect val platformModule: Module
 

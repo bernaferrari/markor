@@ -67,6 +67,7 @@ import coil3.request.ImageRequest
 import okio.Path
 import okio.Path.Companion.toPath
 import net.gsantner.markor.data.local.AppSettings
+import kotlin.math.roundToInt
 
 /**
  * Platform-specific back handler.
@@ -166,9 +167,13 @@ fun EditorScreen(
 
     // Outline State
     var showOutlinePanel by remember { mutableStateOf(false) }
+    var showDocumentInfoDialog by remember { mutableStateOf(false) }
 
     val outlineItems = remember(content.text) {
         net.gsantner.markor.ui.components.parseOutline(content.text)
+    }
+    val documentInfoStats = remember(content.text, outlineItems.size) {
+        buildDocumentInfoStats(content.text, outlineItems.size)
     }
 
     // NEW: Color Selection State
@@ -590,6 +595,14 @@ fun EditorScreen(
                                 },
                                 enabled = outlineItems.isNotEmpty()
                             )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(Res.string.document_info)) },
+                                leadingIcon = { Icon(Icons.Default.Info, null) },
+                                onClick = {
+                                    showDocumentInfoDialog = true
+                                    showOverflowMenu = false
+                                }
+                            )
                             HorizontalDivider()
                             DropdownMenuItem(
                                 text = { Text(stringResource(Res.string.export)) },
@@ -706,6 +719,7 @@ fun EditorScreen(
                         title = titleInput,
                         content = content.text,
                         backgroundColor = editorContentSurfaceColor,
+                        noteAccentColor = noteColor?.let(::Color),
                         onTapToEdit = {
                             editorFocusNonce++
                             isPreviewMode = false
@@ -721,6 +735,7 @@ fun EditorScreen(
                         editorFontSize = editorFontSize,
                         wordWrap = wordWrap,
                         surfaceColor = editorContentSurfaceColor,
+                        noteAccentColor = noteColor?.let(::Color),
                         focusRequestNonce = editorFocusNonce,
                         autoFocusOnStart = openKeyboardOnStart &&
                                 !initialAutoFocusConsumed &&
@@ -829,6 +844,41 @@ fun EditorScreen(
             )
         }
 
+        if (showDocumentInfoDialog) {
+            AlertDialog(
+                onDismissRequest = { showDocumentInfoDialog = false },
+                title = { Text(stringResource(Res.string.document_info)) },
+                text = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(stringResource(Res.string.headings_with_arg, documentInfoStats.headings))
+                        Text(stringResource(Res.string.lines_with_arg, documentInfoStats.lines))
+                        Text(stringResource(Res.string.words_with_arg, documentInfoStats.words))
+                        Text(stringResource(Res.string.characters_with_arg, documentInfoStats.characters))
+                        Text(
+                            stringResource(
+                                Res.string.characters_no_spaces_with_arg,
+                                documentInfoStats.charactersNoSpaces
+                            )
+                        )
+                        Text(
+                            stringResource(
+                                Res.string.size_utf8_with_arg,
+                                formatStorageSize(documentInfoStats.bytes)
+                            )
+                        )
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { showDocumentInfoDialog = false }) {
+                        Text(stringResource(Res.string.close))
+                    }
+                }
+            )
+        }
+
         if (showColorSheet) {
             net.gsantner.markor.ui.components.ColorSelectionSheet(
                 currentColor = noteColor,
@@ -840,6 +890,38 @@ fun EditorScreen(
             )
         }
     }
+}
+
+private data class DocumentInfoStats(
+    val headings: Int,
+    val lines: Int,
+    val words: Int,
+    val characters: Int,
+    val charactersNoSpaces: Int,
+    val bytes: Int
+)
+
+private fun buildDocumentInfoStats(text: String, headings: Int): DocumentInfoStats {
+    val lines = if (text.isEmpty()) 0 else text.count { it == '\n' } + 1
+    val words = Regex("\\S+").findAll(text).count()
+    val characters = text.length
+    val charactersNoSpaces = text.count { !it.isWhitespace() }
+    val bytes = text.encodeToByteArray().size
+    return DocumentInfoStats(
+        headings = headings,
+        lines = lines,
+        words = words,
+        characters = characters,
+        charactersNoSpaces = charactersNoSpaces,
+        bytes = bytes
+    )
+}
+
+private fun formatStorageSize(bytes: Int): String {
+    if (bytes < 1024) return "$bytes B"
+    val kib = bytes / 1024.0
+    val kibRounded = (kib * 10).roundToInt() / 10.0
+    return "$bytes B ($kibRounded KiB)"
 }
 
 private data class TitleRenameResult(
@@ -988,6 +1070,7 @@ private fun EditorTab(
     editorFontSize: Int,
     wordWrap: Boolean,
     surfaceColor: Color,
+    noteAccentColor: Color?,
     focusRequestNonce: Int = 0,
     autoFocusOnStart: Boolean = false,
     onAutoFocusConsumed: () -> Unit = {},
@@ -996,8 +1079,13 @@ private fun EditorTab(
     onContentChange: (TextFieldValue) -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
-    val markdownPalette = remember(colorScheme, surfaceColor) {
-        resolveMarkdownColorPalette(colorScheme, surfaceColor)
+    val editorLineHeightMultiplier = 1.55f
+    val markdownPalette = remember(colorScheme, surfaceColor, noteAccentColor) {
+        resolveMarkdownColorPalette(
+            colorScheme = colorScheme,
+            backgroundColor = surfaceColor,
+            accentColorOverride = noteAccentColor
+        )
     }
     val editorScrollState = rememberScrollState()
     val focusRequester = remember(filePath) { FocusRequester() }
@@ -1006,16 +1094,20 @@ private fun EditorTab(
     val editorTextStyle = MaterialTheme.typography.bodyLarge.copy(
         fontFamily = FontFamily.Monospace,
         fontSize = editorFontSize.sp,
-        lineHeight = (editorFontSize * 1.45f).sp,
+        lineHeight = (editorFontSize * editorLineHeightMultiplier).sp,
         color = markdownPalette.body,
         letterSpacing = 0.sp
     )
-    val editorLineHeight = (editorFontSize * 1.45f).sp
-    val markdownTransform = remember(colorScheme, surfaceColor, editorFontSize) {
+    val titleTextStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+    val lineNumberGutterWidth = 44.dp
+    val editorLineHeight = (editorFontSize * editorLineHeightMultiplier).sp
+    val markdownTransform = remember(colorScheme, surfaceColor, editorFontSize, noteAccentColor) {
         MarkdownVisualTransformation(
             colorScheme = colorScheme,
             backgroundColor = surfaceColor,
-            editorFontSize = editorFontSize
+            editorFontSize = editorFontSize,
+            editorLineHeightMultiplier = editorLineHeightMultiplier,
+            accentColorOverride = noteAccentColor
         )
     }
                 var lineNumberMetadata by remember(showLineNumbers, content.text) {
@@ -1059,10 +1151,10 @@ private fun EditorTab(
                 )
                 .background(
                     surfaceColor,
-                    MaterialTheme.shapes.extraLarge
+                    MaterialTheme.shapes.large
                 )
                 .padding(
-                    start = if (showLineNumbers) 0.dp else MarkorTheme.spacing.medium,
+                    start = if (showLineNumbers) 0.dp else MarkorTheme.spacing.large,
                     end = MarkorTheme.spacing.medium,
                     top = MarkorTheme.spacing.small,
                     bottom = MarkorTheme.spacing.medium
@@ -1079,17 +1171,11 @@ private fun EditorTab(
                     key = SharedTransitionKeys.fileTitle(filePath),
                     isSource = false
                 ) {
-                    TextField(
+                    BasicTextField(
                         value = title,
                         onValueChange = onTitleChange,
-                        placeholder = {
-                            Text(
-                                text = "Title",
-                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                            )
-                        },
                         singleLine = true,
-                        textStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        textStyle = titleTextStyle.copy(color = markdownPalette.body),
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Sentences,
                             imeAction = ImeAction.Done
@@ -1101,15 +1187,13 @@ private fun EditorTab(
                                 keyboardController?.show()
                             }
                         ),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(
+                                start = if (showLineNumbers) lineNumberGutterWidth + MarkorTheme.spacing.medium else 0.dp,
+                                top = MarkorTheme.spacing.small,
+                                bottom = MarkorTheme.spacing.small
+                            )
                             .onPreviewKeyEvent { event ->
                                 if (event.type == KeyEventType.KeyDown &&
                                     (event.key == Key.Enter || event.key == Key.NumPadEnter)
@@ -1121,9 +1205,30 @@ private fun EditorTab(
                                 } else {
                                     false
                                 }
+                            },
+                        decorationBox = { innerTextField ->
+                            Box {
+                                if (title.isBlank()) {
+                                    Text(
+                                        text = "Title",
+                                        style = titleTextStyle,
+                                        color = markdownPalette.subtle
+                                    )
+                                }
+                                innerTextField()
                             }
+                        }
                     )
                 }
+                HorizontalDivider(
+                    modifier = Modifier.padding(
+                        start = if (showLineNumbers) lineNumberGutterWidth + MarkorTheme.spacing.medium else 0.dp,
+                        end = MarkorTheme.spacing.extraSmall,
+                        top = MarkorTheme.spacing.extraSmall,
+                        bottom = MarkorTheme.spacing.medium
+                    ),
+                    color = markdownPalette.accent.copy(alpha = 0.36f)
+                )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -1135,7 +1240,7 @@ private fun EditorTab(
                         val editorLineHeightPx = with(density) { editorLineHeight.toPx() }
                         Column(
                             modifier = Modifier
-                                .width(44.dp)
+                                .width(lineNumberGutterWidth)
                                 .fillMaxHeight()
                                 .heightIn(min = bodyMinHeight)
                                 .background(
@@ -1197,7 +1302,7 @@ private fun EditorTab(
                             }
                         },
                         modifier = Modifier
-                            .padding(start = if (showLineNumbers) MarkorTheme.spacing.small else 0.dp)
+                            .padding(start = if (showLineNumbers) MarkorTheme.spacing.medium else 0.dp)
                             .weight(1f)
                             .focusRequester(focusRequester)
                             .heightIn(min = bodyMinHeight)
@@ -1316,21 +1421,27 @@ private fun PreviewTab(
     title: String,
     content: String,
     backgroundColor: Color,
+    noteAccentColor: Color?,
     onTapToEdit: () -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
-    val markdownPalette = remember(colorScheme, backgroundColor) {
-        resolveMarkdownColorPalette(colorScheme, backgroundColor)
+    val markdownPalette = remember(colorScheme, backgroundColor, noteAccentColor) {
+        resolveMarkdownColorPalette(
+            colorScheme = colorScheme,
+            backgroundColor = backgroundColor,
+            accentColorOverride = noteAccentColor
+        )
     }
     val previewBlocks = remember(content, filePath) {
         buildPreviewBlocks(content, filePath)
     }
     val emptyMessage = stringResource(Res.string.nothing_to_preview)
-    val styledText = remember<AnnotatedString>(content, colorScheme, backgroundColor) {
+    val styledText = remember<AnnotatedString>(content, colorScheme, backgroundColor, noteAccentColor) {
         net.gsantner.markor.ui.components.renderCleanMarkdown(
             if (content.isEmpty()) emptyMessage else content,
             colorScheme,
-            backgroundColor
+            backgroundColor,
+            accentColorOverride = noteAccentColor
         )
     }
 
@@ -1343,7 +1454,7 @@ private fun PreviewTab(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(MarkorTheme.spacing.medium)
-                .background(backgroundColor, MaterialTheme.shapes.extraLarge)
+                .background(backgroundColor, MaterialTheme.shapes.large)
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = { onTapToEdit() })
                 }
@@ -1364,7 +1475,7 @@ private fun PreviewTab(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            if (previewBlocks.none { it is PreviewBlock.Image }) {
+            if (previewBlocks.none { it is PreviewBlock.Image || it is PreviewBlock.HorizontalRule }) {
                 Text(
                     text = styledText,
                     style = MaterialTheme.typography.bodyLarge.copy(
@@ -1381,11 +1492,12 @@ private fun PreviewTab(
                                 Spacer(modifier = Modifier.height(8.dp))
                             } else {
                                 val lineText =
-                                    remember(block.content, colorScheme, backgroundColor) {
+                                    remember(block.content, colorScheme, backgroundColor, noteAccentColor) {
                                         net.gsantner.markor.ui.components.renderCleanMarkdown(
                                             block.content,
                                             colorScheme,
-                                            backgroundColor
+                                            backgroundColor,
+                                            accentColorOverride = noteAccentColor
                                         )
                                     }
                                 Text(
@@ -1412,6 +1524,15 @@ private fun PreviewTab(
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                         }
+
+                        is PreviewBlock.HorizontalRule -> {
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                color = markdownPalette.accent.copy(alpha = 0.42f)
+                            )
+                        }
                     }
                 }
             }
@@ -1422,15 +1543,23 @@ private fun PreviewTab(
 private sealed interface PreviewBlock {
     data class Text(val content: String) : PreviewBlock
     data class Image(val source: String, val altText: String?) : PreviewBlock
+    data object HorizontalRule : PreviewBlock
 }
 
 private val markdownImageRegex = Regex("!\\[([^\\]]*)\\]\\(([^)]+)\\)")
+private val markdownHorizontalRuleRegex =
+    Regex("^[ \\t]{0,3}(?:(?:\\*[ \\t]*){3,}|(?:-[ \\t]*){3,}|(?:_[ \\t]*){3,})$")
 
 private fun buildPreviewBlocks(content: String, filePath: String): List<PreviewBlock> {
     if (content.isEmpty()) return emptyList()
 
     val blocks = mutableListOf<PreviewBlock>()
     content.lineSequence().forEach { line ->
+        if (markdownHorizontalRuleRegex.matches(line)) {
+            blocks.add(PreviewBlock.HorizontalRule)
+            return@forEach
+        }
+
         val matches = markdownImageRegex.findAll(line).toList()
         if (matches.isEmpty()) {
             blocks.add(PreviewBlock.Text(line))

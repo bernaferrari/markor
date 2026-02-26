@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -62,10 +64,14 @@ fun MainScreen(
 
     val isSelectionMode by fileBrowserViewModel.isSelectionMode.collectAsState()
     val selectedFiles by fileBrowserViewModel.selectedFiles.collectAsState()
+    val files by fileBrowserViewModel.files.collectAsState()
+    val trashFiles by fileBrowserViewModel.trashFiles.collectAsState()
+    val noteMetadataByPath by fileBrowserViewModel.noteMetadataByPath.collectAsState()
     
     var showDeleteDialog by remember { mutableStateOf(false) }
     var isGridView by remember { mutableStateOf(true) }
     var showCreateFileDialog by remember { mutableStateOf(false) }
+    var showSelectionColorSheet by remember { mutableStateOf(false) }
     
     // Adaptive layout info
     val adaptiveInfo = rememberAdaptiveLayoutInfo()
@@ -75,6 +81,35 @@ fun MainScreen(
     
     // Left panel content for tablets
     var leftPanelContent by remember { mutableStateOf(LeftPanelContent.FILE_BROWSER) }
+
+    val fileByPath = remember(files, trashFiles) {
+        (files + trashFiles).associateBy { it.path }
+    }
+    val nonDirectorySelectedColors = remember(selectedFiles, fileByPath, noteMetadataByPath) {
+        buildList<Int?> {
+            selectedFiles.forEach { path ->
+                val fileInfo = fileByPath[path]
+                if (fileInfo?.isDirectory != true) {
+                    // Keep nullable colors so "all default color" can be detected as a shared state.
+                    add(noteMetadataByPath[path.toString()]?.note?.color)
+                }
+            }
+        }
+    }
+    val (selectionSheetCurrentColor, selectionSheetShowCurrentSelection) =
+        remember(nonDirectorySelectedColors) {
+            if (nonDirectorySelectedColors.isEmpty()) {
+                null to false
+            } else {
+                val firstColor = nonDirectorySelectedColors.first()
+                val allSame = nonDirectorySelectedColors.all { it == firstColor }
+                if (allSame) {
+                    firstColor to true
+                } else {
+                    null to false
+                }
+            }
+        }
 
     BackHandler(enabled = isSelectionMode) {
         fileBrowserViewModel.clearSelection()
@@ -105,6 +140,18 @@ fun MainScreen(
         )
     }
 
+    if (showSelectionColorSheet) {
+        net.gsantner.markor.ui.components.ColorSelectionSheet(
+            currentColor = selectionSheetCurrentColor,
+            showCurrentSelection = selectionSheetShowCurrentSelection,
+            onColorSelected = { color ->
+                fileBrowserViewModel.setColorForSelectedFiles(color)
+                showSelectionColorSheet = false
+            },
+            onDismiss = { showSelectionColorSheet = false }
+        )
+    }
+
     if (adaptiveInfo.showDualPane) {
         // Tablet landscape: List-Detail layout with persistent left panel
         val filterMode by fileBrowserViewModel.filterMode.collectAsState()
@@ -123,7 +170,8 @@ fun MainScreen(
                 onNavigateToEditor(path, false)
             },
             onClearSelection = { fileBrowserViewModel.clearSelection() },
-            onSelectAll = { fileBrowserViewModel.selectAll() },
+            onSelectAll = { fileBrowserViewModel.toggleSelectAll() },
+            onSetColorForSelected = { showSelectionColorSheet = true },
             onDeleteSelected = { showDeleteDialog = true },
             onToggleGridView = { isGridView = !isGridView },
             onFilterModeChange = { fileBrowserViewModel.setFilterMode(it) },
@@ -149,7 +197,8 @@ fun MainScreen(
             currentFilterMode = filterMode,
             currentSortOrder = sortOrder,
             onClearSelection = { fileBrowserViewModel.clearSelection() },
-            onSelectAll = { fileBrowserViewModel.selectAll() },
+            onSelectAll = { fileBrowserViewModel.toggleSelectAll() },
+            onSetColorForSelected = { showSelectionColorSheet = true },
             onDeleteSelected = { showDeleteDialog = true },
             onToggleGridView = { isGridView = !isGridView },
             onOpenSettings = onNavigateToSettings,
@@ -172,6 +221,7 @@ private fun PhoneLayout(
     currentSortOrder: String,
     onClearSelection: () -> Unit,
     onSelectAll: () -> Unit,
+    onSetColorForSelected: () -> Unit,
     onDeleteSelected: () -> Unit,
     onToggleGridView: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -247,6 +297,7 @@ private fun PhoneLayout(
                     onFilterModeChange = onFilterModeChange,
                     onClearSelection = onClearSelection,
                     onSelectAll = onSelectAll,
+                    onSetColor = onSetColorForSelected,
                     onDelete = onDeleteSelected,
                     showFilterChips = true
                 )
@@ -296,6 +347,7 @@ private fun ListDetailLayout(
     onFileSelected: (String) -> Unit,
     onClearSelection: () -> Unit,
     onSelectAll: () -> Unit,
+    onSetColorForSelected: () -> Unit,
     onDeleteSelected: () -> Unit,
     onToggleGridView: () -> Unit,
     onFilterModeChange: (FileFilterMode) -> Unit,
@@ -347,6 +399,7 @@ private fun ListDetailLayout(
                                 onFilterModeChange = onFilterModeChange,
                                 onClearSelection = onClearSelection,
                                 onSelectAll = onSelectAll,
+                                onSetColor = onSetColorForSelected,
                                 onDelete = onDeleteSelected,
                                 showFilterChips = true
                             )
@@ -487,6 +540,7 @@ private fun SelectionTopBar(
     onFilterModeChange: (FileFilterMode) -> Unit = {},
     onClearSelection: () -> Unit,
     onSelectAll: () -> Unit,
+    onSetColor: () -> Unit,
     onDelete: () -> Unit,
     showFilterChips: Boolean = false
 ) {
@@ -512,6 +566,14 @@ private fun SelectionTopBar(
                         Icons.Default.SelectAll,
                         contentDescription = stringResource(Res.string.select_all)
                     )
+                }
+                if (currentFilterMode != FileFilterMode.TRASH) {
+                    IconButton(onClick = onSetColor) {
+                        Icon(
+                            Icons.Default.Palette,
+                            contentDescription = stringResource(Res.string.note_color)
+                        )
+                    }
                 }
                 IconButton(onClick = onDelete) {
                     Icon(
@@ -548,7 +610,7 @@ private fun FilterTabRow(
         Triple(
             FileFilterMode.ALL,
             Res.string.all,
-            Icons.Outlined.List to Icons.Default.List
+            Icons.AutoMirrored.Outlined.List to Icons.AutoMirrored.Filled.List
         ),
         Triple(
             FileFilterMode.FAVORITES,

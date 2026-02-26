@@ -15,6 +15,7 @@
     <color name="file">@color/light__file</color>
     <color name="folder">@color/light__folder</color>
     <color name="background">@color/light__background</color>
+    <color name="splash_background">@color/light__background</color>
     <color name="background_2">@color/light__background_2</color>
     <color name="textActionBarColor">@color/lighter_grey</color>
     <color name="textActionIconColor">@color/grey</color>
