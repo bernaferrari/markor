@@ -138,6 +138,13 @@
     <string name="manage_images">Manage Images</string>
     <string name="properties">Properties</string>
     <string name="document_outline">Document Outline</string>
+    <string name="document_info">Document Info</string>
+    <string name="headings_with_arg">Headings: %d</string>
+    <string name="lines_with_arg">Lines: %d</string>
+    <string name="words_with_arg">Words: %d</string>
+    <string name="characters_with_arg">Characters: %d</string>
+    <string name="characters_no_spaces_with_arg">Characters (no spaces): %d</string>
+    <string name="size_utf8_with_arg">Size (UTF-8): %s</string>
     <string name="in_use">In use</string>
     <string name="folder_name">Folder Name</string>
     <string name="file_name">File Name</string>

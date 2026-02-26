@@ -88,8 +88,13 @@ fun FileGridItem(
     }
     val contentSurfaceColor = if (isSelected) containerColor else noteSurfaceColor ?: containerColor
     val effectiveBackground = contentSurfaceColor.compositeOver(colorScheme.surface)
-    val previewPalette = remember(effectiveBackground, colorScheme) {
-        resolveMarkdownColorPalette(colorScheme, effectiveBackground)
+    val accentOverride = color?.let(::Color)
+    val previewPalette = remember(effectiveBackground, colorScheme, accentOverride) {
+        resolveMarkdownColorPalette(
+            colorScheme = colorScheme,
+            backgroundColor = effectiveBackground,
+            accentColorOverride = accentOverride
+        )
     }
     val resolvedImagePreviewUrl = remember(imagePreviewUrl, file.path) {
         resolveImagePreviewUrl(imagePreviewUrl, file.path)
@@ -230,8 +235,13 @@ fun FileGridItem(
                         Spacer(modifier = Modifier.height(3.dp))
 
                         if (!file.preview.isNullOrEmpty()) {
-                            val previewText = remember(file.preview, colorScheme, effectiveBackground) {
-                                renderGridMarkdown(file.preview, colorScheme, backgroundColor = effectiveBackground)
+                            val previewText = remember(file.preview, colorScheme, effectiveBackground, accentOverride) {
+                                renderGridMarkdown(
+                                    file.preview,
+                                    colorScheme,
+                                    backgroundColor = effectiveBackground,
+                                    accentColorOverride = accentOverride
+                                )
                             }
                             Text(
                                 text = previewText,

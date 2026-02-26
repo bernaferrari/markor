@@ -126,6 +126,13 @@
     <string name="document_error_clip">Error encountered: Text copied to clipboard.</string>
     <string name="document_to_be_loaded_and_saved_as_witharg">Document to be loaded and saved as "%s"</string>
     <string name="documents">Documents</string>
+    <string name="document_info">Document Info</string>
+    <string name="headings_with_arg">Headings: %d</string>
+    <string name="lines_with_arg">Lines: %d</string>
+    <string name="words_with_arg">Words: %d</string>
+    <string name="characters_with_arg">Characters: %d</string>
+    <string name="characters_no_spaces_with_arg">Characters (no spaces): %d</string>
+    <string name="size_utf8_with_arg">Size (UTF-8): %s</string>
     <string name="drag">Drag</string>
     <string name="due_date">Due date</string>
     <string name="due_future">Due in future</string>

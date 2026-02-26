@@ -380,6 +380,25 @@ class FileBrowserViewModel(
         _selectedFiles.value = allPaths
     }
 
+    fun toggleSelectAll() {
+        val allPaths = if (_filterMode.value == FileFilterMode.TRASH) {
+            _trashFiles.value.map { it.path }.toSet()
+        } else {
+            _files.value.map { it.path }.toSet()
+        }
+
+        val allAreAlreadySelected = allPaths.isNotEmpty() &&
+            _selectedFiles.value.size == allPaths.size &&
+            _selectedFiles.value.containsAll(allPaths)
+
+        if (allAreAlreadySelected) {
+            clearSelection()
+        } else {
+            _selectedFiles.value = allPaths
+            _isSelectionMode.value = allPaths.isNotEmpty()
+        }
+    }
+
     fun clearSelection() {
         _selectedFiles.value = emptySet()
         _isSelectionMode.value = false
@@ -578,7 +597,38 @@ class FileBrowserViewModel(
                  }
             } else {
                 noteMetadataRepository.setLabelsForNote(existing.id, labels)
+             }
+        }
+    }
+
+    fun setColorForSelectedFiles(color: Int?) {
+        viewModelScope.launch {
+            val selected = _selectedFiles.value.toList()
+            if (selected.isEmpty()) {
+                clearSelection()
+                return@launch
             }
+
+            val now = nowMillis()
+            selected.forEach { path ->
+                // Note color applies to notes only, not directories.
+                if (fileRepository.isDirectory(path)) {
+                    return@forEach
+                }
+
+                val pathString = path.toString()
+                val existing = noteMetadataRepository.getNoteByPath(pathString)
+                if (existing == null) {
+                    val note = net.gsantner.markor.data.local.db.NoteMetadataMapper
+                        .buildNoteEntityFromPath(pathString, null, now)
+                        .copy(color = color, updatedAt = now)
+                    noteMetadataRepository.upsertNote(note)
+                } else {
+                    noteMetadataRepository.upsertNote(existing.copy(color = color, updatedAt = now))
+                }
+            }
+
+            clearSelection()
         }
     }
 }

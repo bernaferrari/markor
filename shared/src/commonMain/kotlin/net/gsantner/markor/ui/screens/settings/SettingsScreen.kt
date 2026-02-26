@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,7 +45,6 @@ import net.gsantner.markor.ui.theme.dynamicColorScheme
 import net.gsantner.markor.ui.theme.MarkorTheme
 import net.gsantner.markor.ui.theme.ThemePaletteOption
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.ui.graphics.vector.ImageVector
 import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.stringResource
 import markor.shared.generated.resources.*
@@ -127,34 +125,50 @@ fun SettingsScreen(
             }
 
             // Editor Section
-            SettingsSection(title = stringResource(Res.string.editor)) {
-                SwitchSettingItem(
-                    title = stringResource(Res.string.line_numbers),
-                    subtitle = stringResource(Res.string.display_line_numbers),
-                    checked = showLineNumbers,
-                    onCheckedChange = { viewModel.setShowLineNumbers(it) },
-                    position = SettingItemPosition.First
-                )
-                SwitchSettingItem(
-                    title = stringResource(Res.string.word_wrap),
-                    subtitle = stringResource(Res.string.wrap_text_to_fit_screen),
-                    checked = wordWrap,
-                    onCheckedChange = { viewModel.setWordWrap(it) },
-                    position = SettingItemPosition.Middle
-                )
-                SwitchSettingItem(
-                    title = stringResource(Res.string.auto_format),
-                    subtitle = stringResource(Res.string.format_while_typing),
-                    checked = autoFormat,
-                    onCheckedChange = { viewModel.setAutoFormat(it) },
-                    position = SettingItemPosition.Middle
-                )
-                FontSizeSettingItem(
-                    value = editorFontSize,
-                    onValueChange = { viewModel.setEditorFontSize(it.toInt()) },
-                    position = SettingItemPosition.Last
-                )
-            }
+            val editorItems = listOf<SegmentedSectionItem>(
+                { index, itemCount ->
+                    SwitchSettingItem(
+                        title = stringResource(Res.string.line_numbers),
+                        subtitle = stringResource(Res.string.display_line_numbers),
+                        checked = showLineNumbers,
+                        onCheckedChange = { viewModel.setShowLineNumbers(it) },
+                        index = index,
+                        itemCount = itemCount
+                    )
+                },
+                { index, itemCount ->
+                    SwitchSettingItem(
+                        title = stringResource(Res.string.word_wrap),
+                        subtitle = stringResource(Res.string.wrap_text_to_fit_screen),
+                        checked = wordWrap,
+                        onCheckedChange = { viewModel.setWordWrap(it) },
+                        index = index,
+                        itemCount = itemCount
+                    )
+                },
+                { index, itemCount ->
+                    SwitchSettingItem(
+                        title = stringResource(Res.string.auto_format),
+                        subtitle = stringResource(Res.string.format_while_typing),
+                        checked = autoFormat,
+                        onCheckedChange = { viewModel.setAutoFormat(it) },
+                        index = index,
+                        itemCount = itemCount
+                    )
+                },
+                { index, itemCount ->
+                    FontSizeSettingItem(
+                        value = editorFontSize,
+                        onValueChange = { viewModel.setEditorFontSize(it.toInt()) },
+                        index = index,
+                        itemCount = itemCount
+                    )
+                }
+            )
+            SegmentedSettingsSection(
+                title = stringResource(Res.string.editor),
+                items = editorItems
+            )
             Spacer(modifier = Modifier.height(MarkorTheme.spacing.small))
 
             // Storage Section
@@ -183,47 +197,67 @@ fun SettingsScreen(
                 )
             }
 
-            SettingsSection(title = stringResource(Res.string.storage)) {
-                if (supportsSharedStorage) {
-                    StorageModeSettingItem(
-                        isExternalStorageEnabled = isExternalStorageEnabled,
-                        onSwitchMode = { viewModel.switchStorageMode(it) },
-                        position = SettingItemPosition.First
-                    )
-                } else {
-                    InfoSettingItem(
-                        title = stringResource(Res.string.storage_mode),
-                        value = "Private (iOS)",
-                        position = SettingItemPosition.First
+            val storageItems = listOf<SegmentedSectionItem>(
+                { index, itemCount ->
+                    if (supportsSharedStorage) {
+                        StorageModeSettingItem(
+                            isExternalStorageEnabled = isExternalStorageEnabled,
+                            onSwitchMode = { viewModel.switchStorageMode(it) },
+                            index = index,
+                            itemCount = itemCount
+                        )
+                    } else {
+                        InfoSettingItem(
+                            title = stringResource(Res.string.storage_mode),
+                            value = "Private (iOS)",
+                            index = index,
+                            itemCount = itemCount
+                        )
+                    }
+                },
+                { index, itemCount ->
+                    ClickableSettingItem(
+                        title = stringResource(Res.string.notebook_directory),
+                        subtitle = notebookDirectory.ifEmpty { "Default (Documents/Markor)" },
+                        onClick = {
+                            editingStorageKey = "notebook"
+                            currentStorageValue = notebookDirectory
+                        },
+                        index = index,
+                        itemCount = itemCount
                     )
                 }
-
-                ClickableSettingItem(
-                    title = stringResource(Res.string.notebook_directory),
-                    subtitle = notebookDirectory.ifEmpty { "Default (Documents/Markor)" },
-                    onClick = { 
-                        editingStorageKey = "notebook"
-                        currentStorageValue = notebookDirectory
-                    },
-                    position = SettingItemPosition.Last
-                )
-            }
+            )
+            SegmentedSettingsSection(
+                title = stringResource(Res.string.storage),
+                items = storageItems
+            )
             Spacer(modifier = Modifier.height(MarkorTheme.spacing.small))
              
             // About Section
-            SettingsSection(title = stringResource(Res.string.about)) {
-                InfoSettingItem(
-                    title = stringResource(Res.string.version),
-                    value = "2.15.2-Expressive",
-                    position = SettingItemPosition.First
-                )
-                ClickableSettingItem(
-                    title = stringResource(Res.string.project_license),
-                    subtitle = "Apache License 2.0",
-                    onClick = { showProjectLicenseDialog = true },
-                    position = SettingItemPosition.Last
-                )
-            }
+            val aboutItems = listOf<SegmentedSectionItem>(
+                { index, itemCount ->
+                    InfoSettingItem(
+                        title = stringResource(Res.string.version),
+                        value = "2.15.2-Expressive",
+                        index = index,
+                        itemCount = itemCount
+                    )
+                },
+                { index, itemCount ->
+                    ClickableSettingItem(
+                        title = stringResource(Res.string.project_license),
+                        subtitle = "Apache License 2.0",
+                        onClick = { showProjectLicenseDialog = true },
+                        index = index,
+                        itemCount = itemCount
+                    )
+                }
+            )
+            SegmentedSettingsSection(
+                title = stringResource(Res.string.about),
+                items = aboutItems
+            )
             
             // Keep final items above gesture/navigation area while preserving edge-to-edge.
             Spacer(modifier = Modifier.height(MarkorTheme.spacing.small))
@@ -248,73 +282,66 @@ CONDITIONS OF ANY KIND, either express or implied.
 See LICENSE.txt in the project root for the full license text.
 """
 
+private typealias SegmentedSectionItem = @Composable (Int, Int) -> Unit
+
 @Composable
 private fun SettingsSection(
     title: String,
-    icon: ImageVector? = null,
-    titleColor: Color = MaterialTheme.colorScheme.onSurface,
+    segmented: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(start = MarkorTheme.spacing.medium, bottom = MarkorTheme.spacing.medium)
-        ) {
-            icon?.let {
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.size(28.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = it,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }
-            }
-            if (icon != null) {
-                Spacer(modifier = Modifier.width(MarkorTheme.spacing.medium))
-            }
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.5.sp
-                ),
-                color = titleColor
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.5.sp
+            ),
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(
+                start = MarkorTheme.spacing.medium,
+                bottom = MarkorTheme.spacing.medium
             )
-        }
+        )
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            verticalArrangement = Arrangement.spacedBy(
+                if (segmented) ListItemDefaults.SegmentedGap else 0.dp
+            )
         ) {
             content()
         }
     }
 }
 
-private enum class SettingItemPosition {
-    Single, First, Middle, Last
-}
-
-private fun settingItemShape(position: SettingItemPosition): Shape = when (position) {
-    SettingItemPosition.Single -> RoundedCornerShape(22.dp)
-    SettingItemPosition.First -> RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
-    SettingItemPosition.Middle -> RoundedCornerShape(8.dp)
-    SettingItemPosition.Last -> RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 22.dp, bottomEnd = 22.dp)
+@Composable
+private fun SegmentedSettingsSection(
+    title: String,
+    items: List<SegmentedSectionItem>
+) {
+    SettingsSection(title = title, segmented = true) {
+        items.forEachIndexed { index, item ->
+            item(index, items.size)
+        }
+    }
 }
 
 @Composable
-private fun SettingsItemContainer(
-    position: SettingItemPosition,
+private fun segmentedItemColors(): ListItemColors =
+    ListItemDefaults.segmentedColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+
+@Composable
+private fun segmentedShapes(index: Int, itemCount: Int): ListItemShapes =
+    ListItemDefaults.segmentedShapes(index = index, count = itemCount)
+
+@Composable
+private fun SegmentedSettingSurface(
+    index: Int,
+    itemCount: Int,
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-    val shape = settingItemShape(position)
+    val shape = segmentedShapes(index = index, itemCount = itemCount).shape
 
     if (onClick != null) {
         Surface(
@@ -346,49 +373,51 @@ private fun SwitchSettingItem(
     subtitle: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    position: SettingItemPosition
+    index: Int,
+    itemCount: Int
 ) {
     val hapticHelper = rememberHapticHelper()
-
-    SettingsItemContainer(
-        position = position,
-        onClick = {
-            hapticHelper.performLightClick()
-            onCheckedChange(!checked)
-        }
-    ) {
-        ListItem(
-            headlineContent = {
-                Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
-            },
-            supportingContent = {
-                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            },
-            trailingContent = {
-                Switch(
-                    checked = checked,
-                    onCheckedChange = {
-                        hapticHelper.performLightClick()
-                        onCheckedChange(it)
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                        checkedTrackColor = MaterialTheme.colorScheme.primary
-                    )
-                )
-            },
-            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-        )
+    val onToggle: (Boolean) -> Unit = {
+        hapticHelper.performLightClick()
+        onCheckedChange(it)
     }
+
+    SegmentedListItem(
+        checked = checked,
+        onCheckedChange = onToggle,
+        shapes = segmentedShapes(index = index, itemCount = itemCount),
+        colors = segmentedItemColors(),
+        supportingContent = {
+            Text(
+                subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        trailingContent = {
+            Switch(
+                checked = checked,
+                onCheckedChange = onToggle,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                    checkedTrackColor = MaterialTheme.colorScheme.primary
+                )
+            )
+        },
+        content = {
+            Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+        }
+    )
 }
 
 @Composable
 private fun InfoSettingItem(
     title: String,
     value: String,
-    position: SettingItemPosition
+    index: Int,
+    itemCount: Int
 ) {
-    SettingsItemContainer(position = position) {
+    SegmentedSettingSurface(index = index, itemCount = itemCount) {
         ListItem(
             headlineContent = {
                 Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
@@ -411,31 +440,34 @@ private fun ClickableSettingItem(
     title: String,
     subtitle: String,
     onClick: () -> Unit,
-    position: SettingItemPosition
+    index: Int,
+    itemCount: Int
 ) {
-    SettingsItemContainer(
-        position = position,
-        onClick = onClick
-    ) {
-        ListItem(
-            headlineContent = {
-                Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
-            },
-            supportingContent = {
-                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            },
-            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-        )
-    }
+    SegmentedListItem(
+        onClick = onClick,
+        shapes = segmentedShapes(index = index, itemCount = itemCount),
+        colors = segmentedItemColors(),
+        supportingContent = {
+            Text(
+                subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        content = {
+            Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+        }
+    )
 }
 
 @Composable
 private fun FontSizeSettingItem(
     value: Int,
     onValueChange: (Float) -> Unit,
-    position: SettingItemPosition
+    index: Int,
+    itemCount: Int
 ) {
-    SettingsItemContainer(position = position) {
+    SegmentedSettingSurface(index = index, itemCount = itemCount) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -472,11 +504,12 @@ private fun FontSizeSettingItem(
 private fun StorageModeSettingItem(
     isExternalStorageEnabled: Boolean,
     onSwitchMode: (Boolean) -> Unit,
-    position: SettingItemPosition
+    index: Int,
+    itemCount: Int
 ) {
     val hapticHelper = rememberHapticHelper()
 
-    SettingsItemContainer(position = position) {
+    SegmentedSettingSurface(index = index, itemCount = itemCount) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Text(
                 text = stringResource(Res.string.storage_mode),
@@ -569,7 +602,7 @@ private fun ThemeModeSettingItem(
             Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
-            modeOptions.forEachIndexed { index, (mode, label, icon) ->
+            modeOptions.forEachIndexed { modeIndex, (mode, label, icon) ->
                 ToggleButton(
                     checked = mode == selectedMode,
                     onCheckedChange = { isChecked ->
@@ -578,7 +611,7 @@ private fun ThemeModeSettingItem(
                             onSelectMode(mode)
                         }
                     },
-                    shapes = when (index) {
+                    shapes = when (modeIndex) {
                         0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                         modeOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                         else -> ButtonGroupDefaults.connectedMiddleButtonShapes()

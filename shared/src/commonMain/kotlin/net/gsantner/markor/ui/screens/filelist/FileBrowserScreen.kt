@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -479,7 +480,7 @@ fun FileBrowserContent(
                     LazyVerticalStaggeredGrid(
                         columns = StaggeredGridCells.Adaptive(150.dp),
                         contentPadding = PaddingValues(
-                            top = 12.dp,
+                            top = 16.dp,
                             start = 16.dp, 
                             end = 16.dp, 
                             bottom = 120.dp
@@ -534,7 +535,7 @@ fun FileBrowserContent(
                 } else {
                     LazyColumn(
                         contentPadding = PaddingValues(
-                            top = 12.dp,
+                            top = 16.dp,
                             bottom = 120.dp, 
                             start = 16.dp, 
                             end = 16.dp
@@ -783,8 +784,36 @@ private fun FileItem(
         else -> colorScheme.surfaceContainerLow
     }
     val effectiveBackground = containerColor.compositeOver(colorScheme.surface)
-    val previewPalette = remember(effectiveBackground, colorScheme) {
-        resolveMarkdownColorPalette(colorScheme, effectiveBackground)
+    val accentOverride = noteColor?.let(::Color)
+    val previewPalette = remember(effectiveBackground, colorScheme, accentOverride) {
+        resolveMarkdownColorPalette(
+            colorScheme = colorScheme,
+            backgroundColor = effectiveBackground,
+            accentColorOverride = accentOverride
+        )
+    }
+    val iconContainerColor = remember(file.isDirectory, colorScheme, accentOverride) {
+        when {
+            file.isDirectory -> colorScheme.primaryContainer
+            accentOverride != null -> {
+                val alpha = if (colorScheme.surface.luminance() < 0.5f) 0.36f else 0.22f
+                accentOverride.copy(alpha = alpha).compositeOver(colorScheme.surfaceContainerHigh)
+            }
+            else -> colorScheme.secondaryContainer
+        }
+    }
+    val iconTintColor = remember(file.isDirectory, colorScheme, iconContainerColor, accentOverride) {
+        when {
+            file.isDirectory -> colorScheme.primary
+            accentOverride != null -> {
+                resolveMarkdownColorPalette(
+                    colorScheme = colorScheme,
+                    backgroundColor = iconContainerColor,
+                    accentColorOverride = accentOverride
+                ).accent
+            }
+            else -> colorScheme.secondary
+        }
     }
 
     val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
@@ -827,21 +856,13 @@ private fun FileItem(
                         modifier = Modifier
                             .size(52.dp)
                             .clip(MaterialTheme.shapes.large)
-                            .background(
-                                if (file.isDirectory)
-                                    MaterialTheme.colorScheme.primaryContainer
-                                else
-                                    MaterialTheme.colorScheme.secondaryContainer
-                            ),
+                            .background(iconContainerColor),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = if (file.isDirectory) Icons.Default.Folder else Icons.Default.Description,
                             contentDescription = null,
-                            tint = if (file.isDirectory)
-                                MaterialTheme.colorScheme.primary
-                            else
-                                MaterialTheme.colorScheme.secondary,
+                            tint = iconTintColor,
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -896,11 +917,12 @@ private fun FileItem(
                             val effectivePreview = preview?.takeIf { it.isNotBlank() }
                                 ?: file.preview?.takeIf { it.isNotBlank() }
                             if (!effectivePreview.isNullOrEmpty()) {
-                                val previewText = remember(effectivePreview, colorScheme, effectiveBackground) {
+                                val previewText = remember(effectivePreview, colorScheme, effectiveBackground, accentOverride) {
                                     renderGridMarkdown(
                                         effectivePreview,
                                         colorScheme,
-                                        backgroundColor = effectiveBackground
+                                        backgroundColor = effectiveBackground,
+                                        accentColorOverride = accentOverride
                                     )
                                 }
                                 Text(
