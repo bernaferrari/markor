@@ -2,12 +2,12 @@ package com.bernaferrari.remarkor.ui.components
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 
@@ -65,13 +65,13 @@ private fun renderMarkdown(
         backgroundColor = backgroundColor,
         accentColorOverride = accentColorOverride
     )
-    
+
     lines.forEachIndexed { index, line ->
         if (index > 0) builder.append("\n")
-        
+
         var content = line
         var lineStyle: SpanStyle? = null
-        
+
         // Headers - strip # and apply sizing
         val headerMatch = Regex("^(#{1,6})[ \\t]+(.+)$").find(content)
         if (headerMatch != null) {
@@ -89,7 +89,7 @@ private fun renderMarkdown(
                 brush = SolidColor(palette.accent),
             )
         }
-        
+
         // Blockquotes - strip >
         val quoteMatch = Regex("^>\\s*(.*)$").find(content)
         if (quoteMatch != null) {
@@ -99,19 +99,19 @@ private fun renderMarkdown(
                 brush = SolidColor(palette.subtle),
             )
         }
-        
+
         // Lists - replace markers with bullet
         val listMatch = Regex("^[-*+]\\s+(.+)$").find(content)
         if (listMatch != null) {
             content = "• " + listMatch.groupValues[1]
         }
-        
+
         // Numbered lists
         val numberedMatch = Regex("^(\\d+)\\.\\s+(.+)$").find(content)
         if (numberedMatch != null) {
             content = numberedMatch.groupValues[1] + ". " + numberedMatch.groupValues[2]
         }
-        
+
         // Checkboxes
         val taskMatch = Regex("^-?\\s?\\[([ xX])\\]\\s+(.+)$").find(content)
         if (taskMatch != null) {
@@ -119,27 +119,27 @@ private fun renderMarkdown(
             val checkbox = if (isChecked) "☑ " else "☐ "
             content = checkbox + taskMatch.groupValues[2]
         }
-        
+
         // Skip empty lines
         if (content.isEmpty()) return@forEachIndexed
-        
+
         // Process inline styles and build clean string
         val cleanResult = processInlineStyles(content, palette)
-        
+
         val start = builder.length
         builder.append(cleanResult.text)
-        
+
         // Apply line-level style first
         if (lineStyle != null) {
             builder.addStyle(lineStyle, start, builder.length)
         }
-        
+
         // Apply inline styles with adjusted offsets
         cleanResult.styles.forEach { (style, range) ->
             builder.addStyle(style, start + range.first, start + range.last + 1)
         }
     }
-    
+
     return builder.toAnnotatedString()
 }
 
@@ -156,58 +156,75 @@ private fun processInlineStyles(text: String, palette: MarkdownColorPalette): In
     val styles = mutableListOf<Pair<SpanStyle, IntRange>>()
     var result = text
     var offset = 0
-    
+
     // Process in order: strikethrough, bold, italic, code
     // Each pass updates 'result' and tracks style positions
-    
+
     // Strikethrough ~~text~~
     Regex("~~(.+?)~~").findAll(result).toList().reversed().forEach { match ->
         val content = match.groupValues[1]
         val startPos = match.range.first
         val endPos = startPos + content.length - 1
-        
+
         // Replace ~~content~~ with content
-        result = result.substring(0, match.range.first) + content + result.substring(match.range.last + 1)
-        
+        result = result.substring(
+            0,
+            match.range.first
+        ) + content + result.substring(match.range.last + 1)
+
         styles.add(SpanStyle(textDecoration = TextDecoration.LineThrough) to (startPos..endPos))
     }
-    
+
     // Bold **text** or __text__
     Regex("(\\*\\*|__)(.+?)\\1").findAll(result).toList().reversed().forEach { match ->
         val content = match.groupValues[2]
         val startPos = match.range.first
         val endPos = startPos + content.length - 1
-        
-        result = result.substring(0, match.range.first) + content + result.substring(match.range.last + 1)
-        
+
+        result = result.substring(
+            0,
+            match.range.first
+        ) + content + result.substring(match.range.last + 1)
+
         styles.add(SpanStyle(fontWeight = FontWeight.Bold) to (startPos..endPos))
     }
-    
+
     // Italic *text* or _text_ (avoiding ** and __)
-    Regex("(?<!\\*)(\\*)(?!\\*)(.+?)(?<!\\*)(\\*)(?!\\*)|(?<!_)(_)(?!_)(.+?)(?<!_)(_)(?!_)").findAll(result).toList().reversed().forEach { match ->
-        val content = if (match.groupValues[2].isNotEmpty()) match.groupValues[2] else match.groupValues[5]
+    Regex("(?<!\\*)(\\*)(?!\\*)(.+?)(?<!\\*)(\\*)(?!\\*)|(?<!_)(_)(?!_)(.+?)(?<!_)(_)(?!_)").findAll(
+        result
+    ).toList().reversed().forEach { match ->
+        val content =
+            if (match.groupValues[2].isNotEmpty()) match.groupValues[2] else match.groupValues[5]
         val startPos = match.range.first
         val endPos = startPos + content.length - 1
-        
-        result = result.substring(0, match.range.first) + content + result.substring(match.range.last + 1)
-        
+
+        result = result.substring(
+            0,
+            match.range.first
+        ) + content + result.substring(match.range.last + 1)
+
         styles.add(SpanStyle(fontStyle = FontStyle.Italic) to (startPos..endPos))
     }
-    
+
     // Inline code `text`
     Regex("`([^`]+)`").findAll(result).toList().reversed().forEach { match ->
         val content = match.groupValues[1]
         val startPos = match.range.first
         val endPos = startPos + content.length - 1
-        
-        result = result.substring(0, match.range.first) + content + result.substring(match.range.last + 1)
-        
-        styles.add(SpanStyle(
-            fontFamily = FontFamily.Monospace,
-            background = palette.codeBackground,
-            brush = SolidColor(palette.codeText),
-        ) to (startPos..endPos))
+
+        result = result.substring(
+            0,
+            match.range.first
+        ) + content + result.substring(match.range.last + 1)
+
+        styles.add(
+            SpanStyle(
+                fontFamily = FontFamily.Monospace,
+                background = palette.codeBackground,
+                brush = SolidColor(palette.codeText),
+            ) to (startPos..endPos)
+        )
     }
-    
+
     return InlineResult(result, styles)
 }

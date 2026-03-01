@@ -2,11 +2,10 @@ package com.bernaferrari.remarkor.ui.screens.editor
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.bernaferrari.remarkor.domain.service.PickedImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import com.bernaferrari.remarkor.domain.service.PickedImage
-import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
 
@@ -24,7 +23,7 @@ actual fun rememberImagePickerLauncher(
                         "jpg", "jpeg", "png", "gif", "webp"
                     )
                 }
-                
+
                 val result = fileChooser.showOpenDialog(null)
                 if (result == JFileChooser.APPROVE_OPTION) {
                     val file = fileChooser.selectedFile

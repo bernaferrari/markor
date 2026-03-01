@@ -1,8 +1,8 @@
 package com.bernaferrari.remarkor.data.local.db
 
+import com.bernaferrari.remarkor.domain.repository.IFileRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.bernaferrari.remarkor.domain.repository.IFileRepository
 import okio.Path
 
 class NoteMetadataIndexer(

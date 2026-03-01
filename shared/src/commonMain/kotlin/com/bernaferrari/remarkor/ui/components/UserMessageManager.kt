@@ -11,7 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
 
 /**
  * Sealed class representing different types of user messages.
@@ -19,7 +18,12 @@ import kotlinx.coroutines.launch
 sealed class UserMessage {
     data class Error(val message: String, val action: (() -> Unit)? = null) : UserMessage()
     data class Success(val message: String) : UserMessage()
-    data class Info(val message: String, val actionLabel: String? = null, val action: (() -> Unit)? = null) : UserMessage()
+    data class Info(
+        val message: String,
+        val actionLabel: String? = null,
+        val action: (() -> Unit)? = null
+    ) : UserMessage()
+
     data class Confirmation(
         val message: String,
         val confirmLabel: String = "Confirm",
@@ -35,23 +39,23 @@ sealed class UserMessage {
 class UserMessageManager {
     private val _messages = MutableSharedFlow<UserMessage>(extraBufferCapacity = 16)
     val messages: Flow<UserMessage> = _messages.asSharedFlow()
-    
+
     fun showMessage(message: UserMessage) {
         _messages.tryEmit(message)
     }
-    
+
     fun error(message: String, action: (() -> Unit)? = null) {
         showMessage(UserMessage.Error(message, action))
     }
-    
+
     fun success(message: String) {
         showMessage(UserMessage.Success(message))
     }
-    
+
     fun info(message: String, actionLabel: String? = null, action: (() -> Unit)? = null) {
         showMessage(UserMessage.Info(message, actionLabel, action))
     }
-    
+
     fun confirm(
         message: String,
         confirmLabel: String = "Confirm",
@@ -59,7 +63,15 @@ class UserMessageManager {
         onConfirm: () -> Unit,
         onDismiss: () -> Unit = {}
     ) {
-        showMessage(UserMessage.Confirmation(message, confirmLabel, dismissLabel, onConfirm, onDismiss))
+        showMessage(
+            UserMessage.Confirmation(
+                message,
+                confirmLabel,
+                dismissLabel,
+                onConfirm,
+                onDismiss
+            )
+        )
     }
 }
 
@@ -90,12 +102,14 @@ fun UserMessageHandler(
                         withDismissAction = true
                     )
                 }
+
                 is UserMessage.Success -> {
                     snackbarHostState.showSnackbar(
                         message = message.message,
                         duration = SnackbarDuration.Short
                     )
                 }
+
                 is UserMessage.Info -> {
                     val result = snackbarHostState.showSnackbar(
                         message = message.message,
@@ -106,6 +120,7 @@ fun UserMessageHandler(
                         message.action?.invoke()
                     }
                 }
+
                 is UserMessage.Confirmation -> {
                     val result = snackbarHostState.showSnackbar(
                         message = message.message,
@@ -129,28 +144,28 @@ fun UserMessageHandler(
 sealed class Result<out T> {
     data class Success<out T>(val data: T) : Result<T>()
     data class Error(val message: String, val exception: Throwable? = null) : Result<Nothing>()
-    
+
     val isSuccess: Boolean get() = this is Success
     val isError: Boolean get() = this is Error
-    
+
     fun getOrNull(): T? = (this as? Success)?.data
     fun getErrorMessage(): String? = (this as? Error)?.message
-    
+
     inline fun <R> map(transform: (T) -> R): Result<R> = when (this) {
         is Success -> Success(transform(data))
         is Error -> this
     }
-    
+
     inline fun onSuccess(action: (T) -> Unit): Result<T> {
         if (this is Success) action(data)
         return this
     }
-    
+
     inline fun onError(action: (String) -> Unit): Result<T> {
         if (this is Error) action(message)
         return this
     }
-    
+
     companion object {
         inline fun <T> catching(block: () -> T): Result<T> = try {
             Success(block())

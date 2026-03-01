@@ -1,60 +1,139 @@
 package com.bernaferrari.remarkor.ui.screens
 
-import com.bernaferrari.remarkor.ui.components.RenameDialog
-import com.bernaferrari.remarkor.ui.components.CreateFolderDialog
-import com.bernaferrari.remarkor.ui.components.DeleteDialog
-import com.bernaferrari.remarkor.ui.components.AssetManagerSheet
-import com.bernaferrari.remarkor.ui.components.ShareDialog
-import com.bernaferrari.remarkor.domain.service.ImageAssetManager
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.*
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarOutline
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bernaferrari.remarkor.domain.repository.FileInfo
-import com.bernaferrari.remarkor.ui.components.*
+import com.bernaferrari.remarkor.domain.service.ImageAssetManager
+import com.bernaferrari.remarkor.ui.components.AssetManagerSheet
+import com.bernaferrari.remarkor.ui.components.BackHandler
+import com.bernaferrari.remarkor.ui.components.CreateFolderDialog
+import com.bernaferrari.remarkor.ui.components.DeleteDialog
+import com.bernaferrari.remarkor.ui.components.EmptyState
+import com.bernaferrari.remarkor.ui.components.FavoriteIndicator
+import com.bernaferrari.remarkor.ui.components.FileActionSheet
+import com.bernaferrari.remarkor.ui.components.FileGridItem
+import com.bernaferrari.remarkor.ui.components.HapticHelper
+import com.bernaferrari.remarkor.ui.components.LabelsDialog
+import com.bernaferrari.remarkor.ui.components.RenameDialog
+import com.bernaferrari.remarkor.ui.components.ShareDialog
+import com.bernaferrari.remarkor.ui.components.SharedElementContainer
+import com.bernaferrari.remarkor.ui.components.SharedTransitionKeys
+import com.bernaferrari.remarkor.ui.components.SwipeableFileCard
+import com.bernaferrari.remarkor.ui.components.rememberHapticHelper
+import com.bernaferrari.remarkor.ui.components.renderGridMarkdown
+import com.bernaferrari.remarkor.ui.components.resolveMarkdownColorPalette
+import com.bernaferrari.remarkor.ui.components.resolveNoteSurfaceColor
 import com.bernaferrari.remarkor.ui.viewmodel.FileBrowserViewModel
 import com.bernaferrari.remarkor.ui.viewmodel.FileFilterMode
-import com.bernaferrari.remarkor.ui.theme.MarkorTheme
-import markor.shared.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
-import okio.FileSystem
-import okio.SYSTEM
-import okio.Path.Companion.toPath
-import androidx.compose.ui.input.key.*
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.compose.koinInject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.back_to_with_arg
+import markor.shared.generated.resources.create_new
+import markor.shared.generated.resources.delete_permanently
+import markor.shared.generated.resources.favorite
+import markor.shared.generated.resources.folder
+import markor.shared.generated.resources.more
+import markor.shared.generated.resources.more_create_options
+import markor.shared.generated.resources.no_favorites_yet
+import markor.shared.generated.resources.no_favorites_yet_description
+import markor.shared.generated.resources.notebook_is_empty
+import markor.shared.generated.resources.notebook_is_empty_description
+import markor.shared.generated.resources.restore
+import markor.shared.generated.resources.trash_is_empty
+import markor.shared.generated.resources.trash_is_empty_description
+import okio.FileSystem
+import okio.Path.Companion.toPath
+import okio.SYSTEM
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * Extracts the original filename from a trash filename.
@@ -119,12 +198,12 @@ fun FileBrowserContent(
     var labelsInitial by remember { mutableStateOf<List<String>>(emptyList()) }
     var showAssetManager by remember { mutableStateOf(false) }
     var showShareDialog by remember { mutableStateOf(false) }
-    
+
     // Asset manager - loaded async to avoid blocking
     val assetManager: ImageAssetManager = koinInject()
     var hasAssets by remember { mutableStateOf(false) }
     var fileContent by remember { mutableStateOf("") }
-    
+
     // Load file content and check for assets async
     LaunchedEffect(selectedFileForAction) {
         if (selectedFileForAction != null && !selectedFileForAction!!.isDirectory) {
@@ -200,13 +279,15 @@ fun FileBrowserContent(
             onInfo = { /* TODO */ },
             onTogglePin = { viewModel.togglePin(selectedFileForAction!!.path) },
             onEditLabels = {
-                labelsInitial = noteMetadataByPath[selectedFileForAction!!.path.toString()]?.labels?.map { it.name } ?: emptyList()
+                labelsInitial =
+                    noteMetadataByPath[selectedFileForAction!!.path.toString()]?.labels?.map { it.name }
+                        ?: emptyList()
                 showLabelsDialog = true
             },
             onManageAssets = { showAssetManager = true }
         )
     }
-    
+
     // Share Dialog
     if (showShareDialog && selectedFileForAction != null) {
         ShareDialog(
@@ -216,7 +297,7 @@ fun FileBrowserContent(
             onDismiss = { showShareDialog = false }
         )
     }
-    
+
     // Asset Manager Sheet - uses pre-loaded fileContent
     if (showAssetManager && selectedFileForAction != null) {
         AssetManagerSheet(
@@ -275,12 +356,13 @@ fun FileBrowserContent(
             cachedDisplayedFiles = displayedFiles
         }
     }
-    val visibleFiles = if (displayedFiles.isEmpty() && isLoading && cachedDisplayedFiles.isNotEmpty()) {
-        cachedDisplayedFiles
-    } else {
-        displayedFiles
-    }
-    
+    val visibleFiles =
+        if (displayedFiles.isEmpty() && isLoading && cachedDisplayedFiles.isNotEmpty()) {
+            cachedDisplayedFiles
+        } else {
+            displayedFiles
+        }
+
     // Keyboard navigation state
     var keyboardSelectedIndex by remember { mutableStateOf(-1) }
 
@@ -319,6 +401,7 @@ fun FileBrowserContent(
             parent.isNullOrEmpty() -> {
                 if (root != null) currentPath = root else onNavigateBack()
             }
+
             root == null -> currentPath = parent
             parent.length < root.length || !parent.startsWith(root) -> currentPath = root
             else -> currentPath = parent
@@ -328,19 +411,19 @@ fun FileBrowserContent(
     BackHandler(enabled = canNavigateToParent) {
         navigateToParentDirectory()
     }
-    
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .onPreviewKeyEvent { event ->
-                
+
                 when {
                     // Arrow Down
                     event.key == Key.DirectionDown && event.type == KeyEventType.KeyDown -> {
-                            keyboardSelectedIndex = if (keyboardSelectedIndex < visibleFiles.size - 1) {
-                                haptic.performLightClick()
-                                keyboardSelectedIndex + 1
-                            } else keyboardSelectedIndex
+                        keyboardSelectedIndex = if (keyboardSelectedIndex < visibleFiles.size - 1) {
+                            haptic.performLightClick()
+                            keyboardSelectedIndex + 1
+                        } else keyboardSelectedIndex
                         true
                     }
                     // Arrow Up
@@ -376,6 +459,7 @@ fun FileBrowserContent(
                         haptic.performSuccess()
                         true
                     }
+
                     else -> false
                 }
             }
@@ -428,7 +512,10 @@ fun FileBrowserContent(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = stringResource(Res.string.back_to_with_arg, displayedParentDirectoryLabel),
+                            text = stringResource(
+                                Res.string.back_to_with_arg,
+                                displayedParentDirectoryLabel
+                            ),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1
@@ -436,16 +523,17 @@ fun FileBrowserContent(
                     }
                 }
             }
-            
+
             // Filtered files based on current mode - use displayedFiles from parent scope
             val trashFiles by viewModel.trashFiles.collectAsState()
-            
+
             if (isLoading && visibleFiles.isEmpty()) {
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     // Content is empty during loading (indicator at top)
                 }
             } else if (visibleFiles.isEmpty()) {
-                val shouldOffsetForBottomActions = !isSelectionMode && filterMode != FileFilterMode.TRASH
+                val shouldOffsetForBottomActions =
+                    !isSelectionMode && filterMode != FileFilterMode.TRASH
                 val emptyStateBottomOffset = if (shouldOffsetForBottomActions) 120.dp else 0.dp
                 Box(
                     modifier = Modifier
@@ -462,6 +550,7 @@ fun FileBrowserContent(
                                 icon = Icons.Outlined.StarOutline
                             )
                         }
+
                         filterMode == FileFilterMode.TRASH && trashFiles.isEmpty() -> {
                             EmptyState(
                                 title = stringResource(Res.string.trash_is_empty),
@@ -469,6 +558,7 @@ fun FileBrowserContent(
                                 icon = Icons.Default.Delete
                             )
                         }
+
                         else -> {
                             EmptyListState()
                         }
@@ -480,8 +570,8 @@ fun FileBrowserContent(
                         columns = StaggeredGridCells.Adaptive(150.dp),
                         contentPadding = PaddingValues(
                             top = 16.dp,
-                            start = 16.dp, 
-                            end = 16.dp, 
+                            start = 16.dp,
+                            end = 16.dp,
                             bottom = 120.dp
                         ),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -492,7 +582,9 @@ fun FileBrowserContent(
                             val isSelected = selectedFiles.contains(file.path)
                             val isFavorite = favorites.contains(file.path.toString())
                             Box {
-                                val noteLabels = noteMetadataByPath[file.path.toString()]?.labels?.map { it.name } ?: emptyList()
+                                val noteLabels =
+                                    noteMetadataByPath[file.path.toString()]?.labels?.map { it.name }
+                                        ?: emptyList()
                                 FileGridItem(
                                     file = file,
                                     isSelected = isSelected,
@@ -535,8 +627,8 @@ fun FileBrowserContent(
                     LazyColumn(
                         contentPadding = PaddingValues(
                             top = 16.dp,
-                            bottom = 120.dp, 
-                            start = 16.dp, 
+                            bottom = 120.dp,
+                            start = 16.dp,
                             end = 16.dp
                         ),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -579,7 +671,7 @@ fun FileBrowserContent(
                                 }
                             } else {
                                 val isTrashMode = filterMode == FileFilterMode.TRASH
-                                
+
                                 FileItem(
                                     file = file,
                                     isSelected = isSelected,
@@ -592,7 +684,10 @@ fun FileBrowserContent(
                                             viewModel.toggleSelection(file.path)
                                         } else if (isTrashMode) {
                                             // Restore file from trash
-                                            viewModel.restoreFile(file.path, getOriginalPath(file.name).toPath())
+                                            viewModel.restoreFile(
+                                                file.path,
+                                                getOriginalPath(file.name).toPath()
+                                            )
                                         } else {
                                             if (file.isDirectory) {
                                                 currentPath = file.path.toString()
@@ -612,7 +707,10 @@ fun FileBrowserContent(
                                     },
                                     isTrashMode = isTrashMode,
                                     onRestore = {
-                                        viewModel.restoreFile(file.path, getOriginalPath(file.name).toPath())
+                                        viewModel.restoreFile(
+                                            file.path,
+                                            getOriginalPath(file.name).toPath()
+                                        )
                                     },
                                     onDeletePermanently = {
                                         selectedFileForAction = file
@@ -626,11 +724,11 @@ fun FileBrowserContent(
                 }
             }
         }
-        
+
         // M3 Expressive: Bottom-center extended FAB
         val trashFiles by viewModel.trashFiles.collectAsState()
         val isTrashMode = filterMode == FileFilterMode.TRASH
-        
+
         if (!isSelectionMode) {
             Box(
                 modifier = Modifier
@@ -656,7 +754,10 @@ fun FileBrowserContent(
                     ) {
                         Icon(Icons.Default.DeleteForever, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
-                        Text("Empty Trash", style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                        Text(
+                            "Empty Trash",
+                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                        )
                     }
                 } else if (!isTrashMode) {
                     // Split action: primary creates note, trailing opens extra actions.
@@ -692,7 +793,12 @@ fun FileBrowserContent(
                                 createNote()
                             },
                             modifier = Modifier.height(56.dp),
-                            shape = RoundedCornerShape(topStart = 28.dp, bottomStart = 28.dp, topEnd = 10.dp, bottomEnd = 10.dp)
+                            shape = RoundedCornerShape(
+                                topStart = 28.dp,
+                                bottomStart = 28.dp,
+                                topEnd = 10.dp,
+                                bottomEnd = 10.dp
+                            )
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
@@ -710,7 +816,12 @@ fun FileBrowserContent(
                                 haptic.performLightClick()
                                 showAddMenu = !showAddMenu
                             },
-                            shape = RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp, topEnd = 28.dp, bottomEnd = 28.dp),
+                            shape = RoundedCornerShape(
+                                topStart = 10.dp,
+                                bottomStart = 10.dp,
+                                topEnd = 28.dp,
+                                bottomEnd = 28.dp
+                            ),
                             contentPadding = PaddingValues(0.dp),
                             modifier = Modifier
                                 .width(56.dp)
@@ -779,7 +890,12 @@ private fun FileItem(
         isKeyboardSelected -> colorScheme.secondaryContainer
         isTrashMode -> colorScheme.errorContainer.copy(alpha = 0.3f)
         file.isDirectory -> colorScheme.surface
-        noteColor != null -> resolveNoteSurfaceColor(noteColor, colorScheme, fallback = colorScheme.surfaceContainerLow)
+        noteColor != null -> resolveNoteSurfaceColor(
+            noteColor,
+            colorScheme,
+            fallback = colorScheme.surfaceContainerLow
+        )
+
         else -> colorScheme.surfaceContainerLow
     }
     val effectiveBackground = containerColor.compositeOver(colorScheme.surface)
@@ -798,24 +914,28 @@ private fun FileItem(
                 val alpha = if (colorScheme.surface.luminance() < 0.5f) 0.36f else 0.22f
                 accentOverride.copy(alpha = alpha).compositeOver(colorScheme.surfaceContainerHigh)
             }
+
             else -> colorScheme.secondaryContainer
         }
     }
-    val iconTintColor = remember(file.isDirectory, colorScheme, iconContainerColor, accentOverride) {
-        when {
-            file.isDirectory -> colorScheme.primary
-            accentOverride != null -> {
-                resolveMarkdownColorPalette(
-                    colorScheme = colorScheme,
-                    backgroundColor = iconContainerColor,
-                    accentColorOverride = accentOverride
-                ).accent
-            }
-            else -> colorScheme.secondary
-        }
-    }
+    val iconTintColor =
+        remember(file.isDirectory, colorScheme, iconContainerColor, accentOverride) {
+            when {
+                file.isDirectory -> colorScheme.primary
+                accentOverride != null -> {
+                    resolveMarkdownColorPalette(
+                        colorScheme = colorScheme,
+                        backgroundColor = iconContainerColor,
+                        accentColorOverride = accentOverride
+                    ).accent
+                }
 
-    val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                else -> colorScheme.secondary
+            }
+        }
+
+    val interactionSource =
+        remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
 
     val card = @Composable {
         val cardShape = MaterialTheme.shapes.medium
@@ -850,167 +970,172 @@ private fun FileItem(
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                    // Icon Container
-                    Box(
-                        modifier = Modifier
-                            .size(52.dp)
-                            .clip(MaterialTheme.shapes.large)
-                            .background(iconContainerColor),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = if (file.isDirectory) Icons.Default.Folder else Icons.Default.Description,
-                            contentDescription = null,
-                            tint = iconTintColor,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
+                // Icon Container
+                Box(
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clip(MaterialTheme.shapes.large)
+                        .background(iconContainerColor),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = if (file.isDirectory) Icons.Default.Folder else Icons.Default.Description,
+                        contentDescription = null,
+                        tint = iconTintColor,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
 
-                    Column(
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .weight(1f)
-                    ) {
-                        // Show filename with extension in reduced opacity
-                        if (file.isDirectory) {
-                            Text(
-                                text = file.name,
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    letterSpacing = 0.sp
-                                ),
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = stringResource(Res.string.folder),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                            )
-                        } else {
-                            val baseName = file.name.substringBeforeLast(".")
-                            val ext = if (file.name.contains(".")) ".${file.extension}" else ""
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                SharedElementContainer(
-                                    key = SharedTransitionKeys.fileTitle(file.path.toString()),
-                                    isSource = true
-                                ) {
-                                    Text(
-                                        text = baseName,
-                                        style = MaterialTheme.typography.titleMedium.copy(
-                                            fontWeight = FontWeight.SemiBold,
-                                            letterSpacing = 0.sp
-                                        ),
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                }
+                Column(
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .weight(1f)
+                ) {
+                    // Show filename with extension in reduced opacity
+                    if (file.isDirectory) {
+                        Text(
+                            text = file.name,
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                letterSpacing = 0.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = stringResource(Res.string.folder),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+                    } else {
+                        val baseName = file.name.substringBeforeLast(".")
+                        val ext = if (file.name.contains(".")) ".${file.extension}" else ""
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            SharedElementContainer(
+                                key = SharedTransitionKeys.fileTitle(file.path.toString()),
+                                isSource = true
+                            ) {
                                 Text(
-                                    text = ext,
+                                    text = baseName,
                                     style = MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight = FontWeight.Normal,
+                                        fontWeight = FontWeight.SemiBold,
                                         letterSpacing = 0.sp
                                     ),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             }
-
-                            val effectivePreview = preview?.takeIf { it.isNotBlank() }
-                                ?: file.preview?.takeIf { it.isNotBlank() }
-                            if (!effectivePreview.isNullOrEmpty()) {
-                                val previewText = remember(effectivePreview, colorScheme, effectiveBackground, accentOverride) {
-                                    renderGridMarkdown(
-                                        effectivePreview,
-                                        colorScheme,
-                                        backgroundColor = effectiveBackground,
-                                        accentColorOverride = accentOverride
-                                    )
-                                }
-                                Text(
-                                    text = previewText,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = previewPalette.body,
-                                    maxLines = 2,
-                                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                                )
-                            }
-                        }
-                    }
-
-                    if (selectionMode) {
-                        Checkbox(
-                            checked = isSelected,
-                            onCheckedChange = {
-                                haptic.performLightClick()
-                                onClick()
-                            },
-                            colors = CheckboxDefaults.colors(
-                                checkedColor = MaterialTheme.colorScheme.primary,
-                                uncheckedColor = MaterialTheme.colorScheme.outline
+                            Text(
+                                text = ext,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Normal,
+                                    letterSpacing = 0.sp
+                                ),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
-                        )
-                    } else if (isTrashMode) {
-                        // Trash mode: show restore and delete permanently actions
-                        Row {
-                            IconButton(
-                                onClick = {
-                                    haptic.performSuccess()
-                                    onRestore?.invoke()
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Restore,
-                                    contentDescription = stringResource(Res.string.restore),
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    haptic.performHeavyClick()
-                                    onDeletePermanently?.invoke()
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.DeleteForever,
-                                    contentDescription = stringResource(Res.string.delete_permanently),
-                                    tint = MaterialTheme.colorScheme.error
-                                )
-                            }
                         }
-                    } else {
-                        Row {
-                            // Favorite star indicator
-                            if (isFavorite) {
-                                Icon(
-                                    imageVector = Icons.Filled.Star,
-                                    contentDescription = stringResource(Res.string.favorite),
-                                    tint = MaterialTheme.colorScheme.tertiary,
-                                    modifier = Modifier
-                                        .size(20.dp)
-                                        .clickable {
-                                            haptic.performHeavyClick()
-                                            // Toggle favorite handled by parent
-                                        }
-                                )
-                                Spacer(Modifier.width(4.dp))
-                            }
-                            IconButton(
-                                onClick = {
-                                    haptic.performHeavyClick()
-                                    onMoreClick()
-                                }
+
+                        val effectivePreview = preview?.takeIf { it.isNotBlank() }
+                            ?: file.preview?.takeIf { it.isNotBlank() }
+                        if (!effectivePreview.isNullOrEmpty()) {
+                            val previewText = remember(
+                                effectivePreview,
+                                colorScheme,
+                                effectiveBackground,
+                                accentOverride
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.MoreVert,
-                                    contentDescription = stringResource(Res.string.more),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(24.dp)
+                                renderGridMarkdown(
+                                    effectivePreview,
+                                    colorScheme,
+                                    backgroundColor = effectiveBackground,
+                                    accentColorOverride = accentOverride
                                 )
                             }
+                            Text(
+                                text = previewText,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = previewPalette.body,
+                                maxLines = 2,
+                                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                            )
                         }
                     }
                 }
+
+                if (selectionMode) {
+                    Checkbox(
+                        checked = isSelected,
+                        onCheckedChange = {
+                            haptic.performLightClick()
+                            onClick()
+                        },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = MaterialTheme.colorScheme.primary,
+                            uncheckedColor = MaterialTheme.colorScheme.outline
+                        )
+                    )
+                } else if (isTrashMode) {
+                    // Trash mode: show restore and delete permanently actions
+                    Row {
+                        IconButton(
+                            onClick = {
+                                haptic.performSuccess()
+                                onRestore?.invoke()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Restore,
+                                contentDescription = stringResource(Res.string.restore),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                haptic.performHeavyClick()
+                                onDeletePermanently?.invoke()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.DeleteForever,
+                                contentDescription = stringResource(Res.string.delete_permanently),
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                } else {
+                    Row {
+                        // Favorite star indicator
+                        if (isFavorite) {
+                            Icon(
+                                imageVector = Icons.Filled.Star,
+                                contentDescription = stringResource(Res.string.favorite),
+                                tint = MaterialTheme.colorScheme.tertiary,
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clickable {
+                                        haptic.performHeavyClick()
+                                        // Toggle favorite handled by parent
+                                    }
+                            )
+                            Spacer(Modifier.width(4.dp))
+                        }
+                        IconButton(
+                            onClick = {
+                                haptic.performHeavyClick()
+                                onMoreClick()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = stringResource(Res.string.more),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
-    
+
     if (!file.isDirectory) {
         SharedElementContainer(
             key = SharedTransitionKeys.fileCard(file.path.toString()),

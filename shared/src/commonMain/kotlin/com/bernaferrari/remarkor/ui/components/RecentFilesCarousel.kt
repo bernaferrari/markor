@@ -1,25 +1,46 @@
 package com.bernaferrari.remarkor.ui.components
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import com.bernaferrari.remarkor.ui.theme.MarkorTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.bernaferrari.remarkor.ui.theme.MarkorTheme
 import kotlinx.coroutines.delay
 
 /**
@@ -41,7 +62,10 @@ fun RecentFilesCarousel(
             // Section header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = MarkorTheme.spacing.large, vertical = MarkorTheme.spacing.small)
+                modifier = Modifier.padding(
+                    horizontal = MarkorTheme.spacing.large,
+                    vertical = MarkorTheme.spacing.small
+                )
             ) {
                 Surface(
                     color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
@@ -64,7 +88,7 @@ fun RecentFilesCarousel(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            
+
             // Horizontal scroll of recent files
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -80,7 +104,7 @@ fun RecentFilesCarousel(
                         delay(index * 50L)
                         visible = true
                     }
-                    
+
                     val alpha by animateFloatAsState(
                         targetValue = if (visible) 1f else 0f,
                         animationSpec = tween(300),
@@ -91,7 +115,7 @@ fun RecentFilesCarousel(
                         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
                         label = "itemScale"
                     )
-                    
+
                     RecentFileChip(
                         filePath = filePath,
                         onClick = { onFileClick(filePath) },
@@ -115,9 +139,9 @@ private fun RecentFileChip(
 ) {
     val fileName = filePath.substringAfterLast("/").substringBeforeLast(".")
     val extension = filePath.substringAfterLast(".", "")
-    
+
     val hapticHelper = rememberHapticHelper()
-    
+
     Surface(
         onClick = {
             hapticHelper.performLightClick()
@@ -130,7 +154,10 @@ private fun RecentFileChip(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = MarkorTheme.spacing.medium, vertical = MarkorTheme.spacing.medium)
+            modifier = Modifier.padding(
+                horizontal = MarkorTheme.spacing.medium,
+                vertical = MarkorTheme.spacing.medium
+            )
         ) {
             // File icon
             Surface(
@@ -147,9 +174,9 @@ private fun RecentFileChip(
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.width(MarkorTheme.spacing.small))
-            
+
             Column {
                 Text(
                     text = fileName,

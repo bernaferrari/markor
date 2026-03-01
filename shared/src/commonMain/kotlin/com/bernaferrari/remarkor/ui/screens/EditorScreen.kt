@@ -1,72 +1,133 @@
 package com.bernaferrari.remarkor.ui.screens
 
-import markor.shared.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.automirrored.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.filled.Redo
+import androidx.compose.material.icons.automirrored.filled.Undo
+import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.CenterFocusStrong
+import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.input.key.*
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.TextRange
-import androidx.compose.foundation.gestures.detectTapGestures
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import com.bernaferrari.remarkor.domain.model.Document
-import com.bernaferrari.remarkor.ui.components.EditorAction
-import com.bernaferrari.remarkor.ui.components.FormatToolbar
-import com.bernaferrari.remarkor.ui.components.MarkdownVisualTransformation
-import com.bernaferrari.remarkor.ui.components.resolveNoteSurfaceColor
-import com.bernaferrari.remarkor.ui.components.resolveMarkdownColorPalette
-import com.bernaferrari.remarkor.ui.viewmodel.EditorViewModel
-import com.bernaferrari.remarkor.ui.components.SharedElementContainer
-import com.bernaferrari.remarkor.ui.components.SharedTransitionKeys
-import com.bernaferrari.remarkor.util.resolveImageUrl
-import org.koin.compose.viewmodel.koinViewModel
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import com.bernaferrari.remarkor.ui.theme.MarkorTheme
-import com.bernaferrari.remarkor.domain.service.ImageAssetManager
-import com.bernaferrari.remarkor.domain.service.PickedImage
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
+import com.bernaferrari.remarkor.data.local.AppSettings
+import com.bernaferrari.remarkor.domain.model.Document
+import com.bernaferrari.remarkor.domain.service.ImageAssetManager
+import com.bernaferrari.remarkor.domain.service.PickedImage
+import com.bernaferrari.remarkor.ui.components.EditorAction
+import com.bernaferrari.remarkor.ui.components.FormatToolbar
+import com.bernaferrari.remarkor.ui.components.MarkdownVisualTransformation
+import com.bernaferrari.remarkor.ui.components.SharedElementContainer
+import com.bernaferrari.remarkor.ui.components.SharedTransitionKeys
+import com.bernaferrari.remarkor.ui.components.resolveMarkdownColorPalette
+import com.bernaferrari.remarkor.ui.components.resolveNoteSurfaceColor
+import com.bernaferrari.remarkor.ui.theme.MarkorTheme
+import com.bernaferrari.remarkor.ui.viewmodel.EditorViewModel
+import com.bernaferrari.remarkor.util.resolveImageUrl
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.characters_no_spaces_with_arg
+import markor.shared.generated.resources.characters_with_arg
+import markor.shared.generated.resources.close
+import markor.shared.generated.resources.document_info
+import markor.shared.generated.resources.document_outline
+import markor.shared.generated.resources.export
+import markor.shared.generated.resources.headings_with_arg
+import markor.shared.generated.resources.lines_with_arg
+import markor.shared.generated.resources.more_options
+import markor.shared.generated.resources.nothing_to_preview
+import markor.shared.generated.resources.size_utf8_with_arg
+import markor.shared.generated.resources.words_with_arg
 import okio.Path
 import okio.Path.Companion.toPath
-import com.bernaferrari.remarkor.data.local.AppSettings
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
 
 /**
@@ -852,10 +913,20 @@ fun EditorScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Text(stringResource(Res.string.headings_with_arg, documentInfoStats.headings))
+                        Text(
+                            stringResource(
+                                Res.string.headings_with_arg,
+                                documentInfoStats.headings
+                            )
+                        )
                         Text(stringResource(Res.string.lines_with_arg, documentInfoStats.lines))
                         Text(stringResource(Res.string.words_with_arg, documentInfoStats.words))
-                        Text(stringResource(Res.string.characters_with_arg, documentInfoStats.characters))
+                        Text(
+                            stringResource(
+                                Res.string.characters_with_arg,
+                                documentInfoStats.characters
+                            )
+                        )
                         Text(
                             stringResource(
                                 Res.string.characters_no_spaces_with_arg,
@@ -1016,7 +1087,9 @@ private fun buildWrappedLineNumberMetadata(
     val result = MutableList(layoutResult.lineCount) { visualLine ->
         LineNumberMeta(
             number = null,
-            lineHeightPx = layoutResult.getLineBottom(visualLine) - layoutResult.getLineTop(visualLine)
+            lineHeightPx = layoutResult.getLineBottom(visualLine) - layoutResult.getLineTop(
+                visualLine
+            )
         )
     }
 
@@ -1109,12 +1182,12 @@ private fun EditorTab(
             accentColorOverride = noteAccentColor
         )
     }
-                var lineNumberMetadata by remember(showLineNumbers, content.text) {
-                    mutableStateOf(
-                        if (showLineNumbers) {
-                            buildLineNumberMetadata(content.text)
-                        } else {
-                            emptyList()
+    var lineNumberMetadata by remember(showLineNumbers, content.text) {
+        mutableStateOf(
+            if (showLineNumbers) {
+                buildLineNumberMetadata(content.text)
+            } else {
+                emptyList()
             }
         )
     }
@@ -1244,7 +1317,12 @@ private fun EditorTab(
                                 .heightIn(min = bodyMinHeight)
                                 .background(
                                     lineNumberBackground,
-                                    RoundedCornerShape(topStart = 0.dp, topEnd = 12.dp, bottomStart = 0.dp, bottomEnd = 12.dp)
+                                    RoundedCornerShape(
+                                        topStart = 0.dp,
+                                        topEnd = 12.dp,
+                                        bottomStart = 0.dp,
+                                        bottomEnd = 12.dp
+                                    )
                                 )
                                 .padding(end = MarkorTheme.spacing.small)
                         ) {
@@ -1312,8 +1390,7 @@ private fun EditorTab(
                                     }
                                 }
                                 false
-                            }
-                        ,
+                            },
                         singleLine = !wordWrap,
                     )
                 }
@@ -1435,14 +1512,15 @@ private fun PreviewTab(
         buildPreviewBlocks(content, filePath)
     }
     val emptyMessage = stringResource(Res.string.nothing_to_preview)
-    val styledText = remember<AnnotatedString>(content, colorScheme, backgroundColor, noteAccentColor) {
-        com.bernaferrari.remarkor.ui.components.renderCleanMarkdown(
-            if (content.isEmpty()) emptyMessage else content,
-            colorScheme,
-            backgroundColor,
-            accentColorOverride = noteAccentColor
-        )
-    }
+    val styledText =
+        remember<AnnotatedString>(content, colorScheme, backgroundColor, noteAccentColor) {
+            com.bernaferrari.remarkor.ui.components.renderCleanMarkdown(
+                if (content.isEmpty()) emptyMessage else content,
+                colorScheme,
+                backgroundColor,
+                accentColorOverride = noteAccentColor
+            )
+        }
 
     SharedElementContainer(
         key = SharedTransitionKeys.fileCard(filePath),
@@ -1491,7 +1569,12 @@ private fun PreviewTab(
                                 Spacer(modifier = Modifier.height(8.dp))
                             } else {
                                 val lineText =
-                                    remember(block.content, colorScheme, backgroundColor, noteAccentColor) {
+                                    remember(
+                                        block.content,
+                                        colorScheme,
+                                        backgroundColor,
+                                        noteAccentColor
+                                    ) {
                                         com.bernaferrari.remarkor.ui.components.renderCleanMarkdown(
                                             block.content,
                                             colorScheme,

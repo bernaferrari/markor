@@ -28,8 +28,10 @@ fun resolveNoteSurfaceColor(
 
 private fun relativeLuminance(color: Color): Float {
     fun channel(c: Float): Float {
-        return if (c <= 0.03928f) c / 12.92f else (((c + 0.055f) / 1.055f).toDouble().pow(2.4)).toFloat()
+        return if (c <= 0.03928f) c / 12.92f else (((c + 0.055f) / 1.055f).toDouble()
+            .pow(2.4)).toFloat()
     }
+
     val r = channel(color.red)
     val g = channel(color.green)
     val b = channel(color.blue)

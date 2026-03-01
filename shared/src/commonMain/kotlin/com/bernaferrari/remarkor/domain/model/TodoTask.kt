@@ -12,7 +12,12 @@ data class TodoTask(
     val isCompleted: Boolean = false
 ) {
     val textForDisplay: String
-        get() = if (isCompleted) description.replaceFirst(Regex("^\\s*x\\s*", RegexOption.IGNORE_CASE), "") else description
+        get() = if (isCompleted) description.replaceFirst(
+            Regex(
+                "^\\s*x\\s*",
+                RegexOption.IGNORE_CASE
+            ), ""
+        ) else description
 
     val hasDueDate: Boolean get() = !dueDate.isNullOrBlank()
 
@@ -64,7 +69,8 @@ data class TodoTask(
                 completionDate = null
             }
 
-            val dueDateMatch = Regex("""due:\d{4}-\d{2}-\d{2}""", RegexOption.IGNORE_CASE).find(description)
+            val dueDateMatch =
+                Regex("""due:\d{4}-\d{2}-\d{2}""", RegexOption.IGNORE_CASE).find(description)
             val dueDate = dueDateMatch?.value?.substringAfter(":")
 
             return TodoTask(

@@ -4,9 +4,15 @@ import okio.Path
 
 interface ShareService {
     fun shareFile(path: Path, title: String? = null)
-    fun shareFile(fileName: String, content: ByteArray, title: String? = null, mimeType: String = "text/plain")
+    fun shareFile(
+        fileName: String,
+        content: ByteArray,
+        title: String? = null,
+        mimeType: String = "text/plain"
+    )
+
     fun shareText(text: String, title: String? = null)
-    
+
     /**
      * Share a markdown file with its assets as a zip.
      * @param markdownPath Path to the markdown file

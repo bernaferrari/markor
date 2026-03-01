@@ -1,22 +1,42 @@
 package com.bernaferrari.remarkor.ui.components
 
-import markor.shared.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.automirrored.filled.Toc
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,6 +45,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.document_outline
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Represents a heading/section in the document outline.
@@ -43,7 +66,7 @@ fun parseOutline(text: String): List<OutlineItem> {
     val items = mutableListOf<OutlineItem>()
     val lines = text.split("\n")
     var charOffset = 0
-    
+
     lines.forEachIndexed { lineIndex, line ->
         val headerMatch = Regex("^(#{1,6})\\s+(.+)$").find(line.trim())
         if (headerMatch != null) {
@@ -53,7 +76,7 @@ fun parseOutline(text: String): List<OutlineItem> {
         }
         charOffset += line.length + 1 // +1 for newline
     }
-    
+
     return items
 }
 
@@ -75,7 +98,7 @@ fun OutlinePanel(
     }
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
@@ -121,12 +144,12 @@ fun OutlinePanel(
                     )
                 }
             }
-            
+
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
-            
+
             if (items.isEmpty()) {
                 // Empty state
                 Box(
@@ -136,7 +159,7 @@ fun OutlinePanel(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
+                        Icon(
                             imageVector = Icons.AutoMirrored.Filled.Article,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
@@ -167,14 +190,14 @@ fun OutlinePanel(
                     itemsIndexed(items) { index, item ->
                         val isActive = item == currentSection
                         val hapticHelper = rememberHapticHelper()
-                        
+
                         // Staggered animation
                         var visible by remember { mutableStateOf(false) }
                         LaunchedEffect(Unit) {
                             kotlinx.coroutines.delay(index * 30L)
                             visible = true
                         }
-                        
+
                         AnimatedVisibility(
                             visible = visible,
                             enter = fadeIn() + slideInHorizontally { -it / 3 }
@@ -184,7 +207,7 @@ fun OutlinePanel(
                                 isActive = isActive,
                                 onClick = {
                                     hapticHelper.performLightClick()
-                                    scope.launch { sheetState.hide() }.invokeOnCompletion { 
+                                    scope.launch { sheetState.hide() }.invokeOnCompletion {
                                         if (!sheetState.isVisible) {
                                             onDismiss()
                                         }
@@ -207,21 +230,21 @@ private fun OutlineItemRow(
     onClick: () -> Unit
 ) {
     val backgroundColor by animateColorAsState(
-        targetValue = if (isActive) 
-            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) 
-        else 
+        targetValue = if (isActive)
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+        else
             Color.Transparent,
         label = "outlineBg"
     )
-    
-    val contentColor = if (isActive) 
-        MaterialTheme.colorScheme.primary 
-    else 
+
+    val contentColor = if (isActive)
+        MaterialTheme.colorScheme.primary
+    else
         MaterialTheme.colorScheme.onSurface
-    
+
     // Indentation based on heading level
     val indentation = (item.level - 1) * 16
-    
+
     // Font size based on level
     val fontSize = when (item.level) {
         1 -> 16.sp
@@ -229,12 +252,12 @@ private fun OutlineItemRow(
         3 -> 14.sp
         else -> 13.sp
     }
-    
+
     val fontWeight = when (item.level) {
         1, 2 -> FontWeight.SemiBold
         else -> FontWeight.Normal
     }
-    
+
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
@@ -256,9 +279,9 @@ private fun OutlineItemRow(
                         else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
                     )
             )
-            
+
             Spacer(Modifier.width(12.dp))
-            
+
             Text(
                 text = item.text,
                 style = MaterialTheme.typography.bodyMedium.copy(

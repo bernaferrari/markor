@@ -1,7 +1,6 @@
 package com.bernaferrari.remarkor.ui.components
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
 import java.awt.Toolkit
 
 @Composable

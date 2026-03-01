@@ -58,7 +58,7 @@ data class Block(
             BlockType.IMAGE -> "![$content]()"
         }
     }
-    
+
     /**
      * Get a placeholder hint for this block type.
      */
@@ -93,24 +93,24 @@ data class BlockDocument(
     fun toMarkdown(): String {
         return blocks.joinToString("\n\n") { it.toMarkdown() }
     }
-    
+
     /**
      * Get block by ID.
      */
     fun getBlock(id: String): Block? = blocks.find { it.id == id }
-    
+
     /**
      * Get index of block by ID.
      */
     fun getBlockIndex(id: String): Int = blocks.indexOfFirst { it.id == id }
-    
+
     /**
      * Update a specific block.
      */
     fun updateBlock(id: String, transform: (Block) -> Block): BlockDocument {
         return copy(blocks = blocks.map { if (it.id == id) transform(it) else it })
     }
-    
+
     /**
      * Insert a new block after the specified block.
      */
@@ -121,7 +121,7 @@ data class BlockDocument(
         newBlocks.add(index + 1, newBlock)
         return copy(blocks = newBlocks, focusedBlockId = newBlock.id)
     }
-    
+
     /**
      * Delete a block by ID.
      */
@@ -134,7 +134,7 @@ data class BlockDocument(
         val newFocusId = if (index > 0) blocks[index - 1].id else newBlocks.firstOrNull()?.id
         return copy(blocks = newBlocks, focusedBlockId = newFocusId)
     }
-    
+
     /**
      * Move a block to a new position.
      */
@@ -146,7 +146,7 @@ data class BlockDocument(
         newBlocks.add(toIndex.coerceIn(0, newBlocks.size), block)
         return copy(blocks = newBlocks)
     }
-    
+
     /**
      * Move a block from one index to another (by index).
      */

@@ -2,10 +2,10 @@ package com.bernaferrari.remarkor.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import com.bernaferrari.remarkor.data.local.AppSettings
 import com.bernaferrari.remarkor.domain.repository.FavoritesRepository
 import com.bernaferrari.remarkor.domain.repository.IFileRepository
+import kotlinx.coroutines.launch
 import okio.Path
 import okio.Path.Companion.toPath
 
@@ -35,10 +35,14 @@ class IntroViewModel(
         initializeDefaultFiles(notebookDir.toPath(), todoPath, quicknotePath)
     }
 
-    private suspend fun initializeDefaultFiles(notebookDir: Path, todoPath: String, quicknotePath: String) {
+    private suspend fun initializeDefaultFiles(
+        notebookDir: Path,
+        todoPath: String,
+        quicknotePath: String
+    ) {
         val notebookParent = notebookDir.parent ?: notebookDir
         fileRepository.createDirectory(notebookParent, notebookDir.name)
-        
+
         val todoFilePath = fileRepository.createFileWithContent(
             notebookDir,
             todoPath.toPath().name,
@@ -53,7 +57,7 @@ class IntroViewModel(
 ## This Week
 """
         )
-        
+
         val quicknoteFilePath = fileRepository.createFileWithContent(
             notebookDir,
             quicknotePath.toPath().name,
@@ -71,7 +75,7 @@ Welcome to Markor! This is your quick note file for jotting down thoughts.
 - 
 """
         )
-        
+
         todoFilePath?.toString()?.let { favoritesRepository.addFavorite(it) }
         quicknoteFilePath?.toString()?.let { favoritesRepository.addFavorite(it) }
     }

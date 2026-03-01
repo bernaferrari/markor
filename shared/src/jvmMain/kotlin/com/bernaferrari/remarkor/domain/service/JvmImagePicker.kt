@@ -1,10 +1,9 @@
 package com.bernaferrari.remarkor.domain.service
 
-import java.io.File
-import javax.swing.JFileChooser
-import javax.swing.filechooser.FileNameExtensionFilter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.swing.JFileChooser
+import javax.swing.filechooser.FileNameExtensionFilter
 
 /**
  * JVM implementation of ImagePicker using JFileChooser.
@@ -18,7 +17,7 @@ class JvmImagePicker : ImagePicker {
                 "jpg", "jpeg", "png", "gif", "webp"
             )
         }
-        
+
         val result = fileChooser.showOpenDialog(null)
         if (result == JFileChooser.APPROVE_OPTION) {
             val file = fileChooser.selectedFile

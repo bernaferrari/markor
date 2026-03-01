@@ -1,11 +1,30 @@
 package com.bernaferrari.remarkor.ui.components
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,7 +51,10 @@ fun EmptyState(
 
     val scale by animateFloatAsState(
         targetValue = if (visible) 1f else 0.85f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        )
     )
     val alpha by animateFloatAsState(
         targetValue = if (visible) 1f else 0f,
@@ -73,7 +95,7 @@ fun EmptyState(
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f))
             )
-            
+
             Icon(
                 imageVector = icon,
                 contentDescription = null,
@@ -106,7 +128,10 @@ fun EmptyState(
             Button(
                 onClick = onAction,
                 shape = MaterialTheme.shapes.extraLarge,
-                contentPadding = PaddingValues(horizontal = MarkorTheme.spacing.extraLarge, vertical = MarkorTheme.spacing.medium)
+                contentPadding = PaddingValues(
+                    horizontal = MarkorTheme.spacing.extraLarge,
+                    vertical = MarkorTheme.spacing.medium
+                )
             ) {
                 Text(
                     text = actionLabel,

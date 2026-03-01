@@ -1,9 +1,9 @@
 package com.bernaferrari.remarkor.ui.navigation
 
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -13,8 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import androidx.navigation3.ui.NavDisplay
 import com.bernaferrari.remarkor.ui.components.LocalAnimatedVisibilityScope
 import com.bernaferrari.remarkor.ui.components.LocalSharedTransitionScope
 import com.bernaferrari.remarkor.ui.screens.EditorScreen
@@ -50,13 +50,13 @@ fun MarkorNavDisplay(
                         easing = LinearOutSlowInEasing
                     )
                 )) togetherWith (
-                    fadeOut(
-                        animationSpec = tween(
-                            durationMillis = 120,
-                            easing = FastOutLinearInEasing
+                        fadeOut(
+                            animationSpec = tween(
+                                durationMillis = 120,
+                                easing = FastOutLinearInEasing
+                            )
+                        ) + ExitTransition.KeepUntilTransitionsFinished
                         )
-                    ) + ExitTransition.KeepUntilTransitionsFinished
-                )
             } else {
                 fadeIn(
                     animationSpec = tween(
@@ -64,13 +64,13 @@ fun MarkorNavDisplay(
                         easing = LinearOutSlowInEasing
                     )
                 ) togetherWith (
-                    fadeOut(
-                        animationSpec = tween(
-                            durationMillis = 120,
-                            easing = FastOutLinearInEasing
+                        fadeOut(
+                            animationSpec = tween(
+                                durationMillis = 120,
+                                easing = FastOutLinearInEasing
+                            )
+                        ) + ExitTransition.KeepUntilTransitionsFinished
                         )
-                    ) + ExitTransition.KeepUntilTransitionsFinished
-                )
             }
         },
         popTransitionSpec = {
@@ -87,19 +87,19 @@ fun MarkorNavDisplay(
                         easing = LinearOutSlowInEasing
                     )
                 )) togetherWith (
-                    slideOutHorizontally(
-                        animationSpec = tween(
-                            durationMillis = 200,
-                            easing = FastOutLinearInEasing
-                        ),
-                        targetOffsetX = { width -> width }
-                    ) + fadeOut(
-                        animationSpec = tween(
-                            durationMillis = 140,
-                            easing = FastOutLinearInEasing
+                        slideOutHorizontally(
+                            animationSpec = tween(
+                                durationMillis = 200,
+                                easing = FastOutLinearInEasing
+                            ),
+                            targetOffsetX = { width -> width }
+                        ) + fadeOut(
+                            animationSpec = tween(
+                                durationMillis = 140,
+                                easing = FastOutLinearInEasing
+                            )
+                        ) + ExitTransition.KeepUntilTransitionsFinished
                         )
-                    ) + ExitTransition.KeepUntilTransitionsFinished
-                )
             } else {
                 fadeIn(
                     animationSpec = tween(
@@ -107,13 +107,13 @@ fun MarkorNavDisplay(
                         easing = LinearOutSlowInEasing
                     )
                 ) togetherWith (
-                    fadeOut(
-                        animationSpec = tween(
-                            durationMillis = 120,
-                            easing = FastOutLinearInEasing
+                        fadeOut(
+                            animationSpec = tween(
+                                durationMillis = 120,
+                                easing = FastOutLinearInEasing
+                            )
+                        ) + ExitTransition.KeepUntilTransitionsFinished
                         )
-                    ) + ExitTransition.KeepUntilTransitionsFinished
-                )
             }
         },
         predictivePopTransitionSpec = { _ ->
@@ -130,19 +130,19 @@ fun MarkorNavDisplay(
                         easing = LinearOutSlowInEasing
                     )
                 )) togetherWith (
-                    slideOutHorizontally(
-                        animationSpec = tween(
-                            durationMillis = 200,
-                            easing = FastOutLinearInEasing
-                        ),
-                        targetOffsetX = { width -> width }
-                    ) + fadeOut(
-                        animationSpec = tween(
-                            durationMillis = 140,
-                            easing = FastOutLinearInEasing
+                        slideOutHorizontally(
+                            animationSpec = tween(
+                                durationMillis = 200,
+                                easing = FastOutLinearInEasing
+                            ),
+                            targetOffsetX = { width -> width }
+                        ) + fadeOut(
+                            animationSpec = tween(
+                                durationMillis = 140,
+                                easing = FastOutLinearInEasing
+                            )
+                        ) + ExitTransition.KeepUntilTransitionsFinished
                         )
-                    ) + ExitTransition.KeepUntilTransitionsFinished
-                )
             } else {
                 fadeIn(
                     animationSpec = tween(
@@ -150,13 +150,13 @@ fun MarkorNavDisplay(
                         easing = LinearOutSlowInEasing
                     )
                 ) togetherWith (
-                    fadeOut(
-                        animationSpec = tween(
-                            durationMillis = 120,
-                            easing = FastOutLinearInEasing
+                        fadeOut(
+                            animationSpec = tween(
+                                durationMillis = 120,
+                                easing = FastOutLinearInEasing
+                            )
+                        ) + ExitTransition.KeepUntilTransitionsFinished
                         )
-                    ) + ExitTransition.KeepUntilTransitionsFinished
-                )
             }
         },
         entryProvider = { screen ->
@@ -170,37 +170,79 @@ fun MarkorNavDisplay(
                     when (screen) {
                         is Screen.Notebook -> MainScreen(
                             currentTab = 0,
-                            onNavigateToEditor = { path, autoOpenKeyboard -> onNavigate(Screen.Editor(path, autoOpenKeyboard)) },
+                            onNavigateToEditor = { path, autoOpenKeyboard ->
+                                onNavigate(
+                                    Screen.Editor(
+                                        path,
+                                        autoOpenKeyboard
+                                    )
+                                )
+                            },
                             onNavigateToSettings = { onNavigate(Screen.Settings) }
                         )
+
                         is Screen.Todo -> MainScreen(
                             currentTab = 1,
-                            onNavigateToEditor = { path, autoOpenKeyboard -> onNavigate(Screen.Editor(path, autoOpenKeyboard)) },
+                            onNavigateToEditor = { path, autoOpenKeyboard ->
+                                onNavigate(
+                                    Screen.Editor(
+                                        path,
+                                        autoOpenKeyboard
+                                    )
+                                )
+                            },
                             onNavigateToSettings = { onNavigate(Screen.Settings) }
                         )
+
                         is Screen.QuickNote -> MainScreen(
                             currentTab = 2,
-                            onNavigateToEditor = { path, autoOpenKeyboard -> onNavigate(Screen.Editor(path, autoOpenKeyboard)) },
+                            onNavigateToEditor = { path, autoOpenKeyboard ->
+                                onNavigate(
+                                    Screen.Editor(
+                                        path,
+                                        autoOpenKeyboard
+                                    )
+                                )
+                            },
                             onNavigateToSettings = { onNavigate(Screen.Settings) }
                         )
+
                         is Screen.More -> MainScreen(
                             currentTab = 3,
-                            onNavigateToEditor = { path, autoOpenKeyboard -> onNavigate(Screen.Editor(path, autoOpenKeyboard)) },
+                            onNavigateToEditor = { path, autoOpenKeyboard ->
+                                onNavigate(
+                                    Screen.Editor(
+                                        path,
+                                        autoOpenKeyboard
+                                    )
+                                )
+                            },
                             onNavigateToSettings = { onNavigate(Screen.Settings) }
                         )
+
                         is Screen.Editor -> EditorScreen(
                             filePath = screen.filePath,
                             openKeyboardOnStart = screen.autoOpenKeyboard,
                             onNavigateBack = onPopBackStack
                         )
+
                         is Screen.Settings -> SettingsScreen(
                             onNavigateBack = onPopBackStack
                         )
+
                         is Screen.FileBrowser -> FileBrowserScreen(
                             initialPath = screen.path,
-                            onNavigateToEditor = { path, autoOpenKeyboard -> onNavigate(Screen.Editor(path, autoOpenKeyboard)) },
+                            onNavigateToEditor = { path, autoOpenKeyboard ->
+                                onNavigate(
+                                    Screen.Editor(
+                                        path,
+                                        autoOpenKeyboard
+                                    )
+                                )
+                            },
                             onNavigateBack = onPopBackStack
                         )
+
                         is Screen.Search -> {
                             // Placeholder for SearchScreen
                         }

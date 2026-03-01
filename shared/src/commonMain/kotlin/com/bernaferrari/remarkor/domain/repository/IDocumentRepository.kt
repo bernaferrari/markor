@@ -1,7 +1,7 @@
 package com.bernaferrari.remarkor.domain.repository
 
-import kotlinx.coroutines.flow.Flow
 import com.bernaferrari.remarkor.domain.model.Document
+import kotlinx.coroutines.flow.Flow
 import okio.Path
 
 interface IDocumentRepository {

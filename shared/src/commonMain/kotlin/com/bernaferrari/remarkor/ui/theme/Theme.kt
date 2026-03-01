@@ -10,8 +10,8 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
-import com.materialkolor.dynamicColorScheme as kolorDynamicColorScheme
 import kotlinx.coroutines.flow.Flow
+import com.materialkolor.dynamicColorScheme as kolorDynamicColorScheme
 
 enum class ThemePaletteOption(val token: String, val seedColor: Color?) {
     DYNAMIC("markor", null),
@@ -51,7 +51,7 @@ enum class ThemeMode {
     SYSTEM,  // Follow system setting
     LIGHT,   // Always light
     DARK;    // Always dark
-    
+
     companion object {
         fun fromString(value: String): ThemeMode {
             return when (value.lowercase()) {
@@ -209,6 +209,7 @@ fun MarkorTheme(
                 ThemeMode.SYSTEM -> systemDarkTheme
             }
         }
+
         themeMode != null -> {
             val mode by themeMode.collectAsState(initial = "system")
             when (ThemeMode.fromString(mode)) {
@@ -217,6 +218,7 @@ fun MarkorTheme(
                 ThemeMode.SYSTEM -> systemDarkTheme
             }
         }
+
         else -> systemDarkTheme
     }
 

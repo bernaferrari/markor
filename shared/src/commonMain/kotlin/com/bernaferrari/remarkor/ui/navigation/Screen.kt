@@ -23,18 +23,25 @@ import org.jetbrains.compose.resources.StringResource
 sealed class Screen : NavKey {
     @Serializable
     data object Notebook : Screen()
+
     @Serializable
     data object Todo : Screen()
+
     @Serializable
     data object QuickNote : Screen()
+
     @Serializable
     data object More : Screen()
+
     @Serializable
     data class Editor(val filePath: String, val autoOpenKeyboard: Boolean = false) : Screen()
+
     @Serializable
     data object Settings : Screen()
+
     @Serializable
     data class FileBrowser(val path: String? = null) : Screen()
+
     @Serializable
     data class Search(val path: String? = null, val query: String? = null) : Screen()
 }

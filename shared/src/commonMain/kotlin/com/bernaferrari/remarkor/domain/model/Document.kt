@@ -1,7 +1,6 @@
 package com.bernaferrari.remarkor.domain.model
 
 import okio.Path
-import okio.Path.Companion.toPath
 
 data class Document(
     val path: Path,

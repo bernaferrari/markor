@@ -20,7 +20,8 @@ fun createDataStore(producePath: () -> String): DataStore<Preferences> {
 class AppSettings(private val dataStore: DataStore<Preferences>) {
 
     private object PrefsKeys {
-        val FILE_BROWSER_SHOW_HIDDEN = booleanPreferencesKey("pref_key__file_browser_show_hidden_files")
+        val FILE_BROWSER_SHOW_HIDDEN =
+            booleanPreferencesKey("pref_key__file_browser_show_hidden_files")
         val FILE_BROWSER_SHOW_EXT = booleanPreferencesKey("pref_key__file_browser_show_file_ext")
         val FILE_BROWSER_SORT_ORDER = stringPreferencesKey("pref_key__file_browser_sort_order")
         val FILE_BROWSER_FOLDER_FIRST = booleanPreferencesKey("pref_key__file_browser_folder_first")
@@ -35,7 +36,8 @@ class AppSettings(private val dataStore: DataStore<Preferences>) {
         val EDITOR_FOREGROUND = stringPreferencesKey("pref_key__editor_foreground")
         val EDITOR_BACKGROUND = stringPreferencesKey("pref_key__editor_background")
         val IS_FIRST_RUN = booleanPreferencesKey("pref_key__is_first_run")
-        val IS_EXTERNAL_STORAGE_ENABLED = booleanPreferencesKey("pref_key__is_external_storage_enabled")
+        val IS_EXTERNAL_STORAGE_ENABLED =
+            booleanPreferencesKey("pref_key__is_external_storage_enabled")
     }
 
     val isFirstRun: Flow<Boolean> = dataStore.data.map { prefs ->
