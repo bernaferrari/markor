@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.bernaferrari.remarkor.ui.screens
 
@@ -50,7 +49,6 @@ import org.jetbrains.compose.resources.stringResource
 import markor.shared.generated.resources.*
 import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onNavigateBack: () -> Unit,

@@ -191,7 +191,6 @@ fun BlockEditor(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BlockItem(
     block: Block,

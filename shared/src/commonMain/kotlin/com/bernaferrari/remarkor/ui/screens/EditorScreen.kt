@@ -88,7 +88,6 @@ expect fun rememberImagePickerLauncher(
     onImagePicked: (PickedImage?) -> Unit
 ): () -> Unit
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditorScreen(
     filePath: String,
