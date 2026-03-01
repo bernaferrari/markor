@@ -64,7 +64,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
         ### Copyright © 2017-2025
         **Gregor Santner**
         \n**Official project sources:**
-        [Project page](https://github.com/gsantner/markor#readme) | [Source code](https://github.com/gsantner/markor) | [F-Droid](https://f-droid.org/repository/browse/?fdid=net.gsantner.markor)
+        [Project page](https://github.com/gsantner/markor#readme) | [Source code](https://github.com/gsantner/markor) | [F-Droid](https://f-droid.org/repository/browse/?fdid=com.bernaferrari.remarkor)
     ]]></string>
 
     <string name="inject_to_head" translatable="false">Inject -> head</string>
