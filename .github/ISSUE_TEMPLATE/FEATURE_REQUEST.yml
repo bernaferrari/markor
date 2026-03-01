@@ -16,7 +16,7 @@ body:
           required: true
         - label: The topic is **not** already reported at [Issues](https://github.com/gsantner/markor/issues?q=#js-issues-search). _(I've searched it)_.
           required: true
-        - label: Markor **is** up to date. See [Releases](https://github.com/gsantner/markor/tags) for the latest version. Updates are available from [F-Droid](https://f-droid.org/en/packages/net.gsantner.markor/) and GitHub. 
+        - label: Markor **is** up to date. See [Releases](https://github.com/gsantner/markor/tags) for the latest version. Updates are available from [F-Droid](https://f-droid.org/en/packages/com.bernaferrari.remarkor/) and GitHub. 
           required: true
         - label: The wanted feature/enhancement is not present in the latest development version (git master). (Please [download](https://nightly.link/gsantner/markor/workflows/build-android-project/master) and try the test version of Markor, named **Marder**. Don't worry; Markor and Marder appear as completely separate applications. You can install both side-by-side, and Markor's settings are not touched. If your desired feature is present, you don't need to open this issue. The change will be part of the next Markor update.)
           required: true

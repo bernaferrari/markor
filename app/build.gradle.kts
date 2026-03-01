@@ -17,8 +17,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "net.gsantner.markor"
-        versionName = "2.15.2"
+        applicationId = "com.bernaferrari.remarkor"
+        versionName = "0.1"
         versionCode = 1
         minSdk = 26
         targetSdk = 36
@@ -27,7 +27,7 @@ android {
     flavorDimensions += "default"
     productFlavors {
         create("flavorAtest") {
-            applicationId = "net.gsantner.markor_test"
+            applicationId = "com.bernaferrari.remarkor_test"
             versionCode = SimpleDateFormat("yyMMdd", Locale.US).format(Date()).toInt()
             versionName = "${android.defaultConfig.versionName}-${
                 SimpleDateFormat("HHmm", Locale.US).format(Date())
@@ -70,7 +70,7 @@ android {
         compose = true
     }
 
-    namespace = "net.gsantner.markor"
+    namespace = "com.bernaferrari.remarkor"
 
     lint {
         abortOnError = false
@@ -92,9 +92,9 @@ android {
 kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
-        freeCompilerArgs.addAll(
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-            "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
+        optIn.addAll(
+            "androidx.compose.material3.ExperimentalMaterial3Api",
+            "androidx.compose.material3.ExperimentalMaterial3ExpressiveApi"
         )
     }
 }

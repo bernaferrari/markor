@@ -28,7 +28,7 @@ kotlin {
     }
     
     androidLibrary {
-        namespace = "net.gsantner.markor.shared"
+        namespace = "com.bernaferrari.remarkor.shared"
         compileSdk = 36
         minSdk = 26
         androidResources.enable = true
