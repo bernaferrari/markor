@@ -61,7 +61,6 @@ fun parseOutline(text: String): List<OutlineItem> {
  * A side panel showing the document outline (table of contents).
  * Allows quick navigation to sections.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OutlinePanel(
     items: List<OutlineItem>,

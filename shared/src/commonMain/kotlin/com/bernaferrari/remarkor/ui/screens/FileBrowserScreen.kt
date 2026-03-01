@@ -88,7 +88,6 @@ fun FileBrowserScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FileBrowserContent(
     initialPath: String?,

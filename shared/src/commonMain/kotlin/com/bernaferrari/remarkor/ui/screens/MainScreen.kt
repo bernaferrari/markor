@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.bernaferrari.remarkor.ui.screens
 
@@ -51,7 +50,6 @@ enum class LeftPanelContent {
     SETTINGS
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     currentTab: Int = 0,
@@ -209,7 +207,6 @@ fun MainScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PhoneLayout(
     isSelectionMode: Boolean,
@@ -332,7 +329,6 @@ private fun PhoneLayout(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ListDetailLayout(
     adaptiveInfo: com.bernaferrari.remarkor.ui.components.AdaptiveLayoutInfo,
@@ -506,7 +502,6 @@ private fun ListDetailLayout(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsTopBar(
     onNavigateBack: () -> Unit
@@ -532,7 +527,6 @@ private fun SettingsTopBar(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SelectionTopBar(
     selectedCount: Int,
@@ -678,7 +672,6 @@ private fun FilterTabRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StandardTopBar(
     isGridView: Boolean,
@@ -784,7 +777,6 @@ private fun StandardTopBar(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchScreen(
     query: String,

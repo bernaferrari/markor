@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
  * - Swipe right: Toggle favorite (star)
  * - Swipe left: Delete
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeableFileCard(
     isFavorite: Boolean,

@@ -21,7 +21,6 @@ import androidx.compose.ui.window.Dialog
 
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdvancedSearchReplaceDialog(
     onDismiss: () -> Unit,

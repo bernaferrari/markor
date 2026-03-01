@@ -28,7 +28,6 @@ import com.bernaferrari.remarkor.domain.service.AssetInfo
 import com.bernaferrari.remarkor.domain.service.ImageAssetManager
 import okio.Path
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssetManagerSheet(
     filePath: Path,

@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 /**
  * Google Keep-style search bar that's always prominent at the top.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KeepStyleSearchBar(
     query: String,
