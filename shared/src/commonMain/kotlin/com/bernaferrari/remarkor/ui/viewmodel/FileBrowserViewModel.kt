@@ -1,17 +1,7 @@
 package com.bernaferrari.remarkor.ui.viewmodel
 
-import markor.shared.generated.resources.*
-import org.jetbrains.compose.resources.getString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import com.bernaferrari.remarkor.data.local.AppSettings
 import com.bernaferrari.remarkor.data.local.db.NoteMetadataIndexer
 import com.bernaferrari.remarkor.data.local.db.NoteMetadataRepository
@@ -20,8 +10,33 @@ import com.bernaferrari.remarkor.domain.repository.FileInfo
 import com.bernaferrari.remarkor.domain.repository.IFileRepository
 import com.bernaferrari.remarkor.ui.components.UserMessageManager
 import com.bernaferrari.remarkor.util.nowMillis
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.deleted_permanently
+import markor.shared.generated.resources.failed_to_delete_permanently
+import markor.shared.generated.resources.failed_to_delete_with_arg
+import markor.shared.generated.resources.failed_to_empty_trash
+import markor.shared.generated.resources.failed_to_empty_trash_with_arg
+import markor.shared.generated.resources.failed_to_index_files
+import markor.shared.generated.resources.failed_to_load_files
+import markor.shared.generated.resources.failed_to_load_files_with_arg
+import markor.shared.generated.resources.failed_to_move_to_trash
+import markor.shared.generated.resources.failed_to_restore_file
+import markor.shared.generated.resources.failed_to_restore_with_arg
+import markor.shared.generated.resources.file_restored
+import markor.shared.generated.resources.moved_to_trash
+import markor.shared.generated.resources.some_items_not_deleted
+import markor.shared.generated.resources.trash_emptied
 import okio.Path
 import okio.Path.Companion.toPath
+import org.jetbrains.compose.resources.getString
 
 enum class FileFilterMode {
     ALL, FAVORITES, ARCHIVE, LABEL, TRASH
@@ -46,11 +61,11 @@ class FileBrowserViewModel(
 
     // User message management
     val messageManager = UserMessageManager()
-    
+
     // Loading state
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-    
+
     // Error state
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
@@ -70,19 +85,19 @@ class FileBrowserViewModel(
     // Global Search
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
-    
+
     // Search in content flag
     private val _searchInContent = MutableStateFlow(false)
     val searchInContent: StateFlow<Boolean> = _searchInContent.asStateFlow()
-    
+
     // Content search results
     private val _contentSearchResults = MutableStateFlow<List<FileInfo>>(emptyList())
     val contentSearchResults: StateFlow<List<FileInfo>> = _contentSearchResults.asStateFlow()
-    
+
     // Favorites
     val favorites: StateFlow<Set<String>> = favoritesRepository.favorites
         .stateIn(viewModelScope, SharingStarted.Lazily, emptySet())
-    
+
     // Recent Files
     val recentFiles: StateFlow<List<String>> = favoritesRepository.recentFiles
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
@@ -94,17 +109,17 @@ class FileBrowserViewModel(
         noteMetadataRepository.observeNotes()
             .map { notes -> notes.associateBy { it.note.path } }
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyMap())
-    
+
     // Filter Mode
     private val _filterMode = MutableStateFlow(FileFilterMode.ALL)
     val filterMode: StateFlow<FileFilterMode> = _filterMode.asStateFlow()
-    
+
     // Label Filter
     private val _currentLabel = MutableStateFlow<String?>(null)
     val currentLabel: StateFlow<String?> = _currentLabel.asStateFlow()
-    
+
     // Labels List
-    val labels: StateFlow<List<com.bernaferrari.remarkor.data.local.db.LabelEntity>> = 
+    val labels: StateFlow<List<com.bernaferrari.remarkor.data.local.db.LabelEntity>> =
         noteMetadataRepository.observeLabels()
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
@@ -118,13 +133,13 @@ class FileBrowserViewModel(
     suspend fun loadFiles(path: String?): String {
         _isLoading.value = true
         _errorMessage.value = null
-        
+
         val targetPathString = if (path.isNullOrEmpty()) {
             val notebookDir = appSettings.getNotebookDirectory.first()
             if (notebookDir.isEmpty()) {
                 defaultNotebookPath
             } else {
-                 notebookDir
+                notebookDir
             }
         } else {
             path
@@ -132,11 +147,12 @@ class FileBrowserViewModel(
 
         val resolvedPathString = resolveNotebookPath(targetPathString)
         currentPathString = resolvedPathString
-        
+
         try {
             refreshFiles()
         } catch (e: Exception) {
-            _errorMessage.value = getString(Res.string.failed_to_load_files_with_arg, e.message ?: "")
+            _errorMessage.value =
+                getString(Res.string.failed_to_load_files_with_arg, e.message ?: "")
             messageManager.error(getString(Res.string.failed_to_load_files))
         } finally {
             _isLoading.value = false
@@ -176,7 +192,7 @@ class FileBrowserViewModel(
 
     private suspend fun refreshFiles() {
         val path = currentPathString?.toPath() ?: return
-        
+
         if (_filterMode.value == FileFilterMode.TRASH) {
             _trashFiles.value = fileRepository.listTrash()
             _files.value = emptyList()
@@ -223,7 +239,12 @@ class FileBrowserViewModel(
                 }
                 refreshFiles()
             } catch (e: Exception) {
-                messageManager.error(getString(Res.string.failed_to_delete_with_arg, e.message ?: ""))
+                messageManager.error(
+                    getString(
+                        Res.string.failed_to_delete_with_arg,
+                        e.message ?: ""
+                    )
+                )
             }
         }
     }
@@ -240,7 +261,12 @@ class FileBrowserViewModel(
                 refreshFiles()
                 loadTrashFiles()
             } catch (e: Exception) {
-                messageManager.error(getString(Res.string.failed_to_restore_with_arg, e.message ?: ""))
+                messageManager.error(
+                    getString(
+                        Res.string.failed_to_restore_with_arg,
+                        e.message ?: ""
+                    )
+                )
             }
         }
     }
@@ -256,7 +282,12 @@ class FileBrowserViewModel(
                 }
                 loadTrashFiles()
             } catch (e: Exception) {
-                messageManager.error(getString(Res.string.failed_to_empty_trash_with_arg, e.message ?: ""))
+                messageManager.error(
+                    getString(
+                        Res.string.failed_to_empty_trash_with_arg,
+                        e.message ?: ""
+                    )
+                )
             }
         }
     }
@@ -362,11 +393,11 @@ class FileBrowserViewModel(
             currentSelection.add(path)
         }
         _selectedFiles.value = currentSelection
-        
+
         if (currentSelection.isEmpty()) {
             _isSelectionMode.value = false
         } else {
-             _isSelectionMode.value = true
+            _isSelectionMode.value = true
         }
     }
 
@@ -388,8 +419,8 @@ class FileBrowserViewModel(
         }
 
         val allAreAlreadySelected = allPaths.isNotEmpty() &&
-            _selectedFiles.value.size == allPaths.size &&
-            _selectedFiles.value.containsAll(allPaths)
+                _selectedFiles.value.size == allPaths.size &&
+                _selectedFiles.value.containsAll(allPaths)
 
         if (allAreAlreadySelected) {
             clearSelection()
@@ -403,7 +434,7 @@ class FileBrowserViewModel(
         _selectedFiles.value = emptySet()
         _isSelectionMode.value = false
     }
-    
+
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
         // Trigger content search if enabled
@@ -416,25 +447,25 @@ class FileBrowserViewModel(
             _contentSearchResults.value = emptyList()
         }
     }
-    
+
     // Favorites operations
     fun toggleFavorite(path: String) {
         viewModelScope.launch {
             favoritesRepository.toggleFavorite(path)
         }
     }
-    
+
     fun isFavorite(path: String): Boolean {
         return favorites.value.contains(path)
     }
-    
+
     // Recent files operations
     fun recordFileAccess(path: String) {
         viewModelScope.launch {
             favoritesRepository.recordFileAccess(path)
         }
     }
-    
+
     // Filter mode
     fun setFilterMode(mode: FileFilterMode) {
         _filterMode.value = mode
@@ -449,17 +480,17 @@ class FileBrowserViewModel(
             refreshFiles()
         }
     }
-    
+
     // File type filter
     fun setFileTypeFilter(filter: FileTypeFilter) {
         _fileTypeFilter.value = filter
     }
-    
+
     fun setLabelFilter(label: String) {
         _currentLabel.value = label
         setFilterMode(FileFilterMode.LABEL)
     }
-    
+
     // Search in content
     fun setSearchInContent(enabled: Boolean) {
         _searchInContent.value = enabled
@@ -473,7 +504,7 @@ class FileBrowserViewModel(
             _contentSearchResults.value = emptyList()
         }
     }
-    
+
     /**
      * Returns files filtered by the current search query and filter mode.
      * Matches filename (case-insensitive) or content if searchInContent is enabled.
@@ -486,7 +517,7 @@ class FileBrowserViewModel(
         val contentResults = _contentSearchResults.value
         val favs = favorites.value
         val metadata = noteMetadataByPath.value
-        
+
         // For trash mode, return trash files directly
         if (mode == FileFilterMode.TRASH) {
             var result = _trashFiles.value
@@ -495,35 +526,35 @@ class FileBrowserViewModel(
             }
             return result
         }
-        
+
         var result = _files.value
-        
+
         // Filter by Archive Status
         if (mode == FileFilterMode.ARCHIVE) {
-             result = result.filter { file ->
-                 metadata[file.path.toString()]?.note?.isArchived == true
-             }
+            result = result.filter { file ->
+                metadata[file.path.toString()]?.note?.isArchived == true
+            }
         } else if (mode == FileFilterMode.LABEL) {
-             // Filter by Label
-             val label = _currentLabel.value
-             if (label != null) {
-                 result = result.filter { file ->
-                     val noteWithLabels = metadata[file.path.toString()]
-                     noteWithLabels?.labels?.any { it.name == label } == true && noteWithLabels.note.isArchived != true
-                 }
-             }
+            // Filter by Label
+            val label = _currentLabel.value
+            if (label != null) {
+                result = result.filter { file ->
+                    val noteWithLabels = metadata[file.path.toString()]
+                    noteWithLabels?.labels?.any { it.name == label } == true && noteWithLabels.note.isArchived != true
+                }
+            }
         } else {
-             // In ALL or FAVORITES, hide archived files
-             result = result.filter { file ->
-                 metadata[file.path.toString()]?.note?.isArchived != true
-             }
+            // In ALL or FAVORITES, hide archived files
+            result = result.filter { file ->
+                metadata[file.path.toString()]?.note?.isArchived != true
+            }
         }
-        
+
         // Apply favorites filter
         if (mode == FileFilterMode.FAVORITES) {
             result = result.filter { favs.contains(it.path.toString()) }
         }
-        
+
         // Apply file type filter
         if (typeFilter != FileTypeFilter.ALL) {
             result = result.filter { file ->
@@ -531,20 +562,22 @@ class FileBrowserViewModel(
                 typeFilter.extensions.contains(ext)
             }
         }
-        
+
         // Apply search filter (filename or content)
         if (query.isNotBlank()) {
             result = result.filter { it.name.contains(query, ignoreCase = true) }
-            
+
             // Add content matches if searching in content
             if (searchInContent && contentResults.isNotEmpty()) {
                 val contentMatchingPaths = contentResults.map { it.path }.toSet()
                 val nameMatchingPaths = result.map { it.path }.toSet()
                 // Add content matches that aren't already in name matches
-                result = result + contentResults.filter { contentMatchingPaths.contains(it.path) && !nameMatchingPaths.contains(it.path) }
+                result = result + contentResults.filter {
+                    contentMatchingPaths.contains(it.path) && !nameMatchingPaths.contains(it.path)
+                }
             }
         }
-        
+
         val contentSortComparator = when (sortOrder.value) {
             "name" -> compareBy<FileInfo> { it.name.lowercase() }
             "size" -> compareByDescending<FileInfo> { it.size }
@@ -557,7 +590,7 @@ class FileBrowserViewModel(
                 .then(contentSortComparator)
         )
     }
-    
+
     /**
      * Returns files matching the search query in content.
      */
@@ -576,7 +609,12 @@ class FileBrowserViewModel(
                     .copy(pinned = true)
                 noteMetadataRepository.upsertNote(note)
             } else {
-                noteMetadataRepository.upsertNote(existing.copy(pinned = !existing.pinned, updatedAt = now))
+                noteMetadataRepository.upsertNote(
+                    existing.copy(
+                        pinned = !existing.pinned,
+                        updatedAt = now
+                    )
+                )
             }
         }
     }
@@ -587,17 +625,17 @@ class FileBrowserViewModel(
             // Ensure note exists
             val existing = noteMetadataRepository.getNoteByPath(path)
             if (existing == null) {
-                 val note = com.bernaferrari.remarkor.data.local.db.NoteMetadataMapper
+                val note = com.bernaferrari.remarkor.data.local.db.NoteMetadataMapper
                     .buildNoteEntityFromPath(path, null, now)
-                 noteMetadataRepository.upsertNote(note)
-                 // Need the ID now
-                 val inserted = noteMetadataRepository.getNoteByPath(path)
-                 if (inserted != null) {
-                     noteMetadataRepository.setLabelsForNote(inserted.id, labels)
-                 }
+                noteMetadataRepository.upsertNote(note)
+                // Need the ID now
+                val inserted = noteMetadataRepository.getNoteByPath(path)
+                if (inserted != null) {
+                    noteMetadataRepository.setLabelsForNote(inserted.id, labels)
+                }
             } else {
                 noteMetadataRepository.setLabelsForNote(existing.id, labels)
-             }
+            }
         }
     }
 

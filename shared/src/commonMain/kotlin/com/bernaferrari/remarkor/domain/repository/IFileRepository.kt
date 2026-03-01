@@ -6,8 +6,18 @@ import okio.Path
 interface IFileRepository {
     suspend fun listFiles(directory: Path): List<FileInfo>
     suspend fun listFilesRecursively(directory: Path): List<FileInfo>
-    suspend fun searchFiles(directory: Path, query: String, recursive: Boolean = true): List<FileInfo>
-    suspend fun searchContent(directory: Path, query: String, recursive: Boolean = true): List<FileInfo>
+    suspend fun searchFiles(
+        directory: Path,
+        query: String,
+        recursive: Boolean = true
+    ): List<FileInfo>
+
+    suspend fun searchContent(
+        directory: Path,
+        query: String,
+        recursive: Boolean = true
+    ): List<FileInfo>
+
     suspend fun getFileInfo(path: Path): FileInfo?
     suspend fun createFile(parent: Path, name: String): Path?
     suspend fun createFileWithContent(parent: Path, name: String, content: String): Path?

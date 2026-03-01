@@ -13,7 +13,7 @@ object BlockParser {
     private val bulletListRegex = Regex("^(\\s*)[-*+] (.*)$")
     private val numberedListRegex = Regex("^(\\s*)\\d+\\. (.*)$")
     private val imageRegex = Regex("^!\\[(.*)\\]\\((.*)\\)$")
-    
+
     /**
      * Parse markdown text into a BlockDocument.
      */
@@ -21,11 +21,11 @@ object BlockParser {
         if (markdown.isBlank()) {
             return BlockDocument(blocks = listOf(Block()))
         }
-        
+
         val blocks = mutableListOf<Block>()
         val lines = markdown.split("\n")
         var i = 0
-        
+
         while (i < lines.size) {
             val line = lines[i]
             val trimmed = line.trim()
@@ -33,7 +33,7 @@ object BlockParser {
             val bulletListMatch = bulletListRegex.find(trimmed)
             val numberedListMatch = numberedListRegex.find(trimmed)
             val imageMatch = imageRegex.find(trimmed)
-            
+
             when {
                 // Code block (fenced)
                 trimmed.startsWith("```") -> {
@@ -44,56 +44,75 @@ object BlockParser {
                         codeLines.add(lines[i])
                         i++
                     }
-                    blocks.add(Block(
-                        type = BlockType.CODE_BLOCK,
-                        content = codeLines.joinToString("\n"),
-                        language = language
-                    ))
+                    blocks.add(
+                        Block(
+                            type = BlockType.CODE_BLOCK,
+                            content = codeLines.joinToString("\n"),
+                            language = language
+                        )
+                    )
                 }
-                
+
                 // Divider
                 trimmed == "---" || trimmed == "***" || trimmed == "___" -> {
                     blocks.add(Block(type = BlockType.DIVIDER))
                 }
-                
+
                 // Headings
                 trimmed.startsWith("######") -> {
-                    blocks.add(Block(
-                        type = BlockType.HEADING6,
-                        content = trimmed.removePrefix("######").trim()
-                    ))
+                    blocks.add(
+                        Block(
+                            type = BlockType.HEADING6,
+                            content = trimmed.removePrefix("######").trim()
+                        )
+                    )
                 }
+
                 trimmed.startsWith("#####") -> {
-                    blocks.add(Block(
-                        type = BlockType.HEADING5,
-                        content = trimmed.removePrefix("#####").trim()
-                    ))
+                    blocks.add(
+                        Block(
+                            type = BlockType.HEADING5,
+                            content = trimmed.removePrefix("#####").trim()
+                        )
+                    )
                 }
+
                 trimmed.startsWith("####") -> {
-                    blocks.add(Block(
-                        type = BlockType.HEADING4,
-                        content = trimmed.removePrefix("####").trim()
-                    ))
+                    blocks.add(
+                        Block(
+                            type = BlockType.HEADING4,
+                            content = trimmed.removePrefix("####").trim()
+                        )
+                    )
                 }
+
                 trimmed.startsWith("###") -> {
-                    blocks.add(Block(
-                        type = BlockType.HEADING3,
-                        content = trimmed.removePrefix("###").trim()
-                    ))
+                    blocks.add(
+                        Block(
+                            type = BlockType.HEADING3,
+                            content = trimmed.removePrefix("###").trim()
+                        )
+                    )
                 }
+
                 trimmed.startsWith("##") -> {
-                    blocks.add(Block(
-                        type = BlockType.HEADING2,
-                        content = trimmed.removePrefix("##").trim()
-                    ))
+                    blocks.add(
+                        Block(
+                            type = BlockType.HEADING2,
+                            content = trimmed.removePrefix("##").trim()
+                        )
+                    )
                 }
+
                 trimmed.startsWith("#") -> {
-                    blocks.add(Block(
-                        type = BlockType.HEADING1,
-                        content = trimmed.removePrefix("#").trim()
-                    ))
+                    blocks.add(
+                        Block(
+                            type = BlockType.HEADING1,
+                            content = trimmed.removePrefix("#").trim()
+                        )
+                    )
                 }
-                
+
                 // Task list
                 taskListMatch != null -> {
                     val match = taskListMatch
@@ -109,7 +128,7 @@ object BlockParser {
                         )
                     )
                 }
-                
+
                 // Bullet list
                 bulletListMatch != null -> {
                     val match = bulletListMatch
@@ -123,7 +142,7 @@ object BlockParser {
                         )
                     )
                 }
-                
+
                 // Numbered list
                 numberedListMatch != null -> {
                     val match = numberedListMatch
@@ -137,29 +156,33 @@ object BlockParser {
                         )
                     )
                 }
-                
+
                 // Quote
                 trimmed.startsWith(">") -> {
-                    blocks.add(Block(
-                        type = BlockType.QUOTE,
-                        content = trimmed.removePrefix(">").trim()
-                    ))
+                    blocks.add(
+                        Block(
+                            type = BlockType.QUOTE,
+                            content = trimmed.removePrefix(">").trim()
+                        )
+                    )
                 }
-                
+
                 // Image
                 imageMatch != null -> {
                     val match = imageMatch
-                    blocks.add(Block(
-                        type = BlockType.IMAGE,
-                        content = match.groupValues[1] // Alt text
-                    ))
+                    blocks.add(
+                        Block(
+                            type = BlockType.IMAGE,
+                            content = match.groupValues[1] // Alt text
+                        )
+                    )
                 }
-                
+
                 // Empty line - skip or merge with previous
                 trimmed.isEmpty() -> {
                     // Skip empty lines between blocks
                 }
-                
+
                 // Paragraph (default)
                 else -> {
                     // Collect consecutive lines as one paragraph
@@ -174,29 +197,32 @@ object BlockParser {
                             nextTrimmed.startsWith("*") ||
                             nextTrimmed.startsWith(">") ||
                             nextTrimmed.startsWith("```") ||
-                            nextTrimmed.matches(Regex("^\\d+\\. .*"))) {
+                            nextTrimmed.matches(Regex("^\\d+\\. .*"))
+                        ) {
                             break
                         }
                         paragraphLines.add(nextLine)
                         i++
                     }
-                    blocks.add(Block(
-                        type = BlockType.PARAGRAPH,
-                        content = paragraphLines.joinToString("\n")
-                    ))
+                    blocks.add(
+                        Block(
+                            type = BlockType.PARAGRAPH,
+                            content = paragraphLines.joinToString("\n")
+                        )
+                    )
                 }
             }
             i++
         }
-        
+
         // Ensure at least one block
         if (blocks.isEmpty()) {
             blocks.add(Block())
         }
-        
+
         return BlockDocument(blocks = blocks, focusedBlockId = blocks.firstOrNull()?.id)
     }
-    
+
     /**
      * Convert BlockDocument back to markdown string.
      */

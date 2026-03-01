@@ -58,32 +58,32 @@ class NoteMetadataRepository(
             }
         }
     }
-    
+
     suspend fun setLabelsForPath(path: String, labels: List<String>) {
         val note = dao.getNoteByPath(path)
         if (note != null) {
             setLabelsForNote(note.id, labels)
         } else {
-             // Create empty note entry if it doesn't exist? 
-             // Ideally we index it first. For now, assume it exists or index on the fly.
-             // Let's index it briefly without content or just fail silently/log.
-             // Better: upsertFromPath(path, Clock.System.now().toEpochMilliseconds())
-             // But we don't have Clock here easily. 
-             // Let's just return for now or try to get it if safe.
+            // Create empty note entry if it doesn't exist?
+            // Ideally we index it first. For now, assume it exists or index on the fly.
+            // Let's index it briefly without content or just fail silently/log.
+            // Better: upsertFromPath(path, Clock.System.now().toEpochMilliseconds())
+            // But we don't have Clock here easily.
+            // Let's just return for now or try to get it if safe.
         }
     }
 
     suspend fun getNoteWithLabelsByPath(path: String): NoteWithLabels? {
         return dao.getNoteWithLabelsByPath(path)
     }
-    
+
     suspend fun setColor(path: String, color: Int?) {
         val note = dao.getNoteByPath(path)
         if (note != null) {
             dao.upsertNote(note.copy(color = color))
         }
     }
-    
+
     suspend fun setArchived(path: String, archived: Boolean) {
         val note = dao.getNoteByPath(path)
         if (note != null) {

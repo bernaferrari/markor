@@ -1,19 +1,19 @@
 package com.bernaferrari.remarkor.data.repository
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.withContext
 import com.bernaferrari.remarkor.data.local.AppSettings
 import com.bernaferrari.remarkor.data.local.db.NoteMetadataRepository
 import com.bernaferrari.remarkor.domain.model.Document
 import com.bernaferrari.remarkor.domain.repository.IDocumentRepository
 import com.bernaferrari.remarkor.util.nowMillis
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.withContext
 import okio.FileSystem
-import okio.SYSTEM
 import okio.IOException
 import okio.Path
 import okio.Path.Companion.toPath
+import okio.SYSTEM
 
 class DocumentRepository(
     private val appSettings: AppSettings,
@@ -33,10 +33,11 @@ class DocumentRepository(
             val content = fileSystem.read(path) {
                 readUtf8()
             }
-            
+
             val lastModified = metadata.lastModifiedAtMillis ?: 0L
 
-            val document = Document.fromPath(path).copy(content = content, lastModified = lastModified)
+            val document =
+                Document.fromPath(path).copy(content = content, lastModified = lastModified)
             updateCache(document)
             document
         } catch (e: IOException) {
@@ -44,54 +45,57 @@ class DocumentRepository(
         }
     }
 
-    override suspend fun saveDocument(document: Document, content: String): Boolean = withContext(Dispatchers.Default) {
-        try {
-            fileSystem.write(document.path) {
-                writeUtf8(content)
-            }
-            val timestamp = nowMillis()
-            val updated = document.copy(
-                content = content,
-                lastModified = timestamp
-            )
-            updateCache(updated)
-            noteMetadataRepository.upsertFromContent(
-                path = document.path.toString(),
-                content = content,
-                nowMillis = updated.lastModified
-            )
-            true
-        } catch (e: IOException) {
-            false
-        }
-    }
-
-    override suspend fun createDocument(path: Path, content: String): Document? = withContext(Dispatchers.Default) {
-        try {
-            val parent = path.parent ?: ".".toPath()
-            parent.let {
-                if (!fileSystem.exists(parent)) {
-                    fileSystem.createDirectories(parent)
+    override suspend fun saveDocument(document: Document, content: String): Boolean =
+        withContext(Dispatchers.Default) {
+            try {
+                fileSystem.write(document.path) {
+                    writeUtf8(content)
                 }
+                val timestamp = nowMillis()
+                val updated = document.copy(
+                    content = content,
+                    lastModified = timestamp
+                )
+                updateCache(updated)
+                noteMetadataRepository.upsertFromContent(
+                    path = document.path.toString(),
+                    content = content,
+                    nowMillis = updated.lastModified
+                )
+                true
+            } catch (e: IOException) {
+                false
             }
-            val actualPath = resolveUniquePath(parent, path.name)
-            fileSystem.write(actualPath) {
-                writeUtf8(content)
-            }
-            
-            val metadata = fileSystem.metadata(actualPath)
-            val document = Document.fromPath(actualPath).copy(content = content, lastModified = metadata.lastModifiedAtMillis ?: 0L)
-            updateCache(document)
-            noteMetadataRepository.upsertFromContent(
-                path = actualPath.toString(),
-                content = content,
-                nowMillis = document.lastModified
-            )
-            document
-        } catch (e: IOException) {
-            null
         }
-    }
+
+    override suspend fun createDocument(path: Path, content: String): Document? =
+        withContext(Dispatchers.Default) {
+            try {
+                val parent = path.parent ?: ".".toPath()
+                parent.let {
+                    if (!fileSystem.exists(parent)) {
+                        fileSystem.createDirectories(parent)
+                    }
+                }
+                val actualPath = resolveUniquePath(parent, path.name)
+                fileSystem.write(actualPath) {
+                    writeUtf8(content)
+                }
+
+                val metadata = fileSystem.metadata(actualPath)
+                val document = Document.fromPath(actualPath)
+                    .copy(content = content, lastModified = metadata.lastModifiedAtMillis ?: 0L)
+                updateCache(document)
+                noteMetadataRepository.upsertFromContent(
+                    path = actualPath.toString(),
+                    content = content,
+                    nowMillis = document.lastModified
+                )
+                document
+            } catch (e: IOException) {
+                null
+            }
+        }
 
     override suspend fun deleteDocument(path: Path): Boolean = withContext(Dispatchers.Default) {
         try {
@@ -104,24 +108,25 @@ class DocumentRepository(
         }
     }
 
-    override suspend fun renameDocument(document: Document, newName: String): Path? = withContext(Dispatchers.Default) {
-        try {
-            val oldPath = document.path
-            val parent = oldPath.parent ?: ".".toPath()
-            val newPath = resolveUniquePath(parent, newName, excludePath = oldPath)
-            if (newPath == oldPath) return@withContext oldPath
-            fileSystem.atomicMove(oldPath, newPath)
-            removeFromCache(oldPath)
-            noteMetadataRepository.updatePath(
-                oldPath = oldPath.toString(),
-                newPath = newPath.toString(),
-                nowMillis = nowMillis()
-            )
-            newPath
-        } catch (e: IOException) {
-            null
+    override suspend fun renameDocument(document: Document, newName: String): Path? =
+        withContext(Dispatchers.Default) {
+            try {
+                val oldPath = document.path
+                val parent = oldPath.parent ?: ".".toPath()
+                val newPath = resolveUniquePath(parent, newName, excludePath = oldPath)
+                if (newPath == oldPath) return@withContext oldPath
+                fileSystem.atomicMove(oldPath, newPath)
+                removeFromCache(oldPath)
+                noteMetadataRepository.updatePath(
+                    oldPath = oldPath.toString(),
+                    newPath = newPath.toString(),
+                    nowMillis = nowMillis()
+                )
+                newPath
+            } catch (e: IOException) {
+                null
+            }
         }
-    }
 
     override fun observeDocument(path: Path): Flow<Document?> {
         return MutableStateFlow(documentCache.value[path.toString()])
@@ -149,7 +154,11 @@ class DocumentRepository(
         documentCache.value = documentCache.value - path.toString()
     }
 
-    private fun resolveUniquePath(parent: Path, requestedName: String, excludePath: Path? = null): Path {
+    private fun resolveUniquePath(
+        parent: Path,
+        requestedName: String,
+        excludePath: Path? = null
+    ): Path {
         val normalizedName = requestedName.trim().ifBlank { "Untitled" }
         val (baseName, extension) = splitBaseAndExtension(normalizedName)
         var index = 0

@@ -1,10 +1,23 @@
 package com.bernaferrari.remarkor.ui.components
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -43,7 +56,7 @@ fun ConfettiCelebration(
     onFinished: () -> Unit = {}
 ) {
     var isPlaying by remember(trigger) { mutableStateOf(trigger) }
-    
+
     // Particles state
     data class ConfettiParticle(
         val color: Color,
@@ -72,10 +85,10 @@ fun ConfettiCelebration(
             )
         }
     }
-    
+
     // Animation progress
     var progress by remember { mutableStateOf(0f) }
-    
+
     LaunchedEffect(trigger) {
         if (trigger) {
             isPlaying = true
@@ -84,7 +97,7 @@ fun ConfettiCelebration(
             onFinished()
         }
     }
-    
+
     AnimatedVisibility(
         visible = isPlaying,
         enter = fadeIn(),
@@ -95,32 +108,36 @@ fun ConfettiCelebration(
         ) {
             val canvasWidth = size.width
             val canvasHeight = size.height
-            
+
             particles.forEach { particle ->
                 // Physics: gravity affects Y velocity over time
                 val gravity = 2f * progress
                 val currentVelocityY = particle.velocityY + gravity
-                
+
                 // Position based on progress
                 val x = particle.startX + particle.velocityX * progress * 0.5f
                 val y = particle.startY + currentVelocityY * progress * 0.5f
-                
+
                 // Only draw if on screen
                 if (y >= -0.1f && y <= 1.1f && x >= -0.1f && x <= 1.1f) {
                     val drawX = x * canvasWidth
                     val drawY = y * canvasHeight
                     val currentRotation = particle.rotation + particle.rotationSpeed * progress
-                    
+
                     rotate(currentRotation, Offset(drawX, drawY)) {
                         when (particle.shape) {
                             ConfettiShape.RECTANGLE -> {
                                 drawRect(
                                     color = particle.color,
-                                    topLeft = Offset(drawX - particle.size / 2, drawY - particle.size / 4),
+                                    topLeft = Offset(
+                                        drawX - particle.size / 2,
+                                        drawY - particle.size / 4
+                                    ),
                                     size = Size(particle.size, particle.size / 2),
                                     alpha = 1f - progress * 0.3f
                                 )
                             }
+
                             ConfettiShape.CIRCLE -> {
                                 drawCircle(
                                     color = particle.color,
@@ -129,11 +146,15 @@ fun ConfettiCelebration(
                                     alpha = 1f - progress * 0.3f
                                 )
                             }
+
                             ConfettiShape.TRIANGLE -> {
                                 // Simple triangle as a rotated rectangle
                                 drawRect(
                                     color = particle.color,
-                                    topLeft = Offset(drawX - particle.size / 4, drawY - particle.size / 2),
+                                    topLeft = Offset(
+                                        drawX - particle.size / 4,
+                                        drawY - particle.size / 2
+                                    ),
                                     size = Size(particle.size / 2, particle.size),
                                     alpha = 1f - progress * 0.3f
                                 )
@@ -160,14 +181,14 @@ fun SparkleEffect(
 ) {
     var isPlaying by remember(trigger) { mutableStateOf(trigger) }
     var progress by remember { mutableStateOf(0f) }
-    
+
     data class Sparkle(
         val angle: Float,
         val distance: Float,
         val delay: Float,
         val size: Float
     )
-    
+
     val sparkles = remember(sparkleCount) {
         List(sparkleCount) { i ->
             Sparkle(
@@ -178,7 +199,7 @@ fun SparkleEffect(
             )
         }
     }
-    
+
     LaunchedEffect(trigger) {
         if (trigger) {
             isPlaying = true
@@ -187,7 +208,7 @@ fun SparkleEffect(
             onFinished()
         }
     }
-    
+
     AnimatedVisibility(
         visible = isPlaying,
         enter = fadeIn(tween(100)),
@@ -196,24 +217,24 @@ fun SparkleEffect(
         Canvas(modifier = Modifier.fillMaxSize()) {
             val centerX = centerOffset.x * size.width
             val centerY = centerOffset.y * size.height
-            
+
             sparkles.forEach { sparkle ->
                 // Only show after delay
                 if (progress > sparkle.delay) {
                     val adjustedProgress = (progress - sparkle.delay) / (1f - sparkle.delay)
-                    
+
                     // Ease out curve
                     val easedProgress = 1f - (1f - adjustedProgress) * (1f - adjustedProgress)
-                    
+
                     val distance = sparkle.distance * easedProgress
                     val angleRad = sparkle.angle * (PI.toFloat() / 180f)
-                    
+
                     val x = centerX + cos(angleRad) * distance
                     val y = centerY + sin(angleRad) * distance
-                    
+
                     // Fade out
                     val alpha = 1f - adjustedProgress
-                    
+
                     // Draw star shape
                     drawCircle(
                         color = color,
@@ -238,7 +259,7 @@ fun SuccessCheckmark(
     onAnimationComplete: () -> Unit = {}
 ) {
     var progress by remember { mutableStateOf(0f) }
-    
+
     LaunchedEffect(visible) {
         if (visible) {
             runTimedAnimation(400L) { progress = it }
@@ -246,7 +267,7 @@ fun SuccessCheckmark(
             onAnimationComplete()
         }
     }
-    
+
     AnimatedVisibility(
         visible = visible,
         enter = scaleIn(tween(200), initialScale = 0.5f) + fadeIn(tween(200)),
@@ -257,7 +278,7 @@ fun SuccessCheckmark(
             val canvasSize = size.toPx()
             val center = Offset(canvasSize / 2, canvasSize / 2)
             val radius = canvasSize / 2 - strokeWidth
-            
+
             // Draw circle background
             drawCircle(
                 color = color,
@@ -265,7 +286,7 @@ fun SuccessCheckmark(
                 center = center,
                 alpha = 0.2f
             )
-            
+
             // Draw checkmark with progress
             val checkProgress = (progress * 2f).coerceIn(0f, 1f)
             if (checkProgress > 0) {
@@ -274,9 +295,9 @@ fun SuccessCheckmark(
                     val p1 = Offset(center.x - radius * 0.3f, center.y)
                     val p2 = Offset(center.x - radius * 0.05f, center.y + radius * 0.35f)
                     val p3 = Offset(center.x + radius * 0.35f, center.y - radius * 0.25f)
-                    
+
                     moveTo(p1.x, p1.y)
-                    
+
                     if (checkProgress <= 0.5f) {
                         // First segment
                         val segmentProgress = checkProgress * 2f
@@ -286,7 +307,7 @@ fun SuccessCheckmark(
                     } else {
                         // Complete first segment
                         lineTo(p2.x, p2.y)
-                        
+
                         // Second segment
                         val segmentProgress = (checkProgress - 0.5f) * 2f
                         val endX = p2.x + (p3.x - p2.x) * segmentProgress
@@ -294,7 +315,7 @@ fun SuccessCheckmark(
                         lineTo(endX, endY)
                     }
                 }
-                
+
                 drawPath(
                     path = path,
                     color = color,
@@ -324,7 +345,7 @@ fun BounceAnimation(
         ),
         label = "bounce"
     )
-    
+
     Box(
         modifier = Modifier.graphicsLayer {
             scaleX = scale
@@ -358,7 +379,7 @@ fun ShakeAnimation(
 ) {
     var offset by remember { mutableStateOf(0f) }
     var isShaking by remember { mutableStateOf(false) }
-    
+
     LaunchedEffect(trigger) {
         if (trigger) {
             isShaking = true
@@ -370,7 +391,7 @@ fun ShakeAnimation(
             isShaking = false
         }
     }
-    
+
     Box(
         modifier = Modifier.graphicsLayer {
             translationX = offset
@@ -389,10 +410,10 @@ fun TaskCompletionCelebration(
     onComplete: () -> Unit = {}
 ) {
     var showConfetti by remember { mutableStateOf(false) }
-    
+
     // Show checkmark first, then confetti
     var showCheckmark by remember { mutableStateOf(false) }
-    
+
     LaunchedEffect(trigger) {
         if (trigger) {
             showCheckmark = true
@@ -400,7 +421,7 @@ fun TaskCompletionCelebration(
             showConfetti = true
         }
     }
-    
+
     Box(modifier = Modifier.fillMaxSize()) {
         if (showCheckmark) {
             SuccessCheckmark(
@@ -410,7 +431,7 @@ fun TaskCompletionCelebration(
                 }
             )
         }
-        
+
         ConfettiCelebration(
             trigger = showConfetti,
             durationMs = 2000,

@@ -1,35 +1,90 @@
 package com.bernaferrari.remarkor.ui.components
 
-import markor.shared.generated.resources.*
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.stringResource
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.FormatBold
+import androidx.compose.material.icons.filled.FormatItalic
+import androidx.compose.material.icons.filled.FormatListNumbered
+import androidx.compose.material.icons.filled.FormatQuote
+import androidx.compose.material.icons.filled.FormatStrikethrough
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Title
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.bold_description
+import markor.shared.generated.resources.bold_label
+import markor.shared.generated.resources.bullet_list
+import markor.shared.generated.resources.bullet_list_description_label
+import markor.shared.generated.resources.code_block_description
+import markor.shared.generated.resources.code_block_label
+import markor.shared.generated.resources.commands_label
+import markor.shared.generated.resources.divider_description
+import markor.shared.generated.resources.divider_label
+import markor.shared.generated.resources.heading_1_description
+import markor.shared.generated.resources.heading_1_label
+import markor.shared.generated.resources.heading_2_description
+import markor.shared.generated.resources.heading_2_label
+import markor.shared.generated.resources.heading_3_description
+import markor.shared.generated.resources.heading_3_label
+import markor.shared.generated.resources.image_description
+import markor.shared.generated.resources.image_label
+import markor.shared.generated.resources.inline_code_description
+import markor.shared.generated.resources.inline_code_label
+import markor.shared.generated.resources.italic_description
+import markor.shared.generated.resources.italic_label
+import markor.shared.generated.resources.link
+import markor.shared.generated.resources.link_description
+import markor.shared.generated.resources.no_commands_match
+import markor.shared.generated.resources.numbered_list
+import markor.shared.generated.resources.numbered_list_description_label
+import markor.shared.generated.resources.quote_description
+import markor.shared.generated.resources.quote_label
+import markor.shared.generated.resources.strikethrough_description
+import markor.shared.generated.resources.strikethrough_label
+import markor.shared.generated.resources.task_list_description
+import markor.shared.generated.resources.task_list_label
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Represents a slash command that can format text.
@@ -48,29 +103,134 @@ data class SlashCommand(
  */
 val slashCommands = listOf(
     // Headers
-    SlashCommand(Res.string.heading_1_label, "h1", Icons.Default.Title, Res.string.heading_1_description, "# ", 0),
-    SlashCommand(Res.string.heading_2_label, "h2", Icons.Default.Title, Res.string.heading_2_description, "## ", 0),
-    SlashCommand(Res.string.heading_3_label, "h3", Icons.Default.Title, Res.string.heading_3_description, "### ", 0),
-    
+    SlashCommand(
+        Res.string.heading_1_label,
+        "h1",
+        Icons.Default.Title,
+        Res.string.heading_1_description,
+        "# ",
+        0
+    ),
+    SlashCommand(
+        Res.string.heading_2_label,
+        "h2",
+        Icons.Default.Title,
+        Res.string.heading_2_description,
+        "## ",
+        0
+    ),
+    SlashCommand(
+        Res.string.heading_3_label,
+        "h3",
+        Icons.Default.Title,
+        Res.string.heading_3_description,
+        "### ",
+        0
+    ),
+
     // Lists
-    SlashCommand(Res.string.bullet_list, "bullet", Icons.AutoMirrored.Filled.FormatListBulleted, Res.string.bullet_list_description_label, "- ", 0),
-    SlashCommand(Res.string.numbered_list, "num", Icons.Default.FormatListNumbered, Res.string.numbered_list_description_label, "1. ", 0),
-    SlashCommand(Res.string.task_list_label, "task", Icons.Default.CheckBox, Res.string.task_list_description, "- [ ] ", 0),
-    
+    SlashCommand(
+        Res.string.bullet_list,
+        "bullet",
+        Icons.AutoMirrored.Filled.FormatListBulleted,
+        Res.string.bullet_list_description_label,
+        "- ",
+        0
+    ),
+    SlashCommand(
+        Res.string.numbered_list,
+        "num",
+        Icons.Default.FormatListNumbered,
+        Res.string.numbered_list_description_label,
+        "1. ",
+        0
+    ),
+    SlashCommand(
+        Res.string.task_list_label,
+        "task",
+        Icons.Default.CheckBox,
+        Res.string.task_list_description,
+        "- [ ] ",
+        0
+    ),
+
     // Blocks
-    SlashCommand(Res.string.quote_label, "quote", Icons.Default.FormatQuote, Res.string.quote_description, "> ", 0),
-    SlashCommand(Res.string.code_block_label, "code", Icons.Default.Code, Res.string.code_block_description, "```\n\n```", 4),
-    SlashCommand(Res.string.inline_code_label, "inline", Icons.Default.Code, Res.string.inline_code_description, "`code`", 1),
-    
+    SlashCommand(
+        Res.string.quote_label,
+        "quote",
+        Icons.Default.FormatQuote,
+        Res.string.quote_description,
+        "> ",
+        0
+    ),
+    SlashCommand(
+        Res.string.code_block_label,
+        "code",
+        Icons.Default.Code,
+        Res.string.code_block_description,
+        "```\n\n```",
+        4
+    ),
+    SlashCommand(
+        Res.string.inline_code_label,
+        "inline",
+        Icons.Default.Code,
+        Res.string.inline_code_description,
+        "`code`",
+        1
+    ),
+
     // Structure
-    SlashCommand(Res.string.divider_label, "hr", Icons.Default.Remove, Res.string.divider_description, "\n---\n", 0),
-    SlashCommand(Res.string.link, "link", Icons.Default.Link, Res.string.link_description, "[text](url)", 4),
-    SlashCommand(Res.string.image_label, "img", Icons.Default.Image, Res.string.image_description, "![alt](url)", 4),
-    
+    SlashCommand(
+        Res.string.divider_label,
+        "hr",
+        Icons.Default.Remove,
+        Res.string.divider_description,
+        "\n---\n",
+        0
+    ),
+    SlashCommand(
+        Res.string.link,
+        "link",
+        Icons.Default.Link,
+        Res.string.link_description,
+        "[text](url)",
+        4
+    ),
+    SlashCommand(
+        Res.string.image_label,
+        "img",
+        Icons.Default.Image,
+        Res.string.image_description,
+        "![alt](url)",
+        4
+    ),
+
     // Text formatting
-    SlashCommand(Res.string.bold_label, "bold", Icons.Default.FormatBold, Res.string.bold_description, "**text**", 2),
-    SlashCommand(Res.string.italic_label, "italic", Icons.Default.FormatItalic, Res.string.italic_description, "*text*", 1),
-    SlashCommand(Res.string.strikethrough_label, "strike", Icons.Default.FormatStrikethrough, Res.string.strikethrough_description, "~~text~~", 2),
+    SlashCommand(
+        Res.string.bold_label,
+        "bold",
+        Icons.Default.FormatBold,
+        Res.string.bold_description,
+        "**text**",
+        2
+    ),
+    SlashCommand(
+        Res.string.italic_label,
+        "italic",
+        Icons.Default.FormatItalic,
+        Res.string.italic_description,
+        "*text*",
+        1
+    ),
+    SlashCommand(
+        Res.string.strikethrough_label,
+        "strike",
+        Icons.Default.FormatStrikethrough,
+        Res.string.strikethrough_description,
+        "~~text~~",
+        2
+    ),
 )
 
 /**
@@ -86,18 +246,18 @@ fun SlashCommandMenu(
     modifier: Modifier = Modifier
 ) {
     val hapticHelper = rememberHapticHelper()
-    
+
     // Filter commands based on query
     val filteredCommands = remember(query) {
         if (query.isEmpty()) {
             slashCommands
         } else {
-            slashCommands.filter { 
+            slashCommands.filter {
                 it.shortcut.contains(query, ignoreCase = true)
             }
         }
     }
-    
+
     AnimatedVisibility(
         visible = visible && filteredCommands.isNotEmpty(),
         enter = fadeIn(tween(150)) + slideInVertically { -it / 4 },
@@ -129,7 +289,7 @@ fun SlashCommandMenu(
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                         )
                     }
-                    
+
                     items(filteredCommands) { command ->
                         SlashCommandItem(
                             command = command,
@@ -140,7 +300,7 @@ fun SlashCommandMenu(
                             }
                         )
                     }
-                    
+
                     // Empty state
                     if (filteredCommands.isEmpty()) {
                         item {
@@ -190,9 +350,9 @@ private fun SlashCommandItem(
                     )
                 }
             }
-            
+
             Spacer(Modifier.width(12.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = stringResource(command.name),
@@ -220,18 +380,18 @@ fun applySlashCommand(
 ): TextFieldValue {
     val text = value.text
     val currentPosition = value.selection.start
-    
+
     // Find the end of the slash command (current cursor position)
     val beforeSlash = text.substring(0, slashStartIndex)
     val afterCursor = text.substring(currentPosition)
-    
+
     // Build new text
     val newText = beforeSlash + command.insertText + afterCursor
-    
+
     // Calculate new cursor position
     val insertEnd = slashStartIndex + command.insertText.length
     val newCursor = insertEnd - command.cursorOffset
-    
+
     return value.copy(
         text = newText,
         selection = TextRange(newCursor)
@@ -245,9 +405,9 @@ fun applySlashCommand(
 fun detectSlashCommand(value: TextFieldValue): Pair<Int, String>? {
     val text = value.text
     val cursorPos = value.selection.start
-    
+
     if (cursorPos == 0 || text.isEmpty()) return null
-    
+
     // Look backwards from cursor for "/"
     var slashIndex = -1
     for (i in (cursorPos - 1) downTo 0) {
@@ -265,16 +425,16 @@ fun detectSlashCommand(value: TextFieldValue): Pair<Int, String>? {
             return null // Hit newline or space before finding /
         }
     }
-    
+
     if (slashIndex == -1) return null
-    
+
     // Extract query (text after /)
     val query = text.substring(slashIndex + 1, cursorPos)
-    
+
     // Only match if query is reasonable length and alphanumeric
     if (query.length > 20 || !query.all { it.isLetterOrDigit() }) {
         return null
     }
-    
+
     return slashIndex to query
 }

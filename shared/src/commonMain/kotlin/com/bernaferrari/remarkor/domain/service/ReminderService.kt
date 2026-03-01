@@ -37,27 +37,27 @@ interface ReminderService {
      * @return The reminder ID, or null if scheduling failed.
      */
     suspend fun scheduleReminder(reminder: Reminder): String?
-    
+
     /**
      * Cancel a reminder.
      */
     suspend fun cancelReminder(reminderId: String)
-    
+
     /**
      * Get all scheduled reminders.
      */
     suspend fun getAllReminders(): List<Reminder>
-    
+
     /**
      * Get reminders for a specific file.
      */
     suspend fun getRemindersForFile(filePath: String): List<Reminder>
-    
+
     /**
      * Update an existing reminder.
      */
     suspend fun updateReminder(reminder: Reminder): Boolean
-    
+
     /**
      * Enable or disable a reminder.
      */

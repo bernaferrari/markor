@@ -34,7 +34,14 @@ fun resolveMarkdownColorPalette(
     val preferredAccent = accentColorOverride ?: colorScheme.primary
     val accentFallback = bestContrastColor(
         backgroundColor,
-        listOf(preferredAccent, colorScheme.primary, colorScheme.tertiary, body, Color.White, Color.Black)
+        listOf(
+            preferredAccent,
+            colorScheme.primary,
+            colorScheme.tertiary,
+            body,
+            Color.White,
+            Color.Black
+        )
     )
     val accent = ensureMinContrast(
         preferred = preferredAccent,
@@ -99,13 +106,18 @@ private fun ensureMinContrast(
 private fun contrastRatio(foreground: Color, background: Color): Float {
     val foregroundLuminance = relativeLuminance(foreground.compositeOver(background)) + 0.05f
     val backgroundLuminance = relativeLuminance(background) + 0.05f
-    return max(foregroundLuminance, backgroundLuminance) / min(foregroundLuminance, backgroundLuminance)
+    return max(foregroundLuminance, backgroundLuminance) / min(
+        foregroundLuminance,
+        backgroundLuminance
+    )
 }
 
 private fun relativeLuminance(color: Color): Float {
     fun channel(c: Float): Float {
-        return if (c <= 0.03928f) c / 12.92f else (((c + 0.055f) / 1.055f).toDouble().pow(2.4)).toFloat()
+        return if (c <= 0.03928f) c / 12.92f else (((c + 0.055f) / 1.055f).toDouble()
+            .pow(2.4)).toFloat()
     }
+
     val r = channel(color.red)
     val g = channel(color.green)
     val b = channel(color.blue)

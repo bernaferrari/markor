@@ -2,14 +2,14 @@ package com.bernaferrari.remarkor.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bernaferrari.remarkor.data.local.AppSettings
+import com.bernaferrari.remarkor.domain.repository.IFileRepository
+import com.bernaferrari.remarkor.ui.theme.ThemePaletteOption
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import com.bernaferrari.remarkor.data.local.AppSettings
-import com.bernaferrari.remarkor.domain.repository.IFileRepository
 import okio.Path.Companion.toPath
-import com.bernaferrari.remarkor.ui.theme.ThemePaletteOption
 
 enum class ThemeModeOption(val token: String) {
     AUTO("auto"),
@@ -57,7 +57,7 @@ class SettingsViewModel(
     // Editor
     val editorFontSize = appSettings.getEditorFontSize
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 16)
-    
+
     // Storage
     val notebookDirectory = appSettings.getNotebookDirectory
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
@@ -79,7 +79,7 @@ class SettingsViewModel(
     fun setAutoFormat(value: Boolean) {
         viewModelScope.launch { appSettings.setEditorAutoFormat(value) }
     }
-    
+
     fun setFileBrowserShowHidden(value: Boolean) {
         viewModelScope.launch { appSettings.setFileBrowserShowHiddenFiles(value) }
     }
@@ -95,7 +95,7 @@ class SettingsViewModel(
     fun setFileBrowserFolderFirst(value: Boolean) {
         viewModelScope.launch { appSettings.setFileBrowserFolderFirst(value) }
     }
-    
+
     fun setEditorFontSize(value: Int) {
         viewModelScope.launch { appSettings.setEditorFontSize(value) }
     }

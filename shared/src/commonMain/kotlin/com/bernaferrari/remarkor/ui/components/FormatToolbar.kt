@@ -1,16 +1,40 @@
-
 package com.bernaferrari.remarkor.ui.components
 
-import markor.shared.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.FormatListNumbered
+import androidx.compose.material.icons.filled.FormatQuote
+import androidx.compose.material.icons.filled.FormatStrikethrough
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.Title
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialShapes
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -19,6 +43,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.bold
+import markor.shared.generated.resources.bullet_list_label
+import markor.shared.generated.resources.horizontal_rule
+import markor.shared.generated.resources.italic
+import markor.shared.generated.resources.numbered_list_label
+import markor.shared.generated.resources.task_list
+import org.jetbrains.compose.resources.stringResource
 
 enum class EditorAction {
     BOLD, ITALIC, STRIKETHROUGH, CODE,
@@ -110,14 +142,44 @@ fun FormatToolbar(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CompactActionButton(Icons.Default.FormatStrikethrough, "Strike", onAction, EditorAction.STRIKETHROUGH)
+                    CompactActionButton(
+                        Icons.Default.FormatStrikethrough,
+                        "Strike",
+                        onAction,
+                        EditorAction.STRIKETHROUGH
+                    )
                     CompactActionButton(Icons.Default.Code, "Code", onAction, EditorAction.CODE)
-                    CompactActionButton(Icons.Default.Title, "Header", onAction, EditorAction.HEADER)
-                    CompactActionButton(Icons.Default.FormatQuote, "Quote", onAction, EditorAction.QUOTE)
+                    CompactActionButton(
+                        Icons.Default.Title,
+                        "Header",
+                        onAction,
+                        EditorAction.HEADER
+                    )
+                    CompactActionButton(
+                        Icons.Default.FormatQuote,
+                        "Quote",
+                        onAction,
+                        EditorAction.QUOTE
+                    )
                     CompactActionButton(Icons.Default.Image, "Image", onAction, EditorAction.IMAGE)
-                    CompactActionButton(Icons.AutoMirrored.Filled.FormatListBulleted, stringResource(Res.string.bullet_list_label), onAction, EditorAction.LIST_BULLET)
-                    CompactActionButton(Icons.Default.FormatListNumbered, stringResource(Res.string.numbered_list_label), onAction, EditorAction.LIST_NUMBERED)
-                    CompactActionButton(Icons.Default.CheckBox, stringResource(Res.string.task_list), onAction, EditorAction.LIST_TASK)
+                    CompactActionButton(
+                        Icons.AutoMirrored.Filled.FormatListBulleted,
+                        stringResource(Res.string.bullet_list_label),
+                        onAction,
+                        EditorAction.LIST_BULLET
+                    )
+                    CompactActionButton(
+                        Icons.Default.FormatListNumbered,
+                        stringResource(Res.string.numbered_list_label),
+                        onAction,
+                        EditorAction.LIST_NUMBERED
+                    )
+                    CompactActionButton(
+                        Icons.Default.CheckBox,
+                        stringResource(Res.string.task_list),
+                        onAction,
+                        EditorAction.LIST_TASK
+                    )
                 }
             }
         }
@@ -159,6 +221,7 @@ private fun ExpressiveActionButton(
                     fontStyle = fontStyle
                 )
             )
+
             icon != null -> Icon(icon, description, modifier = Modifier.size(22.dp))
         }
     }
@@ -172,7 +235,7 @@ private fun CompactActionButton(
     action: EditorAction
 ) {
     val hapticHelper = rememberHapticHelper()
-    
+
     FilledTonalIconButton(
         onClick = {
             hapticHelper.performLightClick()

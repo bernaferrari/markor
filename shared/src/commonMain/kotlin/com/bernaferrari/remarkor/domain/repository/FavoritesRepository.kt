@@ -4,9 +4,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.bernaferrari.remarkor.util.nowMillis
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import com.bernaferrari.remarkor.util.nowMillis
 
 /**
  * Repository for managing favorited files.
@@ -88,7 +88,7 @@ class FavoritesRepository(private val dataStore: DataStore<Preferences>) {
             val current = prefs[Keys.RECENT_FILES]?.toMutableSet() ?: mutableSetOf()
             // Remove old entry for this path if exists
             current.removeAll { it.substringAfter("|") == path }
-            
+
             // Add new entry with current timestamp
             current.add("${nowMillis()}|$path")
             // Keep only last 20 entries

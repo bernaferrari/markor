@@ -1,6 +1,5 @@
 package com.bernaferrari.remarkor.di
 
-import java.io.File
 import com.bernaferrari.remarkor.data.local.createDataStore
 import com.bernaferrari.remarkor.data.local.db.NoteMetadataDatabase
 import com.bernaferrari.remarkor.data.local.db.NoteMetadataRepository
@@ -8,6 +7,7 @@ import com.bernaferrari.remarkor.data.local.db.getNoteMetadataDatabase
 import com.bernaferrari.remarkor.data.local.db.getNoteMetadataDatabaseBuilder
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import java.io.File
 
 actual val platformModule: Module = module {
     single {

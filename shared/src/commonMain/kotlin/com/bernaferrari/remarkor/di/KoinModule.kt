@@ -11,9 +11,9 @@ import com.bernaferrari.remarkor.domain.repository.IFileRepository
 import com.bernaferrari.remarkor.domain.service.ImageAssetManager
 import com.bernaferrari.remarkor.ui.viewmodel.EditorViewModel
 import com.bernaferrari.remarkor.ui.viewmodel.FileBrowserViewModel
+import com.bernaferrari.remarkor.ui.viewmodel.IntroViewModel
 import com.bernaferrari.remarkor.ui.viewmodel.MainViewModel
 import com.bernaferrari.remarkor.ui.viewmodel.SettingsViewModel
-import com.bernaferrari.remarkor.ui.viewmodel.IntroViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -30,16 +30,23 @@ val appModule = module {
     singleOf(::AppSettings)
     singleOf(::DocumentRepository) bind IDocumentRepository::class
     singleOf(::FileRepository) bind IFileRepository::class
-    
+
     // FavoritesRepository - shares DataStore with AppSettings
     single { FavoritesRepository(get()) }
     single { NoteMetadataIndexer(get(), get()) }
     singleOf(::NoteMetadataRepository)
     singleOf(::ImageAssetManager)
-    
+
     viewModelOf(::EditorViewModel)
-    factory { 
-        FileBrowserViewModel(get(), get(), get(), get(), get(), get(org.koin.core.qualifier.named("default_notebook_path"))) 
+    factory {
+        FileBrowserViewModel(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(org.koin.core.qualifier.named("default_notebook_path"))
+        )
     }
     factory {
         MainViewModel(get(), get(org.koin.core.qualifier.named("default_notebook_path")))

@@ -1,18 +1,50 @@
 package com.bernaferrari.remarkor.ui.components
 
-import markor.shared.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.ImageNotSupported
+import androidx.compose.material.icons.filled.SelectAll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,13 +52,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import coil3.compose.LocalPlatformContext
-import kotlinx.coroutines.launch
 import com.bernaferrari.remarkor.domain.service.AssetInfo
 import com.bernaferrari.remarkor.domain.service.ImageAssetManager
+import kotlinx.coroutines.launch
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.delete
+import markor.shared.generated.resources.in_use
+import markor.shared.generated.resources.manage_images
 import okio.Path
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AssetManagerSheet(
@@ -38,14 +75,14 @@ fun AssetManagerSheet(
     onAssetsDeleted: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
-    
+
     var allAssets by remember { mutableStateOf<List<AssetInfo>>(emptyList()) }
     var orphanedAssets by remember { mutableStateOf<List<AssetInfo>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var loadError by remember { mutableStateOf<String?>(null) }
     var selectedAssets by remember { mutableStateOf<Set<Path>>(emptySet()) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
-    
+
     // Load assets
     LaunchedEffect(filePath, content) {
         isLoading = true
@@ -58,23 +95,23 @@ fun AssetManagerSheet(
         }
         isLoading = false
     }
-    
+
     // Delete confirmation dialog
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
             icon = { Icon(Icons.Default.Delete, contentDescription = null) },
-            title = { 
+            title = {
                 Text(
                     "Delete ${if (selectedAssets.size == orphanedAssets.size && orphanedAssets.isNotEmpty()) "all orphaned" else "selected"} images?",
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
-                ) 
+                )
             },
-            text = { 
+            text = {
                 Text(
                     "This will permanently delete ${selectedAssets.size} image${if (selectedAssets.size != 1) "s" else ""}. This action cannot be undone.",
                     style = MaterialTheme.typography.bodyMedium
-                ) 
+                )
             },
             confirmButton = {
                 Button(
@@ -92,7 +129,7 @@ fun AssetManagerSheet(
                             selectedAssets = emptySet()
                             showDeleteConfirm = false
                             onAssetsDeleted()
-                            
+
                             // Clean up empty folder
                             assetManager.cleanupEmptyAssetsFolder(filePath)
                         }
@@ -109,7 +146,7 @@ fun AssetManagerSheet(
             }
         )
     }
-    
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         shape = MaterialTheme.shapes.extraLarge
@@ -126,7 +163,7 @@ fun AssetManagerSheet(
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface
             )
-            
+
             if (isLoading) {
                 Spacer(modifier = Modifier.height(24.dp))
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -205,7 +242,7 @@ fun AssetManagerSheet(
                         )
                     }
                 }
-                
+
                 // Action buttons
                 if (orphanedAssets.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -216,11 +253,12 @@ fun AssetManagerSheet(
                         // Select all orphans
                         OutlinedButton(
                             onClick = {
-                                selectedAssets = if (selectedAssets == orphanedAssets.map { it.path }.toSet()) {
-                                    emptySet()
-                                } else {
-                                    orphanedAssets.map { it.path }.toSet()
-                                }
+                                selectedAssets =
+                                    if (selectedAssets == orphanedAssets.map { it.path }.toSet()) {
+                                        emptySet()
+                                    } else {
+                                        orphanedAssets.map { it.path }.toSet()
+                                    }
                             },
                             modifier = Modifier.weight(1f)
                         ) {
@@ -232,24 +270,28 @@ fun AssetManagerSheet(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(if (selectedAssets.size == orphanedAssets.size) "Deselect all" else "Select unused")
                         }
-                        
+
                         // Delete selected
                         Button(
                             onClick = { showDeleteConfirm = true },
                             enabled = selectedAssets.isNotEmpty(),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (selectedAssets.isNotEmpty()) MaterialTheme.colorScheme.error 
-                                    else MaterialTheme.colorScheme.surfaceVariant
+                                containerColor = if (selectedAssets.isNotEmpty()) MaterialTheme.colorScheme.error
+                                else MaterialTheme.colorScheme.surfaceVariant
                             ),
                             modifier = Modifier.weight(1f)
                         ) {
-                            Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(stringResource(Res.string.delete))
                         }
                     }
                 }
-                
+
                 // Asset list
                 Spacer(modifier = Modifier.height(16.dp))
                 LazyColumn(
@@ -259,7 +301,7 @@ fun AssetManagerSheet(
                     items(allAssets) { asset ->
                         val isOrphaned = orphanedAssets.any { it.path == asset.path }
                         val isSelected = selectedAssets.contains(asset.path)
-                        
+
                         AssetItem(
                             asset = asset,
                             isOrphaned = isOrphaned,
@@ -319,8 +361,8 @@ private fun AssetItem(
     Surface(
         shape = MaterialTheme.shapes.medium,
         color = if (isSelected) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)
-               else if (isOrphaned) MaterialTheme.colorScheme.surfaceContainerHighest
-               else MaterialTheme.colorScheme.surface,
+        else if (isOrphaned) MaterialTheme.colorScheme.surfaceContainerHighest
+        else MaterialTheme.colorScheme.surface,
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -369,9 +411,9 @@ private fun AssetItem(
                     }
                 }
             )
-            
+
             Spacer(modifier = Modifier.width(12.dp))
-            
+
             // Info
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -396,7 +438,7 @@ private fun AssetItem(
                     }
                 }
             }
-            
+
             // Selection indicator or status
             if (canSelect) {
                 if (isSelected) {

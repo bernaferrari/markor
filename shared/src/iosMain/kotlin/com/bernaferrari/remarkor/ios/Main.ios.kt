@@ -11,20 +11,20 @@ import platform.Foundation.NSUserDomainMask
  * Main entry point for iOS application.
  * Called from Swift AppDelegate to initialize and display the Compose UI.
  */
-fun MainViewController() = ComposeUIViewController { 
+fun MainViewController() = ComposeUIViewController {
     // Initialize Koin DI
     initKoin()
-    
+
     // Get the iOS documents directory
     val documentDirectory = NSSearchPathForDirectoriesInDomains(
         NSDocumentDirectory,
         NSUserDomainMask,
         true
     ).firstOrNull() as? String ?: ""
-    
+
     AppContent(
         systemInternalFilesDir = documentDirectory,
-        onExit = { 
+        onExit = {
             // On iOS, we typically don't "exit" the app
         }
     )

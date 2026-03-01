@@ -1,25 +1,36 @@
 package com.bernaferrari.remarkor.ui.components
 
-import markor.shared.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import com.bernaferrari.remarkor.ui.theme.MarkorTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarOutline
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.delete
+import markor.shared.generated.resources.favorite
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Wraps a file card with swipe-to-action functionality.
@@ -35,7 +46,7 @@ fun SwipeableFileCard(
     content: @Composable () -> Unit
 ) {
     val hapticHelper = rememberHapticHelper()
-    
+
     val dismissState = rememberSwipeToDismissBoxState(
         positionalThreshold = { it * 0.3f } // 30% threshold
     )
@@ -50,7 +61,7 @@ fun SwipeableFileCard(
         state = dismissState,
         backgroundContent = {
             val direction = dismissState.dismissDirection
-            
+
             // Background colors based on swipe direction
             val color by animateColorAsState(
                 targetValue = when (direction) {
@@ -60,7 +71,7 @@ fun SwipeableFileCard(
                 },
                 label = "bgColor"
             )
-            
+
             val iconColor by animateColorAsState(
                 targetValue = when (direction) {
                     SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.onTertiaryContainer
@@ -69,13 +80,13 @@ fun SwipeableFileCard(
                 },
                 label = "iconColor"
             )
-            
+
             val scale by animateFloatAsState(
                 targetValue = if (dismissState.targetValue == SwipeToDismissBoxValue.Settled) 0.75f else 1f,
                 animationSpec = spring(),
                 label = "iconScale"
             )
-            
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -96,6 +107,7 @@ fun SwipeableFileCard(
                             modifier = Modifier.scale(scale).size(28.dp)
                         )
                     }
+
                     SwipeToDismissBoxValue.EndToStart -> {
                         Icon(
                             imageVector = Icons.Filled.Delete,
@@ -104,6 +116,7 @@ fun SwipeableFileCard(
                             modifier = Modifier.scale(scale).size(28.dp)
                         )
                     }
+
                     else -> {}
                 }
             }
@@ -115,11 +128,13 @@ fun SwipeableFileCard(
                     hapticHelper.performHeavyClick()
                     onToggleFavorite()
                 }
+
                 SwipeToDismissBoxValue.EndToStart -> {
                     // Swipe left = delete
                     hapticHelper.performHeavyClick()
                     onDelete()
                 }
+
                 SwipeToDismissBoxValue.Settled -> {}
             }
         },

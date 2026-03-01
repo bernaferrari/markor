@@ -1,7 +1,5 @@
 package com.bernaferrari.remarkor.domain.service
 
-import okio.Path
-
 /**
  * Platform-specific image picker interface.
  * Each platform implements this to handle image selection.
@@ -11,7 +9,7 @@ interface ImagePicker {
      * Whether this platform supports picking images.
      */
     val isSupported: Boolean get() = true
-    
+
     /**
      * Pick an image from gallery/file system.
      * @param onResult Callback with the picked image or null if cancelled.
@@ -30,7 +28,7 @@ interface ImagePickerLauncher {
      * @param onResult Callback with the picked image or null if cancelled.
      */
     fun launch(onResult: (PickedImage?) -> Unit)
-    
+
     /**
      * Whether this platform supports picking images.
      */

@@ -1,10 +1,22 @@
 package com.bernaferrari.remarkor.ui.screens
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -12,9 +24,27 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.NoteAdd
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FolderShared
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,11 +55,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
-import markor.shared.generated.resources.*
 import com.bernaferrari.remarkor.ui.components.supportsSharedStorageMode
-import com.bernaferrari.remarkor.ui.theme.MarkorTheme
 import com.bernaferrari.remarkor.ui.viewmodel.IntroViewModel
+import kotlinx.coroutines.launch
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.back
+import markor.shared.generated.resources.choose_storage_location
+import markor.shared.generated.resources.intro_description
+import markor.shared.generated.resources.next
+import markor.shared.generated.resources.private_storage
+import markor.shared.generated.resources.recommended
+import markor.shared.generated.resources.select_storage_location
+import markor.shared.generated.resources.shared_storage
+import markor.shared.generated.resources.stay_organized
+import markor.shared.generated.resources.stay_organized_description
+import markor.shared.generated.resources.storage_external_description
+import markor.shared.generated.resources.storage_internal_description
+import markor.shared.generated.resources.welcome_to_markor
+import markor.shared.generated.resources.write_quickly
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -56,9 +99,9 @@ fun IntroScreen(
             }
         },
         onDenied = {
-             requestPermissions = false
-             // Effectively falls back or stays on screen?
-             // For now, reset. User must explicitly choose Private to proceed without perms.
+            requestPermissions = false
+            // Effectively falls back or stays on screen?
+            // For now, reset. User must explicitly choose Private to proceed without perms.
         }
     )
 
@@ -88,7 +131,10 @@ fun IntroScreen(
                         StorageSelectionPage(
                             onPrivateSelected = {
                                 scope.launch {
-                                    viewModel.setStorageMode(isExternal = false, internalPath = systemInternalFilesDir)
+                                    viewModel.setStorageMode(
+                                        isExternal = false,
+                                        internalPath = systemInternalFilesDir
+                                    )
                                     onIntroFinished()
                                 }
                             },
@@ -118,7 +164,10 @@ fun IntroScreen(
                         onNext = {
                             scope.launch {
                                 if (!supportsSharedStorage && pagerState.currentPage == pageCount - 1) {
-                                    viewModel.setStorageMode(isExternal = false, internalPath = systemInternalFilesDir)
+                                    viewModel.setStorageMode(
+                                        isExternal = false,
+                                        internalPath = systemInternalFilesDir
+                                    )
                                     onIntroFinished()
                                 } else {
                                     pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -150,26 +199,26 @@ private fun StorageSelectionPage(
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.primary
         )
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Text(
             text = stringResource(Res.string.choose_storage_location),
             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
             textAlign = TextAlign.Center
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         Text(
             text = stringResource(Res.string.select_storage_location),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
-        
+
         Spacer(modifier = Modifier.height(32.dp))
-        
+
         StorageOptionCard(
             title = stringResource(Res.string.private_storage),
             description = stringResource(Res.string.storage_internal_description),
@@ -177,9 +226,9 @@ private fun StorageSelectionPage(
             onClick = onPrivateSelected,
             recommended = true
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         StorageOptionCard(
             title = stringResource(Res.string.shared_storage),
             description = stringResource(Res.string.storage_external_description),
@@ -213,7 +262,9 @@ private fun StorageOptionCard(
         ) {
             Surface(
                 shape = CircleShape,
-                color = if (recommended) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                color = if (recommended) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                    alpha = 0.1f
+                ),
                 modifier = Modifier.size(48.dp)
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -225,7 +276,7 @@ private fun StorageOptionCard(
                     )
                 }
             }
-            
+
             Column(modifier = Modifier.padding(start = 16.dp).weight(1f)) {
                 Text(
                     text = title,
@@ -253,11 +304,13 @@ private fun StorageOptionCard(
                     color = if (recommended) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
+
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = null,
-                tint = if (recommended) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                tint = if (recommended) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                    alpha = 0.5f
+                )
             )
         }
     }
@@ -271,16 +324,19 @@ private fun IntroPage(page: Int) {
             stringResource(Res.string.intro_description),
             Icons.Filled.Edit
         ) to MaterialTheme.colorScheme.primary
+
         1 -> Triple(
             stringResource(Res.string.write_quickly),
             stringResource(Res.string.intro_description),
             Icons.AutoMirrored.Filled.NoteAdd
         ) to MaterialTheme.colorScheme.secondary
+
         2 -> Triple(
             stringResource(Res.string.stay_organized),
             stringResource(Res.string.stay_organized_description),
             Icons.Filled.Search
         ) to MaterialTheme.colorScheme.tertiary
+
         else -> Triple("", "", Icons.Filled.Close) to Color.Gray
     }
     val (title, description, icon) = data
@@ -311,9 +367,9 @@ private fun IntroPage(page: Int) {
                 )
             }
         }
-        
+
         Spacer(modifier = Modifier.height(48.dp))
-        
+
         Text(
             text = title,
             style = MaterialTheme.typography.headlineLarge.copy(
@@ -323,9 +379,9 @@ private fun IntroPage(page: Int) {
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onBackground
         )
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Text(
             text = description,
             style = MaterialTheme.typography.bodyLarge.copy(
@@ -371,7 +427,7 @@ private fun IntroBottomBar(
                 val active = pagerState.currentPage == index
                 val width by animateDpAsState(if (active) 24.dp else 8.dp, label = "indicatorWidth")
                 val alpha by animateFloatAsState(if (active) 1f else 0.3f, label = "indicatorAlpha")
-                
+
                 Box(
                     modifier = Modifier
                         .height(8.dp)
@@ -384,11 +440,14 @@ private fun IntroBottomBar(
 
         // Next Button
         Box(modifier = Modifier.width(120.dp), contentAlignment = Alignment.CenterEnd) {
-             FilledTonalButton(
+            FilledTonalButton(
                 onClick = onNext,
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text(stringResource(Res.string.next), style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                Text(
+                    stringResource(Res.string.next),
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                )
             }
         }
     }

@@ -13,7 +13,7 @@ actual fun rememberImagePickerLauncher(
     onImagePicked: (PickedImage?) -> Unit
 ): () -> Unit {
     val context = LocalContext.current
-    
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
@@ -21,33 +21,35 @@ actual fun rememberImagePickerLauncher(
             onImagePicked(null)
             return@rememberLauncherForActivityResult
         }
-        
+
         try {
             val inputStream = context.contentResolver.openInputStream(uri)
             val data = inputStream?.readBytes()
             inputStream?.close()
-            
+
             if (data == null) {
                 onImagePicked(null)
                 return@rememberLauncherForActivityResult
             }
-            
+
             // Get filename
-            val fileName = context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-                val nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
-                cursor.moveToFirst()
-                cursor.getString(nameIndex)
-            } ?: "image_${System.currentTimeMillis()}.jpg"
-            
+            val fileName =
+                context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                    val nameIndex =
+                        cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                    cursor.moveToFirst()
+                    cursor.getString(nameIndex)
+                } ?: "image_${System.currentTimeMillis()}.jpg"
+
             // Get mime type
             val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
-            
+
             onImagePicked(PickedImage(data, fileName, mimeType))
         } catch (e: Exception) {
             onImagePicked(null)
         }
     }
-    
+
     return remember {
         {
             launcher.launch(

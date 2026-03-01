@@ -1,16 +1,16 @@
 package com.bernaferrari.remarkor.ui.components
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.sp
 
 class MarkdownVisualTransformation(
@@ -62,7 +62,8 @@ fun markdownToAnnotatedString(
     }
 
     // Italic (*text* or _text_)
-    val italicRegex = Regex("(?<!\\*)(\\*)(?![\\*\\s])(.+?)(?<![\\*\\s])(\\*)|(?<!_)(_)(?![_\\s])(.+?)(?<![_\\s])(_)")
+    val italicRegex =
+        Regex("(?<!\\*)(\\*)(?![\\*\\s])(.+?)(?<![\\*\\s])(\\*)|(?<!_)(_)(?![_\\s])(.+?)(?<![_\\s])(_)")
     italicRegex.findAll(text).forEach { match ->
         builder.addStyle(
             style = SpanStyle(fontStyle = FontStyle.Italic),
@@ -86,22 +87,22 @@ fun markdownToAnnotatedString(
         }
         val headingFontSize = kotlin.math.max(1, editorFontSize).sp * headingScale
 
-            builder.addStyle(
-                style = SpanStyle(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = headingFontSize,
-                    brush = SolidColor(palette.accent),
-                ),
-                start = match.range.first,
-                end = match.range.last + 1
-            )
-            builder.addStyle(
-                style = ParagraphStyle(
-                    lineHeight = headingFontSize * editorLineHeightMultiplier
-                ),
-                start = match.range.first,
-                end = match.range.last + 1
-            )
+        builder.addStyle(
+            style = SpanStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = headingFontSize,
+                brush = SolidColor(palette.accent),
+            ),
+            start = match.range.first,
+            end = match.range.last + 1
+        )
+        builder.addStyle(
+            style = ParagraphStyle(
+                lineHeight = headingFontSize * editorLineHeightMultiplier
+            ),
+            start = match.range.first,
+            end = match.range.last + 1
+        )
     }
 
     // Links ([text](url))
@@ -126,7 +127,7 @@ fun markdownToAnnotatedString(
             end = match.range.last + 1
         )
     }
-    
+
     // Blockquote (> text)
     val quoteRegex = Regex("^>\\s+(.+)$", RegexOption.MULTILINE)
     quoteRegex.findAll(text).forEach { match ->
@@ -138,11 +139,11 @@ fun markdownToAnnotatedString(
             end = match.range.last + 1
         )
     }
-    
+
     // Strikethrough (~~text~~)
     val strikeRegex = Regex("~~(.+?)~~")
     strikeRegex.findAll(text).forEach { match ->
-            builder.addStyle(
+        builder.addStyle(
             style = SpanStyle(textDecoration = androidx.compose.ui.text.style.TextDecoration.LineThrough),
             start = match.range.first,
             end = match.range.last + 1

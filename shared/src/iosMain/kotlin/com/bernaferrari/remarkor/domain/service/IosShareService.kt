@@ -21,7 +21,7 @@ import platform.UIKit.UIViewController
  */
 @OptIn(ExperimentalForeignApi::class)
 class IosShareService : ShareService {
-    
+
     // Reference to the current view controller - should be set from iOS app
     var rootViewController: UIViewController? = null
 
@@ -48,45 +48,49 @@ class IosShareService : ShareService {
             val tempDir = NSFileManager.defaultManager.temporaryDirectory
             val fileUrl = tempDir.URLByAppendingPathComponent(fileName)
                 ?: return println("ShareService: Failed to create temp file URL")
-            
+
             // Write content to temp file
             content.toNSData().writeToURL(fileUrl, atomically = true)
-            
+
             shareItems(listOf(fileUrl), title)
         } catch (e: Exception) {
             println("ShareService: Failed to share file content - ${e.message}")
         }
     }
-    
-    override fun shareMarkdownWithAssets(markdownPath: Path, assetsFolderPath: Path, title: String?) {
+
+    override fun shareMarkdownWithAssets(
+        markdownPath: Path,
+        assetsFolderPath: Path,
+        title: String?
+    ) {
         try {
             val fileManager = NSFileManager.defaultManager
-            
+
             // Create temp zip file
             val tempDir = fileManager.temporaryDirectory
             val zipFileName = markdownPath.name.substringBeforeLast(".") + ".zip"
             val zipUrl = tempDir.URLByAppendingPathComponent(zipFileName)
                 ?: return shareFile(markdownPath, title) // Fallback
-            
+
             // Remove existing zip if present
             fileManager.removeItemAtURL(zipUrl, null)
-            
+
             // Create zip using pure Kotlin ZipWriter
             val zipPath = zipUrl.path?.toPath()
                 ?: return shareFile(markdownPath, title)
             val zipWriter = com.bernaferrari.remarkor.util.ZipWriter(zipPath)
-            
+
             // Add markdown file
             zipWriter.addFile(markdownPath.name, markdownPath)
-            
+
             // Add assets folder if it exists
             val assetsPath = assetsFolderPath.toString()
             if (fileManager.fileExistsAtPath(assetsPath)) {
                 zipWriter.addDirectory(assetsFolderPath.name, assetsFolderPath)
             }
-            
+
             zipWriter.write()
-            
+
             // Share the zip file
             shareItems(listOf(zipUrl), title)
         } catch (e: Exception) {
@@ -95,27 +99,32 @@ class IosShareService : ShareService {
             shareFile(markdownPath, title)
         }
     }
-    
+
     private fun shareItems(items: List<Any>, title: String?) {
         val viewController = rootViewController ?: getCurrentViewController() ?: run {
             println("ShareService: No view controller available")
             return
         }
-        
+
         val activityViewController = UIActivityViewController(
             activityItems = items,
             applicationActivities = null
         )
-        
+
         // Set subject for email etc. (optional)
         // Note: setValue:forKey: requires NSObject interop, skipping for simplicity
-        
-        viewController.presentViewController(activityViewController, animated = true, completion = null)
+
+        viewController.presentViewController(
+            activityViewController,
+            animated = true,
+            completion = null
+        )
     }
-    
+
     private fun getCurrentViewController(): UIViewController? {
         return try {
             val app = UIApplication.sharedApplication
+
             @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
             val scene = app.connectedScenes.firstOrNull() as? platform.UIKit.UIWindowScene
             val window = scene?.windows?.firstOrNull() as? platform.UIKit.UIWindow
@@ -124,7 +133,7 @@ class IosShareService : ShareService {
             null
         }
     }
-    
+
     // Helper extension to convert ByteArray to NSData
     private fun ByteArray.toNSData(): NSData {
         return if (this.isEmpty()) {

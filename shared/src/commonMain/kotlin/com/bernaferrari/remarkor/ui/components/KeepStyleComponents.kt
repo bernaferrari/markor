@@ -1,27 +1,53 @@
 package com.bernaferrari.remarkor.ui.components
 
-import markor.shared.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.clear_search
+import markor.shared.generated.resources.create_new
+import markor.shared.generated.resources.search
+import markor.shared.generated.resources.selected
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Google Keep-style search bar that's always prominent at the top.
@@ -33,14 +59,19 @@ fun KeepStyleSearchBar(
     onSearch: (String) -> Unit,
     modifier: Modifier = Modifier,
     placeholder: String = "Search notes...",
-    leadingIcon: @Composable () -> Unit = { Icon(Icons.Default.Search, contentDescription = stringResource(Res.string.search)) },
+    leadingIcon: @Composable () -> Unit = {
+        Icon(
+            Icons.Default.Search,
+            contentDescription = stringResource(Res.string.search)
+        )
+    },
     trailingIcon: @Composable () -> Unit = {},
     expanded: Boolean = false,
     onExpandedChange: (Boolean) -> Unit = {},
     content: @Composable ColumnScope.() -> Unit = {}
 ) {
     val focusRequester = remember { FocusRequester() }
-    
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -62,9 +93,9 @@ fun KeepStyleSearchBar(
             ) {
                 leadingIcon()
             }
-            
+
             Spacer(modifier = Modifier.width(12.dp))
-            
+
             // Search input
             Box(modifier = Modifier.weight(1f)) {
                 if (query.isEmpty()) {
@@ -77,7 +108,7 @@ fun KeepStyleSearchBar(
                 // Using a simplified approach - BasicTextField could be used for actual input
                 // For now, this integrates with existing SearchBar API
             }
-            
+
             // Clear button
             AnimatedVisibility(
                 visible = query.isNotEmpty(),
@@ -95,7 +126,7 @@ fun KeepStyleSearchBar(
                     )
                 }
             }
-            
+
             trailingIcon()
         }
     }
@@ -122,7 +153,7 @@ fun NoteColorPicker(
         0xFFE6C9A8.toInt() to "Brown",
         0xFFE8EAED.toInt() to "Gray"
     )
-    
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -136,7 +167,7 @@ fun NoteColorPicker(
                     .size(32.dp)
                     .clip(CircleShape)
                     .background(
-                        color?.let { Color(it) } 
+                        color?.let { Color(it) }
                             ?: MaterialTheme.colorScheme.surfaceVariant
                     )
                     .then(
@@ -182,7 +213,7 @@ fun QuickCreateFab(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val haptic = rememberHapticHelper()
-    
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.End
@@ -209,7 +240,7 @@ fun QuickCreateFab(
                 ) {
                     Icon(Icons.AutoMirrored.Filled.Assignment, "New List")
                 }
-                
+
                 // New Folder option
                 SmallFloatingActionButton(
                     onClick = {
@@ -225,7 +256,7 @@ fun QuickCreateFab(
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
-        
+
         // Main FAB
         LargeFloatingActionButton(
             onClick = {

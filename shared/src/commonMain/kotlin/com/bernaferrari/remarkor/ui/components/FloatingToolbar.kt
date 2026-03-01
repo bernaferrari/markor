@@ -1,24 +1,47 @@
 package com.bernaferrari.remarkor.ui.components
 
-import markor.shared.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.CenterFocusStrong
+import androidx.compose.material.icons.filled.CenterFocusWeak
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.FormatBold
+import androidx.compose.material.icons.filled.FormatItalic
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import com.bernaferrari.remarkor.ui.theme.MarkorTheme
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.bold
+import markor.shared.generated.resources.italic
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * A compact floating toolbar that appears above text selection.
@@ -35,7 +58,7 @@ fun FloatingSelectionToolbar(
     modifier: Modifier = Modifier
 ) {
     val hapticHelper = rememberHapticHelper()
-    
+
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn(tween(150)) + scaleIn(
@@ -86,7 +109,7 @@ fun FloatingSelectionToolbar(
                             onCode()
                         }
                     )
-                    
+
                     // Divider
                     Box(
                         modifier = Modifier
@@ -94,7 +117,7 @@ fun FloatingSelectionToolbar(
                             .height(24.dp)
                             .background(MaterialTheme.colorScheme.inverseOnSurface.copy(alpha = 0.2f))
                     )
-                    
+
                     FloatingToolbarButton(
                         icon = Icons.Default.Link,
                         contentDescription = "Link",
@@ -142,7 +165,7 @@ fun FocusModeOverlay(
 ) {
     Box(modifier = modifier) {
         content()
-        
+
         // The actual focus mode effect is applied within the editor
         // This overlay can add additional ambient effects
         AnimatedVisibility(
@@ -166,23 +189,23 @@ fun FocusModeToggle(
     modifier: Modifier = Modifier
 ) {
     val hapticHelper = rememberHapticHelper()
-    
+
     val backgroundColor by animateColorAsState(
-        targetValue = if (isFocusMode) 
-            MaterialTheme.colorScheme.primaryContainer 
-        else 
+        targetValue = if (isFocusMode)
+            MaterialTheme.colorScheme.primaryContainer
+        else
             Color.Transparent,
         label = "focusBg"
     )
-    
+
     val iconColor by animateColorAsState(
-        targetValue = if (isFocusMode) 
-            MaterialTheme.colorScheme.primary 
-        else 
+        targetValue = if (isFocusMode)
+            MaterialTheme.colorScheme.primary
+        else
             MaterialTheme.colorScheme.onSurfaceVariant,
         label = "focusIcon"
     )
-    
+
     Surface(
         onClick = {
             hapticHelper.performLightClick()
@@ -221,7 +244,7 @@ fun calculateParagraphAlpha(
     isFocusMode: Boolean
 ): Float {
     if (!isFocusMode) return 1f
-    
+
     val distance = kotlin.math.abs(paragraphIndex - currentParagraphIndex)
     return when (distance) {
         0 -> 1f // Current paragraph
@@ -236,7 +259,7 @@ fun calculateParagraphAlpha(
  */
 fun getCurrentParagraphIndex(text: String, cursorPosition: Int): Int {
     if (text.isEmpty() || cursorPosition == 0) return 0
-    
+
     val beforeCursor = text.substring(0, minOf(cursorPosition, text.length))
     return beforeCursor.count { it == '\n' }
 }

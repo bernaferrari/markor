@@ -1,53 +1,137 @@
-
 package com.bernaferrari.remarkor.ui.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.BrightnessAuto
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.ListItemShapes
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedListItem
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.bernaferrari.remarkor.ui.components.BackHandler
+import com.bernaferrari.remarkor.ui.components.RenameDialog
 import com.bernaferrari.remarkor.ui.components.rememberHapticHelper
 import com.bernaferrari.remarkor.ui.components.supportsSharedStorageMode
-import com.bernaferrari.remarkor.ui.viewmodel.SettingsViewModel
-import com.bernaferrari.remarkor.ui.viewmodel.ThemeModeOption
-import com.bernaferrari.remarkor.ui.components.RenameDialog
-import com.bernaferrari.remarkor.ui.theme.dynamicColorScheme
 import com.bernaferrari.remarkor.ui.theme.MarkorTheme
 import com.bernaferrari.remarkor.ui.theme.ThemePaletteOption
-import androidx.compose.foundation.isSystemInDarkTheme
-import kotlin.math.roundToInt
+import com.bernaferrari.remarkor.ui.theme.dynamicColorScheme
+import com.bernaferrari.remarkor.ui.viewmodel.SettingsViewModel
+import com.bernaferrari.remarkor.ui.viewmodel.ThemeModeOption
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.about
+import markor.shared.generated.resources.amber
+import markor.shared.generated.resources.appearance
+import markor.shared.generated.resources.auto
+import markor.shared.generated.resources.auto_format
+import markor.shared.generated.resources.back
+import markor.shared.generated.resources.blue
+import markor.shared.generated.resources.close
+import markor.shared.generated.resources.dark
+import markor.shared.generated.resources.display_line_numbers
+import markor.shared.generated.resources.dynamic
+import markor.shared.generated.resources.editor
+import markor.shared.generated.resources.font_size
+import markor.shared.generated.resources.format_while_typing
+import markor.shared.generated.resources.green
+import markor.shared.generated.resources.indigo
+import markor.shared.generated.resources.light
+import markor.shared.generated.resources.lime
+import markor.shared.generated.resources.line_numbers
+import markor.shared.generated.resources.notebook_directory
+import markor.shared.generated.resources.orange
+import markor.shared.generated.resources.pink
+import markor.shared.generated.resources.private
+import markor.shared.generated.resources.project_license
+import markor.shared.generated.resources.purple
+import markor.shared.generated.resources.red
+import markor.shared.generated.resources.settings
+import markor.shared.generated.resources.shared
+import markor.shared.generated.resources.storage
+import markor.shared.generated.resources.storage_mode
+import markor.shared.generated.resources.teal
+import markor.shared.generated.resources.version
+import markor.shared.generated.resources.word_wrap
+import markor.shared.generated.resources.wrap_text_to_fit_screen
 import org.jetbrains.compose.resources.stringResource
-import markor.shared.generated.resources.*
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.math.roundToInt
 
 @Composable
 fun SettingsScreen(
@@ -179,7 +263,7 @@ fun SettingsScreen(
                     currentName = currentStorageValue,
                     onDismiss = { editingStorageKey = null },
                     onConfirm = { newValue ->
-                        when(editingStorageKey) {
+                        when (editingStorageKey) {
                             "notebook" -> viewModel.setNotebookDirectory(newValue)
                         }
                         editingStorageKey = null
@@ -231,7 +315,7 @@ fun SettingsScreen(
                 items = storageItems
             )
             Spacer(modifier = Modifier.height(MarkorTheme.spacing.small))
-             
+
             // About Section
             val aboutItems = listOf<SegmentedSectionItem>(
                 { index, itemCount ->
@@ -256,7 +340,7 @@ fun SettingsScreen(
                 title = stringResource(Res.string.about),
                 items = aboutItems
             )
-            
+
             // Keep final items above gesture/navigation area while preserving edge-to-edge.
             Spacer(modifier = Modifier.height(MarkorTheme.spacing.small))
             Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
@@ -403,7 +487,10 @@ private fun SwitchSettingItem(
             )
         },
         content = {
-            Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+            Text(
+                title,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+            )
         }
     )
 }
@@ -418,7 +505,10 @@ private fun InfoSettingItem(
     SegmentedSettingSurface(index = index, itemCount = itemCount) {
         ListItem(
             headlineContent = {
-                Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+                Text(
+                    title,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+                )
             },
             supportingContent = {
                 Text(
@@ -453,7 +543,10 @@ private fun ClickableSettingItem(
             )
         },
         content = {
-            Text(title, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+            Text(
+                title,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+            )
         }
     )
 }
@@ -597,7 +690,7 @@ private fun ThemeModeSettingItem(
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement =
-            Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             modeOptions.forEachIndexed { modeIndex, (mode, label, icon) ->

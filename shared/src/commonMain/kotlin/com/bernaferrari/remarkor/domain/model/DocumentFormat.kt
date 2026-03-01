@@ -14,7 +14,8 @@ enum class DocumentFormat(val extension: String, val displayName: String) {
     companion object {
         fun fromExtension(ext: String): DocumentFormat {
             val normalizedExt = if (ext.startsWith(".")) ext.lowercase() else ".${ext.lowercase()}"
-            return entries.find { it.extension.equals(normalizedExt, ignoreCase = true) } ?: PLAINTEXT
+            return entries.find { it.extension.equals(normalizedExt, ignoreCase = true) }
+                ?: PLAINTEXT
         }
     }
 }

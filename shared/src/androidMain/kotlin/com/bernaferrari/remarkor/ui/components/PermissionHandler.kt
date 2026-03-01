@@ -20,19 +20,19 @@ actual fun HandleStoragePermissions(
     if (!onRequest) return
 
     val context = LocalContext.current
-    
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
-        ) { 
-             // On return from settings, check if granted
-             if (android.os.Environment.isExternalStorageManager()) {
-                 onGranted()
-             } else {
-                 onDenied()
-             }
+        ) {
+            // On return from settings, check if granted
+            if (android.os.Environment.isExternalStorageManager()) {
+                onGranted()
+            } else {
+                onDenied()
+            }
         }
-        
+
         LaunchedEffect(onRequest) {
             if (!android.os.Environment.isExternalStorageManager()) {
                 try {
@@ -66,9 +66,9 @@ actual fun HandleStoragePermissions(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ) == android.content.pm.PackageManager.PERMISSION_GRANTED
             ) {
-               onGranted()
+                onGranted()
             } else {
-               launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
         }
     }

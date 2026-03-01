@@ -1,5 +1,5 @@
 package com.bernaferrari.remarkor.ui.components
- 
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 
@@ -38,7 +38,7 @@ fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
     return remember(dimensions) {
         val screenWidthDp = dimensions.widthDp
         val isLandscape = dimensions.widthDp > dimensions.heightDp
-        
+
         AdaptiveLayoutInfo(
             isLargeScreen = screenWidthDp >= 600,
             isExpandedScreen = screenWidthDp >= 840,
@@ -70,7 +70,7 @@ data class AdaptiveLayoutInfo(
             listPaneWeight = 1f,
             detailPaneWeight = 1f
         )
-        
+
         val TABLET_LANDSCAPE = AdaptiveLayoutInfo(
             isLargeScreen = true,
             isExpandedScreen = true,
