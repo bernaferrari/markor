@@ -914,22 +914,32 @@ fun EditorScreen(
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Text(
-                            stringResource(
-                                Res.string.headings_with_arg,
+                            formatIntStringResource(
+                                stringResource(Res.string.headings_with_arg),
                                 documentInfoStats.headings
                             )
                         )
-                        Text(stringResource(Res.string.lines_with_arg, documentInfoStats.lines))
-                        Text(stringResource(Res.string.words_with_arg, documentInfoStats.words))
                         Text(
-                            stringResource(
-                                Res.string.characters_with_arg,
+                            formatIntStringResource(
+                                stringResource(Res.string.lines_with_arg),
+                                documentInfoStats.lines
+                            )
+                        )
+                        Text(
+                            formatIntStringResource(
+                                stringResource(Res.string.words_with_arg),
+                                documentInfoStats.words
+                            )
+                        )
+                        Text(
+                            formatIntStringResource(
+                                stringResource(Res.string.characters_with_arg),
                                 documentInfoStats.characters
                             )
                         )
                         Text(
-                            stringResource(
-                                Res.string.characters_no_spaces_with_arg,
+                            formatIntStringResource(
+                                stringResource(Res.string.characters_no_spaces_with_arg),
                                 documentInfoStats.charactersNoSpaces
                             )
                         )
@@ -992,6 +1002,12 @@ private fun formatStorageSize(bytes: Int): String {
     val kib = bytes / 1024.0
     val kibRounded = (kib * 10).roundToInt() / 10.0
     return "$bytes B ($kibRounded KiB)"
+}
+
+private val intPlaceholderRegex = Regex("%(?:\\d+\\$)?d")
+
+private fun formatIntStringResource(template: String, value: Int): String {
+    return intPlaceholderRegex.replace(template, value.toString())
 }
 
 private data class TitleRenameResult(
