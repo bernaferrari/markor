@@ -7,19 +7,19 @@ import okio.SYSTEM
 /**
  * Extracts the first image URL from markdown content.
  * Supports:
- * - Standard markdown: ![alt](url)
- * - Wiki-style: ![[image.png]]
- * - HTML: <img src="url">
+ * - Standard markdown: `![alt](url)`
+ * - Wiki-style: `![[image.png]]`
+ * - HTML: `<img src="url">`
  */
 fun extractFirstImageUrl(content: String): String? {
     // Standard markdown image: ![alt](url)
-    val mdImageRegex = """!\[.*?\]\((.*?)\)""".toRegex()
+    val mdImageRegex = """!\[[^]]*]\((.*?)\)""".toRegex()
     mdImageRegex.find(content)?.let { match ->
         return match.groupValues[1]
     }
 
     // Wiki-style image: ![[image.png]]
-    val wikiImageRegex = """!\[\[(.*?)\]\]""".toRegex()
+    val wikiImageRegex = """!\[\[(.*?)]\]""".toRegex()
     wikiImageRegex.find(content)?.let { match ->
         return match.groupValues[1]
     }
@@ -39,12 +39,12 @@ fun extractFirstImageUrl(content: String): String? {
  */
 fun extractFirstImageFromFile(
     filePath: Path,
-    fileSystem: FileSystem = FileSystem.Companion.SYSTEM
+    fileSystem: FileSystem = FileSystem.SYSTEM
 ): String? {
     return try {
         val content = fileSystem.read(filePath) { readUtf8() }
         extractFirstImageUrl(content)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
@@ -71,7 +71,7 @@ fun resolveImageUrl(
     return try {
         val resolved = parentDir.resolve(imageUrl)
         resolved.toString()
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }
@@ -84,8 +84,8 @@ fun extractPreviewText(content: String, maxLength: Int = 150): String {
     var text = content
 
     // Remove images
-    text = text.replace("""!\[.*?\]\(.*?\)""".toRegex(), "")
-    text = text.replace("""!\[\[.*?\]\]""".toRegex(), "")
+    text = text.replace("""!\[[^]]*]\(.*?\)""".toRegex(), "")
+    text = text.replace("""!\[\[.*?]]""".toRegex(), "")
 
     // Remove links but keep text
     text = text.replace("""\[(.*?)\]\(.*?\)""".toRegex(), "$1")
@@ -109,7 +109,7 @@ fun extractPreviewText(content: String, maxLength: Int = 150): String {
     // Remove list markers
     text = text.replace("""^[-*+]\s+""".toRegex(RegexOption.MULTILINE), "")
     text = text.replace("""^\d+\.\s+""".toRegex(RegexOption.MULTILINE), "")
-    text = text.replace("""^[-*+]\s+\[[ xX]\]\s+""".toRegex(RegexOption.MULTILINE), "")
+    text = text.replace("""^[-*+]\s+\[[ xX]]\s+""".toRegex(RegexOption.MULTILINE), "")
 
     // Remove HTML tags
     text = text.replace("""<[^>]+>""".toRegex(), "")

@@ -1,4 +1,4 @@
-package com.bernaferrari.remarkor.ui.screens.editor
+package com.bernaferrari.remarkor.ui.screens
 
 import androidx.compose.runtime.Composable
 

@@ -1,10 +1,10 @@
-package com.bernaferrari.remarkor.ui.screens.editor
+package com.bernaferrari.remarkor.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import com.bernaferrari.remarkor.domain.service.PickedImage
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
@@ -13,9 +13,11 @@ import javax.swing.filechooser.FileNameExtensionFilter
 actual fun rememberImagePickerLauncher(
     onImagePicked: (PickedImage?) -> Unit
 ): () -> Unit {
-    return remember {
+    val scope = rememberCoroutineScope()
+
+    return remember(scope, onImagePicked) {
         {
-            GlobalScope.launch(Dispatchers.IO) {
+            scope.launch(Dispatchers.IO) {
                 val fileChooser = JFileChooser().apply {
                     dialogTitle = "Select Image"
                     fileFilter = FileNameExtensionFilter(
@@ -40,7 +42,7 @@ actual fun rememberImagePickerLauncher(
                             }
                         )
                         onImagePicked(pickedImage)
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         onImagePicked(null)
                     }
                 } else {
