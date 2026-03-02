@@ -33,8 +33,6 @@ class AppSettings(private val dataStore: DataStore<Preferences>) {
         val QUICKNOTE_PATH = stringPreferencesKey("pref_key__quicknote_path")
         val TODO_FILE_PATH = stringPreferencesKey("pref_key__todo_file_path")
         val APP_THEME = stringPreferencesKey("pref_key__app_theme")
-        val EDITOR_FOREGROUND = stringPreferencesKey("pref_key__editor_foreground")
-        val EDITOR_BACKGROUND = stringPreferencesKey("pref_key__editor_background")
         val IS_FIRST_RUN = booleanPreferencesKey("pref_key__is_first_run")
         val IS_EXTERNAL_STORAGE_ENABLED =
             booleanPreferencesKey("pref_key__is_external_storage_enabled")
@@ -96,14 +94,6 @@ class AppSettings(private val dataStore: DataStore<Preferences>) {
 
     val getAppTheme: Flow<String> = dataStore.data.map { prefs ->
         prefs[PrefsKeys.APP_THEME] ?: "markor"
-    }
-
-    val getEditorForeground: Flow<String> = dataStore.data.map { prefs ->
-        prefs[PrefsKeys.EDITOR_FOREGROUND] ?: "#000000"
-    }
-
-    val getEditorBackground: Flow<String> = dataStore.data.map { prefs ->
-        prefs[PrefsKeys.EDITOR_BACKGROUND] ?: "#FFFFFF"
     }
 
     val isExternalStorageEnabled: Flow<Boolean> = dataStore.data.map { prefs ->
@@ -179,18 +169,6 @@ class AppSettings(private val dataStore: DataStore<Preferences>) {
     suspend fun setAppTheme(value: String) {
         dataStore.edit { prefs ->
             prefs[PrefsKeys.APP_THEME] = value
-        }
-    }
-
-    suspend fun setEditorForeground(value: String) {
-        dataStore.edit { prefs ->
-            prefs[PrefsKeys.EDITOR_FOREGROUND] = value
-        }
-    }
-
-    suspend fun setEditorBackground(value: String) {
-        dataStore.edit { prefs ->
-            prefs[PrefsKeys.EDITOR_BACKGROUND] = value
         }
     }
 
