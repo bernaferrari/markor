@@ -12,10 +12,17 @@ plugins {
 }
 
 kotlin {
-    // iOS Targets (arm64 only - device + M-series simulator)
+    // iOS Targets
     iosArm64()
     iosSimulatorArm64()
-    
+
+    compilerOptions {
+        optIn.addAll(
+            "androidx.compose.material3.ExperimentalMaterial3Api",
+            "androidx.compose.material3.ExperimentalMaterial3ExpressiveApi"
+        )
+    }
+
     // iOS Framework configuration for Xcode integration
     listOf(
         iosArm64(),
@@ -26,31 +33,21 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     androidLibrary {
         namespace = "com.bernaferrari.remarkor.shared"
         compileSdk = 36
         minSdk = 26
         androidResources.enable = true
-        
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
-            freeCompilerArgs.addAll(
-                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-                "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
-                "-Xexpect-actual-classes"
-            )
         }
     }
-    
+
     jvm {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
-            freeCompilerArgs.addAll(
-                "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
-                "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
-                "-Xexpect-actual-classes"
-            )
         }
     }
 
@@ -86,7 +83,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.koin.android)
         }
-        
+
         // iOS-specific source sets
         iosMain.dependencies {
             // iOS-specific dependencies can be added here
@@ -95,7 +92,7 @@ kotlin {
             implementation(kotlin("test"))
         }
     }
-    
+
     // Disable iOS tests on non-Apple hosts
     tasks.withType<KotlinNativeTest> {
         enabled = org.apache.tools.ant.taskdefs.condition.Os.isFamily("mac")
