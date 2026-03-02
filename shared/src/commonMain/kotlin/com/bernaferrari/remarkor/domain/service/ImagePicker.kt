@@ -1,42 +1,7 @@
 package com.bernaferrari.remarkor.domain.service
 
 /**
- * Platform-specific image picker interface.
- * Each platform implements this to handle image selection.
- */
-interface ImagePicker {
-    /**
-     * Whether this platform supports picking images.
-     */
-    val isSupported: Boolean get() = true
-
-    /**
-     * Pick an image from gallery/file system.
-     * @param onResult Callback with the picked image or null if cancelled.
-     * Note: This is designed to be called from UI and the result comes async.
-     */
-    suspend fun pickImage(): PickedImage?
-}
-
-/**
- * Callback-based image picker for UI integration.
- * Use this when you need to trigger picking from a Composable.
- */
-interface ImagePickerLauncher {
-    /**
-     * Launch the image picker.
-     * @param onResult Callback with the picked image or null if cancelled.
-     */
-    fun launch(onResult: (PickedImage?) -> Unit)
-
-    /**
-     * Whether this platform supports picking images.
-     */
-    val isSupported: Boolean get() = true
-}
-
-/**
- * Result from picking an image.
+ * Image data returned by the platform picker UI.
  */
 data class PickedImage(
     val data: ByteArray,
