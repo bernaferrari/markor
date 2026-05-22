@@ -34,9 +34,9 @@ kotlin {
         }
     }
 
-    androidLibrary {
+    android {
         namespace = "com.bernaferrari.remarkor.shared"
-        compileSdk = 36
+        compileSdk = 37
         minSdk = 26
         androidResources.enable = true
 
@@ -60,19 +60,19 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
-            implementation(compose.runtime)
-            implementation(compose.foundation)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
             implementation(libs.material.kolor)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.components.resources)
+            implementation(libs.compose.components.ui.tooling.preview)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.androidx.navigation3.ui)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
-            implementation(compose.materialIconsExtended)
+            implementation(libs.compose.material.icons.extended)
             implementation(libs.coil.compose)
         }
         commonTest.dependencies {
