@@ -3,15 +3,15 @@ activityCompose = "1.13.0"
 agp = "9.2.1"
 assertj = "3.27.7"
 coil = "3.4.0"
-composeMultiplatform = "1.12.0-SNAPSHOT+ok-kotlin-2-4-0"
-coreKtx = "1.18.0"
+composeMultiplatform = "1.12.0-SNAPSHOT+pjBooms-bump-chr-version"
+coreKtx = "1.19.0"
 coroutines = "1.11.0"
 datastore = "1.2.1"
 glance = "1.1.1"
 glanceAppwidget = "1.1.1"
 junit = "4.13.2"
 koin = "4.2.1"
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 kotlinxDatetime = "0.8.0"
 kotlinxSerializationJson = "1.11.0"
 lifecycle = "2.11.0-SNAPSHOT+release-1-11"
@@ -34,13 +34,13 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-components-ui-tooling-preview = { module = "org.jetbrains.compose.components:components-ui-tooling-preview", version.ref = "composeMultiplatform" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
+compose-material-icons-extended = "org.jetbrains.compose.material:material-icons-extended:1.7.3"
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatform" }
-compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version = "1.7.3" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 junit = { module = "junit:junit", version.ref = "junit" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
@@ -62,7 +62,7 @@ compose-multiplatform = "org.jetbrains.compose:1.12.0-alpha01"
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = "com.google.devtools.ksp:2.3.8"
+ksp = "com.google.devtools.ksp:2.3.9"
 
 [bundles]
 coroutines = [
