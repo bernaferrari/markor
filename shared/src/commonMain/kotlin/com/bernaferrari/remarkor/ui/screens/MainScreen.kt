@@ -169,7 +169,7 @@ fun MainScreen(
                 val fileInfo = fileByPath[path]
                 if (fileInfo?.isDirectory != true) {
                     // Keep nullable colors so "all default color" can be detected as a shared state.
-                    add(noteMetadataByPath[path.toString()]?.note?.color)
+                    add(noteMetadataByPath[path.toString()]?.color)
                 }
             }
         }

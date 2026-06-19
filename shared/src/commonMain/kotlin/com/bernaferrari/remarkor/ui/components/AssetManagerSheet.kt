@@ -55,8 +55,8 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import com.bernaferrari.remarkor.domain.service.AssetInfo
-import com.bernaferrari.remarkor.domain.service.ImageAssetManager
+import com.bernaferrari.remarkor.domain.model.AssetInfo
+import com.bernaferrari.remarkor.domain.repository.IAssetRepository
 import kotlinx.coroutines.launch
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.delete
@@ -69,7 +69,7 @@ import org.jetbrains.compose.resources.stringResource
 fun AssetManagerSheet(
     filePath: Path,
     content: String,
-    assetManager: ImageAssetManager,
+    assetManager: IAssetRepository,
     onDismiss: () -> Unit,
     onContentChanged: (String) -> Unit = {},
     onAssetsDeleted: () -> Unit = {}

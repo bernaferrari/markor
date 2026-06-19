@@ -4,7 +4,7 @@ agp = "9.2.1"
 appfunctions = "1.0.0-alpha09"
 assertj = "3.27.7"
 coil = "3.5.0"
-composeMultiplatform = "1.12.0-SNAPSHOT+v-mazunin-enable-lifecycle-and-nav3-for-1-12-0-alpha02"
+composeMultiplatform = "1.12.0-alpha02"
 coreKtx = "1.19.0"
 coroutines = "1.11.0"
 datastore = "1.2.1"
@@ -12,11 +12,12 @@ glance = "1.1.1"
 glanceAppwidget = "1.1.1"
 junit = "4.13.2"
 koin = "4.2.2"
+koinCompiler = "1.0.1"
 kotlin = "2.4.0"
 kotlinxDatetime = "0.8.0"
 kotlinxSerializationJson = "1.11.0"
-lifecycle = "2.11.0-SNAPSHOT+release-1-11"
-navigation3ui = "1.2.0-SNAPSHOT+v-mazunin-enable-lifecycle-and-nav3-for-1-12-0-alpha02"
+lifecycle = "2.11.0-beta02"
+navigation3ui = "1.2.0-alpha01"
 okio = "3.17.0"
 room = "2.8.4"
 sqlite = "2.6.2"
@@ -49,7 +50,9 @@ junit = { module = "junit:junit", version.ref = "junit" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-core-viewmodel = { module = "io.insert-koin:koin-core-viewmodel", version.ref = "koin" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
@@ -62,10 +65,11 @@ okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 androidx-room = { id = "androidx.room", version.ref = "room" }
-compose-multiplatform = "org.jetbrains.compose:1.12.0-alpha02"
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koinCompiler" }
 ksp = "com.google.devtools.ksp:2.3.9"
 
 [bundles]

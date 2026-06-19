@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.koin.compiler)
 }
 
 android {
@@ -118,6 +119,7 @@ dependencies {
 
     implementation(libs.bundles.coroutines)
     implementation(libs.koin.android)
+    implementation(libs.koin.annotations)
 
     implementation(libs.androidx.appfunctions)
     implementation(libs.androidx.appfunctions.service)

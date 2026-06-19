@@ -28,6 +28,7 @@ import markor.shared.generated.resources.saved
 import okio.Path
 import okio.Path.Companion.toPath
 import org.jetbrains.compose.resources.getString
+import org.koin.core.annotation.KoinViewModel
 
 /**
  * Represents a state in the editor's history for undo/redo.
@@ -38,13 +39,12 @@ data class EditorHistoryState(
     val timestamp: Long
 )
 
+@KoinViewModel
 class EditorViewModel(
     private val documentRepository: IDocumentRepository,
-    private val metadataRepository: com.bernaferrari.remarkor.data.local.db.NoteMetadataRepository
+    private val metadataRepository: com.bernaferrari.remarkor.domain.repository.INoteMetadataRepository,
+    private val messageManager: UserMessageManager,
 ) : ViewModel() {
-
-    // User message management
-    val messageManager = UserMessageManager()
 
     // Note color state
     private val _noteColor = MutableStateFlow<Int?>(null)

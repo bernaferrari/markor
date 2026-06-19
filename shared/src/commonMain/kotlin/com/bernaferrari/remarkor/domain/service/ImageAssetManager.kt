@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.domain.service
 
+import com.bernaferrari.remarkor.domain.model.AssetInfo
+import com.bernaferrari.remarkor.domain.repository.IAssetRepository
 import com.bernaferrari.remarkor.util.nowMillis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -7,13 +9,14 @@ import okio.FileSystem
 import okio.IOException
 import okio.Path
 import okio.SYSTEM
-import kotlin.math.roundToInt
+import org.koin.core.annotation.Single
 
 /**
  * Manages image assets for markdown files.
  * Images are stored in a sibling folder: `filename_assets/`
  */
-class ImageAssetManager {
+@Single(binds = [IAssetRepository::class])
+class ImageAssetManager : IAssetRepository {
 
     private val fileSystem = FileSystem.Companion.SYSTEM
 
@@ -24,7 +27,7 @@ class ImageAssetManager {
      * Get the assets folder path for a markdown file.
      * E.g., for "/notes/mydoc.md" -> "/notes/mydoc_assets/"
      */
-    fun getAssetsFolderPath(filePath: Path): Path {
+    override fun getAssetsFolderPath(filePath: Path): Path {
         val fileName = filePath.name.substringBeforeLast(".")
         val parent = filePath.parent ?: filePath
         return parent / "${fileName}_assets"
@@ -33,7 +36,7 @@ class ImageAssetManager {
     /**
      * Check if a file has an associated assets folder.
      */
-    fun hasAssetsFolder(filePath: Path): Boolean {
+    override fun hasAssetsFolder(filePath: Path): Boolean {
         val assetsPath = getAssetsFolderPath(filePath)
         return fileSystem.exists(assetsPath) && fileSystem.metadata(assetsPath).isDirectory
     }
@@ -60,29 +63,29 @@ class ImageAssetManager {
      * @param originalName Original filename (to preserve extension)
      * @return The relative path to use in markdown (e.g., "./mydoc_assets/image.jpg")
      */
-    suspend fun addImage(
-        filePath: Path,
+    override suspend fun addImage(
+        markdownPath: Path,
         imageData: ByteArray,
-        originalName: String
+        fileName: String,
     ): String? = withContext(Dispatchers.Default) {
         try {
-            val assetsPath = ensureAssetsFolder(filePath) ?: return@withContext null
+            val assetsPath = ensureAssetsFolder(markdownPath) ?: return@withContext null
 
             // Generate unique filename
-            val extension = originalName.substringAfterLast(".", "jpg").lowercase()
-            val baseName = originalName.substringBeforeLast(".")
+            val extension = fileName.substringAfterLast(".", "jpg").lowercase()
+            val baseName = fileName.substringBeforeLast(".")
                 .replace(Regex("[^a-zA-Z0-9_-]"), "_")
                 .take(50)
             val timestamp = nowMillis()
-            val fileName = "${baseName}_$timestamp.$extension"
+            val uniqueFileName = "${baseName}_$timestamp.$extension"
 
-            val imagePath = assetsPath / fileName
+            val imagePath = assetsPath / uniqueFileName
             fileSystem.write(imagePath) {
                 write(imageData)
             }
 
             // Return relative path for markdown
-            "./${assetsPath.name}/$fileName"
+            "./${assetsPath.name}/$uniqueFileName"
         } catch (e: IOException) {
             null
         }
@@ -118,7 +121,7 @@ class ImageAssetManager {
     /**
      * Get all image files in the assets folder.
      */
-    suspend fun listAssets(filePath: Path): List<AssetInfo> = withContext(Dispatchers.Default) {
+    override suspend fun listAssets(filePath: Path): List<AssetInfo> = withContext(Dispatchers.Default) {
         try {
             val assetsPath = getAssetsFolderPath(filePath)
             if (!fileSystem.exists(assetsPath)) return@withContext emptyList()
@@ -168,7 +171,7 @@ class ImageAssetManager {
     /**
      * Find orphaned images (in assets folder but not referenced in markdown).
      */
-    suspend fun findOrphanedAssets(filePath: Path, content: String): List<AssetInfo> =
+    override suspend fun findOrphanedAssets(filePath: Path, content: String): List<AssetInfo> =
         withContext(Dispatchers.Default) {
             val allAssets = listAssets(filePath)
             val references = extractImageReferences(content)
@@ -187,7 +190,7 @@ class ImageAssetManager {
     /**
      * Delete a specific asset.
      */
-    suspend fun deleteAsset(assetPath: Path): Boolean = withContext(Dispatchers.Default) {
+    override suspend fun deleteAsset(assetPath: Path): Boolean = withContext(Dispatchers.Default) {
         try {
             fileSystem.delete(assetPath)
             true
@@ -265,7 +268,7 @@ class ImageAssetManager {
     /**
      * Clean up empty assets folder.
      */
-    suspend fun cleanupEmptyAssetsFolder(filePath: Path) = withContext(Dispatchers.Default) {
+    override suspend fun cleanupEmptyAssetsFolder(filePath: Path) = withContext(Dispatchers.Default) {
         try {
             val assetsPath = getAssetsFolderPath(filePath)
             if (fileSystem.exists(assetsPath)) {
@@ -276,28 +279,6 @@ class ImageAssetManager {
             }
         } catch (e: IOException) {
             // Ignore
-        }
-    }
-}
-
-/**
- * Information about an asset file.
- */
-data class AssetInfo(
-    val path: Path,
-    val name: String,
-    val size: Long,
-    val lastModified: Long
-) {
-    fun formatSize(): String {
-        return when {
-            size < 1024 -> "$size B"
-            size < 1024 * 1024 -> "${size / 1024} KB"
-            else -> {
-                val megabytes = size / (1024.0 * 1024.0)
-                val roundedMegabytes = (megabytes * 10.0).roundToInt() / 10.0
-                "$roundedMegabytes MB"
-            }
         }
     }
 }

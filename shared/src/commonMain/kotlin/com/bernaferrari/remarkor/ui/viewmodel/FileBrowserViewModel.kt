@@ -2,10 +2,12 @@ package com.bernaferrari.remarkor.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bernaferrari.remarkor.data.local.AppSettings
-import com.bernaferrari.remarkor.data.local.db.NoteMetadataIndexer
-import com.bernaferrari.remarkor.data.local.db.NoteMetadataRepository
-import com.bernaferrari.remarkor.domain.repository.FavoritesRepository
+import com.bernaferrari.remarkor.domain.usecase.IndexNoteMetadataUseCase
+import com.bernaferrari.remarkor.domain.model.NoteLabel
+import com.bernaferrari.remarkor.domain.model.NoteMetadata
+import com.bernaferrari.remarkor.domain.repository.IFavoritesRepository
+import com.bernaferrari.remarkor.domain.repository.INoteMetadataRepository
+import com.bernaferrari.remarkor.domain.repository.ISettingsRepository
 import com.bernaferrari.remarkor.domain.repository.FileInfo
 import com.bernaferrari.remarkor.domain.repository.IFileRepository
 import com.bernaferrari.remarkor.ui.components.UserMessageManager
@@ -37,6 +39,8 @@ import markor.shared.generated.resources.trash_emptied
 import okio.Path
 import okio.Path.Companion.toPath
 import org.jetbrains.compose.resources.getString
+import org.koin.core.annotation.KoinViewModel
+import org.koin.core.annotation.Named
 
 enum class FileFilterMode {
     ALL, FAVORITES, ARCHIVE, LABEL, TRASH
@@ -50,17 +54,16 @@ enum class FileTypeFilter(val displayName: String, val extensions: List<String>)
     CODE("Code", listOf("py", "js", "kt", "java", "cpp", "c", "h", "rs", "go", "rb"))
 }
 
+@KoinViewModel
 class FileBrowserViewModel(
     private val fileRepository: IFileRepository,
-    private val appSettings: AppSettings,
-    private val favoritesRepository: FavoritesRepository,
-    private val noteMetadataRepository: NoteMetadataRepository,
-    private val noteMetadataIndexer: NoteMetadataIndexer,
-    private val defaultNotebookPath: String
+    private val settingsRepository: ISettingsRepository,
+    private val favoritesRepository: IFavoritesRepository,
+    private val noteMetadataRepository: INoteMetadataRepository,
+    private val indexNoteMetadata: IndexNoteMetadataUseCase,
+    @Named("default_notebook_path") private val defaultNotebookPath: String,
+    private val messageManager: UserMessageManager,
 ) : ViewModel() {
-
-    // User message management
-    val messageManager = UserMessageManager()
 
     // Loading state
     private val _isLoading = MutableStateFlow(false)
@@ -102,12 +105,12 @@ class FileBrowserViewModel(
     val recentFiles: StateFlow<List<String>> = favoritesRepository.recentFiles
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    val sortOrder: StateFlow<String> = appSettings.getFileBrowserSortOrder
+    val sortOrder: StateFlow<String> = settingsRepository.getFileBrowserSortOrder
         .stateIn(viewModelScope, SharingStarted.Lazily, "date")
 
-    val noteMetadataByPath: StateFlow<Map<String, com.bernaferrari.remarkor.data.local.db.NoteWithLabels>> =
+    val noteMetadataByPath: StateFlow<Map<String, NoteMetadata>> =
         noteMetadataRepository.observeNotes()
-            .map { notes -> notes.associateBy { it.note.path } }
+            .map { notes -> notes.associateBy { it.path } }
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyMap())
 
     // Filter Mode
@@ -119,7 +122,7 @@ class FileBrowserViewModel(
     val currentLabel: StateFlow<String?> = _currentLabel.asStateFlow()
 
     // Labels List
-    val labels: StateFlow<List<com.bernaferrari.remarkor.data.local.db.LabelEntity>> =
+    val labels: StateFlow<List<NoteLabel>> =
         noteMetadataRepository.observeLabels()
             .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
@@ -135,7 +138,7 @@ class FileBrowserViewModel(
         _errorMessage.value = null
 
         val targetPathString = if (path.isNullOrEmpty()) {
-            val notebookDir = appSettings.getNotebookDirectory.first()
+            val notebookDir = settingsRepository.getNotebookDirectory.first()
             if (notebookDir.isEmpty()) {
                 defaultNotebookPath
             } else {
@@ -162,7 +165,7 @@ class FileBrowserViewModel(
             didRunIndexer = true
             viewModelScope.launch {
                 try {
-                    noteMetadataIndexer.indexDirectory(resolvedPathString.toPath(), nowMillis())
+                    indexNoteMetadata(resolvedPathString.toPath(), nowMillis())
                 } catch (e: Exception) {
                     messageManager.error(getString(Res.string.failed_to_index_files))
                 }
@@ -476,7 +479,7 @@ class FileBrowserViewModel(
 
     fun setSortOrder(order: String) {
         viewModelScope.launch {
-            appSettings.setFileBrowserSortOrder(order)
+            settingsRepository.setFileBrowserSortOrder(order)
             refreshFiles()
         }
     }
@@ -532,7 +535,7 @@ class FileBrowserViewModel(
         // Filter by Archive Status
         if (mode == FileFilterMode.ARCHIVE) {
             result = result.filter { file ->
-                metadata[file.path.toString()]?.note?.isArchived == true
+                metadata[file.path.toString()]?.isArchived == true
             }
         } else if (mode == FileFilterMode.LABEL) {
             // Filter by Label
@@ -540,13 +543,13 @@ class FileBrowserViewModel(
             if (label != null) {
                 result = result.filter { file ->
                     val noteWithLabels = metadata[file.path.toString()]
-                    noteWithLabels?.labels?.any { it.name == label } == true && noteWithLabels.note.isArchived != true
+                    noteWithLabels?.labels?.any { it.name == label } == true && noteWithLabels.isArchived != true
                 }
             }
         } else {
             // In ALL or FAVORITES, hide archived files
             result = result.filter { file ->
-                metadata[file.path.toString()]?.note?.isArchived != true
+                metadata[file.path.toString()]?.isArchived != true
             }
         }
 
@@ -586,7 +589,7 @@ class FileBrowserViewModel(
         }
 
         return result.sortedWith(
-            compareByDescending<FileInfo> { metadata[it.path.toString()]?.note?.pinned == true }
+            compareByDescending<FileInfo> { metadata[it.path.toString()]?.pinned == true }
                 .then(contentSortComparator)
         )
     }
@@ -601,41 +604,17 @@ class FileBrowserViewModel(
 
     fun togglePin(path: Path) {
         viewModelScope.launch {
-            val existing = noteMetadataRepository.getNoteByPath(path.toString())
-            val now = nowMillis()
-            if (existing == null) {
-                val note = com.bernaferrari.remarkor.data.local.db.NoteMetadataMapper
-                    .buildNoteEntityFromPath(path.toString(), null, now)
-                    .copy(pinned = true)
-                noteMetadataRepository.upsertNote(note)
-            } else {
-                noteMetadataRepository.upsertNote(
-                    existing.copy(
-                        pinned = !existing.pinned,
-                        updatedAt = now
-                    )
-                )
-            }
+            noteMetadataRepository.togglePinned(path.toString(), nowMillis())
         }
     }
 
     fun setLabels(path: String, labels: List<String>) {
         viewModelScope.launch {
-            val now = nowMillis()
-            // Ensure note exists
             val existing = noteMetadataRepository.getNoteByPath(path)
             if (existing == null) {
-                val note = com.bernaferrari.remarkor.data.local.db.NoteMetadataMapper
-                    .buildNoteEntityFromPath(path, null, now)
-                noteMetadataRepository.upsertNote(note)
-                // Need the ID now
-                val inserted = noteMetadataRepository.getNoteByPath(path)
-                if (inserted != null) {
-                    noteMetadataRepository.setLabelsForNote(inserted.id, labels)
-                }
-            } else {
-                noteMetadataRepository.setLabelsForNote(existing.id, labels)
+                noteMetadataRepository.upsertFromPath(path, nowMillis())
             }
+            noteMetadataRepository.setLabelsForPath(path, labels)
         }
     }
 
@@ -649,21 +628,12 @@ class FileBrowserViewModel(
 
             val now = nowMillis()
             selected.forEach { path ->
-                // Note color applies to notes only, not directories.
-                if (fileRepository.isDirectory(path)) {
-                    return@forEach
-                }
-
+                if (fileRepository.isDirectory(path)) return@forEach
                 val pathString = path.toString()
-                val existing = noteMetadataRepository.getNoteByPath(pathString)
-                if (existing == null) {
-                    val note = com.bernaferrari.remarkor.data.local.db.NoteMetadataMapper
-                        .buildNoteEntityFromPath(pathString, null, now)
-                        .copy(color = color, updatedAt = now)
-                    noteMetadataRepository.upsertNote(note)
-                } else {
-                    noteMetadataRepository.upsertNote(existing.copy(color = color, updatedAt = now))
+                if (noteMetadataRepository.getNoteByPath(pathString) == null) {
+                    noteMetadataRepository.upsertFromPath(pathString, now)
                 }
+                noteMetadataRepository.setColor(pathString, color)
             }
 
             clearSelection()

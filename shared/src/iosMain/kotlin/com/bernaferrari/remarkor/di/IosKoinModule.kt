@@ -1,65 +1,89 @@
 package com.bernaferrari.remarkor.di
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.bernaferrari.remarkor.data.local.createDataStore
+import com.bernaferrari.remarkor.data.local.db.NoteMetadataDao
 import com.bernaferrari.remarkor.data.local.db.NoteMetadataDatabase
-import com.bernaferrari.remarkor.data.local.db.NoteMetadataRepository
 import com.bernaferrari.remarkor.data.local.db.getNoteMetadataDatabase
 import com.bernaferrari.remarkor.data.local.db.getNoteMetadataDatabaseBuilder
-import com.bernaferrari.remarkor.domain.service.IosShareService
-import com.bernaferrari.remarkor.domain.service.ShareService
+import com.bernaferrari.remarkor.di.NotebookPaths
 import kotlinx.cinterop.ExperimentalForeignApi
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
-actual val platformModule: Module = module {
+@Module
+actual class PlatformDiModule {
+
+    @Single
     @OptIn(ExperimentalForeignApi::class)
-    single {
+    fun provideDataStore(): DataStore<Preferences> =
         createDataStore {
-            // iOS path
             val documentDirectory =
                 platform.Foundation.NSFileManager.defaultManager.URLForDirectory(
                     directory = platform.Foundation.NSDocumentDirectory,
                     inDomain = platform.Foundation.NSUserDomainMask,
                     appropriateForURL = null,
-                    create = false,
+                    create = true,
                     error = null
                 )
             requireNotNull(documentDirectory).path + "/markor_settings.preferences_pb"
         }
-    }
 
-    // Default notebook path for iOS
+    @Single
+    @Named("default_notebook_path")
     @OptIn(ExperimentalForeignApi::class)
-    single(org.koin.core.qualifier.named("default_notebook_path")) {
+    fun provideDefaultNotebookPath(): String {
         val documentDirectory = platform.Foundation.NSFileManager.defaultManager.URLForDirectory(
             directory = platform.Foundation.NSDocumentDirectory,
             inDomain = platform.Foundation.NSUserDomainMask,
             appropriateForURL = null,
-            create = false,
+            create = true,
             error = null
         )
-        requireNotNull(documentDirectory).path + "/Notebook"
+        val path = requireNotNull(documentDirectory).path + "/Notebook"
+        ensureDirectory(path)
+        return path
     }
+
+    @Single
+    @Named("internal_notebook_path")
     @OptIn(ExperimentalForeignApi::class)
-    single(org.koin.core.qualifier.named("internal_notebook_path")) {
+    fun provideInternalNotebookPath(): String {
         val documentDirectory = platform.Foundation.NSFileManager.defaultManager.URLForDirectory(
             directory = platform.Foundation.NSDocumentDirectory,
             inDomain = platform.Foundation.NSUserDomainMask,
             appropriateForURL = null,
-            create = false,
+            create = true,
             error = null
         )
-        requireNotNull(documentDirectory).path + "/NotebookPrivate"
+        val path = requireNotNull(documentDirectory).path + "/NotebookPrivate"
+        ensureDirectory(path)
+        return path
     }
 
-    // Database
-    single {
+    @OptIn(ExperimentalForeignApi::class)
+    private fun ensureDirectory(path: String) {
+        platform.Foundation.NSFileManager.defaultManager.createDirectoryAtPath(
+            path = path,
+            withIntermediateDirectories = true,
+            attributes = null,
+            error = null,
+        )
+    }
+
+    @Single
+    fun provideDatabase(): NoteMetadataDatabase =
         getNoteMetadataDatabase(getNoteMetadataDatabaseBuilder())
-    }
-    single { get<NoteMetadataDatabase>().noteMetadataDao() }
-    single { NoteMetadataRepository(get()) }
 
-    singleOf(::IosShareService) bind ShareService::class
+    @Single
+    fun provideNoteMetadataDao(database: NoteMetadataDatabase): NoteMetadataDao =
+        database.noteMetadataDao()
+
+    @Single
+    fun provideNotebookPaths(
+        @Named("default_notebook_path") shared: String,
+        @Named("internal_notebook_path") private: String,
+    ): NotebookPaths = NotebookPaths(shared, private)
 }

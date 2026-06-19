@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.bernaferrari.remarkor.domain.model.NoteLabel
 import com.bernaferrari.remarkor.ui.viewmodel.FileFilterMode
 import kotlinx.coroutines.launch
 
@@ -28,7 +29,7 @@ import kotlinx.coroutines.launch
 fun MainNavigationDrawer(
     drawerState: DrawerState,
     currentFilterMode: FileFilterMode,
-    labels: List<com.bernaferrari.remarkor.data.local.db.LabelEntity>,
+    labels: List<NoteLabel>,
     currentLabel: String?,
     onSelectFilterMode: (FileFilterMode) -> Unit,
     onSelectLabel: (String) -> Unit,

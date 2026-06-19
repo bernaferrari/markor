@@ -1,9 +1,9 @@
 package com.bernaferrari.remarkor.data.repository
 
-import com.bernaferrari.remarkor.data.local.AppSettings
-import com.bernaferrari.remarkor.data.local.db.NoteMetadataRepository
 import com.bernaferrari.remarkor.domain.model.Document
 import com.bernaferrari.remarkor.domain.repository.IDocumentRepository
+import com.bernaferrari.remarkor.domain.repository.INoteMetadataRepository
+import com.bernaferrari.remarkor.domain.repository.ISettingsRepository
 import com.bernaferrari.remarkor.util.nowMillis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -14,10 +14,12 @@ import okio.IOException
 import okio.Path
 import okio.Path.Companion.toPath
 import okio.SYSTEM
+import org.koin.core.annotation.Single
 
+@Single(binds = [IDocumentRepository::class])
 class DocumentRepository(
-    private val appSettings: AppSettings,
-    private val noteMetadataRepository: NoteMetadataRepository
+    private val settingsRepository: ISettingsRepository,
+    private val noteMetadataRepository: INoteMetadataRepository,
 ) : IDocumentRepository {
 
     private val documentCache = MutableStateFlow<Map<String, Document>>(emptyMap())

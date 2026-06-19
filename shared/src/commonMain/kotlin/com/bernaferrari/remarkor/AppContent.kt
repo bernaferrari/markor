@@ -5,6 +5,9 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -14,8 +17,11 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
-import com.bernaferrari.remarkor.data.local.AppSettings
+import com.bernaferrari.remarkor.domain.repository.ISettingsRepository
 import com.bernaferrari.remarkor.ui.components.ConfigureSystemBars
+import com.bernaferrari.remarkor.ui.components.UserMessageHandler
+import com.bernaferrari.remarkor.ui.components.UserMessageManager
+import com.bernaferrari.remarkor.ui.navigation.MarkorNavigator
 import com.bernaferrari.remarkor.ui.components.LocalSharedTransitionScope
 import com.bernaferrari.remarkor.ui.navigation.MarkorNavDisplay
 import com.bernaferrari.remarkor.ui.navigation.Screen
@@ -32,9 +38,11 @@ fun AppContent(
     val isFirstRun by produceState<Boolean?>(initialValue = null, introViewModel) {
         introViewModel.isFirstRun.collect { value = it }
     }
-    val appSettings: AppSettings = koinInject()
+    val settingsRepository: ISettingsRepository = koinInject()
+    val userMessageManager: UserMessageManager = koinInject()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    MarkorTheme(appTheme = appSettings.getAppTheme) {
+    MarkorTheme(appTheme = settingsRepository.getAppTheme) {
         ConfigureSystemBars(
             useDarkIcons = MaterialTheme.colorScheme.background.luminance() > 0.5f
         )
@@ -56,29 +64,33 @@ fun AppContent(
                 }
 
                 false -> {
-                    // Simple backstack management for now, matching previous logic
                     val backstack = remember { mutableStateListOf<Screen>(Screen.Notebook) }
+                    val navigator = remember(backstack) {
+                        MarkorNavigator(backstack, onExitWhenEmpty = onExit)
+                    }
 
-                    SharedTransitionLayout(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        CompositionLocalProvider(
-                            LocalSharedTransitionScope provides this
+                    UserMessageHandler(
+                        messageManager = userMessageManager,
+                        snackbarHostState = snackbarHostState,
+                    )
+
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        snackbarHost = { SnackbarHost(snackbarHostState) },
+                    ) { padding ->
+                        SharedTransitionLayout(
+                            modifier = Modifier.fillMaxSize()
                         ) {
-                            MarkorNavDisplay(
-                                backstack = backstack,
-                                onNavigate = { screen ->
-                                    backstack.add(screen)
-                                },
-                                onPopBackStack = {
-                                    if (backstack.size > 1) {
-                                        backstack.removeAt(backstack.size - 1)
-                                    } else {
-                                        onExit()
-                                    }
-                                },
-                                modifier = Modifier.fillMaxSize()
-                            )
+                            CompositionLocalProvider(
+                                LocalSharedTransitionScope provides this
+                            ) {
+                                MarkorNavDisplay(
+                                    backstack = backstack,
+                                    onNavigate = navigator::navigate,
+                                    onPopBackStack = navigator::pop,
+                                    modifier = Modifier.fillMaxSize(),
+                                )
+                            }
                         }
                     }
                 }

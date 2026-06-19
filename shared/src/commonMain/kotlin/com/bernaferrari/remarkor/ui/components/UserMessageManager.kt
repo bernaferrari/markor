@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import org.koin.core.annotation.Single
 
 /**
  * Sealed class representing different types of user messages.
@@ -36,6 +37,7 @@ sealed class UserMessage {
 /**
  * Manages user messages using a Flow for reactive UI updates.
  */
+@Single
 class UserMessageManager {
     private val _messages = MutableSharedFlow<UserMessage>(extraBufferCapacity = 16)
     val messages: Flow<UserMessage> = _messages.asSharedFlow()

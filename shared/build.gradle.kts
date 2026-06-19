@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.koin.compiler)
     alias(libs.plugins.androidx.room)
 }
 
@@ -90,6 +91,8 @@ kotlin {
             implementation(libs.compose.components.resources)
             implementation(libs.compose.components.ui.tooling.preview)
             implementation(libs.koin.core)
+            implementation(libs.koin.annotations)
+            implementation(libs.koin.core.viewmodel)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.androidx.navigation3.ui)

@@ -11,19 +11,20 @@ import platform.Foundation.NSURL
 import platform.Foundation.dataWithBytes
 import platform.Foundation.temporaryDirectory
 import platform.Foundation.writeToURL
+import com.bernaferrari.remarkor.platform.IosPlatformHolder
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
+import platform.UIKit.popoverPresentationController
+import org.koin.core.annotation.Single
 
 /**
  * iOS implementation of ShareService using UIActivityViewController.
  * Provides native iOS sharing functionality for files and text.
  */
 @OptIn(ExperimentalForeignApi::class)
+@Single(binds = [ShareService::class])
 class IosShareService : ShareService {
-
-    // Reference to the current view controller - should be set from iOS app
-    var rootViewController: UIViewController? = null
 
     override fun shareFile(path: Path, title: String?) {
         try {
@@ -101,7 +102,7 @@ class IosShareService : ShareService {
     }
 
     private fun shareItems(items: List<Any>, title: String?) {
-        val viewController = rootViewController ?: getCurrentViewController() ?: run {
+        val viewController = IosPlatformHolder.rootViewController ?: getCurrentViewController() ?: run {
             println("ShareService: No view controller available")
             return
         }
@@ -111,8 +112,10 @@ class IosShareService : ShareService {
             applicationActivities = null
         )
 
-        // Set subject for email etc. (optional)
-        // Note: setValue:forKey: requires NSObject interop, skipping for simplicity
+        activityViewController.popoverPresentationController?.let { popover ->
+            popover.sourceView = viewController.view
+            popover.sourceRect = viewController.view.bounds
+        }
 
         viewController.presentViewController(
             activityViewController,
@@ -124,11 +127,13 @@ class IosShareService : ShareService {
     private fun getCurrentViewController(): UIViewController? {
         return try {
             val app = UIApplication.sharedApplication
-
-            @Suppress("UNCHECKED_CAST", "UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-            val scene = app.connectedScenes.firstOrNull() as? platform.UIKit.UIWindowScene
-            val window = scene?.windows?.firstOrNull() as? platform.UIKit.UIWindow
-            window?.rootViewController
+            app.keyWindow?.rootViewController
+                ?: run {
+                    @Suppress("UNCHECKED_CAST")
+                    val scene = app.connectedScenes.firstOrNull() as? platform.UIKit.UIWindowScene
+                    val window = scene?.windows?.firstOrNull() as? platform.UIKit.UIWindow
+                    window?.rootViewController
+                }
         } catch (e: Exception) {
             null
         }
