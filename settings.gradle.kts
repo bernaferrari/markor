@@ -9,8 +9,6 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
-        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
-        maven { url = uri("https://jitpack.io") }
     }
 }
 plugins {
@@ -22,10 +20,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
-        maven { url = uri("https://androidx.dev/storage/compose-test/repository/") }
-        maven { url = uri("https://repository.apache.org/content/repositories/snapshots/") }
-        maven { url = uri("https://jitpack.io") }
     }
 }
 

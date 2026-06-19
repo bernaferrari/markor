@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.koin.compiler) apply false
     alias(libs.plugins.compose.multiplatform) apply false
     id("nl.littlerobots.version-catalog-update") version "1.1.0"
 }

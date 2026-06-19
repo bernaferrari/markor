@@ -1,38 +1,56 @@
 package com.bernaferrari.remarkor.di
 
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.bernaferrari.remarkor.data.local.createDataStore
+import com.bernaferrari.remarkor.data.local.db.NoteMetadataDao
 import com.bernaferrari.remarkor.data.local.db.NoteMetadataDatabase
-import com.bernaferrari.remarkor.data.local.db.NoteMetadataRepository
 import com.bernaferrari.remarkor.data.local.db.getNoteMetadataDatabase
 import com.bernaferrari.remarkor.data.local.db.getNoteMetadataDatabaseBuilder
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.module.Module
-import org.koin.dsl.bind
-import org.koin.dsl.module
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Provided
+import org.koin.core.annotation.Single
 
-actual val platformModule: Module = module {
-    single {
+@Module
+actual class PlatformDiModule {
+
+    @Single
+    fun provideDataStore(@Provided context: Context): DataStore<Preferences> =
         createDataStore {
-            androidContext().filesDir.resolve("datastore/settings.preferences_pb").absolutePath
+            context.filesDir.resolve("datastore/settings.preferences_pb").absolutePath
         }
-    }
-    single(org.koin.core.qualifier.named("default_notebook_path")) {
+
+    @Single
+    @Named("default_notebook_path")
+    fun provideDefaultNotebookPath(): String {
         val path = android.os.Environment
             .getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOCUMENTS)
             .resolve("Markor")
         if (!path.exists()) path.mkdirs()
-        path.absolutePath
-    }
-    single(org.koin.core.qualifier.named("internal_notebook_path")) {
-        val path = androidContext().filesDir.resolve("Notebook")
-        if (!path.exists()) path.mkdirs()
-        path.absolutePath
+        return path.absolutePath
     }
 
-    single {
-        getNoteMetadataDatabase(getNoteMetadataDatabaseBuilder(androidContext()))
+    @Single
+    @Named("internal_notebook_path")
+    fun provideInternalNotebookPath(@Provided context: Context): String {
+        val path = context.filesDir.resolve("Notebook")
+        if (!path.exists()) path.mkdirs()
+        return path.absolutePath
     }
-    single { get<NoteMetadataDatabase>().noteMetadataDao() }
-    single { NoteMetadataRepository(get()) }
-    single { com.bernaferrari.remarkor.domain.service.AndroidShareService(androidContext()) } bind com.bernaferrari.remarkor.domain.service.ShareService::class
+
+    @Single
+    fun provideDatabase(@Provided context: Context): NoteMetadataDatabase =
+        getNoteMetadataDatabase(getNoteMetadataDatabaseBuilder(context))
+
+    @Single
+    fun provideNoteMetadataDao(database: NoteMetadataDatabase): NoteMetadataDao =
+        database.noteMetadataDao()
+
+    @Single
+    fun provideNotebookPaths(
+        @Named("default_notebook_path") shared: String,
+        @Named("internal_notebook_path") private: String,
+    ): NotebookPaths = NotebookPaths(shared, private)
 }

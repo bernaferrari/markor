@@ -1,52 +1,57 @@
 package com.bernaferrari.remarkor.data.local.db
 
+import com.bernaferrari.remarkor.domain.model.NoteLabel
+import com.bernaferrari.remarkor.domain.model.NoteMetadata
+import com.bernaferrari.remarkor.domain.repository.INoteMetadataRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import org.koin.core.annotation.Single
 
-class NoteMetadataRepository(
-    private val dao: NoteMetadataDao
-) {
-    fun observeNotes(): Flow<List<NoteWithLabels>> = dao.observeAllNotes()
+@Single(binds = [INoteMetadataRepository::class])
+internal class NoteMetadataRepository(
+    private val dao: NoteMetadataDao,
+) : INoteMetadataRepository {
 
-    fun observePinnedNotes(): Flow<List<NoteEntity>> = dao.observePinnedNotes()
+    override fun observeNotes(): Flow<List<NoteMetadata>> =
+        dao.observeAllNotes().map { notes -> notes.map { it.toDomain() } }
 
-    fun observeArchivedNotes(): Flow<List<NoteEntity>> = dao.observeArchivedNotes()
+    override fun observeLabels(): Flow<List<NoteLabel>> =
+        dao.observeLabels().map { labels -> labels.map { it.toDomain() } }
 
-    fun observeLabels(): Flow<List<LabelEntity>> = dao.observeLabels()
-
-    suspend fun upsertNote(note: NoteEntity) {
-        dao.upsertNote(note)
-    }
-
-    suspend fun upsertFromContent(path: String, content: String, nowMillis: Long) {
+    override suspend fun upsertFromContent(path: String, content: String, nowMillis: Long) {
         val existing = dao.getNoteByPath(path)
         val note = NoteMetadataMapper.buildNoteEntity(path, content, existing, nowMillis)
         dao.upsertNote(note)
     }
 
-    suspend fun upsertFromPath(path: String, nowMillis: Long) {
+    override suspend fun upsertFromPath(path: String, nowMillis: Long) {
         val existing = dao.getNoteByPath(path)
         val note = NoteMetadataMapper.buildNoteEntityFromPath(path, existing, nowMillis)
         dao.upsertNote(note)
     }
 
-    suspend fun getNoteByPath(path: String): NoteEntity? {
-        return dao.getNoteByPath(path)
-    }
+    override suspend fun getNoteByPath(path: String): NoteMetadata? =
+        dao.getNoteByPath(path)?.toDomain()
 
-    suspend fun updatePath(oldPath: String, newPath: String, nowMillis: Long) {
+    override suspend fun updatePath(oldPath: String, newPath: String, nowMillis: Long) {
         val existing = dao.getNoteByPath(oldPath) ?: return
         dao.updateNotePath(existing.id, newPath, nowMillis)
     }
 
-    suspend fun deleteByPath(path: String) {
+    override suspend fun deleteByPath(path: String) {
         dao.deleteNoteByPath(path)
     }
 
-    suspend fun deleteByPathRecursively(path: String) {
+    override suspend fun deleteByPathRecursively(path: String) {
         dao.deleteNotesByPathOrPrefix(path, "$path/%")
     }
 
-    suspend fun setLabelsForNote(noteId: Long, labels: List<String>) {
+    override suspend fun setLabelsForPath(path: String, labels: List<String>) {
+        val note = dao.getNoteByPath(path) ?: return
+        setLabelsForNote(note.id, labels)
+    }
+
+    private suspend fun setLabelsForNote(noteId: Long, labels: List<String>) {
         dao.clearLabelsForNote(noteId)
         labels.distinct().forEach { labelName ->
             dao.upsertLabel(LabelEntity(name = labelName))
@@ -59,35 +64,23 @@ class NoteMetadataRepository(
         }
     }
 
-    suspend fun setLabelsForPath(path: String, labels: List<String>) {
-        val note = dao.getNoteByPath(path)
-        if (note != null) {
-            setLabelsForNote(note.id, labels)
+    override suspend fun setColor(path: String, color: Int?) {
+        val note = dao.getNoteByPath(path) ?: return
+        dao.upsertNote(note.copy(color = color))
+    }
+
+    override suspend fun setArchived(path: String, archived: Boolean) {
+        val note = dao.getNoteByPath(path) ?: return
+        dao.upsertNote(note.copy(isArchived = archived))
+    }
+
+    override suspend fun togglePinned(path: String, nowMillis: Long) {
+        val existing = dao.getNoteByPath(path)
+        if (existing == null) {
+            val note = NoteMetadataMapper.buildNoteEntityFromPath(path, null, nowMillis).copy(pinned = true)
+            dao.upsertNote(note)
         } else {
-            // Create empty note entry if it doesn't exist?
-            // Ideally we index it first. For now, assume it exists or index on the fly.
-            // Let's index it briefly without content or just fail silently/log.
-            // Better: upsertFromPath(path, Clock.System.now().toEpochMilliseconds())
-            // But we don't have Clock here easily.
-            // Let's just return for now or try to get it if safe.
-        }
-    }
-
-    suspend fun getNoteWithLabelsByPath(path: String): NoteWithLabels? {
-        return dao.getNoteWithLabelsByPath(path)
-    }
-
-    suspend fun setColor(path: String, color: Int?) {
-        val note = dao.getNoteByPath(path)
-        if (note != null) {
-            dao.upsertNote(note.copy(color = color))
-        }
-    }
-
-    suspend fun setArchived(path: String, archived: Boolean) {
-        val note = dao.getNoteByPath(path)
-        if (note != null) {
-            dao.upsertNote(note.copy(isArchived = archived))
+            dao.upsertNote(existing.copy(pinned = !existing.pinned, updatedAt = nowMillis))
         }
     }
 }

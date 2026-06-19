@@ -3,29 +3,26 @@ package com.bernaferrari.remarkor.ios
 import androidx.compose.ui.window.ComposeUIViewController
 import com.bernaferrari.remarkor.AppContent
 import com.bernaferrari.remarkor.di.initKoin
+import com.bernaferrari.remarkor.platform.IosPlatformHolder
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSUserDomainMask
+import platform.UIKit.UIViewController
 
-/**
- * Main entry point for iOS application.
- * Called from Swift AppDelegate to initialize and display the Compose UI.
- */
-fun MainViewController() = ComposeUIViewController {
-    // Initialize Koin DI
+fun MainViewController(): UIViewController {
     initKoin()
+    val controller = ComposeUIViewController {
+        val documentDirectory = NSSearchPathForDirectoriesInDomains(
+            NSDocumentDirectory,
+            NSUserDomainMask,
+            true,
+        ).firstOrNull() as? String ?: ""
 
-    // Get the iOS documents directory
-    val documentDirectory = NSSearchPathForDirectoriesInDomains(
-        NSDocumentDirectory,
-        NSUserDomainMask,
-        true
-    ).firstOrNull() as? String ?: ""
-
-    AppContent(
-        systemInternalFilesDir = documentDirectory,
-        onExit = {
-            // On iOS, we typically don't "exit" the app
-        }
-    )
+        AppContent(
+            systemInternalFilesDir = documentDirectory,
+            onExit = { /* iOS apps don't exit from the UI */ },
+        )
+    }
+    IosPlatformHolder.configure(controller)
+    return controller
 }

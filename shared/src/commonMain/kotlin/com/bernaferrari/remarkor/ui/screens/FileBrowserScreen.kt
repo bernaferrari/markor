@@ -89,7 +89,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bernaferrari.remarkor.domain.repository.FileInfo
-import com.bernaferrari.remarkor.domain.service.ImageAssetManager
+import com.bernaferrari.remarkor.domain.repository.IAssetRepository
 import com.bernaferrari.remarkor.ui.components.AssetManagerSheet
 import com.bernaferrari.remarkor.ui.components.BackHandler
 import com.bernaferrari.remarkor.ui.components.CreateFolderDialog
@@ -200,7 +200,7 @@ fun FileBrowserContent(
     var showShareDialog by remember { mutableStateOf(false) }
 
     // Asset manager - loaded async to avoid blocking
-    val assetManager: ImageAssetManager = koinInject()
+    val assetManager: IAssetRepository = koinInject()
     var hasAssets by remember { mutableStateOf(false) }
     var fileContent by remember { mutableStateOf("") }
 
@@ -270,7 +270,7 @@ fun FileBrowserContent(
     if (selectedFileForAction != null && !showRenameDialog && !showDeleteDialog) {
         FileActionSheet(
             file = selectedFileForAction!!,
-            isPinned = noteMetadataByPath[selectedFileForAction!!.path.toString()]?.note?.pinned == true,
+            isPinned = noteMetadataByPath[selectedFileForAction!!.path.toString()]?.pinned == true,
             hasAssets = hasAssets,
             onDismiss = { selectedFileForAction = null },
             onRename = { showRenameDialog = true },
@@ -601,9 +601,9 @@ fun FileBrowserContent(
                                             }
                                         }
                                     },
-                                    isPinned = noteMetadataByPath[file.path.toString()]?.note?.pinned == true,
-                                    color = noteMetadataByPath[file.path.toString()]?.note?.color,
-                                    imagePreviewUrl = noteMetadataByPath[file.path.toString()]?.note?.imagePreviewUrl,
+                                    isPinned = noteMetadataByPath[file.path.toString()]?.pinned == true,
+                                    color = noteMetadataByPath[file.path.toString()]?.color,
+                                    imagePreviewUrl = noteMetadataByPath[file.path.toString()]?.imagePreviewUrl,
                                     labels = noteLabels,
                                     onLongClick = {
                                         if (!isSelectionMode) {
@@ -654,8 +654,8 @@ fun FileBrowserContent(
                                         isSelected = isSelected,
                                         selectionMode = isSelectionMode,
                                         isFavorite = isFavorite,
-                                        noteColor = noteMetadataByPath[file.path.toString()]?.note?.color,
-                                        preview = noteMetadataByPath[file.path.toString()]?.note?.preview,
+                                        noteColor = noteMetadataByPath[file.path.toString()]?.color,
+                                        preview = noteMetadataByPath[file.path.toString()]?.preview,
                                         onClick = {
                                             viewModel.recordFileAccess(file.path.toString())
                                             onNavigateToEditor(file.path.toString(), false)
@@ -677,8 +677,8 @@ fun FileBrowserContent(
                                     isSelected = isSelected,
                                     selectionMode = isSelectionMode,
                                     isFavorite = false,
-                                    noteColor = noteMetadataByPath[file.path.toString()]?.note?.color,
-                                    preview = noteMetadataByPath[file.path.toString()]?.note?.preview,
+                                    noteColor = noteMetadataByPath[file.path.toString()]?.color,
+                                    preview = noteMetadataByPath[file.path.toString()]?.preview,
                                     onClick = {
                                         if (isSelectionMode) {
                                             viewModel.toggleSelection(file.path)

@@ -34,7 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.bernaferrari.remarkor.domain.service.ImageAssetManager
+import com.bernaferrari.remarkor.domain.repository.IAssetRepository
 import com.bernaferrari.remarkor.domain.service.ShareService
 import kotlinx.coroutines.launch
 import markor.shared.generated.resources.Res
@@ -53,7 +53,7 @@ import org.koin.compose.koinInject
 fun ShareDialog(
     filePath: Path,
     hasAssets: Boolean,
-    assetManager: ImageAssetManager,
+    assetManager: IAssetRepository,
     onDismiss: () -> Unit
 ) {
     val scope = rememberCoroutineScope()

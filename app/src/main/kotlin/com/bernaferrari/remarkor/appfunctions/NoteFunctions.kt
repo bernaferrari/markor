@@ -6,7 +6,7 @@ import androidx.appfunctions.AppFunctionElementNotFoundException
 import androidx.appfunctions.AppFunctionInvalidArgumentException
 import androidx.appfunctions.AppFunctionSerializable
 import androidx.appfunctions.service.AppFunction
-import com.bernaferrari.remarkor.data.local.AppSettings
+import com.bernaferrari.remarkor.domain.repository.ISettingsRepository
 import com.bernaferrari.remarkor.domain.model.Document
 import com.bernaferrari.remarkor.domain.repository.FileInfo
 import com.bernaferrari.remarkor.domain.repository.IDocumentRepository
@@ -14,15 +14,18 @@ import com.bernaferrari.remarkor.domain.repository.IFileRepository
 import kotlinx.coroutines.flow.first
 import okio.Path
 import okio.Path.Companion.toPath
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 
 /**
  * Exposes Markor note-taking capabilities to Android AppFunctions (on-device AI agents).
  */
+@Single
 class NoteFunctions(
     private val fileRepository: IFileRepository,
     private val documentRepository: IDocumentRepository,
-    private val appSettings: AppSettings,
-    private val defaultNotebookPath: String,
+    private val settingsRepository: ISettingsRepository,
+    @Named("default_notebook_path") private val defaultNotebookPath: String,
 ) {
     /** A note returned by AppFunctions. */
     @AppFunctionSerializable(isDescribedByKDoc = true)
@@ -124,7 +127,7 @@ class NoteFunctions(
             throw AppFunctionInvalidArgumentException("Text to append cannot be blank")
         }
 
-        val quickNotePath = appSettings.getQuickNoteFilePath.first()
+        val quickNotePath = settingsRepository.getQuickNoteFilePath.first()
         val path = if (quickNotePath.isNotEmpty()) {
             quickNotePath.toPath()
         } else {
@@ -148,7 +151,7 @@ class NoteFunctions(
     }
 
     private suspend fun getNotebookPath(): Path {
-        val configured = appSettings.getNotebookDirectory.first()
+        val configured = settingsRepository.getNotebookDirectory.first()
         val path = configured.ifEmpty { defaultNotebookPath }
         return path.toPath()
     }

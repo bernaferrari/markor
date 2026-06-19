@@ -1,15 +1,18 @@
-package com.bernaferrari.remarkor.data.local.db
+package com.bernaferrari.remarkor.domain.usecase
 
 import com.bernaferrari.remarkor.domain.repository.IFileRepository
+import com.bernaferrari.remarkor.domain.repository.INoteMetadataRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okio.Path
+import org.koin.core.annotation.Single
 
-class NoteMetadataIndexer(
+@Single
+class IndexNoteMetadataUseCase(
     private val fileRepository: IFileRepository,
-    private val metadataRepository: NoteMetadataRepository
+    private val metadataRepository: INoteMetadataRepository,
 ) {
-    suspend fun indexDirectory(path: Path, nowMillis: Long) = withContext(Dispatchers.Default) {
+    suspend operator fun invoke(path: Path, nowMillis: Long) = withContext(Dispatchers.Default) {
         val files = fileRepository.listFilesRecursively(path)
         files.filter { isIndexable(it.path.name) }.forEach { fileInfo ->
             val content = fileRepository.readText(fileInfo.path)

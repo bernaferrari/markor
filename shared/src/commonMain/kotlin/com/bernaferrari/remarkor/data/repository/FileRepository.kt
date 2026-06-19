@@ -1,8 +1,8 @@
 package com.bernaferrari.remarkor.data.repository
 
-import com.bernaferrari.remarkor.data.local.AppSettings
 import com.bernaferrari.remarkor.domain.repository.FileInfo
 import com.bernaferrari.remarkor.domain.repository.IFileRepository
+import com.bernaferrari.remarkor.domain.repository.ISettingsRepository
 import com.bernaferrari.remarkor.util.nowMillis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -22,9 +22,11 @@ import okio.Path
 import okio.Path.Companion.toPath
 import okio.SYSTEM
 import org.jetbrains.compose.resources.getString
+import org.koin.core.annotation.Single
 
+@Single(binds = [IFileRepository::class])
 class FileRepository(
-    private val appSettings: AppSettings
+    private val settingsRepository: ISettingsRepository,
 ) : IFileRepository {
 
     private val fileSystem = FileSystem.Companion.SYSTEM
@@ -44,7 +46,7 @@ class FileRepository(
     }
 
     override suspend fun getTrashPath(): Path {
-        val notebookDir = appSettings.getNotebookDirectory.first()
+        val notebookDir = settingsRepository.getNotebookDirectory.first()
         return if (notebookDir.isNotEmpty()) {
             notebookDir.toPath() / trashDirectoryName
         } else {
@@ -71,8 +73,8 @@ class FileRepository(
                     return@withContext emptyList()
                 }
 
-                val showHidden = appSettings.isFileBrowserShowHiddenFiles.first()
-                val sortOrder = appSettings.getFileBrowserSortOrder.first()
+                val showHidden = settingsRepository.isFileBrowserShowHiddenFiles.first()
+                val sortOrder = settingsRepository.getFileBrowserSortOrder.first()
 
                 val files = fileSystem.list(directory)
 

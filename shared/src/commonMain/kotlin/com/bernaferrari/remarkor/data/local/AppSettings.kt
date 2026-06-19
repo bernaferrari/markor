@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okio.Path.Companion.toPath
+import org.koin.core.annotation.Single
 
 fun createDataStore(producePath: () -> String): DataStore<Preferences> {
     return PreferenceDataStoreFactory.createWithPath(
@@ -17,7 +18,8 @@ fun createDataStore(producePath: () -> String): DataStore<Preferences> {
     )
 }
 
-class AppSettings(private val dataStore: DataStore<Preferences>) {
+@Single
+internal class AppSettings(private val dataStore: DataStore<Preferences>) {
 
     private object PrefsKeys {
         val FILE_BROWSER_SHOW_HIDDEN =

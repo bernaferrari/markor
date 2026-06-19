@@ -7,8 +7,11 @@ import androidx.core.content.FileProvider
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import org.koin.core.annotation.Provided
+import org.koin.core.annotation.Single
 
-class AndroidShareService(private val context: Context) : ShareService {
+@Single(binds = [ShareService::class])
+class AndroidShareService(@Provided private val context: Context) : ShareService {
     override fun shareFile(path: Path, title: String?) {
         val file = File(path.toString())
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)

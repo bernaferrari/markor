@@ -1,38 +1,62 @@
 package com.bernaferrari.remarkor.di
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.bernaferrari.remarkor.data.local.createDataStore
+import com.bernaferrari.remarkor.data.local.db.NoteMetadataDao
 import com.bernaferrari.remarkor.data.local.db.NoteMetadataDatabase
-import com.bernaferrari.remarkor.data.local.db.NoteMetadataRepository
 import com.bernaferrari.remarkor.data.local.db.getNoteMetadataDatabase
 import com.bernaferrari.remarkor.data.local.db.getNoteMetadataDatabaseBuilder
-import org.koin.core.module.Module
-import org.koin.dsl.module
+import com.bernaferrari.remarkor.di.NotebookPaths
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import java.io.File
 
-actual val platformModule: Module = module {
-    single {
+@Module
+actual class PlatformDiModule {
+
+    @Single
+    fun provideDataStore(): DataStore<Preferences> {
         val baseDir = File(System.getProperty("user.home"), ".markor")
         if (!baseDir.exists()) {
             baseDir.mkdirs()
         }
         val dataStoreFile = File(baseDir, "settings.preferences_pb")
-        createDataStore { dataStoreFile.absolutePath }
+        return createDataStore { dataStoreFile.absolutePath }
     }
-    single(org.koin.core.qualifier.named("default_notebook_path")) {
+
+    @Single
+    @Named("default_notebook_path")
+    fun provideDefaultNotebookPath(): String {
         val documentsDir = File(System.getProperty("user.home"), "Documents/Markor")
         if (!documentsDir.exists()) {
             documentsDir.mkdirs()
         }
-        documentsDir.absolutePath
+        return documentsDir.absolutePath
     }
-    single(org.koin.core.qualifier.named("internal_notebook_path")) {
+
+    @Single
+    @Named("internal_notebook_path")
+    fun provideInternalNotebookPath(): String {
         val notebookDir = File(System.getProperty("user.home"), ".markor/Notebook")
         if (!notebookDir.exists()) {
             notebookDir.mkdirs()
         }
-        notebookDir.absolutePath
+        return notebookDir.absolutePath
     }
-    single { getNoteMetadataDatabase(getNoteMetadataDatabaseBuilder()) }
-    single { get<NoteMetadataDatabase>().noteMetadataDao() }
-    single { NoteMetadataRepository(get()) }
+
+    @Single
+    fun provideDatabase(): NoteMetadataDatabase =
+        getNoteMetadataDatabase(getNoteMetadataDatabaseBuilder())
+
+    @Single
+    fun provideNoteMetadataDao(database: NoteMetadataDatabase): NoteMetadataDao =
+        database.noteMetadataDao()
+
+    @Single
+    fun provideNotebookPaths(
+        @Named("default_notebook_path") shared: String,
+        @Named("internal_notebook_path") private: String,
+    ): NotebookPaths = NotebookPaths(shared, private)
 }

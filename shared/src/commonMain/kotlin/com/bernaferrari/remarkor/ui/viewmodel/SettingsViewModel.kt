@@ -2,7 +2,7 @@ package com.bernaferrari.remarkor.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bernaferrari.remarkor.data.local.AppSettings
+import com.bernaferrari.remarkor.domain.repository.ISettingsRepository
 import com.bernaferrari.remarkor.domain.repository.IFileRepository
 import com.bernaferrari.remarkor.ui.theme.ThemePaletteOption
 import kotlinx.coroutines.flow.SharingStarted
@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import okio.Path.Companion.toPath
+import org.koin.core.annotation.KoinViewModel
+import org.koin.core.annotation.Named
 
 enum class ThemeModeOption(val token: String) {
     AUTO("auto"),
@@ -17,112 +19,113 @@ enum class ThemeModeOption(val token: String) {
     DARK("dark")
 }
 
+@KoinViewModel
 class SettingsViewModel(
-    private val appSettings: AppSettings,
+    private val settingsRepository: ISettingsRepository,
     private val fileRepository: IFileRepository,
-    private val sharedNotebookPath: String,
-    private val privateNotebookPath: String
+    @Named("default_notebook_path") private val sharedNotebookPath: String,
+    @Named("internal_notebook_path") private val privateNotebookPath: String
 ) : ViewModel() {
 
-    val showLineNumbers = appSettings.isShowLineNumbers
+    val showLineNumbers = settingsRepository.isShowLineNumbers
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
-    val wordWrap = appSettings.isWordWrap
+    val wordWrap = settingsRepository.isWordWrap
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
-    val autoFormat = appSettings.isEditorAutoFormat
+    val autoFormat = settingsRepository.isEditorAutoFormat
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
-    val appTheme = appSettings.getAppTheme
+    val appTheme = settingsRepository.getAppTheme
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "markor")
 
-    val themeMode = appSettings.getAppTheme
+    val themeMode = settingsRepository.getAppTheme
         .map { parseThemeSelection(it).second }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ThemeModeOption.AUTO)
 
-    val themePalette = appSettings.getAppTheme
+    val themePalette = settingsRepository.getAppTheme
         .map { parseThemeSelection(it).first }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ThemePaletteOption.DYNAMIC)
 
     // File Browser
-    val fileBrowserShowHidden = appSettings.isFileBrowserShowHiddenFiles
+    val fileBrowserShowHidden = settingsRepository.isFileBrowserShowHiddenFiles
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-    val fileBrowserShowExt = appSettings.isFileBrowserShowFileExtensions
+    val fileBrowserShowExt = settingsRepository.isFileBrowserShowFileExtensions
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
-    val fileBrowserSortOrder = appSettings.getFileBrowserSortOrder
+    val fileBrowserSortOrder = settingsRepository.getFileBrowserSortOrder
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "name")
-    val fileBrowserFolderFirst = appSettings.isFileBrowserFolderFirst
+    val fileBrowserFolderFirst = settingsRepository.isFileBrowserFolderFirst
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
     // Editor
-    val editorFontSize = appSettings.getEditorFontSize
+    val editorFontSize = settingsRepository.getEditorFontSize
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 16)
 
     // Storage
-    val notebookDirectory = appSettings.getNotebookDirectory
+    val notebookDirectory = settingsRepository.getNotebookDirectory
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
-    val isExternalStorageEnabled = appSettings.isExternalStorageEnabled
+    val isExternalStorageEnabled = settingsRepository.isExternalStorageEnabled
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-    val quickNotePath = appSettings.getQuickNoteFilePath
+    val quickNotePath = settingsRepository.getQuickNoteFilePath
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
-    val todoFilePath = appSettings.getTodoFilePath
+    val todoFilePath = settingsRepository.getTodoFilePath
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
     fun setShowLineNumbers(value: Boolean) {
-        viewModelScope.launch { appSettings.setShowLineNumbers(value) }
+        viewModelScope.launch { settingsRepository.setShowLineNumbers(value) }
     }
 
     fun setWordWrap(value: Boolean) {
-        viewModelScope.launch { appSettings.setWordWrap(value) }
+        viewModelScope.launch { settingsRepository.setWordWrap(value) }
     }
 
     fun setAutoFormat(value: Boolean) {
-        viewModelScope.launch { appSettings.setEditorAutoFormat(value) }
+        viewModelScope.launch { settingsRepository.setEditorAutoFormat(value) }
     }
 
     fun setFileBrowserShowHidden(value: Boolean) {
-        viewModelScope.launch { appSettings.setFileBrowserShowHiddenFiles(value) }
+        viewModelScope.launch { settingsRepository.setFileBrowserShowHiddenFiles(value) }
     }
 
     fun setFileBrowserShowExt(value: Boolean) {
-        viewModelScope.launch { appSettings.setFileBrowserShowFileExtensions(value) }
+        viewModelScope.launch { settingsRepository.setFileBrowserShowFileExtensions(value) }
     }
 
     fun setFileBrowserSortOrder(value: String) {
-        viewModelScope.launch { appSettings.setFileBrowserSortOrder(value) }
+        viewModelScope.launch { settingsRepository.setFileBrowserSortOrder(value) }
     }
 
     fun setFileBrowserFolderFirst(value: Boolean) {
-        viewModelScope.launch { appSettings.setFileBrowserFolderFirst(value) }
+        viewModelScope.launch { settingsRepository.setFileBrowserFolderFirst(value) }
     }
 
     fun setEditorFontSize(value: Int) {
-        viewModelScope.launch { appSettings.setEditorFontSize(value) }
+        viewModelScope.launch { settingsRepository.setEditorFontSize(value) }
     }
 
     fun setNotebookDirectory(value: String) {
-        viewModelScope.launch { appSettings.setNotebookDirectory(value) }
+        viewModelScope.launch { settingsRepository.setNotebookDirectory(value) }
     }
 
     fun setQuickNotePath(value: String) {
-        viewModelScope.launch { appSettings.setQuickNoteFilePath(value) }
+        viewModelScope.launch { settingsRepository.setQuickNoteFilePath(value) }
     }
 
     fun setTodoFilePath(value: String) {
-        viewModelScope.launch { appSettings.setTodoFilePath(value) }
+        viewModelScope.launch { settingsRepository.setTodoFilePath(value) }
     }
 
     fun setThemeMode(mode: ThemeModeOption) {
         viewModelScope.launch {
             val palette = themePalette.value
-            appSettings.setAppTheme("${palette.token} ${mode.token}")
+            settingsRepository.setAppTheme("${palette.token} ${mode.token}")
         }
     }
 
     fun setThemePalette(palette: ThemePaletteOption) {
         viewModelScope.launch {
             val mode = themeMode.value
-            appSettings.setAppTheme("${palette.token} ${mode.token}")
+            settingsRepository.setAppTheme("${palette.token} ${mode.token}")
         }
     }
 
@@ -132,10 +135,10 @@ class SettingsViewModel(
             val notebookPath = notebookDir.toPath()
             val parent = notebookPath.parent ?: notebookPath
 
-            appSettings.setExternalStorageEnabled(useSharedStorage)
-            appSettings.setNotebookDirectory(notebookDir)
-            appSettings.setTodoFilePath("$notebookDir/todo.txt")
-            appSettings.setQuickNoteFilePath("$notebookDir/quicknote.md")
+            settingsRepository.setExternalStorageEnabled(useSharedStorage)
+            settingsRepository.setNotebookDirectory(notebookDir)
+            settingsRepository.setTodoFilePath("$notebookDir/todo.txt")
+            settingsRepository.setQuickNoteFilePath("$notebookDir/quicknote.md")
 
             fileRepository.createDirectory(parent, notebookPath.name)
         }
