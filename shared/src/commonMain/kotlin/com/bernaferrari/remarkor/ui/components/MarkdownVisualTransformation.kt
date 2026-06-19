@@ -18,18 +18,22 @@ class MarkdownVisualTransformation(
     private val backgroundColor: Color = colorScheme.surface,
     private val editorFontSize: Int = 16,
     private val editorLineHeightMultiplier: Float = 1.45f,
-    private val accentColorOverride: Color? = null
+    private val accentColorOverride: Color? = null,
+    private val isFocusMode: Boolean = false,
+    private val currentLineIndex: Int = 0,
 ) : VisualTransformation {
 
     override fun filter(text: AnnotatedString): TransformedText {
         return TransformedText(
             markdownToAnnotatedString(
-                text.text,
-                colorScheme,
-                backgroundColor,
-                editorFontSize,
-                editorLineHeightMultiplier,
-                accentColorOverride
+                text = text.text,
+                colorScheme = colorScheme,
+                backgroundColor = backgroundColor,
+                editorFontSize = editorFontSize,
+                editorLineHeightMultiplier = editorLineHeightMultiplier,
+                accentColorOverride = accentColorOverride,
+                isFocusMode = isFocusMode,
+                currentLineIndex = currentLineIndex,
             ),
             OffsetMapping.Identity
         )
@@ -42,7 +46,9 @@ fun markdownToAnnotatedString(
     backgroundColor: Color = colorScheme.surface,
     editorFontSize: Int = 16,
     editorLineHeightMultiplier: Float = 1.45f,
-    accentColorOverride: Color? = null
+    accentColorOverride: Color? = null,
+    isFocusMode: Boolean = false,
+    currentLineIndex: Int = 0,
 ): AnnotatedString {
     val builder = AnnotatedString.Builder(text)
     val palette = resolveMarkdownColorPalette(
@@ -150,5 +156,54 @@ fun markdownToAnnotatedString(
         )
     }
 
+    if (isFocusMode) {
+        applyFocusModeLineDimming(
+            builder = builder,
+            text = text,
+            baseColor = palette.body,
+            currentLineIndex = currentLineIndex,
+        )
+    }
+
     return builder.toAnnotatedString()
+}
+
+private fun applyFocusModeLineDimming(
+    builder: AnnotatedString.Builder,
+    text: String,
+    baseColor: Color,
+    currentLineIndex: Int,
+) {
+    if (text.isEmpty()) return
+
+    var lineStart = 0
+    var lineIndex = 0
+    text.forEachIndexed { index, char ->
+        if (char == '\n') {
+            applyLineDimming(builder, lineStart, index + 1, lineIndex, currentLineIndex, baseColor)
+            lineStart = index + 1
+            lineIndex++
+        }
+    }
+    if (lineStart < text.length) {
+        applyLineDimming(builder, lineStart, text.length, lineIndex, currentLineIndex, baseColor)
+    }
+}
+
+private fun applyLineDimming(
+    builder: AnnotatedString.Builder,
+    start: Int,
+    end: Int,
+    lineIndex: Int,
+    currentLineIndex: Int,
+    baseColor: Color,
+) {
+    val alpha = calculateParagraphAlpha(lineIndex, currentLineIndex, isFocusMode = true)
+    if (alpha < 1f) {
+        builder.addStyle(
+            style = SpanStyle(color = baseColor.copy(alpha = alpha)),
+            start = start,
+            end = end,
+        )
+    }
 }

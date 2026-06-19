@@ -1,4 +1,4 @@
-package com.bernaferrari.remarkor.ui.screens
+package com.bernaferrari.remarkor.ui.screens.main
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -89,9 +89,7 @@ import com.bernaferrari.remarkor.ui.components.CreateFileDialog
 import com.bernaferrari.remarkor.ui.components.EmptyState
 import com.bernaferrari.remarkor.ui.components.rememberAdaptiveLayoutInfo
 import com.bernaferrari.remarkor.ui.components.rememberHapticHelper
-import com.bernaferrari.remarkor.ui.screens.main.LeftPanelContent
-import com.bernaferrari.remarkor.ui.screens.main.MainScreenListDetailLayout
-import com.bernaferrari.remarkor.ui.screens.main.MainScreenPhoneLayout
+import com.bernaferrari.remarkor.ui.screens.filebrowser.FileBrowserContent
 import com.bernaferrari.remarkor.ui.viewmodel.FileBrowserViewModel
 import com.bernaferrari.remarkor.ui.viewmodel.FileFilterMode
 import com.bernaferrari.remarkor.ui.viewmodel.MainViewModel
@@ -129,158 +127,123 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun MainScreen(
-    currentTab: Int = 0,
-    onNavigateToEditor: (String, Boolean) -> Unit,
-    onNavigateToSettings: () -> Unit,
-    viewModel: MainViewModel = koinViewModel(),
-    fileBrowserViewModel: FileBrowserViewModel = koinViewModel()
+internal fun MainScreenPhoneLayout(
+    isSelectionMode: Boolean,
+    selectedFiles: Set<Path>,
+    fileBrowserViewModel: FileBrowserViewModel,
+    notebookDirectory: String,
+    isGridView: Boolean,
+    currentFilterMode: FileFilterMode,
+    currentSortOrder: String,
+    onClearSelection: () -> Unit,
+    onSelectAll: () -> Unit,
+    onSetColorForSelected: () -> Unit,
+    onDeleteSelected: () -> Unit,
+    onToggleGridView: () -> Unit,
+    onOpenSettings: () -> Unit,
+    onFilterModeChange: (FileFilterMode) -> Unit,
+    onSortOrderChange: (String) -> Unit,
+    onNavigateToEditor: (String, Boolean) -> Unit
 ) {
-    val notebookDirectory by viewModel.notebookDirectory.collectAsState()
-
-    val isSelectionMode by fileBrowserViewModel.isSelectionMode.collectAsState()
-    val selectedFiles by fileBrowserViewModel.selectedFiles.collectAsState()
     val files by fileBrowserViewModel.files.collectAsState()
     val trashFiles by fileBrowserViewModel.trashFiles.collectAsState()
-    val noteMetadataByPath by fileBrowserViewModel.noteMetadataByPath.collectAsState()
+    var isSearchScreenOpen by rememberSaveable { mutableStateOf(false) }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
 
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var isGridView by remember { mutableStateOf(true) }
-    var showCreateFileDialog by remember { mutableStateOf(false) }
-    var showSelectionColorSheet by remember { mutableStateOf(false) }
-
-    // Adaptive layout info
-    val adaptiveInfo = rememberAdaptiveLayoutInfo()
-
-    // For dual pane: track selected file for detail view
-    var selectedFileForDetail by remember { mutableStateOf<String?>(null) }
-
-    // Left panel content for tablets
-    var leftPanelContent by remember { mutableStateOf(LeftPanelContent.FILE_BROWSER) }
-
-    val fileByPath = remember(files, trashFiles) {
-        (files + trashFiles).associateBy { it.path }
+    val searchableFiles = remember(files, trashFiles) {
+        (files + trashFiles).filter { !it.isDirectory }
     }
-    val nonDirectorySelectedColors = remember(selectedFiles, fileByPath, noteMetadataByPath) {
-        buildList<Int?> {
-            selectedFiles.forEach { path ->
-                val fileInfo = fileByPath[path]
-                if (fileInfo?.isDirectory != true) {
-                    // Keep nullable colors so "all default color" can be detected as a shared state.
-                    add(noteMetadataByPath[path.toString()]?.color)
+    val searchResults = remember(searchableFiles, searchQuery) {
+        val query = searchQuery.trim().lowercase()
+        if (query.isBlank()) {
+            searchableFiles
+                .sortedByDescending { it.lastModified }
+                .take(40)
+        } else {
+            searchableFiles
+                .mapNotNull { file ->
+                    val name = file.name.lowercase()
+                    val preview = file.preview.orEmpty().lowercase()
+                    val score = when {
+                        name.startsWith(query) -> 0
+                        name.contains(query) -> 1
+                        preview.contains(query) -> 2
+                        else -> return@mapNotNull null
+                    }
+                    score to file
                 }
-            }
+                .sortedWith(compareBy<Pair<Int, com.bernaferrari.remarkor.domain.repository.FileInfo>> { it.first }
+                    .thenByDescending { it.second.lastModified })
+                .map { it.second }
+                .take(80)
         }
     }
-    val (selectionSheetCurrentColor, selectionSheetShowCurrentSelection) =
-        remember(nonDirectorySelectedColors) {
-            if (nonDirectorySelectedColors.isEmpty()) {
-                null to false
-            } else {
-                val firstColor = nonDirectorySelectedColors.first()
-                val allSame = nonDirectorySelectedColors.all { it == firstColor }
-                if (allSame) {
-                    firstColor to true
-                } else {
-                    null to false
-                }
-            }
-        }
 
-    BackHandler(enabled = isSelectionMode) {
-        fileBrowserViewModel.clearSelection()
+    BackHandler(enabled = isSearchScreenOpen) {
+        searchQuery = ""
+        isSearchScreenOpen = false
     }
 
-    if (showDeleteDialog) {
-        com.bernaferrari.remarkor.ui.components.DeleteDialog(
-            count = selectedFiles.size,
-            onDismiss = { showDeleteDialog = false },
-            onConfirm = {
-                fileBrowserViewModel.deleteSelectedFiles()
-                showDeleteDialog = false
-            }
-        )
-    }
-
-    if (showCreateFileDialog) {
-        CreateFileDialog(
-            onDismiss = { showCreateFileDialog = false },
-            onConfirm = { fileName ->
-                val effectivePath = notebookDirectory.ifEmpty { null }
-                if (effectivePath != null) {
-                    fileBrowserViewModel.createNewFile(effectivePath.toPath(), fileName)
-                }
-                showCreateFileDialog = false
+    if (isSearchScreenOpen && !isSelectionMode) {
+        SearchScreen(
+            query = searchQuery,
+            results = searchResults,
+            onQueryChange = { searchQuery = it },
+            onClose = {
+                searchQuery = ""
+                isSearchScreenOpen = false
             },
-            suggestedName = "new_note.md"
-        )
-    }
-
-    if (showSelectionColorSheet) {
-        com.bernaferrari.remarkor.ui.components.ColorSelectionSheet(
-            currentColor = selectionSheetCurrentColor,
-            showCurrentSelection = selectionSheetShowCurrentSelection,
-            onColorSelected = { color ->
-                fileBrowserViewModel.setColorForSelectedFiles(color)
-                showSelectionColorSheet = false
-            },
-            onDismiss = { showSelectionColorSheet = false }
-        )
-    }
-
-    if (adaptiveInfo.showDualPane) {
-        // Tablet landscape: List-Detail layout with persistent left panel
-        val filterMode by fileBrowserViewModel.filterMode.collectAsState()
-        MainScreenListDetailLayout(
-            adaptiveInfo = adaptiveInfo,
-            isSelectionMode = isSelectionMode,
-            selectedFiles = selectedFiles,
-            fileBrowserViewModel = fileBrowserViewModel,
-            notebookDirectory = notebookDirectory,
-            isGridView = isGridView,
-            selectedFileForDetail = selectedFileForDetail,
-            leftPanelContent = leftPanelContent,
-            currentFilterMode = filterMode,
-            onFileSelected = { path ->
-                selectedFileForDetail = path
+            onOpenNote = { path ->
+                searchQuery = ""
+                isSearchScreenOpen = false
                 onNavigateToEditor(path, false)
-            },
-            onClearSelection = { fileBrowserViewModel.clearSelection() },
-            onSelectAll = { fileBrowserViewModel.toggleSelectAll() },
-            onSetColorForSelected = { showSelectionColorSheet = true },
-            onDeleteSelected = { showDeleteDialog = true },
-            onToggleGridView = { isGridView = !isGridView },
-            onFilterModeChange = { fileBrowserViewModel.setFilterMode(it) },
-            onNavigateToSettings = {
-                leftPanelContent = LeftPanelContent.SETTINGS
-            },
-            onNavigateToFileBrowser = {
-                leftPanelContent = LeftPanelContent.FILE_BROWSER
-            },
-            onNavigateToEditor = onNavigateToEditor
+            }
         )
-    } else {
-        // Phone: Standard Scaffold (no drawer)
-        val filterMode by fileBrowserViewModel.filterMode.collectAsState()
-        val sortOrder by fileBrowserViewModel.sortOrder.collectAsState()
+        return
+    }
 
-        MainScreenPhoneLayout(
-            isSelectionMode = isSelectionMode,
-            selectedFiles = selectedFiles,
-            fileBrowserViewModel = fileBrowserViewModel,
-            notebookDirectory = notebookDirectory,
-            isGridView = isGridView,
-            currentFilterMode = filterMode,
-            currentSortOrder = sortOrder,
-            onClearSelection = { fileBrowserViewModel.clearSelection() },
-            onSelectAll = { fileBrowserViewModel.toggleSelectAll() },
-            onSetColorForSelected = { showSelectionColorSheet = true },
-            onDeleteSelected = { showDeleteDialog = true },
-            onToggleGridView = { isGridView = !isGridView },
-            onOpenSettings = onNavigateToSettings,
-            onFilterModeChange = { fileBrowserViewModel.setFilterMode(it) },
-            onSortOrderChange = { fileBrowserViewModel.setSortOrder(it) },
-            onNavigateToEditor = onNavigateToEditor
-        )
+    Scaffold(
+        // Draw content behind the bottom system bar for a true edge-to-edge main surface.
+        contentWindowInsets = WindowInsets.statusBars,
+        topBar = {
+            if (isSelectionMode) {
+                SelectionTopBar(
+                    selectedCount = selectedFiles.size,
+                    currentFilterMode = currentFilterMode,
+                    onFilterModeChange = onFilterModeChange,
+                    onClearSelection = onClearSelection,
+                    onSelectAll = onSelectAll,
+                    onSetColor = onSetColorForSelected,
+                    onDelete = onDeleteSelected,
+                    showFilterChips = true
+                )
+            } else {
+                StandardTopBar(
+                    isGridView = isGridView,
+                    currentFilterMode = currentFilterMode,
+                    currentSortOrder = currentSortOrder,
+                    onFilterModeChange = onFilterModeChange,
+                    onSortOrderChange = onSortOrderChange,
+                    onToggleGridView = onToggleGridView,
+                    onOpenSettings = onOpenSettings,
+                    onOpenSearch = { isSearchScreenOpen = true }
+                )
+            }
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
+        ) {
+            FileBrowserContent(
+                initialPath = notebookDirectory.ifEmpty { null },
+                onNavigateToEditor = onNavigateToEditor,
+                onNavigateBack = { },
+                viewModel = fileBrowserViewModel,
+                isGridView = isGridView
+            )
+        }
     }
 }
