@@ -286,6 +286,7 @@ fun EditorScreen(
                 wordWrap = wordWrap,
                 surfaceColor = editorContentSurfaceColor,
                 noteAccentColor = noteColor?.let(::Color),
+                isFocusMode = isFocusMode,
                 editorFocusNonce = editorFocusNonce,
                 autoFocusOnStart = openKeyboardOnStart &&
                     !initialAutoFocusConsumed &&

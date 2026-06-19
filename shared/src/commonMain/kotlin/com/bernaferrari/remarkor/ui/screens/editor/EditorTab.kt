@@ -49,7 +49,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bernaferrari.remarkor.ui.components.FocusModeOverlay
 import com.bernaferrari.remarkor.ui.components.MarkdownVisualTransformation
+import com.bernaferrari.remarkor.ui.components.calculateParagraphAlpha
+import com.bernaferrari.remarkor.ui.components.getCurrentParagraphIndex
 import com.bernaferrari.remarkor.ui.components.SharedElementContainer
 import com.bernaferrari.remarkor.ui.components.SharedTransitionKeys
 import com.bernaferrari.remarkor.ui.components.resolveMarkdownColorPalette
@@ -65,6 +68,7 @@ internal fun EditorTab(
     wordWrap: Boolean,
     surfaceColor: Color,
     noteAccentColor: Color?,
+    isFocusMode: Boolean = false,
     focusRequestNonce: Int = 0,
     autoFocusOnStart: Boolean = false,
     onAutoFocusConsumed: () -> Unit = {},
@@ -95,13 +99,25 @@ internal fun EditorTab(
     val titleTextStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
     val lineNumberGutterWidth = 44.dp
     val editorLineHeight = (editorFontSize * editorLineHeightMultiplier).sp
-    val markdownTransform = remember(colorScheme, surfaceColor, editorFontSize, noteAccentColor) {
+    val currentLineIndex = remember(content.text, content.selection.start, isFocusMode) {
+        if (isFocusMode) getCurrentParagraphIndex(content.text, content.selection.start) else 0
+    }
+    val markdownTransform = remember(
+        colorScheme,
+        surfaceColor,
+        editorFontSize,
+        noteAccentColor,
+        isFocusMode,
+        currentLineIndex,
+    ) {
         MarkdownVisualTransformation(
             colorScheme = colorScheme,
             backgroundColor = surfaceColor,
             editorFontSize = editorFontSize,
             editorLineHeightMultiplier = editorLineHeightMultiplier,
-            accentColorOverride = noteAccentColor
+            accentColorOverride = noteAccentColor,
+            isFocusMode = isFocusMode,
+            currentLineIndex = currentLineIndex,
         )
     }
     var lineNumberMetadata by remember(showLineNumbers, content.text) {
@@ -130,6 +146,7 @@ internal fun EditorTab(
         }
     }
 
+    FocusModeOverlay(enabled = isFocusMode) {
     SharedElementContainer(
         key = SharedTransitionKeys.fileCard(filePath),
         isSource = false,
@@ -248,19 +265,24 @@ internal fun EditorTab(
                                 )
                                 .padding(end = MarkorTheme.spacing.small)
                         ) {
-                            lineNumberMetadata.forEach { line ->
+                            lineNumberMetadata.forEachIndexed { index, line ->
                                 val gutterLineHeightPx = if (line.lineHeightPx > 0f) {
                                     line.lineHeightPx
                                 } else {
                                     editorLineHeightPx
                                 }
                                 val gutterLineHeightDp = with(density) { gutterLineHeightPx.toDp() }
+                                val lineAlpha = if (isFocusMode && line.number != null) {
+                                    calculateParagraphAlpha(line.number - 1, currentLineIndex, true)
+                                } else {
+                                    1f
+                                }
                                 val numberLineStyle = editorTextStyle.copy(
                                     fontSize = editorFontSize.sp,
                                     color = if (line.number == null) {
                                         Color.Transparent
                                     } else {
-                                        markdownPalette.subtle
+                                        markdownPalette.subtle.copy(alpha = lineAlpha)
                                     },
                                     textAlign = TextAlign.End
                                 )
@@ -318,6 +340,7 @@ internal fun EditorTab(
                 }
             }
         }
+    }
     }
 }
 
