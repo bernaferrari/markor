@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppFunctionAppMetadata xmlns:appfn="http://schemas.android.com/apk/res-auto"
+    appfn:description="Provides tools for creating, listing, and searching markdown notes, and appending to the Quick Note scratchpad.
+Operational Patterns:
+  - Use 'listNotes' to discover existing notes in the notebook.
+  - Use 'searchNotes' to find notes by title or content before editing.
+  - Use 'createNote' to create a new markdown note with a title and optional content.
+  - Use 'appendToQuickNote' to quickly capture text in the scratchpad.
+Constraints:
+  - Note titles cannot be blank.
+  - Search queries cannot be blank.
+  - Notes are stored as markdown (.md) files in the user's notebook directory."
+    appfn:displayDescription="@string/app_function_app_display_description" />

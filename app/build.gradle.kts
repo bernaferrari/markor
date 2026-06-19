@@ -7,10 +7,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    compileSdk = 36
+    compileSdk = 37
 
     androidResources {
         generateLocaleConfig = true
@@ -21,7 +22,7 @@ android {
         versionName = "0.1"
         versionCode = 1
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
     }
 
     flavorDimensions += "default"
@@ -117,4 +118,12 @@ dependencies {
 
     implementation(libs.bundles.coroutines)
     implementation(libs.koin.android)
+
+    implementation(libs.androidx.appfunctions)
+    implementation(libs.androidx.appfunctions.service)
+    ksp(libs.androidx.appfunctions.compiler)
+}
+
+ksp {
+    arg("appfunctions:aggregateAppFunctions", "true")
 }

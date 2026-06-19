@@ -52,6 +52,28 @@ kotlin {
     }
 
     sourceSets {
+        // Workaround: CMP Resources does not wire generated sources when using the AGP 9
+        // androidLibrary plugin (com.android.kotlin.multiplatform.library).
+        // Track: https://youtrack.jetbrains.com/issue/CMP-7611
+        // When fixed, remove this block and rely on default compose.resources { generateResClass = auto }.
+        val composeGeneratedKotlin = layout.buildDirectory.dir("generated/compose/resourceGenerator/kotlin")
+        fun org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.addComposeGeneratedSources(vararg dirs: String) {
+            dirs.forEach { dir -> kotlin.srcDir(composeGeneratedKotlin.map { it.dir(dir) }) }
+        }
+
+        commonMain {
+            addComposeGeneratedSources(
+                "commonResClass",
+                "commonMainResourceAccessors",
+                "commonMainResourceCollectors",
+            )
+        }
+        androidMain { addComposeGeneratedSources("androidMainResourceCollectors") }
+        jvmMain { addComposeGeneratedSources("jvmMainResourceCollectors") }
+        iosMain { addComposeGeneratedSources("iosMainResourceCollectors") }
+        iosArm64Main { addComposeGeneratedSources("iosArm64MainResourceCollectors") }
+        iosSimulatorArm64Main { addComposeGeneratedSources("iosSimulatorArm64MainResourceCollectors") }
+
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
@@ -108,4 +130,10 @@ dependencies {
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+compose.resources {
+    // `auto` does not emit Res.kt with androidLibrary; see CMP-7611 above.
+    // Docs: https://kotlinlang.org/docs/multiplatform/compose-multiplatform-resources-usage.html
+    generateResClass = org.jetbrains.compose.resources.ResourcesExtension.ResourceClassGeneration.Always
 }
