@@ -3,7 +3,7 @@ package com.bernaferrari.remarkor.util
 import okio.Buffer
 import okio.FileSystem
 import okio.Path
-import okio.SYSTEM
+import com.bernaferrari.remarkor.util.platformFileSystem
 
 /**
  * Simple ZIP file writer that works across platforms.
@@ -11,7 +11,7 @@ import okio.SYSTEM
  */
 class ZipWriter(
     private val outputPath: Path,
-    private val fileSystem: FileSystem = FileSystem.Companion.SYSTEM
+    private val fileSystem: FileSystem = platformFileSystem
 ) {
     private val entries = mutableListOf<ZipEntry>()
 

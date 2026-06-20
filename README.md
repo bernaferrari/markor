@@ -10,20 +10,27 @@
 </p>
 
 <p align="center">
-  <a href="https://kotlinlang.org/"><img src="https://img.shields.io/badge/Kotlin-2.3.10-blue.svg?logo=kotlin" alt="Kotlin 2.1.0"></a>
-  <a href="https://www.jetbrains.com/lp/compose-multiplatform/"><img src="https://img.shields.io/badge/Compose%20Multiplatform-1.11.0-orange.svg?logo=jetpackcompose" alt="Compose Multiplatform 1.7.1"></a>
+  <a href="https://bernardoferrari.github.io/markor/"><strong>Try the Web Demo</strong></a>
+</p>
+
+<p align="center">
+  <a href="https://kotlinlang.org/"><img src="https://img.shields.io/badge/Kotlin-2.4.0-blue.svg?logo=kotlin" alt="Kotlin 2.4.0"></a>
+  <a href="https://www.jetbrains.com/lp/compose-multiplatform/"><img src="https://img.shields.io/badge/Compose%20Multiplatform-1.12.0--alpha02-orange.svg?logo=jetpackcompose" alt="Compose Multiplatform"></a>
   <a href="LICENSE.txt"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-lightgrey.svg" alt="Platforms"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-lightgrey.svg" alt="Platforms"></a>
 </p>
 
 ---
 
-Re-Markor is a modern, cross-platform port of the original [Markor](https://github.com/gsantner/markor) project. It preserves the core philosophy—plain text files, offline-first workflow, and no account lock-in—while leveraging **Kotlin Multiplatform (KMP)** to bring a unified experience to Android and iOS.
+Re-Markor is a modern, cross-platform port of the original [Markor](https://github.com/gsantner/markor) project. It preserves the core philosophy—plain text files, offline-first workflow, and no account lock-in—while leveraging **Kotlin Multiplatform (KMP)** to bring a unified experience to Android, iOS, and the web.
+
+**Try it in your browser:** [bernardoferrari.github.io/markor](https://bernardoferrari.github.io/markor/)
 
 ## 🚀 Key Features
 
 - 📝 **Markdown-First:** Fast editing with live preview and syntax highlighting.
-- 🌍 **Multiplatform:** Shared business logic and UI across Android, iOS, and JVM.
+- 🌍 **Multiplatform:** Shared business logic and UI across Android, iOS, JVM, and Web (Wasm).
+- 🌐 **Web Demo:** Run Markor in the browser via Compose Multiplatform for Web.
 - 📂 **Local-First:** Your data stays on your device in plain text files.
 - 🏷️ **Smart Organization:** Pinned notes, archive, labels, trash, and recents.
 - 🎨 **Modern UX:** A complete redesign using Material 3 and Compose Multiplatform.
@@ -54,6 +61,7 @@ The project follows a standard KMP layout:
 - `shared/`: The heart of the app. Contains common UI (Compose), business logic, and data layers (Room, DataStore).
 - `app/`: Android-specific entry point and resources.
 - `iosApp/`: iOS-specific Xcode project and Swift entry point.
+- `webApp/`: Wasm browser entry point for the GitHub Pages demo.
 - `metadata/`: App store metadata and screenshots.
 
 ## 🏁 Getting Started
@@ -80,6 +88,16 @@ The project follows a standard KMP layout:
 Alternatively, via CLI:
 ```bash
 ./gradlew :shared:embedAndSignAppleFrameworkForXcode
+```
+
+#### Web (local dev server)
+```bash
+./gradlew :webApp:wasmJsBrowserDevelopmentRun
+```
+
+Production build:
+```bash
+./gradlew :webApp:wasmJsBrowserDistribution
 ```
 
 ## 📜 Credits & License

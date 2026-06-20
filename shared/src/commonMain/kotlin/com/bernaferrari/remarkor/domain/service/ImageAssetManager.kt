@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import okio.FileSystem
 import okio.IOException
 import okio.Path
-import okio.SYSTEM
+import com.bernaferrari.remarkor.util.platformFileSystem
 import org.koin.core.annotation.Single
 
 /**
@@ -18,7 +18,7 @@ import org.koin.core.annotation.Single
 @Single(binds = [IAssetRepository::class])
 class ImageAssetManager : IAssetRepository {
 
-    private val fileSystem = FileSystem.Companion.SYSTEM
+    private val fileSystem = platformFileSystem
 
     // Supported image extensions
     private val imageExtensions = setOf("jpg", "jpeg", "png", "gif", "webp", "svg", "bmp")

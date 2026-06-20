@@ -2,7 +2,8 @@ package com.bernaferrari.remarkor.util
 
 import okio.FileSystem
 import okio.Path
-import okio.SYSTEM
+import com.bernaferrari.remarkor.util.platformFileSystem
+
 
 /**
  * Extracts the first image URL from markdown content.
@@ -39,7 +40,7 @@ fun extractFirstImageUrl(content: String): String? {
  */
 fun extractFirstImageFromFile(
     filePath: Path,
-    fileSystem: FileSystem = FileSystem.SYSTEM
+    fileSystem: FileSystem = platformFileSystem
 ): String? {
     return try {
         val content = fileSystem.read(filePath) { readUtf8() }

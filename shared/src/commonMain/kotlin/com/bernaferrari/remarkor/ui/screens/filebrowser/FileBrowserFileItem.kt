@@ -128,9 +128,7 @@ import markor.shared.generated.resources.notebook_is_empty_description
 import markor.shared.generated.resources.restore
 import markor.shared.generated.resources.trash_is_empty
 import markor.shared.generated.resources.trash_is_empty_description
-import okio.FileSystem
 import okio.Path.Companion.toPath
-import okio.SYSTEM
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel

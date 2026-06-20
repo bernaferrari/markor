@@ -13,7 +13,7 @@ import okio.FileSystem
 import okio.IOException
 import okio.Path
 import okio.Path.Companion.toPath
-import okio.SYSTEM
+import com.bernaferrari.remarkor.util.platformFileSystem
 import org.koin.core.annotation.Single
 
 @Single(binds = [IDocumentRepository::class])
@@ -23,7 +23,7 @@ class DocumentRepository(
 ) : IDocumentRepository {
 
     private val documentCache = MutableStateFlow<Map<String, Document>>(emptyMap())
-    private val fileSystem = FileSystem.Companion.SYSTEM
+    private val fileSystem = platformFileSystem
 
     override suspend fun loadDocument(path: Path): Document? = withContext(Dispatchers.Default) {
         try {

@@ -1,3 +1,5 @@
+@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
@@ -52,7 +54,15 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser()
+    }
+
     sourceSets {
+        val nativeStorageMain by creating {
+            dependsOn(commonMain.get())
+        }
+
         // Workaround: CMP Resources does not wire generated sources when using the AGP 9
         // androidLibrary plugin (com.android.kotlin.multiplatform.library).
         // Track: https://youtrack.jetbrains.com/issue/CMP-7611
@@ -74,15 +84,14 @@ kotlin {
         iosMain { addComposeGeneratedSources("iosMainResourceCollectors") }
         iosArm64Main { addComposeGeneratedSources("iosArm64MainResourceCollectors") }
         iosSimulatorArm64Main { addComposeGeneratedSources("iosSimulatorArm64MainResourceCollectors") }
+        wasmJsMain { addComposeGeneratedSources("wasmJsMainResourceCollectors") }
 
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
+
             implementation(libs.okio)
-            implementation(libs.androidx.datastore.preferences)
-            implementation(libs.androidx.room.runtime)
-            implementation(libs.androidx.sqlite.bundled)
+
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -105,16 +114,35 @@ kotlin {
             implementation(libs.junit)
             implementation(libs.kotlinx.coroutines.test)
         }
+        nativeStorageMain.dependencies {
+            implementation(libs.androidx.datastore.preferences)
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.sqlite.bundled)
+        }
+
+        androidMain {
+            dependsOn(nativeStorageMain)
+        }
         androidMain.dependencies {
             implementation(libs.koin.android)
         }
 
+        jvmMain {
+            dependsOn(nativeStorageMain)
+        }
+
         // iOS-specific source sets
+        iosMain {
+            dependsOn(nativeStorageMain)
+        }
         iosMain.dependencies {
             // iOS-specific dependencies can be added here
         }
         iosTest.dependencies {
             implementation(kotlin("test"))
+        }
+        wasmJsMain.dependencies {
+            implementation("com.squareup.okio:okio-fakefilesystem:${libs.versions.okio.get()}")
         }
     }
 
@@ -129,6 +157,7 @@ dependencies {
     add("kspJvm", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+
 }
 
 room {
