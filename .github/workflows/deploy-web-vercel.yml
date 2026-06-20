@@ -32,7 +32,7 @@ jobs:
         run: ./scripts/verify-web-deploy.sh --ci
 
       - name: Install Vercel CLI
-        run: npm install -g vercel@41
+        run: npm install -g vercel@latest
 
       - name: Deploy production
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
