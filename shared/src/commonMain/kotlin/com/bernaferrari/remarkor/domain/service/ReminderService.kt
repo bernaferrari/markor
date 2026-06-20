@@ -1,7 +1,5 @@
 package com.bernaferrari.remarkor.domain.service
 
-import kotlinx.datetime.LocalDateTime
-
 /**
  * Reminder data class.
  */
@@ -10,7 +8,7 @@ data class Reminder(
     val title: String,
     val message: String,
     val filePath: String,
-    val triggerAt: LocalDateTime,
+    val triggerAtEpochMillis: Long,
     val isRepeating: Boolean = false,
     val repeatInterval: ReminderInterval = ReminderInterval.NONE,
     val isEnabled: Boolean = true

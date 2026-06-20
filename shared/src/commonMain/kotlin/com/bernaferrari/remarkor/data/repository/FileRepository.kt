@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import com.bernaferrari.remarkor.util.formatTrashTimestamp
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.directory_does_not_exist_with_arg
 import markor.shared.generated.resources.failed_to_list_files_with_arg
@@ -20,7 +19,7 @@ import okio.FileSystem
 import okio.IOException
 import okio.Path
 import okio.Path.Companion.toPath
-import okio.SYSTEM
+import com.bernaferrari.remarkor.util.platformFileSystem
 import org.jetbrains.compose.resources.getString
 import org.koin.core.annotation.Single
 
@@ -29,7 +28,7 @@ class FileRepository(
     private val settingsRepository: ISettingsRepository,
 ) : IFileRepository {
 
-    private val fileSystem = FileSystem.Companion.SYSTEM
+    private val fileSystem = platformFileSystem
 
     private val trashDirectoryName = ".trash"
 
@@ -258,16 +257,7 @@ class FileRepository(
         }
     }
 
-    private fun formatTimestampForTrash(epochMillis: Long): String {
-        val datetime = kotlin.time.Instant.fromEpochMilliseconds(epochMillis)
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-        return "${datetime.year}" +
-                "${(datetime.month.ordinal + 1).toString().padStart(2, '0')}" +
-                "${datetime.day.toString().padStart(2, '0')}_" +
-                "${datetime.hour.toString().padStart(2, '0')}" +
-                "${datetime.minute.toString().padStart(2, '0')}" +
-                "${datetime.second.toString().padStart(2, '0')}"
-    }
+    private fun formatTimestampForTrash(epochMillis: Long): String = formatTrashTimestamp(epochMillis)
 
     override suspend fun restoreFromTrash(path: Path, originalPath: Path): Boolean =
         withContext(Dispatchers.Default) {

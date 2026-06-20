@@ -134,7 +134,7 @@ import markor.shared.generated.resources.trash_is_empty
 import markor.shared.generated.resources.trash_is_empty_description
 import okio.FileSystem
 import okio.Path.Companion.toPath
-import okio.SYSTEM
+import com.bernaferrari.remarkor.util.platformFileSystem
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -181,7 +181,7 @@ fun FileBrowserContent(
         if (selectedFileForAction != null && !selectedFileForAction!!.isDirectory) {
             hasAssets = assetManager.hasAssetsFolder(selectedFileForAction!!.path)
             fileContent = try {
-                FileSystem.Companion.SYSTEM.read(selectedFileForAction!!.path) { readUtf8() }
+                platformFileSystem.read(selectedFileForAction!!.path) { readUtf8() }
             } catch (e: Exception) {
                 ""
             }

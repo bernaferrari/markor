@@ -38,13 +38,12 @@ import androidx.compose.ui.window.Dialog
 import com.bernaferrari.remarkor.domain.service.ShareService
 import com.bernaferrari.remarkor.util.nowMillis
 import kotlinx.coroutines.launch
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import com.bernaferrari.remarkor.util.formatExportTimestamp
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.export
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import kotlin.time.Instant
+
 
 data class ExportOption(
     val title: String,
@@ -289,15 +288,4 @@ fun generateSimpleHtml(title: String, markdown: String): String {
 </body>
 </html>
 """
-}
-
-/**
- * Format timestamp for display (multiplatform-compatible)
- */
-fun formatExportTimestamp(): String {
-    val now = Instant.fromEpochMilliseconds(nowMillis())
-        .toLocalDateTime(TimeZone.currentSystemDefault())
-    return "${now.month.name.take(3)} ${now.day}, ${now.year} at ${
-        now.hour.toString().padStart(2, '0')
-    }:${now.minute.toString().padStart(2, '0')}"
 }
