@@ -31,17 +31,26 @@ if [[ ! -f "$DIST/index.html" || ! -f "$DIST/markor.js" ]]; then
   exit 1
 fi
 
-: "${VERCEL_TOKEN:?Set VERCEL_TOKEN (create at https://vercel.com/account/tokens)}"
+PROJECT_JSON="$ROOT/webApp/.vercel/project.json"
+if [[ -z "${VERCEL_ORG_ID:-}" && -f "$PROJECT_JSON" ]]; then
+  VERCEL_ORG_ID="$(python3 -c "import json; print(json.load(open('$PROJECT_JSON'))['orgId'])")"
+  export VERCEL_ORG_ID
+fi
+if [[ -z "${VERCEL_PROJECT_ID:-}" && -f "$PROJECT_JSON" ]]; then
+  VERCEL_PROJECT_ID="$(python3 -c "import json; print(json.load(open('$PROJECT_JSON'))['projectId'])")"
+  export VERCEL_PROJECT_ID
+fi
+
+if [[ -z "${VERCEL_TOKEN:-}" && -f "$HOME/Library/Application Support/com.vercel.cli/auth.json" ]]; then
+  VERCEL_TOKEN="$(python3 -c "import json; print(json.load(open('$HOME/Library/Application Support/com.vercel.cli/auth.json'))['token'])")"
+  export VERCEL_TOKEN
+fi
+
+: "${VERCEL_TOKEN:?Set VERCEL_TOKEN (vercel login, or https://vercel.com/account/tokens)}"
 
 cd "$DIST"
 
 args=(deploy --yes --token "$VERCEL_TOKEN")
-if [[ -n "${VERCEL_ORG_ID:-}" ]]; then
-  export VERCEL_ORG_ID
-fi
-if [[ -n "${VERCEL_PROJECT_ID:-}" ]]; then
-  export VERCEL_PROJECT_ID
-fi
 if [[ "$PREVIEW" == false ]]; then
   args+=(--prod)
 fi

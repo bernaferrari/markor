@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://bernardoferrari.github.io/markor/"><strong>Try the Web Demo</strong></a>
+  <a href="https://markor-five.vercel.app/"><strong>Try the Web Demo</strong></a>
 </p>
 
 <p align="center">
@@ -24,7 +24,7 @@
 
 Re-Markor is a modern, cross-platform port of the original [Markor](https://github.com/gsantner/markor) project. It preserves the core philosophy—plain text files, offline-first workflow, and no account lock-in—while leveraging **Kotlin Multiplatform (KMP)** to bring a unified experience to Android, iOS, and the web.
 
-**Try it in your browser:** [bernardoferrari.github.io/markor](https://bernardoferrari.github.io/markor/)
+**Try it in your browser:** [markor-five.vercel.app](https://markor-five.vercel.app/)
 
 ## 🚀 Key Features
 
