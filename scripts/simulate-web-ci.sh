@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Local dry-run of the Deploy Web to Vercel GitHub Action.
+# Runs the same build/verify job that CI executes before deploy.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+echo "==> Simulating GitHub Actions job: verify"
+./scripts/verify-web-deploy.sh --ci
+
+if command -v act >/dev/null 2>&1; then
+  echo ""
+  echo "==> act is installed — running workflow verify job in Docker"
+  act push \
+    -W .github/workflows/deploy-web-vercel.yml \
+    -j verify \
+    --container-architecture linux/amd64
+else
+  echo ""
+  echo "Tip: install act to run the workflow in Docker:"
+  echo "  brew install act"
+  echo "  act push -W .github/workflows/deploy-web-vercel.yml -j verify"
+fi
+
+echo ""
+echo "To deploy locally after linking a Vercel project:"
+echo "  VERCEL_TOKEN=... VERCEL_ORG_ID=... VERCEL_PROJECT_ID=... ./scripts/deploy-web-vercel.sh"
+echo "To preview with Vercel dev server:"
+echo "  ./scripts/verify-web-deploy.sh --serve"
