@@ -33,6 +33,7 @@ import org.koin.compose.koinInject
 fun AppContent(
     systemInternalFilesDir: String,
     onExit: () -> Unit,
+    initialFilePath: String? = null,
     introViewModel: com.bernaferrari.remarkor.ui.viewmodel.IntroViewModel = org.koin.compose.viewmodel.koinViewModel()
 ) {
     val isFirstRun by produceState<Boolean?>(initialValue = null, introViewModel) {
@@ -64,7 +65,11 @@ fun AppContent(
                 }
 
                 false -> {
-                    val backstack = remember { mutableStateListOf<Screen>(Screen.Notebook) }
+                    val backstack = remember(initialFilePath) {
+                        mutableStateListOf<Screen>(
+                            initialFilePath?.let { Screen.Editor(it) } ?: Screen.Notebook
+                        )
+                    }
                     val navigator = remember(backstack) {
                         MarkorNavigator(backstack, onExitWhenEmpty = onExit)
                     }

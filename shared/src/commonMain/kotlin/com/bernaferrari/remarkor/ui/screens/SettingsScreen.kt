@@ -91,6 +91,8 @@ import com.bernaferrari.remarkor.ui.components.rememberHapticHelper
 import com.bernaferrari.remarkor.ui.components.supportsSharedStorageMode
 import com.bernaferrari.remarkor.ui.theme.MarkorTheme
 import com.bernaferrari.remarkor.ui.theme.ThemePaletteOption
+import com.bernaferrari.remarkor.ui.theme.resolveThemePalette
+import com.bernaferrari.remarkor.ui.theme.themeSwatchOptions
 import com.bernaferrari.remarkor.ui.theme.dynamicColorScheme
 import com.bernaferrari.remarkor.ui.viewmodel.SettingsViewModel
 import com.bernaferrari.remarkor.ui.viewmodel.ThemeModeOption
@@ -103,6 +105,7 @@ import markor.shared.generated.resources.auto_format
 import markor.shared.generated.resources.back
 import markor.shared.generated.resources.blue
 import markor.shared.generated.resources.close
+import markor.shared.generated.resources.cyan
 import markor.shared.generated.resources.dark
 import markor.shared.generated.resources.display_line_numbers
 import markor.shared.generated.resources.dynamic
@@ -737,19 +740,7 @@ private fun ThemeColorSettingItem(
 ) {
     val hapticHelper = rememberHapticHelper()
 
-    val paletteChoices = listOf(
-        ThemePaletteOption.DYNAMIC,
-        ThemePaletteOption.BLUE,
-        ThemePaletteOption.PURPLE,
-        ThemePaletteOption.INDIGO,
-        ThemePaletteOption.TEAL,
-        ThemePaletteOption.GREEN,
-        ThemePaletteOption.LIME,
-        ThemePaletteOption.AMBER,
-        ThemePaletteOption.ORANGE,
-        ThemePaletteOption.RED,
-        ThemePaletteOption.PINK
-    )
+    val displayPalette = resolveThemePalette(selectedPalette)
     val dynamicColor = dynamicColorScheme(isSystemInDarkTheme())?.primary
         ?: MaterialTheme.colorScheme.primary
 
@@ -759,12 +750,12 @@ private fun ThemeColorSettingItem(
             horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterHorizontally),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            paletteChoices.forEach { choice ->
+            themeSwatchOptions().forEach { choice ->
                 ThemeSwatch(
                     theme = choice.token,
                     seedColor = choice.seedColor,
                     isDynamic = choice == ThemePaletteOption.DYNAMIC,
-                    isSelected = selectedPalette == choice,
+                    isSelected = displayPalette == choice,
                     isEnabled = true,
                     dynamicColor = if (choice == ThemePaletteOption.DYNAMIC) dynamicColor else MaterialTheme.colorScheme.primary,
                     onClick = {
@@ -783,6 +774,7 @@ private fun ThemeColorSettingItem(
                             ThemePaletteOption.AMBER -> Res.string.amber
                             ThemePaletteOption.GREEN -> Res.string.green
                             ThemePaletteOption.TEAL -> Res.string.teal
+                            ThemePaletteOption.CYAN -> Res.string.cyan
                             ThemePaletteOption.PINK -> Res.string.pink
                             ThemePaletteOption.INDIGO -> Res.string.indigo
                             ThemePaletteOption.LIME -> Res.string.lime

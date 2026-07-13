@@ -160,7 +160,7 @@ dependencies {
 
 }
 
-room {
+room3 {
     schemaDirectory("$projectDir/schemas")
 }
 

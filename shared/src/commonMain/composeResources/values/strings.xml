@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Markor</string>
+    <string name="app_name">Re-Markor</string>
     <string name="back">Back</string>
     <string name="settings">Settings</string>
     <string name="appearance">Appearance</string>
@@ -58,6 +58,7 @@
     <string name="purple">Purple</string>
     <string name="green">Green</string>
     <string name="teal">Teal</string>
+    <string name="cyan">Cyan</string>
     <string name="pink">Pink</string>
     <string name="indigo">Indigo</string>
     <string name="lime">Lime</string>

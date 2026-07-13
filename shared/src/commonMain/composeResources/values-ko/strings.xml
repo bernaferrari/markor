@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Markor</string>
+    <string name="app_name">Re-Markor</string>
     <string name="back">뒤로</string>
     <string name="settings">설정</string>
     <string name="appearance">모양</string>

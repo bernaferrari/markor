@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.bernaferrari.remarkor.domain.repository.ISettingsRepository
 import com.bernaferrari.remarkor.domain.repository.IFileRepository
 import com.bernaferrari.remarkor.ui.theme.ThemePaletteOption
+import com.bernaferrari.remarkor.ui.theme.resolveThemePalette
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -167,6 +168,6 @@ class SettingsViewModel(
             }
         }
 
-        return palette to mode
+        return resolveThemePalette(palette) to mode
     }
 }

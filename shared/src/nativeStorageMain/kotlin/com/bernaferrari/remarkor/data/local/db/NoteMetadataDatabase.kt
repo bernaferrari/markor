@@ -1,9 +1,9 @@
 package com.bernaferrari.remarkor.data.local.db
 
-import androidx.room.ConstructedBy
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.RoomDatabaseConstructor
+import androidx.room3.ConstructedBy
+import androidx.room3.Database
+import androidx.room3.RoomDatabase
+import androidx.room3.RoomDatabaseConstructor
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.coroutines.Dispatchers
 

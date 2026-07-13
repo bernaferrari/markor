@@ -1,12 +1,12 @@
 package com.bernaferrari.remarkor.data.local.db
 
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.Junction
-import androidx.room.PrimaryKey
-import androidx.room.Relation
+import androidx.room3.ColumnInfo
+import androidx.room3.Embedded
+import androidx.room3.Entity
+import androidx.room3.Index
+import androidx.room3.Junction
+import androidx.room3.PrimaryKey
+import androidx.room3.Relation
 
 @Entity(
     tableName = "notes",
@@ -53,12 +53,12 @@ data class NoteWithLabels(
     @Embedded
     val note: NoteEntity,
     @Relation(
-        parentColumn = "id",
-        entityColumn = "id",
+        parentColumns = ["id"],
+        entityColumns = ["id"],
         associateBy = Junction(
             value = NoteLabelCrossRef::class,
-            parentColumn = "noteId",
-            entityColumn = "labelId"
+            parentColumns = ["noteId"],
+            entityColumns = ["labelId"]
         )
     )
     val labels: List<LabelEntity>
