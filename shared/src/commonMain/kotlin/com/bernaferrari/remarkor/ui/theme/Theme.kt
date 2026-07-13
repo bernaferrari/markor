@@ -1,17 +1,32 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 package com.bernaferrari.remarkor.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import com.materialkolor.PaletteStyle
+import com.materialkolor.dynamicColorScheme
+import com.materialkolor.dynamiccolor.ColorSpec
 import kotlinx.coroutines.flow.Flow
-import com.materialkolor.dynamicColorScheme as kolorDynamicColorScheme
+
+private val BlueSeedColor = Color(0xFF0D73F6)
+private val RedSeedColor = Color(0xFFDF5353)
+private val OrangeSeedColor = Color(0xFFED7F2A)
+private val PurpleSeedColor = Color(0xFF8E4BFF)
+private val GreenSeedColor = Color(0xFF30B67A)
+private val AmberSeedColor = Color(0xFFFFB84D)
+private val TealSeedColor = Color(0xFF17A6A6)
+private val CyanSeedColor = Color(0xFF00BCD4)
+private val PinkSeedColor = Color(0xFFEE5588)
+private val IndigoSeedColor = Color(0xFF5C6BC0)
+private val LimeSeedColor = Color(0xFF9CBF37)
 
 enum class ThemePaletteOption(val token: String, val seedColor: Color?) {
     DYNAMIC("markor", null),
@@ -22,6 +37,7 @@ enum class ThemePaletteOption(val token: String, val seedColor: Color?) {
     GREEN("green", GreenSeedColor),
     AMBER("amber", AmberSeedColor),
     TEAL("teal", TealSeedColor),
+    CYAN("cyan", CyanSeedColor),
     PINK("pink", PinkSeedColor),
     INDIGO("indigo", IndigoSeedColor),
     LIME("lime", LimeSeedColor);
@@ -35,7 +51,8 @@ enum class ThemePaletteOption(val token: String, val seedColor: Color?) {
             "purple" -> PURPLE
             "green" -> GREEN
             "amber" -> AMBER
-            "teal", "cyan" -> TEAL
+            "teal" -> TEAL
+            "cyan" -> CYAN
             "pink" -> PINK
             "indigo" -> INDIGO
             "lime" -> LIME
@@ -44,13 +61,45 @@ enum class ThemePaletteOption(val token: String, val seedColor: Color?) {
     }
 }
 
+/** Settings swatches ordered warm → cool by hue. */
+val ThemeSwatchOptions: List<ThemePaletteOption> =
+    listOf(
+        ThemePaletteOption.DYNAMIC,
+        ThemePaletteOption.RED,
+        ThemePaletteOption.ORANGE,
+        ThemePaletteOption.AMBER,
+        ThemePaletteOption.LIME,
+        ThemePaletteOption.GREEN,
+        ThemePaletteOption.TEAL,
+        ThemePaletteOption.CYAN,
+        ThemePaletteOption.BLUE,
+        ThemePaletteOption.INDIGO,
+        ThemePaletteOption.PURPLE,
+        ThemePaletteOption.PINK,
+    )
+
+/** Swatches visible on the current platform (dynamic is Android-only). */
+fun themeSwatchOptions(): List<ThemePaletteOption> =
+    if (supportsDynamicTheme()) {
+        ThemeSwatchOptions
+    } else {
+        ThemeSwatchOptions.filter { it != ThemePaletteOption.DYNAMIC }
+    }
+
+fun resolveThemePalette(palette: ThemePaletteOption): ThemePaletteOption =
+    if (palette == ThemePaletteOption.DYNAMIC && !supportsDynamicTheme()) {
+        ThemePaletteOption.TEAL
+    } else {
+        palette
+    }
+
 /**
  * Theme mode options.
  */
 enum class ThemeMode {
-    SYSTEM,  // Follow system setting
-    LIGHT,   // Always light
-    DARK;    // Always dark
+    SYSTEM,
+    LIGHT,
+    DARK;
 
     companion object {
         fun fromString(value: String): ThemeMode {
@@ -65,7 +114,7 @@ enum class ThemeMode {
 
 private data class ThemeSelection(
     val palette: ThemePaletteOption,
-    val mode: ThemeMode
+    val mode: ThemeMode,
 )
 
 private fun parseThemeSelection(rawValue: String): ThemeSelection {
@@ -90,116 +139,30 @@ private fun parseThemeSelection(rawValue: String): ThemeSelection {
         }
     }
 
-    return ThemeSelection(palette = palette, mode = mode)
+    return ThemeSelection(
+        palette = resolveThemePalette(palette),
+        mode = mode,
+    )
 }
 
-private val DarkColorScheme = darkColorScheme(
-    primary = md_theme_dark_primary,
-    onPrimary = md_theme_dark_onPrimary,
-    primaryContainer = md_theme_dark_primaryContainer,
-    onPrimaryContainer = md_theme_dark_onPrimaryContainer,
-    secondary = md_theme_dark_secondary,
-    onSecondary = md_theme_dark_onSecondary,
-    secondaryContainer = md_theme_dark_secondaryContainer,
-    onSecondaryContainer = md_theme_dark_onSecondaryContainer,
-    tertiary = md_theme_dark_tertiary,
-    onTertiary = md_theme_dark_onTertiary,
-    tertiaryContainer = md_theme_dark_tertiaryContainer,
-    onTertiaryContainer = md_theme_dark_onTertiaryContainer,
-    error = md_theme_dark_error,
-    onError = md_theme_dark_onError,
-    errorContainer = md_theme_dark_errorContainer,
-    onErrorContainer = md_theme_dark_onErrorContainer,
-    background = md_theme_dark_background,
-    onBackground = md_theme_dark_onBackground,
-    surface = md_theme_dark_surface,
-    onSurface = md_theme_dark_onSurface,
-    surfaceVariant = md_theme_dark_surfaceVariant,
-    onSurfaceVariant = md_theme_dark_onSurfaceVariant,
-    surfaceContainerLowest = md_theme_dark_surfaceContainerLowest,
-    surfaceContainerLow = md_theme_dark_surfaceContainerLow,
-    surfaceContainer = md_theme_dark_surfaceContainer,
-    surfaceContainerHigh = md_theme_dark_surfaceContainerHigh,
-    surfaceContainerHighest = md_theme_dark_surfaceContainerHighest,
-    inverseSurface = md_theme_dark_inverseSurface,
-    inverseOnSurface = md_theme_dark_inverseOnSurface,
-    inversePrimary = md_theme_dark_inversePrimary,
-    outline = md_theme_dark_outline,
-    outlineVariant = md_theme_dark_outlineVariant,
-    scrim = md_theme_dark_scrim
-)
+private fun seedColorFor(palette: ThemePaletteOption): Color =
+    when (palette) {
+        ThemePaletteOption.DYNAMIC -> Seed
+        else -> requireNotNull(palette.seedColor)
+    }
 
-private val LightColorScheme = lightColorScheme(
-    primary = md_theme_light_primary,
-    onPrimary = md_theme_light_onPrimary,
-    primaryContainer = md_theme_light_primaryContainer,
-    onPrimaryContainer = md_theme_light_onPrimaryContainer,
-    secondary = md_theme_light_secondary,
-    onSecondary = md_theme_light_onSecondary,
-    secondaryContainer = md_theme_light_secondaryContainer,
-    onSecondaryContainer = md_theme_light_onSecondaryContainer,
-    tertiary = md_theme_light_tertiary,
-    onTertiary = md_theme_light_onTertiary,
-    tertiaryContainer = md_theme_light_tertiaryContainer,
-    onTertiaryContainer = md_theme_light_onTertiaryContainer,
-    error = md_theme_light_error,
-    onError = md_theme_light_onError,
-    errorContainer = md_theme_light_errorContainer,
-    onErrorContainer = md_theme_light_onErrorContainer,
-    background = md_theme_light_background,
-    onBackground = md_theme_light_onBackground,
-    surface = md_theme_light_surface,
-    onSurface = md_theme_light_onSurface,
-    surfaceVariant = md_theme_light_surfaceVariant,
-    onSurfaceVariant = md_theme_light_onSurfaceVariant,
-    surfaceContainerLowest = md_theme_light_surfaceContainerLowest,
-    surfaceContainerLow = md_theme_light_surfaceContainerLow,
-    surfaceContainer = md_theme_light_surfaceContainer,
-    surfaceContainerHigh = md_theme_light_surfaceContainerHigh,
-    surfaceContainerHighest = md_theme_light_surfaceContainerHighest,
-    inverseSurface = md_theme_light_inverseSurface,
-    inverseOnSurface = md_theme_light_inverseOnSurface,
-    inversePrimary = md_theme_light_inversePrimary,
-    outline = md_theme_light_outline,
-    outlineVariant = md_theme_light_outlineVariant,
-    scrim = md_theme_light_scrim
-)
-
-private val BlueSeedColor = Color(0xFF0D73F6)
-private val RedSeedColor = Color(0xFFDF5353)
-private val OrangeSeedColor = Color(0xFFED7F2A)
-private val PurpleSeedColor = Color(0xFF8E4BFF)
-private val GreenSeedColor = Color(0xFF30B67A)
-private val AmberSeedColor = Color(0xFFFFB84D)
-private val TealSeedColor = Color(0xFF17A6A6)
-private val PinkSeedColor = Color(0xFFEE5588)
-private val IndigoSeedColor = Color(0xFF5C6BC0)
-private val LimeSeedColor = Color(0xFF9CBF37)
-
-/**
- * Markor Material 3 Expressive Theme with dynamic color and motion support.
- *
- * Uses MaterialExpressiveTheme with expressive MotionScheme for enhanced
- * spring-based animations and micro-interactions following M3 Expressive guidelines.
- *
- * @param darkTheme Whether to use dark theme colors (overrides themeMode if provided)
- * @param themeMode Flow of the theme mode setting (System, Light, Dark)
- * @param dynamicColor Whether to use dynamic colors from the system wallpaper (Android 12+)
- * @param content The composable content to theme
- */
 @Composable
 fun MarkorTheme(
     darkTheme: Boolean? = null,
     appTheme: Flow<String>? = null,
     themeMode: Flow<String>? = null,
     dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val systemDarkTheme = isSystemInDarkTheme()
     val appThemeValue = appTheme?.collectAsState(initial = "markor")?.value
     val selection = appThemeValue?.let(::parseThemeSelection)
 
-    // Determine dark theme based on settings or parameter
     val effectiveDarkTheme = when {
         darkTheme != null -> darkTheme
         selection != null -> {
@@ -222,39 +185,31 @@ fun MarkorTheme(
         else -> systemDarkTheme
     }
 
-    val palette = selection?.palette ?: ThemePaletteOption.DYNAMIC
-    val kolorSeed = when (palette) {
-        ThemePaletteOption.DYNAMIC -> null
-        else -> palette.seedColor
-    }
-
-    val staticColorScheme = when (palette) {
-        ThemePaletteOption.DYNAMIC -> if (effectiveDarkTheme) DarkColorScheme else LightColorScheme
-        else -> requireNotNull(kolorSeed).let { seed ->
-            kolorDynamicColorScheme(
-                seedColor = seed,
-                isDark = effectiveDarkTheme
-            )
+    val palette = resolveThemePalette(selection?.palette ?: ThemePaletteOption.DYNAMIC)
+    val wallpaperScheme =
+        if (dynamicColor && palette == ThemePaletteOption.DYNAMIC && supportsDynamicTheme()) {
+            dynamicColorScheme(effectiveDarkTheme)
+        } else {
+            null
         }
-    }
 
-    // Dynamic color should not override explicit accent palettes.
-    val dynamicScheme = if (dynamicColor && palette == ThemePaletteOption.DYNAMIC) {
-        dynamicColorScheme(effectiveDarkTheme)
-    } else {
-        null
-    }
-    val colorScheme = dynamicScheme ?: staticColorScheme
+    val colorScheme =
+        wallpaperScheme ?: dynamicColorScheme(
+            seedColor = seedColorFor(palette),
+            isDark = effectiveDarkTheme,
+            style = PaletteStyle.TonalSpot,
+            specVersion = ColorSpec.SpecVersion.SPEC_2025,
+        )
 
     CompositionLocalProvider(
         LocalSpacing provides Spacing(),
-        LocalElevation provides Elevation()
+        LocalElevation provides Elevation(),
     ) {
-        MaterialTheme(
+        MaterialExpressiveTheme(
             colorScheme = colorScheme,
             typography = Typography,
             shapes = Shapes,
-            content = content
+            content = content,
         )
     }
 }
