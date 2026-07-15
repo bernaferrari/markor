@@ -49,6 +49,13 @@ internal class WasmFavoritesRepository : IFavoritesRepository {
         persistFav()
     }
 
+    override suspend fun updatePath(oldPath: String, newPath: String) {
+        favoritesState.value = favoritesState.value.map { it.replaceMovedPath(oldPath, newPath) }.toSet()
+        recentState.value = recentState.value.map { it.replaceMovedPath(oldPath, newPath) }
+        persistFav()
+        BrowserStorage.setString(RECENT_KEY, json.encodeToString(recentState.value))
+    }
+
     override suspend fun recordFileAccess(path: String) {
         recentState.value = listOf(path) + recentState.value.filter { it != path }.take(9)
         BrowserStorage.setString(RECENT_KEY, json.encodeToString(recentState.value))
@@ -67,4 +74,10 @@ internal class WasmFavoritesRepository : IFavoritesRepository {
         const val FAV_KEY = "markor.web.favorites.v1"
         const val RECENT_KEY = "markor.web.recent.v1"
     }
+}
+
+private fun String.replaceMovedPath(oldPath: String, newPath: String): String = when {
+    this == oldPath -> newPath
+    this.startsWith("$oldPath/") -> newPath + this.removePrefix(oldPath)
+    else -> this
 }

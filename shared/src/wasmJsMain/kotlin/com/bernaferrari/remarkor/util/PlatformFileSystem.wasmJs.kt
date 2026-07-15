@@ -21,7 +21,8 @@ import okio.fakefilesystem.FakeFileSystem
 @Serializable
 private data class FsSnapshot(
     val directories: Set<String> = emptySet(),
-    val files: Map<String, String> = emptyMap(),
+    // Keep raw bytes so images and other attachments survive a refresh unchanged.
+    val files: Map<String, ByteArray> = emptyMap(),
 )
 
 private const val FS_KEY = "markor.web.fs.v1"
@@ -54,7 +55,7 @@ private fun loadOrSeed(): FakeFileSystem {
         snapshot.files.forEach { (path, content) ->
             val p = path.toPath()
             p.parent?.let { runCatching { fake.createDirectories(it) } }
-            fake.write(p) { writeUtf8(content) }
+            fake.write(p) { write(content) }
         }
     }
     return fake
@@ -62,7 +63,7 @@ private fun loadOrSeed(): FakeFileSystem {
 
 private fun FakeFileSystem.collectSnapshot(): FsSnapshot {
     val directories = linkedSetOf<String>()
-    val files = linkedMapOf<String, String>()
+    val files = linkedMapOf<String, ByteArray>()
 
     fun walk(dir: Path) {
         val dirKey = normalize(dir)
@@ -72,7 +73,7 @@ private fun FakeFileSystem.collectSnapshot(): FsSnapshot {
             if (meta.isDirectory) {
                 walk(child)
             } else {
-                files[normalize(child)] = read(child) { readUtf8() }
+                files[normalize(child)] = read(child) { readByteArray() }
             }
         }
     }
@@ -85,9 +86,9 @@ private fun FakeFileSystem.collectSnapshot(): FsSnapshot {
 }
 
 private fun persist(fs: FakeFileSystem) {
-    runCatching {
-        BrowserStorage.setString(FS_KEY, json.encodeToString(fs.collectSnapshot()))
-    }
+    // Let quota/security errors propagate to the originating file operation. Silently
+    // swallowing this exception makes the UI report a save that disappears on refresh.
+    BrowserStorage.setString(FS_KEY, json.encodeToString(fs.collectSnapshot()))
 }
 
 private class SavingSink(

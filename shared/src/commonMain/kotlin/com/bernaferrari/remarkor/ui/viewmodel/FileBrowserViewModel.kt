@@ -133,6 +133,17 @@ class FileBrowserViewModel(
     private var currentPathString: String? = null
     private var didRunIndexer = false
 
+    private fun originalPathFromTrash(path: Path): Path? {
+        val dateSeparator = path.name.indexOf("_")
+        val timeSeparator = path.name.indexOf("_", startIndex = dateSeparator + 1)
+        val originalName = if (timeSeparator > 0) {
+            path.name.substring(timeSeparator + 1)
+        } else {
+            path.name
+        }
+        return currentPathString?.toPath()?.let { it / originalName }
+    }
+
     suspend fun loadFiles(path: String?): String {
         _isLoading.value = true
         _errorMessage.value = null
@@ -212,15 +223,22 @@ class FileBrowserViewModel(
     fun deleteFile(path: Path) {
         viewModelScope.launch {
             try {
-                val pathString = path.toString()
                 val isTrashMode = _filterMode.value == FileFilterMode.TRASH
-                val isDirectory = fileRepository.isDirectory(path)
 
                 if (isTrashMode) {
                     // Permanent delete from trash should remove instantly from UI.
                     _trashFiles.value = _trashFiles.value.filterNot { it.path == path }
+                    val isDirectory = fileRepository.isDirectory(path)
                     val success = fileRepository.deleteFile(path)
                     if (success) {
+                        originalPathFromTrash(path)?.let { originalPath ->
+                            if (isDirectory) {
+                                noteMetadataRepository.deleteByPathRecursively(originalPath.toString())
+                            } else {
+                                noteMetadataRepository.deleteByPath(originalPath.toString())
+                            }
+                            favoritesRepository.removeFavorite(originalPath.toString())
+                        }
                         messageManager.success(getString(Res.string.deleted_permanently))
                     } else {
                         messageManager.error(getString(Res.string.failed_to_delete_permanently))
@@ -230,11 +248,6 @@ class FileBrowserViewModel(
                     _files.value = _files.value.filterNot { it.path == path }
                     val success = fileRepository.moveToTrash(path)
                     if (success) {
-                        if (isDirectory) {
-                            noteMetadataRepository.deleteByPathRecursively(pathString)
-                        } else {
-                            noteMetadataRepository.deleteByPath(pathString)
-                        }
                         messageManager.success(getString(Res.string.moved_to_trash))
                     } else {
                         messageManager.error(getString(Res.string.failed_to_move_to_trash))
@@ -311,23 +324,27 @@ class FileBrowserViewModel(
                 val selectedSet = selected.toSet()
                 _trashFiles.value = _trashFiles.value.filterNot { it.path in selectedSet }
                 selected.forEach { path ->
+                    val isDirectory = fileRepository.isDirectory(path)
+                    val originalPath = originalPathFromTrash(path)
                     val success = fileRepository.deleteFile(path)
-                    if (!success) failures++
+                    if (!success) {
+                        failures++
+                    } else if (originalPath != null) {
+                        if (isDirectory) {
+                            noteMetadataRepository.deleteByPathRecursively(originalPath.toString())
+                        } else {
+                            noteMetadataRepository.deleteByPath(originalPath.toString())
+                        }
+                        favoritesRepository.removeFavorite(originalPath.toString())
+                    }
                 }
             } else {
                 // Move to trash in regular mode.
                 val selectedSet = selected.toSet()
                 _files.value = _files.value.filterNot { it.path in selectedSet }
                 selected.forEach { path ->
-                    val isDirectory = fileRepository.isDirectory(path)
                     val success = fileRepository.moveToTrash(path)
-                    if (success) {
-                        if (isDirectory) {
-                            noteMetadataRepository.deleteByPathRecursively(path.toString())
-                        } else {
-                            noteMetadataRepository.deleteByPath(path.toString())
-                        }
-                    } else {
+                    if (!success) {
                         failures++
                     }
                 }
@@ -378,6 +395,7 @@ class FileBrowserViewModel(
         viewModelScope.launch {
             val renamedPath = fileRepository.renameFile(path, newName)
             if (renamedPath != null) {
+                favoritesRepository.updatePath(path.toString(), renamedPath.toString())
                 noteMetadataRepository.updatePath(
                     oldPath = path.toString(),
                     newPath = renamedPath.toString(),
@@ -410,15 +428,16 @@ class FileBrowserViewModel(
     }
 
     fun selectAll() {
-        val allPaths = _files.value.map { it.path }.toSet()
+        val allPaths = getFilteredFiles().map { it.path }.toSet()
         _selectedFiles.value = allPaths
+        _isSelectionMode.value = allPaths.isNotEmpty()
     }
 
     fun toggleSelectAll() {
         val allPaths = if (_filterMode.value == FileFilterMode.TRASH) {
             _trashFiles.value.map { it.path }.toSet()
         } else {
-            _files.value.map { it.path }.toSet()
+            getFilteredFiles().map { it.path }.toSet()
         }
 
         val allAreAlreadySelected = allPaths.isNotEmpty() &&
@@ -583,6 +602,7 @@ class FileBrowserViewModel(
 
         // Apply search filter (filename or content)
         if (query.isNotBlank()) {
+            val eligiblePaths = result.map { it.path }.toSet()
             result = result.filter { it.name.contains(query, ignoreCase = true) }
 
             // Add content matches if searching in content
@@ -591,7 +611,9 @@ class FileBrowserViewModel(
                 val nameMatchingPaths = result.map { it.path }.toSet()
                 // Add content matches that aren't already in name matches
                 result = result + contentResults.filter {
-                    contentMatchingPaths.contains(it.path) && !nameMatchingPaths.contains(it.path)
+                    it.path in eligiblePaths &&
+                        contentMatchingPaths.contains(it.path) &&
+                        !nameMatchingPaths.contains(it.path)
                 }
             }
         }

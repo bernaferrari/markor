@@ -42,7 +42,9 @@ import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.document_info
 import markor.shared.generated.resources.document_outline
 import markor.shared.generated.resources.export
+import markor.shared.generated.resources.archive
 import markor.shared.generated.resources.more_options
+import markor.shared.generated.resources.unarchive
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -53,6 +55,7 @@ internal fun EditorTopBar(
     canRedo: Boolean,
     hasOutline: Boolean,
     isFocusMode: Boolean,
+    isArchived: Boolean = false,
     embeddedInDialog: Boolean = false,
     onBack: () -> Unit,
     onTogglePreview: () -> Unit,
@@ -128,7 +131,9 @@ internal fun EditorTopBar(
                     onDismissRequest = { showOverflowMenu = false },
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Archive") },
+                        text = {
+                            Text(stringResource(if (isArchived) Res.string.unarchive else Res.string.archive))
+                        },
                         leadingIcon = { Icon(Icons.Default.Archive, null) },
                         onClick = {
                             showOverflowMenu = false

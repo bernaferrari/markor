@@ -48,7 +48,8 @@ fun NoteEditorDialog(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = onDismiss,
+                    // Closing outside the card must not bypass the editor's save/rename commit.
+                    onClick = {},
                 ),
         )
 

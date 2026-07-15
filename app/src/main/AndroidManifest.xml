@@ -73,54 +73,6 @@
         </provider>
 
         <activity
-            android:name=".activity.openeditor.OpenEditorTodoActivity"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@drawable/ic_launcher_todo"
-            android:label="@string/todo"
-            android:noHistory="true">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".activity.IntroActivity"
-            android:label="@string/about" />
-
-        <activity
-            android:name=".activity.openeditor.OpenEditorQuickNoteActivity"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@drawable/ic_launcher_quicknote"
-            android:label="@string/quicknote"
-            android:noHistory="true">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".activity.openeditor.OpenShareIntoActivity"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@drawable/ic_launcher_share_into"
-            android:label="@string/share_into"
-            android:noHistory="true">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".activity.openeditor.OpenFromShortcutOrWidgetActivity"
-            android:launchMode="standard"
-            android:theme="@android:style/Theme.NoDisplay" />
-
-        <activity
             android:name=".activity.MainActivity"
             android:exported="true"
             android:label="@string/app_name"

@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.bernaferrari.remarkor.domain.repository.FileInfo
 import kotlinx.coroutines.delay
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.delete
@@ -132,6 +133,27 @@ fun DeleteDialog(
         },
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         textContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
+@Composable
+fun FilePropertiesDialog(
+    file: FileInfo,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(file.name) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Path: ${file.path}", style = MaterialTheme.typography.bodyMedium)
+                Text("Type: ${if (file.isDirectory) "Folder" else file.extension.ifBlank { "File" }}", style = MaterialTheme.typography.bodyMedium)
+                if (!file.isDirectory) {
+                    Text("Size: ${file.size} bytes", style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("Close") } },
     )
 }
 

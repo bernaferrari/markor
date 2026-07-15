@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bernaferrari.remarkor.domain.model.Document
 import com.bernaferrari.remarkor.domain.repository.IDocumentRepository
+import com.bernaferrari.remarkor.domain.repository.IFavoritesRepository
 import com.bernaferrari.remarkor.ui.components.UserMessageManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -43,6 +44,7 @@ data class EditorHistoryState(
 class EditorViewModel(
     private val documentRepository: IDocumentRepository,
     private val metadataRepository: com.bernaferrari.remarkor.domain.repository.INoteMetadataRepository,
+    private val favoritesRepository: IFavoritesRepository,
     private val messageManager: UserMessageManager,
 ) : ViewModel() {
 
@@ -59,6 +61,9 @@ class EditorViewModel(
 
     private val _hasUnsavedChanges = MutableStateFlow(false)
     val hasUnsavedChanges: StateFlow<Boolean> = _hasUnsavedChanges.asStateFlow()
+
+    private val _isArchived = MutableStateFlow(false)
+    val isArchived: StateFlow<Boolean> = _isArchived.asStateFlow()
 
     // Undo/Redo stacks
     private val undoStack = MutableStateFlow<List<EditorHistoryState>>(emptyList())
@@ -91,6 +96,7 @@ class EditorViewModel(
             // Load note color from metadata
             val metadata = metadataRepository.getNoteByPath(filePath)
             _noteColor.value = metadata?.color
+            _isArchived.value = metadata?.isArchived == true
             // Clear history when loading new document
             undoStack.value = emptyList()
             redoStack.value = emptyList()
@@ -117,21 +123,23 @@ class EditorViewModel(
      *
      * @param notifySuccess reserved for rare explicit user-initiated saves; default false.
      */
-    fun saveDocument(
+    suspend fun saveDocument(
         document: Document,
         content: String,
         notifySuccess: Boolean = false,
-    ) {
-        viewModelScope.launch {
-            try {
-                documentRepository.saveDocument(document, content)
+    ): Boolean {
+        return try {
+            val saved = documentRepository.saveDocument(document, content)
+            if (saved) {
                 _hasUnsavedChanges.value = false
-                if (notifySuccess) {
-                    messageManager.success(getString(Res.string.saved))
-                }
-            } catch (e: Exception) {
-                messageManager.error(getString(Res.string.failed_to_save) + ": ${e.message}")
+                if (notifySuccess) messageManager.success(getString(Res.string.saved))
+            } else {
+                messageManager.error(getString(Res.string.failed_to_save))
             }
+            saved
+        } catch (e: Exception) {
+            messageManager.error(getString(Res.string.failed_to_save) + ": ${e.message}")
+            false
         }
     }
 
@@ -161,6 +169,7 @@ class EditorViewModel(
         return try {
             val renamedPath = documentRepository.renameDocument(document, newName)
             if (renamedPath != null) {
+                favoritesRepository.updatePath(document.path.toString(), renamedPath.toString())
                 messageManager.success(getString(Res.string.renamed_to_with_arg, renamedPath.name))
             } else {
                 messageManager.error(getString(Res.string.failed_to_rename))
@@ -180,6 +189,7 @@ class EditorViewModel(
     }
 
     fun setArchived(path: String, archived: Boolean) {
+        _isArchived.value = archived
         viewModelScope.launch {
             metadataRepository.setArchived(path, archived)
         }
