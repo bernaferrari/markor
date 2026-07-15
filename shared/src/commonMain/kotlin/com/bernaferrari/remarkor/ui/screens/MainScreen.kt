@@ -174,11 +174,6 @@ fun MainScreen(
         }
     }
 
-    BackHandler(enabled = isNoteDialogVisible) {
-        noteDialogPath = null
-        noteDialogAutoKeyboard = false
-    }
-
     val fileByPath = remember(files, trashFiles) {
         (files + trashFiles).associateBy { it.path }
     }

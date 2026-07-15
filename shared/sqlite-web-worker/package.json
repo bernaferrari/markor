@@ -4,6 +4,6 @@
   "description": "androidx SQLite Web Worker for Room 3 (OPFS)",
   "license": "APACHE-2.0",
   "dependencies": {
-    "@sqlite.org/sqlite-wasm": "^3.50.1-build1"
+    "@sqlite.org/sqlite-wasm": "^3.53.0-build1"
   }
 }

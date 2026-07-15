@@ -2,7 +2,7 @@ name: Deploy Web to Vercel
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -25,6 +25,11 @@ jobs:
           java-version: 21
           distribution: temurin
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
@@ -35,7 +40,7 @@ jobs:
         run: npm install -g vercel@latest
 
       - name: Deploy production
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: ./scripts/deploy-web-vercel.sh
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}

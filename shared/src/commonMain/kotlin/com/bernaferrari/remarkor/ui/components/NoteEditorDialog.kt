@@ -15,7 +15,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +39,8 @@ fun NoteEditorDialog(
     openKeyboardOnStart: Boolean = false,
     onDismiss: () -> Unit,
 ) {
+    var dismissHandler by remember { mutableStateOf<(() -> Unit)?>(null) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -48,8 +53,8 @@ fun NoteEditorDialog(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    // Closing outside the card must not bypass the editor's save/rename commit.
-                    onClick = {},
+                    // EditorScreen commits pending edits before invoking onDismiss.
+                    onClick = { dismissHandler?.invoke() },
                 ),
         )
 
@@ -83,6 +88,7 @@ fun NoteEditorDialog(
                     openKeyboardOnStart = openKeyboardOnStart,
                     onNavigateBack = onDismiss,
                     embeddedInDialog = true,
+                    onRegisterDismissHandler = { dismissHandler = it },
                     viewModel = koinViewModel(key = filePath),
                 )
             }
