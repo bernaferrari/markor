@@ -5,9 +5,10 @@ package com.bernaferrari.remarkor.ui.screens.filebrowser
  * Trash format: "yyyyMMdd_HHmmss_originalfilename.ext"
  */
 internal fun getOriginalPath(trashFileName: String): String {
-    val underscoreIndex = trashFileName.indexOf("_")
-    return if (underscoreIndex > 0) {
-        trashFileName.substring(underscoreIndex + 1)
+    val dateSeparator = trashFileName.indexOf("_")
+    val timeSeparator = trashFileName.indexOf("_", startIndex = dateSeparator + 1)
+    return if (timeSeparator > 0) {
+        trashFileName.substring(timeSeparator + 1)
     } else {
         trashFileName
     }

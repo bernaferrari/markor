@@ -46,9 +46,6 @@ fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
             isExpandedScreen = screenWidthDp >= 840,
             isLandscape = isLandscape,
             showNavigationRail = screenWidthDp >= 600,
-            showDualPane = false,
-            listPaneWeight = 1f,
-            detailPaneWeight = 0f,
         )
     }
 }
@@ -57,11 +54,7 @@ data class AdaptiveLayoutInfo(
     val isLargeScreen: Boolean,
     val isExpandedScreen: Boolean,
     val isLandscape: Boolean,
-    val showNavigationRail: Boolean,
-    /** Deprecated: always false — Keep dialog replaces list-detail. */
-    val showDualPane: Boolean,
-    val listPaneWeight: Float,
-    val detailPaneWeight: Float
+    val showNavigationRail: Boolean
 ) {
     companion object {
         val PHONE = AdaptiveLayoutInfo(
@@ -69,9 +62,6 @@ data class AdaptiveLayoutInfo(
             isExpandedScreen = false,
             isLandscape = false,
             showNavigationRail = false,
-            showDualPane = false,
-            listPaneWeight = 1f,
-            detailPaneWeight = 0f,
         )
 
         val TABLET_LANDSCAPE = AdaptiveLayoutInfo(
@@ -79,9 +69,6 @@ data class AdaptiveLayoutInfo(
             isExpandedScreen = true,
             isLandscape = true,
             showNavigationRail = true,
-            showDualPane = false,
-            listPaneWeight = 1f,
-            detailPaneWeight = 0f,
         )
     }
 }

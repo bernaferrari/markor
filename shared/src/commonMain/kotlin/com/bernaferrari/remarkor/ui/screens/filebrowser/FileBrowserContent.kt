@@ -98,6 +98,7 @@ import com.bernaferrari.remarkor.ui.components.DeleteDialog
 import com.bernaferrari.remarkor.ui.components.EmptyState
 import com.bernaferrari.remarkor.ui.components.FileActionSheet
 import com.bernaferrari.remarkor.ui.components.FileGridItem
+import com.bernaferrari.remarkor.ui.components.FilePropertiesDialog
 import com.bernaferrari.remarkor.ui.components.HapticHelper
 import com.bernaferrari.remarkor.ui.components.LabelsDialog
 import com.bernaferrari.remarkor.ui.components.RenameDialog
@@ -155,6 +156,9 @@ fun FileBrowserContent(
     var currentPath by remember { mutableStateOf<String?>(null) }
     var rootPath by remember { mutableStateOf<String?>(null) }
     fun normalizePath(path: String?): String? = path?.trimEnd('/')
+    fun originalPathForTrash(fileName: String) =
+        (currentPath ?: initialPath)?.toPath()?.let { it / getOriginalPath(fileName) }
+            ?: getOriginalPath(fileName).toPath()
     val files by viewModel.files.collectAsState()
     val selectedFiles by viewModel.selectedFiles.collectAsState()
     val isSelectionMode by viewModel.isSelectionMode.collectAsState()
@@ -175,6 +179,7 @@ fun FileBrowserContent(
     var labelsInitial by remember { mutableStateOf<List<String>>(emptyList()) }
     var showAssetManager by remember { mutableStateOf(false) }
     var showShareDialog by remember { mutableStateOf(false) }
+    var showPropertiesDialog by remember { mutableStateOf(false) }
 
     // Asset manager - loaded async to avoid blocking
     val assetManager: IAssetRepository = koinInject()
@@ -279,7 +284,7 @@ fun FileBrowserContent(
             },
             onInfo = {
                 showFileActionSheet = false
-                selectedFileForAction = null
+                showPropertiesDialog = true
             },
             onTogglePin = {
                 viewModel.togglePin(actionFile.path)
@@ -302,6 +307,16 @@ fun FileBrowserContent(
                 showFileActionSheet = false
                 showAssetManager = true
             }
+        )
+    }
+
+    if (showPropertiesDialog && selectedFileForAction != null) {
+        FilePropertiesDialog(
+            file = selectedFileForAction!!,
+            onDismiss = {
+                showPropertiesDialog = false
+                selectedFileForAction = null
+            },
         )
     }
 
@@ -713,7 +728,7 @@ fun FileBrowserContent(
                                             // Restore file from trash
                                             viewModel.restoreFile(
                                                 file.path,
-                                                getOriginalPath(file.name).toPath()
+                                                originalPathForTrash(file.name)
                                             )
                                         } else {
                                             if (file.isDirectory) {
@@ -740,7 +755,7 @@ fun FileBrowserContent(
                                     onRestore = {
                                         viewModel.restoreFile(
                                             file.path,
-                                            getOriginalPath(file.name).toPath()
+                                            originalPathForTrash(file.name)
                                         )
                                     },
                                     onDeletePermanently = {

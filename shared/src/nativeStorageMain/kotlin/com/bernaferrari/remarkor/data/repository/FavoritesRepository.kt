@@ -57,6 +57,19 @@ class FavoritesRepository(
         }
     }
 
+    override suspend fun updatePath(oldPath: String, newPath: String) {
+        dataStore.edit { prefs ->
+            prefs[Keys.FAVORITES] = (prefs[Keys.FAVORITES] ?: emptySet()).map { path ->
+                path.replaceMovedPath(oldPath, newPath)
+            }.toSet()
+            prefs[Keys.RECENT_FILES] = (prefs[Keys.RECENT_FILES] ?: emptySet()).map { entry ->
+                val timestamp = entry.substringBefore("|")
+                val path = entry.substringAfter("|", missingDelimiterValue = entry)
+                "$timestamp|${path.replaceMovedPath(oldPath, newPath)}"
+            }.toSet()
+        }
+    }
+
     override suspend fun recordFileAccess(path: String) {
         dataStore.edit { prefs ->
             val current = prefs[Keys.RECENT_FILES]?.toMutableSet() ?: mutableSetOf()
@@ -73,4 +86,10 @@ class FavoritesRepository(
             prefs[Keys.RECENT_FILES] = emptySet()
         }
     }
+}
+
+private fun String.replaceMovedPath(oldPath: String, newPath: String): String = when {
+    this == oldPath -> newPath
+    this.startsWith("$oldPath/") -> newPath + this.removePrefix(oldPath)
+    else -> this
 }

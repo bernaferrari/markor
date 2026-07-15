@@ -56,6 +56,7 @@ kotlin {
 
     wasmJs {
         browser()
+        binaries.executable()
     }
 
     sourceSets {
@@ -135,6 +136,21 @@ kotlin {
         // iOS-specific source sets
         iosMain {
             dependsOn(nativeStorageMain)
+        }
+        iosArm64Main {
+            dependsOn(iosMain.get())
+        }
+        iosSimulatorArm64Main {
+            dependsOn(iosMain.get())
+        }
+        iosArm64Test {
+            dependsOn(iosTest.get())
+        }
+        iosSimulatorArm64Test {
+            dependsOn(iosTest.get())
+        }
+        iosTest {
+            dependsOn(commonTest.get())
         }
         iosMain.dependencies {
             // iOS-specific dependencies can be added here

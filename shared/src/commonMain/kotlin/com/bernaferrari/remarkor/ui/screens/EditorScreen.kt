@@ -103,6 +103,7 @@ fun EditorScreen(
     var showColorSheet by remember { mutableStateOf(false) }
 
     val noteColor by viewModel.noteColor.collectAsState()
+    val isArchived by viewModel.isArchived.collectAsState()
     val assetManager: IAssetRepository = koinInject()
     var pendingImageInsert by remember { mutableStateOf<PickedImage?>(null) }
     val launchImagePicker = rememberImagePickerLauncher { pendingImageInsert = it }
@@ -116,7 +117,7 @@ fun EditorScreen(
         detectSlashCommand(content)
     }
 
-    suspend fun commitSession(saveIfNeeded: Boolean = hasUnsavedChanges) {
+    suspend fun commitSession(saveIfNeeded: Boolean = hasUnsavedChanges): Boolean {
         val result = commitEditorSession(
             titleInput = titleInput,
             document = document,
@@ -128,13 +129,13 @@ fun EditorScreen(
         titleInput = result.titleInput
         document = result.document
         result.activeFilePath?.let { activeFilePath = it }
-        if (saveIfNeeded) hasUnsavedChanges = false
+        if (saveIfNeeded && result.saveSucceeded) hasUnsavedChanges = false
+        return result.saveSucceeded
     }
 
     PlatformBackHandler(enabled = true) {
         scope.launch {
-            commitSession()
-            onNavigateBack()
+            if (commitSession()) onNavigateBack()
         }
     }
 
@@ -152,8 +153,9 @@ fun EditorScreen(
     LaunchedEffect(content) {
         if (hasUnsavedChanges && document != null) {
             delay(2_000)
-            viewModel.saveDocument(document!!, content.text)
-            hasUnsavedChanges = false
+            if (viewModel.saveDocument(document!!, content.text)) {
+                hasUnsavedChanges = false
+            }
         }
     }
 
@@ -187,8 +189,11 @@ fun EditorScreen(
                     onMarkUnsaved = { hasUnsavedChanges = true },
                     onSave = {
                         document?.let { doc ->
-                            viewModel.saveDocument(doc, content.text)
-                            hasUnsavedChanges = false
+                            scope.launch {
+                                if (viewModel.saveDocument(doc, content.text, notifySuccess = true)) {
+                                    hasUnsavedChanges = false
+                                }
+                            }
                         }
                     },
                     undoRedo = undoRedo,
@@ -215,23 +220,28 @@ fun EditorScreen(
                 canRedo = undoRedo.redoStack.isNotEmpty(),
                 hasOutline = outlineItems.isNotEmpty(),
                 isFocusMode = isFocusMode,
+                isArchived = isArchived,
                 embeddedInDialog = embeddedInDialog,
                 onBack = {
                     scope.launch {
-                        commitSession()
-                        onNavigateBack()
+                        if (commitSession()) onNavigateBack()
                     }
                 },
                 onTogglePreview = {
                     scope.launch {
-                        commitSession(saveIfNeeded = false)
-                        isPreviewMode = !isPreviewMode
+                        if (commitSession(saveIfNeeded = false)) {
+                            isPreviewMode = !isPreviewMode
+                        }
                     }
                 },
                 onShowColorSheet = { showColorSheet = true },
                 onArchive = {
-                    viewModel.setArchived(activeFilePath, true)
-                    onNavigateBack()
+                    scope.launch {
+                        if (commitSession()) {
+                            viewModel.setArchived(activeFilePath, !isArchived)
+                            onNavigateBack()
+                        }
+                    }
                 },
                 onUndo = {
                     undoRedo.undo(content)?.let {

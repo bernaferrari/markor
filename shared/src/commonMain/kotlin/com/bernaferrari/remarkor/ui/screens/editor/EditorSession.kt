@@ -7,6 +7,7 @@ internal data class EditorSessionCommit(
     val titleInput: String,
     val document: Document?,
     val activeFilePath: String?,
+    val saveSucceeded: Boolean,
 )
 
 internal suspend fun commitEditorSession(
@@ -15,7 +16,7 @@ internal suspend fun commitEditorSession(
     contentText: String,
     hasUnsavedChanges: Boolean,
     renameDocument: suspend (Document, String) -> Path?,
-    saveDocument: suspend (Document, String) -> Unit,
+    saveDocument: suspend (Document, String) -> Boolean,
 ): EditorSessionCommit {
     val renameResult = commitTitleRenameIfNeeded(
         titleInput = titleInput,
@@ -23,12 +24,12 @@ internal suspend fun commitEditorSession(
         renameDocument = renameDocument,
     )
     val committedDocument = renameResult.document
-    if (hasUnsavedChanges && committedDocument != null) {
+    val saveSucceeded = !hasUnsavedChanges || committedDocument == null ||
         saveDocument(committedDocument, contentText)
-    }
     return EditorSessionCommit(
         titleInput = renameResult.updatedTitleInput,
         document = committedDocument,
         activeFilePath = renameResult.updatedPath?.toString(),
+        saveSucceeded = saveSucceeded,
     )
 }

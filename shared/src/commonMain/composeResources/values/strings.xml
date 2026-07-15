@@ -47,6 +47,7 @@
     <string name="all">All</string>
     <string name="favorites">Favorites</string>
     <string name="archive">Archive</string>
+    <string name="unarchive">Unarchive</string>
     <string name="trash">Trash</string>
     <string name="theme_color">Theme Color</string>
     <string name="dynamic">Dynamic</string>

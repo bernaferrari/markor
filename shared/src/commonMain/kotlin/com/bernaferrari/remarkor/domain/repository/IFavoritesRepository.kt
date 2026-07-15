@@ -10,6 +10,7 @@ interface IFavoritesRepository {
     suspend fun toggleFavorite(path: String)
     suspend fun addFavorite(path: String)
     suspend fun removeFavorite(path: String)
+    suspend fun updatePath(oldPath: String, newPath: String)
     suspend fun recordFileAccess(path: String)
     suspend fun clearRecentFiles()
 }
