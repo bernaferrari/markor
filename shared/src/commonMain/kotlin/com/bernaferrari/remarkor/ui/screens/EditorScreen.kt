@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -74,6 +75,7 @@ fun EditorScreen(
     onNavigateBack: () -> Unit,
     openKeyboardOnStart: Boolean = false,
     embeddedInDialog: Boolean = false,
+    onRegisterDismissHandler: ((() -> Unit) -> Unit)? = null,
     viewModel: EditorViewModel = koinViewModel(),
     shareService: ShareService = koinInject(),
 ) {
@@ -131,6 +133,15 @@ fun EditorScreen(
         result.activeFilePath?.let { activeFilePath = it }
         if (saveIfNeeded && result.saveSucceeded) hasUnsavedChanges = false
         return result.saveSucceeded
+    }
+
+    DisposableEffect(onRegisterDismissHandler) {
+        onRegisterDismissHandler?.invoke {
+            scope.launch {
+                if (commitSession()) onNavigateBack()
+            }
+        }
+        onDispose { onRegisterDismissHandler?.invoke {} }
     }
 
     PlatformBackHandler(enabled = true) {
