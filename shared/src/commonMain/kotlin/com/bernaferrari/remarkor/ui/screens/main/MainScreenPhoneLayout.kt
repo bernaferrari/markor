@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -143,10 +144,15 @@ internal fun MainScreenPhoneLayout(
     onOpenSettings: () -> Unit,
     onFilterModeChange: (FileFilterMode) -> Unit,
     onSortOrderChange: (String) -> Unit,
-    onNavigateToEditor: (String, Boolean) -> Unit
+    onNavigateToEditor: (String, Boolean) -> Unit,
+    /** Staggered grid min cell width; larger on tablet/desktop for Keep-style cards. */
+    gridMinCellWidthDp: Int = 150,
+    /** Optional max content width so ultra-wide desktops don't stretch the grid endlessly. */
+    contentMaxWidthDp: Int? = null,
 ) {
     val files by fileBrowserViewModel.files.collectAsState()
     val trashFiles by fileBrowserViewModel.trashFiles.collectAsState()
+    val favorites by fileBrowserViewModel.favorites.collectAsState()
     var isSearchScreenOpen by rememberSaveable { mutableStateOf(false) }
     var searchQuery by rememberSaveable { mutableStateOf("") }
 
@@ -213,6 +219,9 @@ internal fun MainScreenPhoneLayout(
                     onFilterModeChange = onFilterModeChange,
                     onClearSelection = onClearSelection,
                     onSelectAll = onSelectAll,
+                    allSelectedAreFavorite = selectedFiles.isNotEmpty() &&
+                        selectedFiles.all { favorites.contains(it.toString()) },
+                    onToggleFavorite = fileBrowserViewModel::toggleFavoriteForSelected,
                     onSetColor = onSetColorForSelected,
                     onDelete = onDeleteSelected,
                     showFilterChips = true
@@ -235,14 +244,24 @@ internal fun MainScreenPhoneLayout(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopCenter,
         ) {
             FileBrowserContent(
                 initialPath = notebookDirectory.ifEmpty { null },
                 onNavigateToEditor = onNavigateToEditor,
                 onNavigateBack = { },
                 viewModel = fileBrowserViewModel,
-                isGridView = isGridView
+                isGridView = isGridView,
+                gridMinCellWidthDp = gridMinCellWidthDp,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(
+                        if (contentMaxWidthDp != null) {
+                            Modifier.widthIn(max = contentMaxWidthDp.dp)
+                        } else {
+                            Modifier
+                        }
+                    ),
             )
         }
     }

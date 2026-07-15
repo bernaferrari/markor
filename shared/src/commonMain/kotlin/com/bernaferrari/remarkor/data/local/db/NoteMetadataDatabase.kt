@@ -4,7 +4,7 @@ import androidx.room3.ConstructedBy
 import androidx.room3.Database
 import androidx.room3.RoomDatabase
 import androidx.room3.RoomDatabaseConstructor
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import androidx.sqlite.SQLiteDriver
 import kotlinx.coroutines.Dispatchers
 
 @Database(
@@ -26,11 +26,17 @@ expect object NoteMetadataDatabaseConstructor : RoomDatabaseConstructor<NoteMeta
     override fun initialize(): NoteMetadataDatabase
 }
 
+/**
+ * Build Room 3 DB with a platform [SQLiteDriver].
+ * - Android/iOS/JVM: [androidx.sqlite.driver.bundled.BundledSQLiteDriver]
+ * - wasmJs: [androidx.sqlite.driver.web.WebWorkerSQLiteDriver] (see Room 3.0 web docs)
+ */
 fun getNoteMetadataDatabase(
-    builder: RoomDatabase.Builder<NoteMetadataDatabase>
+    builder: RoomDatabase.Builder<NoteMetadataDatabase>,
+    driver: SQLiteDriver,
 ): NoteMetadataDatabase {
     return builder
-        .setDriver(BundledSQLiteDriver())
+        .setDriver(driver)
         .setQueryCoroutineContext(Dispatchers.Default)
         .build()
 }

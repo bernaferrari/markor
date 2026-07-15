@@ -39,14 +39,16 @@ fun rememberAdaptiveLayoutInfo(): AdaptiveLayoutInfo {
         val screenWidthDp = dimensions.widthDp
         val isLandscape = dimensions.widthDp > dimensions.heightDp
 
+        // Keep-style: one full-width notebook grid at every size. Notes open in a dialog
+        // on large screens — no list-detail split / empty "select a file" pane.
         AdaptiveLayoutInfo(
             isLargeScreen = screenWidthDp >= 600,
             isExpandedScreen = screenWidthDp >= 840,
             isLandscape = isLandscape,
             showNavigationRail = screenWidthDp >= 600,
-            showDualPane = screenWidthDp >= 840 || (isLandscape && screenWidthDp >= 600),
-            listPaneWeight = if (screenWidthDp >= 840) 0.35f else 0.4f,
-            detailPaneWeight = if (screenWidthDp >= 840) 0.65f else 0.6f
+            showDualPane = false,
+            listPaneWeight = 1f,
+            detailPaneWeight = 0f,
         )
     }
 }
@@ -56,6 +58,7 @@ data class AdaptiveLayoutInfo(
     val isExpandedScreen: Boolean,
     val isLandscape: Boolean,
     val showNavigationRail: Boolean,
+    /** Deprecated: always false — Keep dialog replaces list-detail. */
     val showDualPane: Boolean,
     val listPaneWeight: Float,
     val detailPaneWeight: Float
@@ -68,7 +71,7 @@ data class AdaptiveLayoutInfo(
             showNavigationRail = false,
             showDualPane = false,
             listPaneWeight = 1f,
-            detailPaneWeight = 1f
+            detailPaneWeight = 0f,
         )
 
         val TABLET_LANDSCAPE = AdaptiveLayoutInfo(
@@ -76,9 +79,9 @@ data class AdaptiveLayoutInfo(
             isExpandedScreen = true,
             isLandscape = true,
             showNavigationRail = true,
-            showDualPane = true,
-            listPaneWeight = 0.35f,
-            detailPaneWeight = 0.65f
+            showDualPane = false,
+            listPaneWeight = 1f,
+            detailPaneWeight = 0f,
         )
     }
 }

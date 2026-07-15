@@ -1,11 +1,10 @@
 package com.bernaferrari.remarkor.ui.components
 
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -13,6 +12,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -20,28 +20,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 
 /**
- * Local provider for shared transition scope.
- * Note: Navigation 3 doesn't provide this by default, so we use a fallback implementation.
+ * SharedTransitionScope from the app-level [androidx.compose.animation.SharedTransitionLayout].
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope?> { null }
 
 /**
- * Local provider for AnimatedVisibilityScope.
- * Note: Navigation 3 doesn't provide this by default, so we use a fallback implementation.
+ * AnimatedVisibilityScope for sharedBounds matching.
+ * Grid cards: per-item AnimatedVisibility (Keep pattern).
+ * Overlay: parent AnimatedVisibility when the note is open.
+ * Full-screen editor: NavDisplay scope.
  */
 @OptIn(ExperimentalAnimationApi::class)
 val LocalAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope?> { null }
 
-/**
- * Shared transition keys for consistent animation between screens.
- */
 object SharedTransitionKeys {
     fun fileCard(filePath: String): String = "file_card_$filePath"
     fun fileTitle(filePath: String): String = "file_title_$filePath"
@@ -57,11 +54,23 @@ data class SharedElementState(
 
 val LocalSharedElementState = compositionLocalOf { SharedElementState() }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
+private val KeepBoundsTransform = BoundsTransform { _, _ ->
+    spring(
+        dampingRatio = Spring.DampingRatioNoBouncy,
+        stiffness = Spring.StiffnessMediumLow,
+    )
+}
+
+/** Matches Keep overlay Surface corner radius for clean container morph. */
+private val KeepSharedShape = RoundedCornerShape(28.dp)
+
 /**
- * A shared element container.
- *
- * If native shared transitions are unavailable in the current navigation host,
- * fallback rendering is static to avoid spring/jump artifacts.
+ * Container-transform helper matching
+ * [Android shared element docs](https://developer.android.com/develop/ui/compose/animation/shared-elements):
+ * - [sharedBounds] for visually different content (list card ↔ expanded note)
+ * - both ends under the same SharedTransitionLayout
+ * - each end in its own AnimatedVisibility (source exits when destination enters)
  */
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -69,13 +78,14 @@ fun SharedElementContainer(
     key: String,
     isSource: Boolean,
     useSharedBounds: Boolean = false,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     val sharedScope = LocalSharedTransitionScope.current
     val animatedScope = LocalAnimatedVisibilityScope.current
 
-    if (sharedScope != null && animatedScope != null) {
+    if (enabled && sharedScope != null && animatedScope != null) {
         with(sharedScope) {
             val sharedContentState = rememberSharedContentState(key = key)
             Box(
@@ -83,27 +93,23 @@ fun SharedElementContainer(
                     modifier.sharedBounds(
                         sharedContentState = sharedContentState,
                         animatedVisibilityScope = animatedScope,
-                        enter = fadeIn(
-                            animationSpec = tween(
-                                durationMillis = 90,
-                                easing = LinearOutSlowInEasing
-                            )
-                        ),
-                        exit = fadeOut(
-                            animationSpec = tween(
-                                durationMillis = 90,
-                                easing = FastOutLinearInEasing
-                            )
-                        ),
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                        boundsTransform = KeepBoundsTransform,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(
                             contentScale = ContentScale.FillBounds,
-                            alignment = Alignment.Center
-                        )
+                            alignment = Alignment.Center,
+                        ),
+                        // Match official snack sample: clip morph to rounded container.
+                        clipInOverlayDuringTransition = OverlayClip(KeepSharedShape),
+                        renderInOverlayDuringTransition = true,
                     )
                 } else {
                     modifier.sharedElement(
                         sharedContentState = sharedContentState,
-                        animatedVisibilityScope = animatedScope
+                        animatedVisibilityScope = animatedScope,
+                        boundsTransform = KeepBoundsTransform,
+                        renderInOverlayDuringTransition = true,
                     )
                 }
             ) {
@@ -111,25 +117,12 @@ fun SharedElementContainer(
             }
         }
     } else {
-        // Navigation 3 currently doesn't provide AnimatedVisibilityScope here,
-        // so keep fallback static to avoid bounce/jump artifacts on list/grid relayout.
-        Box(
-            modifier = modifier
-                .onGloballyPositioned { coordinates ->
-                    // Keep this so we can reintroduce real fallback transitions later.
-                    coordinates.positionInRoot()
-                    coordinates.size
-                }
-        ) {
+        Box(modifier = modifier) {
             content()
         }
     }
 }
 
-/**
- * Simpler shared element transition for smaller elements (like icons, text).
- * Uses smooth scale and fade animation.
- */
 @Composable
 fun SimpleSharedElement(
     key: String,

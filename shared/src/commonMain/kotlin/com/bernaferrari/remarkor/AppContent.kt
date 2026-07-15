@@ -4,8 +4,9 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -15,8 +16,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.unit.dp
 import com.bernaferrari.remarkor.domain.repository.ISettingsRepository
 import com.bernaferrari.remarkor.ui.components.ConfigureSystemBars
 import com.bernaferrari.remarkor.ui.components.UserMessageHandler
@@ -79,10 +82,7 @@ fun AppContent(
                         snackbarHostState = snackbarHostState,
                     )
 
-                    Scaffold(
-                        modifier = Modifier.fillMaxSize(),
-                        snackbarHost = { SnackbarHost(snackbarHostState) },
-                    ) { padding ->
+                    Box(modifier = Modifier.fillMaxSize()) {
                         SharedTransitionLayout(
                             modifier = Modifier.fillMaxSize()
                         ) {
@@ -97,6 +97,13 @@ fun AppContent(
                                 )
                             }
                         }
+                        SnackbarHost(
+                            hostState = snackbarHostState,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .navigationBarsPadding()
+                                .padding(bottom = 8.dp),
+                        )
                     }
                 }
             }

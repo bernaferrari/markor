@@ -27,6 +27,11 @@ internal fun EditorFlipContent(
     noteAccentColor: Color?,
     isFocusMode: Boolean,
     editorFocusNonce: Int,
+    /**
+     * When false (Keep overlay), skip nested shared-element wrappers so the overlay
+     * surface is the only sharedBounds target for the card key.
+     */
+    enableSharedElements: Boolean = true,
     autoFocusOnStart: Boolean,
     onAutoFocusConsumed: () -> Unit,
     onTitleChange: (String) -> Unit,
@@ -69,6 +74,7 @@ internal fun EditorFlipContent(
                     content = content.text,
                     backgroundColor = surfaceColor,
                     noteAccentColor = noteAccentColor,
+                    enableSharedElements = enableSharedElements,
                     onTapToEdit = onTapToEdit,
                 )
             } else {
@@ -83,6 +89,7 @@ internal fun EditorFlipContent(
                     noteAccentColor = noteAccentColor,
                     isFocusMode = isFocusMode,
                     focusRequestNonce = editorFocusNonce,
+                    enableSharedElements = enableSharedElements,
                     autoFocusOnStart = autoFocusOnStart,
                     onAutoFocusConsumed = onAutoFocusConsumed,
                     onTitleChange = onTitleChange,

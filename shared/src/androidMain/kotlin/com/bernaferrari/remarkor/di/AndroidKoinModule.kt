@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import com.bernaferrari.remarkor.data.local.createDataStore
 import com.bernaferrari.remarkor.data.local.db.NoteMetadataDao
 import com.bernaferrari.remarkor.data.local.db.NoteMetadataDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.bernaferrari.remarkor.data.local.db.getNoteMetadataDatabase
 import com.bernaferrari.remarkor.data.local.db.getNoteMetadataDatabaseBuilder
 import org.koin.core.annotation.Module
@@ -42,7 +43,10 @@ actual class PlatformDiModule {
 
     @Single
     fun provideDatabase(@Provided context: Context): NoteMetadataDatabase =
-        getNoteMetadataDatabase(getNoteMetadataDatabaseBuilder(context))
+        getNoteMetadataDatabase(
+            getNoteMetadataDatabaseBuilder(context),
+            BundledSQLiteDriver(),
+        )
 
     @Single
     fun provideNoteMetadataDao(database: NoteMetadataDatabase): NoteMetadataDao =

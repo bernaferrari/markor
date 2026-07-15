@@ -1,10 +1,12 @@
 package com.bernaferrari.remarkor.ui.screens
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -71,6 +73,7 @@ fun EditorScreen(
     filePath: String,
     onNavigateBack: () -> Unit,
     openKeyboardOnStart: Boolean = false,
+    embeddedInDialog: Boolean = false,
     viewModel: EditorViewModel = koinViewModel(),
     shareService: ShareService = koinInject(),
 ) {
@@ -192,7 +195,18 @@ fun EditorScreen(
                     scope = scope,
                 ),
             ),
-        containerColor = editorBackgroundColor,
+        containerColor = if (embeddedInDialog) {
+            MaterialTheme.colorScheme.surface
+        } else {
+            editorBackgroundColor
+        },
+        // Dialog content still inherits the host window's inset metrics; clear them so the
+        // Keep-style card doesn't pad for the status bar of the screen behind it.
+        contentWindowInsets = if (embeddedInDialog) {
+            WindowInsets(0, 0, 0, 0)
+        } else {
+            ScaffoldDefaults.contentWindowInsets
+        },
         topBar = {
             EditorTopBar(
                 scrollBehavior = scrollBehavior,
@@ -201,6 +215,7 @@ fun EditorScreen(
                 canRedo = undoRedo.redoStack.isNotEmpty(),
                 hasOutline = outlineItems.isNotEmpty(),
                 isFocusMode = isFocusMode,
+                embeddedInDialog = embeddedInDialog,
                 onBack = {
                     scope.launch {
                         commitSession()
@@ -288,6 +303,8 @@ fun EditorScreen(
                 noteAccentColor = noteColor?.let(::Color),
                 isFocusMode = isFocusMode,
                 editorFocusNonce = editorFocusNonce,
+                // Shared bounds vs. still-visible grid cards crash Lookahead on web/dialog overlay.
+                enableSharedElements = !embeddedInDialog,
                 autoFocusOnStart = openKeyboardOnStart &&
                     !initialAutoFocusConsumed &&
                     !isLoading &&

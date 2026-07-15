@@ -66,15 +66,6 @@ The project follows a standard KMP layout:
 
 ## 🏁 Getting Started
 
-### Prerequisites
-
-- **JDK 17** or higher.
-- **Android Studio** (Koala or newer) with the KMP plugin.
-- **Xcode 15+** (for iOS development).
-- **CocoaPods** (if applicable) or Swift Package Manager.
-
-### Build & Run
-
 #### Android
 ```bash
 ./gradlew :app:installFlavorDefaultDebug
@@ -100,33 +91,7 @@ Production build:
 ./gradlew :webApp:wasmJsBrowserDistribution
 ```
 
-#### Web deploy (Vercel)
-
-Simulate the CI build locally before pushing:
-
-```bash
-./scripts/simulate-web-ci.sh
-```
-
-Deploy manually (after `vercel login` or with a token):
-
-```bash
-./scripts/verify-web-deploy.sh --ci
-VERCEL_TOKEN=... VERCEL_ORG_ID=... VERCEL_PROJECT_ID=... ./scripts/deploy-web-vercel.sh
-```
-
-Pushes to `master` run `.github/workflows/deploy-web-vercel.yml`, which builds the wasm bundle and deploys to Vercel. Add these repository secrets:
-
-| Secret | Where to find it |
-|--------|------------------|
-| `VERCEL_TOKEN` | [vercel.com/account/tokens](https://vercel.com/account/tokens) |
-| `VERCEL_ORG_ID` | Vercel project → Settings → General |
-| `VERCEL_PROJECT_ID` | Vercel project → Settings → General |
-
 ## 📜 Credits & License
 
 - **Original Project:** [Markor](https://github.com/gsantner/markor) by Gregor Santner.
 - **License:** Apache License 2.0. See [LICENSE.txt](LICENSE.txt) for details.
-
----
-<p align="center">Made with ❤️ using Kotlin Multiplatform</p>

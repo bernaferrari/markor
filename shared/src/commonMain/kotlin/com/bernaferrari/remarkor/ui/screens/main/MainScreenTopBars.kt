@@ -10,7 +10,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
@@ -94,6 +92,7 @@ import com.bernaferrari.remarkor.ui.viewmodel.FileFilterMode
 import com.bernaferrari.remarkor.ui.viewmodel.MainViewModel
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.all
+import markor.shared.generated.resources.add_to_favorites
 import markor.shared.generated.resources.archive
 import markor.shared.generated.resources.back
 import markor.shared.generated.resources.choose_file_to_view_edit
@@ -109,6 +108,7 @@ import markor.shared.generated.resources.note_color
 import markor.shared.generated.resources.notebook
 import markor.shared.generated.resources.oldest_first
 import markor.shared.generated.resources.recent_first
+import markor.shared.generated.resources.remove_from_favorites
 import markor.shared.generated.resources.search_notes
 import markor.shared.generated.resources.search_notes_label
 import markor.shared.generated.resources.select_all
@@ -157,6 +157,8 @@ internal fun SelectionTopBar(
     onFilterModeChange: (FileFilterMode) -> Unit = {},
     onClearSelection: () -> Unit,
     onSelectAll: () -> Unit,
+    allSelectedAreFavorite: Boolean = false,
+    onToggleFavorite: () -> Unit = {},
     onSetColor: () -> Unit,
     onDelete: () -> Unit,
     showFilterChips: Boolean = false
@@ -185,6 +187,22 @@ internal fun SelectionTopBar(
                     )
                 }
                 if (currentFilterMode != FileFilterMode.TRASH) {
+                    IconButton(onClick = onToggleFavorite) {
+                        Icon(
+                            imageVector = if (allSelectedAreFavorite) {
+                                Icons.Default.Star
+                            } else {
+                                Icons.Outlined.StarOutline
+                            },
+                            contentDescription = stringResource(
+                                if (allSelectedAreFavorite) {
+                                    Res.string.remove_from_favorites
+                                } else {
+                                    Res.string.add_to_favorites
+                                }
+                            )
+                        )
+                    }
                     IconButton(onClick = onSetColor) {
                         Icon(
                             Icons.Default.Palette,
@@ -252,7 +270,7 @@ internal fun FilterTabRow(
     ) {
         Row(
             modifier = Modifier
-                .horizontalScroll(rememberScrollState())
+                .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
             verticalAlignment = Alignment.CenterVertically,
@@ -260,6 +278,7 @@ internal fun FilterTabRow(
             filters.forEachIndexed { index, (mode, labelRes, icons) ->
                 val isSelected = mode == currentFilterMode
                 ToggleButton(
+                    modifier = Modifier.weight(1f),
                     checked = isSelected,
                     onCheckedChange = { checked ->
                         if (checked && mode != currentFilterMode) {
@@ -312,9 +331,8 @@ internal fun StandardTopBar(
         TopAppBar(
             title = {
                 Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = onOpenSearch),
+                    onClick = onOpenSearch,
+                    modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.large,
                     color = MaterialTheme.colorScheme.surfaceContainerHighest
                 ) {

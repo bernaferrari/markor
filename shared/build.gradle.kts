@@ -108,6 +108,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.compose.material.icons.extended)
             implementation(libs.coil.compose)
+            // Room 3 common schema (entities/DAO/DB); drivers are platform-specific.
+            implementation(libs.androidx.room.runtime)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -116,7 +118,6 @@ kotlin {
         }
         nativeStorageMain.dependencies {
             implementation(libs.androidx.datastore.preferences)
-            implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
         }
 
@@ -143,6 +144,11 @@ kotlin {
         }
         wasmJsMain.dependencies {
             implementation("com.squareup.okio:okio-fakefilesystem:${libs.versions.okio.get()}")
+            implementation("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
+            // Room 3 web (official): WebWorkerSQLiteDriver + local worker package
+            // https://developer.android.com/jetpack/androidx/releases/room3#3.0.0
+            implementation(libs.androidx.sqlite.web)
+            implementation(npm("sqlite-web-worker", file("sqlite-web-worker")))
         }
     }
 
@@ -157,7 +163,7 @@ dependencies {
     add("kspJvm", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-
+    add("kspWasmJs", libs.androidx.room.compiler)
 }
 
 room3 {

@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -73,11 +74,12 @@ fun FileGridItem(
     isSelected: Boolean,
     selectionMode: Boolean,
     isPinned: Boolean,
+    isFavorite: Boolean,
     color: Int? = null,
     imagePreviewUrl: String? = null,
     labels: List<String> = emptyList(),
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val noteSurfaceColor = color?.let {
@@ -179,12 +181,14 @@ fun FileGridItem(
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.PushPin,
-                            contentDescription = "Pinned",
-                            tint = MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier.size(14.dp)
-                        )
+                        if (isPinned) {
+                            Icon(
+                                imageVector = Icons.Default.PushPin,
+                                contentDescription = "Pinned",
+                                tint = MaterialTheme.colorScheme.tertiary,
+                                modifier = Modifier.size(16.dp),
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                 }
@@ -230,17 +234,32 @@ fun FileGridItem(
                         Spacer(modifier = Modifier.height(8.dp))
                     }
 
-                    SharedElementContainer(
-                        key = SharedTransitionKeys.fileTitle(file.path.toString()),
-                        isSource = true
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        Text(
-                            text = file.name.substringBeforeLast("."),
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            maxLines = 1,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                            color = previewPalette.body
-                        )
+                        SharedElementContainer(
+                            key = SharedTransitionKeys.fileTitle(file.path.toString()),
+                            isSource = true,
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Text(
+                                text = file.name.substringBeforeLast("."),
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                maxLines = 1,
+                                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                                color = previewPalette.body
+                            )
+                        }
+                        if (isFavorite) {
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.tertiary,
+                                modifier = Modifier.size(16.dp),
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(3.dp))

@@ -1,6 +1,7 @@
 package com.bernaferrari.remarkor.ui.screens
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -87,10 +88,9 @@ import androidx.compose.ui.unit.dp
 import com.bernaferrari.remarkor.ui.components.BackHandler
 import com.bernaferrari.remarkor.ui.components.CreateFileDialog
 import com.bernaferrari.remarkor.ui.components.EmptyState
+import com.bernaferrari.remarkor.ui.components.NoteEditorDialog
 import com.bernaferrari.remarkor.ui.components.rememberAdaptiveLayoutInfo
 import com.bernaferrari.remarkor.ui.components.rememberHapticHelper
-import com.bernaferrari.remarkor.ui.screens.main.LeftPanelContent
-import com.bernaferrari.remarkor.ui.screens.main.MainScreenListDetailLayout
 import com.bernaferrari.remarkor.ui.screens.main.MainScreenPhoneLayout
 import com.bernaferrari.remarkor.ui.viewmodel.FileBrowserViewModel
 import com.bernaferrari.remarkor.ui.viewmodel.FileFilterMode
@@ -152,11 +152,32 @@ fun MainScreen(
     // Adaptive layout info
     val adaptiveInfo = rememberAdaptiveLayoutInfo()
 
-    // For dual pane: track selected file for detail view
-    var selectedFileForDetail by remember { mutableStateOf<String?>(null) }
+    // Keep-style note overlay on large screens — simple fade (sharedBounds was too expensive).
+    var noteDialogPath by remember { mutableStateOf<String?>(null) }
+    var noteDialogAutoKeyboard by remember { mutableStateOf(false) }
+    var retainedNoteDialogPath by remember { mutableStateOf<String?>(null) }
+    var retainedNoteDialogAutoKeyboard by remember { mutableStateOf(false) }
+    if (noteDialogPath != null) {
+        retainedNoteDialogPath = noteDialogPath
+        retainedNoteDialogAutoKeyboard = noteDialogAutoKeyboard
+    }
+    val isNoteDialogVisible = noteDialogPath != null
 
-    // Left panel content for tablets
-    var leftPanelContent by remember { mutableStateOf(LeftPanelContent.FILE_BROWSER) }
+    // Large screens: open notes in a Keep-style dialog over a full-width notebook grid.
+    // Phone: push full-screen editor. No list-detail split — the empty "select a file" pane is gone.
+    val openNote: (String, Boolean) -> Unit = { path, autoOpenKeyboard ->
+        if (adaptiveInfo.isLargeScreen) {
+            noteDialogPath = path
+            noteDialogAutoKeyboard = autoOpenKeyboard
+        } else {
+            onNavigateToEditor(path, autoOpenKeyboard)
+        }
+    }
+
+    BackHandler(enabled = isNoteDialogVisible) {
+        noteDialogPath = null
+        noteDialogAutoKeyboard = false
+    }
 
     val fileByPath = remember(files, trashFiles) {
         (files + trashFiles).associateBy { it.path }
@@ -228,39 +249,8 @@ fun MainScreen(
         )
     }
 
-    if (adaptiveInfo.showDualPane) {
-        // Tablet landscape: List-Detail layout with persistent left panel
-        val filterMode by fileBrowserViewModel.filterMode.collectAsState()
-        MainScreenListDetailLayout(
-            adaptiveInfo = adaptiveInfo,
-            isSelectionMode = isSelectionMode,
-            selectedFiles = selectedFiles,
-            fileBrowserViewModel = fileBrowserViewModel,
-            notebookDirectory = notebookDirectory,
-            isGridView = isGridView,
-            selectedFileForDetail = selectedFileForDetail,
-            leftPanelContent = leftPanelContent,
-            currentFilterMode = filterMode,
-            onFileSelected = { path ->
-                selectedFileForDetail = path
-                onNavigateToEditor(path, false)
-            },
-            onClearSelection = { fileBrowserViewModel.clearSelection() },
-            onSelectAll = { fileBrowserViewModel.toggleSelectAll() },
-            onSetColorForSelected = { showSelectionColorSheet = true },
-            onDeleteSelected = { showDeleteDialog = true },
-            onToggleGridView = { isGridView = !isGridView },
-            onFilterModeChange = { fileBrowserViewModel.setFilterMode(it) },
-            onNavigateToSettings = {
-                leftPanelContent = LeftPanelContent.SETTINGS
-            },
-            onNavigateToFileBrowser = {
-                leftPanelContent = LeftPanelContent.FILE_BROWSER
-            },
-            onNavigateToEditor = onNavigateToEditor
-        )
-    } else {
-        // Phone: Standard Scaffold (no drawer)
+    // Full-width notebook on all sizes (Keep-style). Large screens open the editor as an overlay.
+    Box(modifier = Modifier.fillMaxSize()) {
         val filterMode by fileBrowserViewModel.filterMode.collectAsState()
         val sortOrder by fileBrowserViewModel.sortOrder.collectAsState()
 
@@ -280,7 +270,31 @@ fun MainScreen(
             onOpenSettings = onNavigateToSettings,
             onFilterModeChange = { fileBrowserViewModel.setFilterMode(it) },
             onSortOrderChange = { fileBrowserViewModel.setSortOrder(it) },
-            onNavigateToEditor = onNavigateToEditor
+            onNavigateToEditor = openNote,
+            gridMinCellWidthDp = when {
+                adaptiveInfo.isExpandedScreen -> 220
+                adaptiveInfo.isLargeScreen -> 180
+                else -> 150
+            },
+            contentMaxWidthDp = if (adaptiveInfo.isExpandedScreen) 1200 else null,
         )
+
+        AnimatedVisibility(
+            visible = isNoteDialogVisible,
+            enter = fadeIn(animationSpec = tween(durationMillis = 160, easing = LinearOutSlowInEasing)),
+            exit = fadeOut(animationSpec = tween(durationMillis = 120, easing = FastOutLinearInEasing)),
+            label = "keep_note_overlay",
+        ) {
+            retainedNoteDialogPath?.let { path ->
+                NoteEditorDialog(
+                    filePath = path,
+                    openKeyboardOnStart = retainedNoteDialogAutoKeyboard,
+                    onDismiss = {
+                        noteDialogPath = null
+                        noteDialogAutoKeyboard = false
+                    },
+                )
+            }
+        }
     }
 }

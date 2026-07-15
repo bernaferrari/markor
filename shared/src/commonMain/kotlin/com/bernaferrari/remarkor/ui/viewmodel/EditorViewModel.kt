@@ -109,12 +109,26 @@ class EditorViewModel(
         }
     }
 
-    fun saveDocument(document: Document, content: String) {
+    /**
+     * Persist document content.
+     *
+     * Autosave is silent on success — a "Saved" snackbar every few keystrokes is too
+     * distracting while writing. Failures still surface as errors.
+     *
+     * @param notifySuccess reserved for rare explicit user-initiated saves; default false.
+     */
+    fun saveDocument(
+        document: Document,
+        content: String,
+        notifySuccess: Boolean = false,
+    ) {
         viewModelScope.launch {
             try {
                 documentRepository.saveDocument(document, content)
                 _hasUnsavedChanges.value = false
-                messageManager.success(getString(Res.string.saved))
+                if (notifySuccess) {
+                    messageManager.success(getString(Res.string.saved))
+                }
             } catch (e: Exception) {
                 messageManager.error(getString(Res.string.failed_to_save) + ": ${e.message}")
             }
@@ -122,13 +136,13 @@ class EditorViewModel(
     }
 
     /**
-     * Auto-save with debounce.
+     * Auto-save with debounce (silent on success).
      */
     fun autoSave(document: Document, content: String) {
         autoSaveJob?.cancel()
         autoSaveJob = viewModelScope.launch {
             delay(autoSaveDelay)
-            saveDocument(document, content)
+            saveDocument(document, content, notifySuccess = false)
         }
     }
 
