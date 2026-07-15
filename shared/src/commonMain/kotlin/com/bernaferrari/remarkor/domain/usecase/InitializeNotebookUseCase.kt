@@ -39,17 +39,26 @@ class InitializeNotebookUseCase(
         quicknotePath: String,
     ) {
         val notebookParent = notebookDir.parent ?: notebookDir
-        fileRepository.createDirectory(notebookParent, notebookDir.name)
+        // Ensure notebook root exists without renaming an existing directory.
+        if (fileRepository.getFileInfo(notebookDir) == null) {
+            fileRepository.createDirectory(notebookParent, notebookDir.name)
+        }
 
-        val todoFilePath = fileRepository.createFileWithContent(
+        val todoName = todoPath.toPath().name
+        val quickName = quicknotePath.toPath().name
+        val todoExisting = fileRepository.getFileInfo(notebookDir / todoName)
+        val quickExisting = fileRepository.getFileInfo(notebookDir / quickName)
+
+        // Only seed defaults once — re-running after refresh must not clobber user notes.
+        val todoFilePath = todoExisting?.path ?: fileRepository.createFileWithContent(
             notebookDir,
-            todoPath.toPath().name,
+            todoName,
             DEFAULT_TODO_CONTENT,
         )
 
-        val quicknoteFilePath = fileRepository.createFileWithContent(
+        val quicknoteFilePath = quickExisting?.path ?: fileRepository.createFileWithContent(
             notebookDir,
-            quicknotePath.toPath().name,
+            quickName,
             DEFAULT_QUICKNOTE_CONTENT,
         )
 

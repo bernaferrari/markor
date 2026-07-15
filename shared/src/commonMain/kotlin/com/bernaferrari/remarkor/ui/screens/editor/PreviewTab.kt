@@ -44,6 +44,7 @@ internal fun PreviewTab(
     content: String,
     backgroundColor: Color,
     noteAccentColor: Color?,
+    enableSharedElements: Boolean = true,
     onTapToEdit: () -> Unit
 ) {
     val colorScheme = MaterialTheme.colorScheme
@@ -71,7 +72,8 @@ internal fun PreviewTab(
     SharedElementContainer(
         key = SharedTransitionKeys.fileCard(filePath),
         isSource = false,
-        useSharedBounds = true
+        useSharedBounds = true,
+        enabled = enableSharedElements,
     ) {
         Column(
             modifier = Modifier
@@ -87,7 +89,8 @@ internal fun PreviewTab(
             if (title.isNotBlank()) {
                 SharedElementContainer(
                     key = SharedTransitionKeys.fileTitle(filePath),
-                    isSource = false
+                    isSource = false,
+                    enabled = enableSharedElements,
                 ) {
                     Text(
                         text = title,

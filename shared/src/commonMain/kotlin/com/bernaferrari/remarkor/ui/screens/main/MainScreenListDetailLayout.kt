@@ -89,7 +89,6 @@ import com.bernaferrari.remarkor.ui.components.CreateFileDialog
 import com.bernaferrari.remarkor.ui.components.EmptyState
 import com.bernaferrari.remarkor.ui.components.rememberAdaptiveLayoutInfo
 import com.bernaferrari.remarkor.ui.components.rememberHapticHelper
-import com.bernaferrari.remarkor.ui.screens.EditorScreen
 import com.bernaferrari.remarkor.ui.screens.SettingsScreen
 import com.bernaferrari.remarkor.ui.screens.filebrowser.FileBrowserContent
 import com.bernaferrari.remarkor.ui.viewmodel.FileBrowserViewModel
@@ -136,7 +135,6 @@ internal fun MainScreenListDetailLayout(
     fileBrowserViewModel: FileBrowserViewModel,
     notebookDirectory: String,
     isGridView: Boolean,
-    selectedFileForDetail: String?,
     leftPanelContent: LeftPanelContent,
     currentFilterMode: FileFilterMode,
     onFileSelected: (String) -> Unit,
@@ -148,11 +146,8 @@ internal fun MainScreenListDetailLayout(
     onFilterModeChange: (FileFilterMode) -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToFileBrowser: () -> Unit,
-    onNavigateToEditor: (String, Boolean) -> Unit
+    onNavigateToEditor: (String, Boolean) -> Unit,
 ) {
-    // Track detail content path
-    var detailPath by remember { mutableStateOf<String?>(null) }
-
     Row(modifier = Modifier.fillMaxSize()) {
         // Left pane - File List or Settings
         Column(
@@ -162,6 +157,7 @@ internal fun MainScreenListDetailLayout(
         ) {
             AnimatedContent(
                 targetState = leftPanelContent,
+                modifier = Modifier.fillMaxSize(),
                 label = "leftPanelContentTransition",
                 transitionSpec = {
                     if (targetState == LeftPanelContent.SETTINGS) {
@@ -197,68 +193,94 @@ internal fun MainScreenListDetailLayout(
                     }
                 }
             ) { panelContent ->
-                when (panelContent) {
-                    LeftPanelContent.FILE_BROWSER -> {
-                        if (isSelectionMode) {
-                            SelectionTopBar(
-                                selectedCount = selectedFiles.size,
-                                currentFilterMode = currentFilterMode,
-                                onFilterModeChange = onFilterModeChange,
-                                onClearSelection = onClearSelection,
-                                onSelectAll = onSelectAll,
-                                onSetColor = onSetColorForSelected,
-                                onDelete = onDeleteSelected,
-                                showFilterChips = true
-                            )
-                        } else {
-                            TopAppBar(
-                                title = {
-                                    Text(
-                                        stringResource(Res.string.notebook),
-                                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                // Scaffold owns top bar + standard window insets (status bars). AnimatedContent
+                // uses a Box by default — never put TopAppBar and content as siblings without Scaffold.
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    contentWindowInsets = WindowInsets.statusBars,
+                    topBar = {
+                        when (panelContent) {
+                            LeftPanelContent.FILE_BROWSER -> {
+                                if (isSelectionMode) {
+                                    SelectionTopBar(
+                                        selectedCount = selectedFiles.size,
+                                        currentFilterMode = currentFilterMode,
+                                        onFilterModeChange = onFilterModeChange,
+                                        onClearSelection = onClearSelection,
+                                        onSelectAll = onSelectAll,
+                                        onSetColor = onSetColorForSelected,
+                                        onDelete = onDeleteSelected,
+                                        showFilterChips = true
                                     )
-                                },
-                                actions = {
-                                    IconButton(onClick = onToggleGridView) {
-                                        Icon(
-                                            if (isGridView) Icons.AutoMirrored.Filled.List else Icons.Default.GridView,
-                                            contentDescription = null
+                                } else {
+                                    TopAppBar(
+                                        title = {
+                                            Text(
+                                                stringResource(Res.string.notebook),
+                                                style = MaterialTheme.typography.titleLarge.copy(
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            )
+                                        },
+                                        actions = {
+                                            IconButton(onClick = onToggleGridView) {
+                                                Icon(
+                                                    if (isGridView) {
+                                                        Icons.AutoMirrored.Filled.List
+                                                    } else {
+                                                        Icons.Default.GridView
+                                                    },
+                                                    contentDescription = null
+                                                )
+                                            }
+                                            IconButton(onClick = onNavigateToSettings) {
+                                                Icon(
+                                                    Icons.Default.Settings,
+                                                    contentDescription = stringResource(Res.string.settings)
+                                                )
+                                            }
+                                        },
+                                        colors = TopAppBarDefaults.topAppBarColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceContainer
                                         )
-                                    }
-                                    IconButton(onClick = onNavigateToSettings) {
-                                        Icon(
-                                            Icons.Default.Settings,
-                                            contentDescription = stringResource(Res.string.settings)
-                                        )
-                                    }
-                                },
-                                colors = TopAppBarDefaults.topAppBarColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                                    )
+                                }
+                            }
+
+                            LeftPanelContent.SETTINGS -> {
+                                SettingsTopBar(
+                                    onNavigateBack = onNavigateToFileBrowser
                                 )
+                            }
+                        }
+                    }
+                ) { paddingValues ->
+                    when (panelContent) {
+                        LeftPanelContent.FILE_BROWSER -> {
+                            FileBrowserContent(
+                                initialPath = notebookDirectory.ifEmpty { null },
+                                onNavigateToEditor = onNavigateToEditor,
+                                onNavigateBack = { },
+                                viewModel = fileBrowserViewModel,
+                                isGridView = isGridView,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(paddingValues)
                             )
                         }
 
-                        FileBrowserContent(
-                            initialPath = notebookDirectory.ifEmpty { null },
-                            onNavigateToEditor = { path, autoOpenKeyboard ->
-                                detailPath = path
-                                onNavigateToEditor(path, autoOpenKeyboard)
-                            },
-                            onNavigateBack = { },
-                            viewModel = fileBrowserViewModel,
-                            isGridView = isGridView,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    LeftPanelContent.SETTINGS -> {
-                        SettingsTopBar(
-                            onNavigateBack = onNavigateToFileBrowser
-                        )
-                        SettingsScreen(
-                            onNavigateBack = onNavigateToFileBrowser,
-                            showTopBar = false
-                        )
+                        LeftPanelContent.SETTINGS -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(paddingValues)
+                            ) {
+                                SettingsScreen(
+                                    onNavigateBack = onNavigateToFileBrowser,
+                                    showTopBar = false,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -270,45 +292,34 @@ internal fun MainScreenListDetailLayout(
             color = MaterialTheme.colorScheme.outlineVariant
         )
 
-        // Right pane - Detail/Editor
-        Column(
+        // Right pane - empty state (notes open as Keep-style dialogs on large screens)
+        Box(
             modifier = Modifier
                 .weight(adaptiveInfo.detailPaneWeight)
-                .fillMaxHeight()
+                .fillMaxHeight(),
+            contentAlignment = Alignment.Center
         ) {
-            if (detailPath != null) {
-                EditorScreen(
-                    filePath = detailPath!!,
-                    onNavigateBack = { detailPath = null }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(32.dp)
+            ) {
+                Icon(
+                    Icons.Default.Description,
+                    contentDescription = null,
+                    modifier = Modifier.size(64.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                 )
-            } else {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(32.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.Description,
-                            contentDescription = null,
-                            modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            stringResource(Res.string.select_file),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            stringResource(Res.string.choose_file_to_view_edit),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                        )
-                    }
-                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    stringResource(Res.string.select_file),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    stringResource(Res.string.choose_file_to_view_edit),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
             }
         }
     }

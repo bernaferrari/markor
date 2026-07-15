@@ -2,6 +2,7 @@ package com.bernaferrari.remarkor.ui.screens.editor
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.Redo
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.CenterFocusStrong
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
@@ -51,6 +53,7 @@ internal fun EditorTopBar(
     canRedo: Boolean,
     hasOutline: Boolean,
     isFocusMode: Boolean,
+    embeddedInDialog: Boolean = false,
     onBack: () -> Unit,
     onTogglePreview: () -> Unit,
     onShowColorSheet: () -> Unit,
@@ -65,9 +68,13 @@ internal fun EditorTopBar(
 ) {
     TopAppBar(
         title = { Spacer(modifier = Modifier) },
+        windowInsets = if (embeddedInDialog) WindowInsets(0, 0, 0, 0) else TopAppBarDefaults.windowInsets,
         navigationIcon = {
             IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                Icon(
+                    imageVector = if (embeddedInDialog) Icons.Default.Close else Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = if (embeddedInDialog) "Close" else "Back",
+                )
             }
         },
         actions = {

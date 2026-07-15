@@ -458,6 +458,21 @@ class FileBrowserViewModel(
         }
     }
 
+    fun toggleFavoriteForSelected() {
+        val paths = _selectedFiles.value.map { it.toString() }
+        if (paths.isEmpty()) return
+        val removeFromFavorites = paths.all(favorites.value::contains)
+        viewModelScope.launch {
+            paths.forEach { path ->
+                if (removeFromFavorites) {
+                    favoritesRepository.removeFavorite(path)
+                } else {
+                    favoritesRepository.addFavorite(path)
+                }
+            }
+        }
+    }
+
     fun isFavorite(path: String): Boolean {
         return favorites.value.contains(path)
     }

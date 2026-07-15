@@ -154,16 +154,18 @@ fun FavoriteIndicator(
     modifier: Modifier = Modifier
 ) {
     if (isFavorite) {
+        // M3 pair: content on *Container must use on*Container for contrast.
+        // tertiary-on-tertiaryContainer often washes out (looks white-on-pastel).
         Surface(
             shape = MaterialTheme.shapes.small,
-            color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.8f),
+            color = MaterialTheme.colorScheme.tertiaryContainer,
             modifier = modifier.size(24.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Filled.Star,
                     contentDescription = stringResource(Res.string.favorite),
-                    tint = MaterialTheme.colorScheme.tertiary,
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
                     modifier = Modifier.size(14.dp)
                 )
             }

@@ -95,7 +95,6 @@ import com.bernaferrari.remarkor.ui.components.BackHandler
 import com.bernaferrari.remarkor.ui.components.CreateFolderDialog
 import com.bernaferrari.remarkor.ui.components.DeleteDialog
 import com.bernaferrari.remarkor.ui.components.EmptyState
-import com.bernaferrari.remarkor.ui.components.FavoriteIndicator
 import com.bernaferrari.remarkor.ui.components.FileActionSheet
 import com.bernaferrari.remarkor.ui.components.FileGridItem
 import com.bernaferrari.remarkor.ui.components.HapticHelper
@@ -114,10 +113,10 @@ import com.bernaferrari.remarkor.ui.viewmodel.FileFilterMode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.add_to_favorites
 import markor.shared.generated.resources.back_to_with_arg
 import markor.shared.generated.resources.create_new
 import markor.shared.generated.resources.delete_permanently
-import markor.shared.generated.resources.favorite
 import markor.shared.generated.resources.folder
 import markor.shared.generated.resources.more
 import markor.shared.generated.resources.more_create_options
@@ -126,6 +125,7 @@ import markor.shared.generated.resources.no_favorites_yet_description
 import markor.shared.generated.resources.notebook_is_empty
 import markor.shared.generated.resources.notebook_is_empty_description
 import markor.shared.generated.resources.restore
+import markor.shared.generated.resources.remove_from_favorites
 import markor.shared.generated.resources.trash_is_empty
 import markor.shared.generated.resources.trash_is_empty_description
 import okio.Path.Companion.toPath
@@ -154,6 +154,7 @@ internal fun FileItem(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     onMoreClick: () -> Unit,
+    onToggleFavorite: () -> Unit,
     haptic: HapticHelper = rememberHapticHelper(),
     isTrashMode: Boolean = false,
     onRestore: (() -> Unit)? = null,
@@ -378,20 +379,24 @@ internal fun FileItem(
                     }
                 } else {
                     Row {
-                        // Favorite star indicator
-                        if (isFavorite) {
+                        IconButton(
+                            onClick = {
+                                haptic.performLightClick()
+                                onToggleFavorite()
+                            }
+                        ) {
                             Icon(
-                                imageVector = Icons.Filled.Star,
-                                contentDescription = stringResource(Res.string.favorite),
-                                tint = MaterialTheme.colorScheme.tertiary,
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .clickable {
-                                        haptic.performHeavyClick()
-                                        // Toggle favorite handled by parent
-                                    }
+                                imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                                contentDescription = stringResource(
+                                    if (isFavorite) Res.string.remove_from_favorites else Res.string.add_to_favorites
+                                ),
+                                tint = if (isFavorite) {
+                                    MaterialTheme.colorScheme.tertiary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                },
+                                modifier = Modifier.size(20.dp),
                             )
-                            Spacer(Modifier.width(4.dp))
                         }
                         IconButton(
                             onClick = {

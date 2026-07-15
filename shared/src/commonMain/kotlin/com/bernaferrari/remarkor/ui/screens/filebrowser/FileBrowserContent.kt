@@ -48,6 +48,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material.icons.outlined.Archive
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -95,7 +96,6 @@ import com.bernaferrari.remarkor.ui.components.BackHandler
 import com.bernaferrari.remarkor.ui.components.CreateFolderDialog
 import com.bernaferrari.remarkor.ui.components.DeleteDialog
 import com.bernaferrari.remarkor.ui.components.EmptyState
-import com.bernaferrari.remarkor.ui.components.FavoriteIndicator
 import com.bernaferrari.remarkor.ui.components.FileActionSheet
 import com.bernaferrari.remarkor.ui.components.FileGridItem
 import com.bernaferrari.remarkor.ui.components.HapticHelper
@@ -119,6 +119,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.back_to_with_arg
+import markor.shared.generated.resources.archive_is_empty
+import markor.shared.generated.resources.archive_is_empty_description
 import markor.shared.generated.resources.create_new
 import markor.shared.generated.resources.delete_permanently
 import markor.shared.generated.resources.favorite
@@ -146,6 +148,8 @@ fun FileBrowserContent(
     onNavigateBack: () -> Unit,
     viewModel: FileBrowserViewModel = koinViewModel(),
     isGridView: Boolean,
+    /** Adaptive staggered grid min width (dp). Wider on large screens. */
+    gridMinCellWidthDp: Int = 150,
     modifier: Modifier = Modifier
 ) {
     var currentPath by remember { mutableStateOf<String?>(null) }
@@ -163,6 +167,7 @@ fun FileBrowserContent(
 
     // Dialog & Sheet States
     var selectedFileForAction by remember { mutableStateOf<FileInfo?>(null) }
+    var showFileActionSheet by remember { mutableStateOf(false) }
     var showRenameDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showCreateFolderDialog by remember { mutableStateOf(false) }
@@ -207,7 +212,10 @@ fun FileBrowserContent(
     if (showRenameDialog && selectedFileForAction != null) {
         RenameDialog(
             currentName = selectedFileForAction!!.name,
-            onDismiss = { showRenameDialog = false },
+            onDismiss = {
+                showRenameDialog = false
+                selectedFileForAction = null
+            },
             onConfirm = { newName: String ->
                 viewModel.renameFile(selectedFileForAction!!.path, newName)
                 showRenameDialog = false
@@ -219,7 +227,10 @@ fun FileBrowserContent(
     if (showDeleteDialog && selectedFileForAction != null) {
         DeleteDialog(
             count = 1,
-            onDismiss = { showDeleteDialog = false },
+            onDismiss = {
+                showDeleteDialog = false
+                selectedFileForAction = null
+            },
             onConfirm = {
                 viewModel.deleteFile(selectedFileForAction!!.path)
                 showDeleteDialog = false
@@ -231,32 +242,66 @@ fun FileBrowserContent(
     if (showLabelsDialog && selectedFileForAction != null) {
         LabelsDialog(
             initialLabels = labelsInitial,
-            onDismiss = { showLabelsDialog = false },
+            onDismiss = {
+                showLabelsDialog = false
+                selectedFileForAction = null
+            },
             onConfirm = { labels ->
                 viewModel.setLabels(selectedFileForAction!!.path.toString(), labels)
                 showLabelsDialog = false
+                selectedFileForAction = null
             }
         )
     }
 
-    if (selectedFileForAction != null && !showRenameDialog && !showDeleteDialog) {
+    val actionFile = selectedFileForAction
+    if (actionFile != null && showFileActionSheet) {
         FileActionSheet(
-            file = selectedFileForAction!!,
-            isPinned = noteMetadataByPath[selectedFileForAction!!.path.toString()]?.pinned == true,
+            file = actionFile,
+            isPinned = noteMetadataByPath[actionFile.path.toString()]?.pinned == true,
+            isFavorite = favorites.contains(actionFile.path.toString()),
             hasAssets = hasAssets,
-            onDismiss = { selectedFileForAction = null },
-            onRename = { showRenameDialog = true },
-            onDelete = { showDeleteDialog = true },
-            onShare = { showShareDialog = true },
-            onInfo = { /* TODO */ },
-            onTogglePin = { viewModel.togglePin(selectedFileForAction!!.path) },
+            onDismiss = {
+                showFileActionSheet = false
+                selectedFileForAction = null
+            },
+            onRename = {
+                showFileActionSheet = false
+                showRenameDialog = true
+            },
+            onDelete = {
+                showFileActionSheet = false
+                showDeleteDialog = true
+            },
+            onShare = {
+                showFileActionSheet = false
+                showShareDialog = true
+            },
+            onInfo = {
+                showFileActionSheet = false
+                selectedFileForAction = null
+            },
+            onTogglePin = {
+                viewModel.togglePin(actionFile.path)
+                showFileActionSheet = false
+                selectedFileForAction = null
+            },
+            onToggleFavorite = {
+                viewModel.toggleFavorite(actionFile.path.toString())
+                showFileActionSheet = false
+                selectedFileForAction = null
+            },
             onEditLabels = {
                 labelsInitial =
-                    noteMetadataByPath[selectedFileForAction!!.path.toString()]?.labels?.map { it.name }
+                    noteMetadataByPath[actionFile.path.toString()]?.labels?.map { it.name }
                         ?: emptyList()
+                showFileActionSheet = false
                 showLabelsDialog = true
             },
-            onManageAssets = { showAssetManager = true }
+            onManageAssets = {
+                showFileActionSheet = false
+                showAssetManager = true
+            }
         )
     }
 
@@ -266,7 +311,10 @@ fun FileBrowserContent(
             filePath = selectedFileForAction!!.path,
             hasAssets = hasAssets,
             assetManager = assetManager,
-            onDismiss = { showShareDialog = false }
+            onDismiss = {
+                showShareDialog = false
+                selectedFileForAction = null
+            }
         )
     }
 
@@ -276,7 +324,10 @@ fun FileBrowserContent(
             filePath = selectedFileForAction!!.path,
             content = fileContent,
             assetManager = assetManager,
-            onDismiss = { showAssetManager = false },
+            onDismiss = {
+                showAssetManager = false
+                selectedFileForAction = null
+            },
             onAssetsDeleted = {
                 // Could refresh UI if needed
             }
@@ -531,6 +582,14 @@ fun FileBrowserContent(
                             )
                         }
 
+                        filterMode == FileFilterMode.ARCHIVE -> {
+                            EmptyState(
+                                title = stringResource(Res.string.archive_is_empty),
+                                subtitle = stringResource(Res.string.archive_is_empty_description),
+                                icon = Icons.Outlined.Archive,
+                            )
+                        }
+
                         else -> {
                             EmptyListState()
                         }
@@ -539,7 +598,7 @@ fun FileBrowserContent(
             } else {
                 if (isGridView) {
                     LazyVerticalStaggeredGrid(
-                        columns = StaggeredGridCells.Adaptive(150.dp),
+                        columns = StaggeredGridCells.Adaptive(gridMinCellWidthDp.dp),
                         contentPadding = PaddingValues(
                             top = 16.dp,
                             start = 16.dp,
@@ -574,6 +633,7 @@ fun FileBrowserContent(
                                         }
                                     },
                                     isPinned = noteMetadataByPath[file.path.toString()]?.pinned == true,
+                                    isFavorite = isFavorite,
                                     color = noteMetadataByPath[file.path.toString()]?.color,
                                     imagePreviewUrl = noteMetadataByPath[file.path.toString()]?.imagePreviewUrl,
                                     labels = noteLabels,
@@ -581,17 +641,8 @@ fun FileBrowserContent(
                                         if (!isSelectionMode) {
                                             viewModel.enterSelectionMode(file.path)
                                         }
-                                    }
+                                    },
                                 )
-                                // Favorite indicator
-                                if (isFavorite && !isSelectionMode) {
-                                    FavoriteIndicator(
-                                        isFavorite = true,
-                                        modifier = Modifier
-                                            .align(Alignment.TopEnd)
-                                            .padding(8.dp)
-                                    )
-                                }
                             }
                         }
                     }
@@ -637,6 +688,10 @@ fun FileBrowserContent(
                                         },
                                         onMoreClick = {
                                             selectedFileForAction = file
+                                            showFileActionSheet = true
+                                        },
+                                        onToggleFavorite = {
+                                            viewModel.toggleFavorite(file.path.toString())
                                         },
                                         isKeyboardSelected = index == keyboardSelectedIndex
                                     )
@@ -676,6 +731,10 @@ fun FileBrowserContent(
                                     },
                                     onMoreClick = {
                                         selectedFileForAction = file
+                                        showFileActionSheet = true
+                                    },
+                                    onToggleFavorite = {
+                                        viewModel.toggleFavorite(file.path.toString())
                                     },
                                     isTrashMode = isTrashMode,
                                     onRestore = {
@@ -738,6 +797,7 @@ fun FileBrowserContent(
                     val createNote = {
                         scope.launch {
                             haptic.performSuccess()
+                            viewModel.setFilterMode(FileFilterMode.ALL)
                             val effectivePath = currentPath
                                 ?: initialPath
                                 ?: viewModel.loadFiles(null).also { loadedPath ->
@@ -818,6 +878,7 @@ fun FileBrowserContent(
                             leadingIcon = { Icon(Icons.Default.Folder, null) },
                             onClick = {
                                 haptic.performSuccess()
+                                viewModel.setFilterMode(FileFilterMode.ALL)
                                 showCreateFolderDialog = true
                                 showAddMenu = false
                             }

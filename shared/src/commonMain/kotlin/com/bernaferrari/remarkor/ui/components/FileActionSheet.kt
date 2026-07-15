@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,10 +33,12 @@ import androidx.compose.ui.unit.dp
 import com.bernaferrari.remarkor.domain.repository.FileInfo
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.delete
+import markor.shared.generated.resources.add_to_favorites
 import markor.shared.generated.resources.labels
 import markor.shared.generated.resources.manage_images
 import markor.shared.generated.resources.properties
 import markor.shared.generated.resources.rename
+import markor.shared.generated.resources.remove_from_favorites
 import markor.shared.generated.resources.share
 import org.jetbrains.compose.resources.stringResource
 
@@ -42,6 +46,7 @@ import org.jetbrains.compose.resources.stringResource
 fun FileActionSheet(
     file: FileInfo,
     isPinned: Boolean,
+    isFavorite: Boolean,
     hasAssets: Boolean = false,
     onDismiss: () -> Unit,
     onRename: () -> Unit,
@@ -49,6 +54,7 @@ fun FileActionSheet(
     onShare: () -> Unit,
     onInfo: () -> Unit,
     onTogglePin: () -> Unit,
+    onToggleFavorite: () -> Unit,
     onEditLabels: () -> Unit,
     onManageAssets: (() -> Unit)? = null
 ) {
@@ -73,37 +79,33 @@ fun FileActionSheet(
             ActionItem(
                 icon = Icons.Default.Edit,
                 label = stringResource(Res.string.rename),
-                onClick = {
-                    onDismiss()
-                    onRename()
-                }
+                onClick = onRename
             )
 
             ActionItem(
                 icon = Icons.Default.Share,
                 label = stringResource(Res.string.share),
-                onClick = {
-                    onDismiss()
-                    onShare()
-                }
+                onClick = onShare
             )
 
             ActionItem(
                 icon = Icons.Default.PushPin,
                 label = if (isPinned) "Unpin" else "Pin",
-                onClick = {
-                    onDismiss()
-                    onTogglePin()
-                }
+                onClick = onTogglePin
+            )
+
+            ActionItem(
+                icon = if (isFavorite) Icons.Default.Star else Icons.Outlined.StarOutline,
+                label = stringResource(
+                    if (isFavorite) Res.string.remove_from_favorites else Res.string.add_to_favorites
+                ),
+                onClick = onToggleFavorite
             )
 
             ActionItem(
                 icon = Icons.AutoMirrored.Filled.Label,
                 label = stringResource(Res.string.labels),
-                onClick = {
-                    onDismiss()
-                    onEditLabels()
-                }
+                onClick = onEditLabels
             )
 
             // Manage Assets - only show if file has assets
@@ -111,10 +113,7 @@ fun FileActionSheet(
                 ActionItem(
                     icon = Icons.Default.Image,
                     label = stringResource(Res.string.manage_images),
-                    onClick = {
-                        onDismiss()
-                        onManageAssets()
-                    }
+                    onClick = onManageAssets
                 )
             }
 
@@ -122,19 +121,13 @@ fun FileActionSheet(
                 icon = Icons.Default.Delete,
                 label = stringResource(Res.string.delete),
                 color = MaterialTheme.colorScheme.error,
-                onClick = {
-                    onDismiss()
-                    onDelete()
-                }
+                onClick = onDelete
             )
 
             ActionItem(
                 icon = Icons.Default.Info,
                 label = stringResource(Res.string.properties),
-                onClick = {
-                    onDismiss()
-                    onInfo()
-                }
+                onClick = onInfo
             )
         }
     }

@@ -1,7 +1,6 @@
 package com.bernaferrari.remarkor.ui.screens
 
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,33 +11,31 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.NoteAdd
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FolderShared
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,133 +44,341 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.bernaferrari.remarkor.ui.components.supportsSharedStorageMode
 import com.bernaferrari.remarkor.ui.viewmodel.IntroViewModel
 import kotlinx.coroutines.launch
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.back
 import markor.shared.generated.resources.choose_storage_location
+import markor.shared.generated.resources.get_started
 import markor.shared.generated.resources.intro_description
-import markor.shared.generated.resources.next
+import markor.shared.generated.resources.intro_local_first
 import markor.shared.generated.resources.private_storage
 import markor.shared.generated.resources.recommended
 import markor.shared.generated.resources.select_storage_location
 import markor.shared.generated.resources.shared_storage
-import markor.shared.generated.resources.stay_organized
-import markor.shared.generated.resources.stay_organized_description
 import markor.shared.generated.resources.storage_external_description
 import markor.shared.generated.resources.storage_internal_description
+import markor.shared.generated.resources.storage_permission_denied
 import markor.shared.generated.resources.welcome_to_markor
-import markor.shared.generated.resources.write_quickly
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+
+private enum class IntroStep {
+    Welcome,
+    Storage,
+}
 
 @Composable
 fun IntroScreen(
     onIntroFinished: () -> Unit,
     systemInternalFilesDir: String,
-    viewModel: IntroViewModel = koinViewModel()
+    viewModel: IntroViewModel = koinViewModel(),
 ) {
     val supportsSharedStorage = remember { supportsSharedStorageMode() }
-    val pageCount = if (supportsSharedStorage) 4 else 3
-    val pagerState = rememberPagerState { pageCount }
     val scope = rememberCoroutineScope()
+    var step by remember { mutableStateOf(IntroStep.Welcome) }
     var requestPermissions by remember { mutableStateOf(false) }
+    var permissionDenied by remember { mutableStateOf(false) }
+    var isFinishing by remember { mutableStateOf(false) }
 
-    // Permission handling only happens if user opted for external storage
+    fun finishWithPrivateStorage() {
+        if (isFinishing) return
+        isFinishing = true
+        scope.launch {
+            viewModel.setStorageMode(isExternal = false, internalPath = systemInternalFilesDir)
+            onIntroFinished()
+        }
+    }
+
     com.bernaferrari.remarkor.ui.components.HandleStoragePermissions(
         onRequest = requestPermissions,
         onGranted = {
-            scope.launch {
-                viewModel.setStorageMode(isExternal = true, internalPath = systemInternalFilesDir)
-                onIntroFinished()
-                requestPermissions = false
+            if (!isFinishing) {
+                isFinishing = true
+                scope.launch {
+                    viewModel.setStorageMode(isExternal = true, internalPath = systemInternalFilesDir)
+                    onIntroFinished()
+                    requestPermissions = false
+                }
             }
         },
         onDenied = {
             requestPermissions = false
-            // Effectively falls back or stays on screen?
-            // For now, reset. User must explicitly choose Private to proceed without perms.
-        }
-    )
-
-    val backgroundBrush = Brush.verticalGradient(
-        colors = listOf(
-            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
-            MaterialTheme.colorScheme.background
-        )
+            permissionDenied = true
+        },
     )
 
     Surface(
+        modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
-        modifier = Modifier.fillMaxSize()
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(backgroundBrush)
-                .windowInsetsPadding(WindowInsets.navigationBars)
+                .windowInsetsPadding(WindowInsets.safeDrawing)
+                .padding(horizontal = 24.dp),
+            contentAlignment = Alignment.Center,
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.weight(1f)
-                ) { page ->
-                    if (supportsSharedStorage && page == pageCount - 1) {
-                        StorageSelectionPage(
-                            onPrivateSelected = {
-                                scope.launch {
-                                    viewModel.setStorageMode(
-                                        isExternal = false,
-                                        internalPath = systemInternalFilesDir
-                                    )
-                                    onIntroFinished()
-                                }
-                            },
-                            onSharedSelected = {
-                                requestPermissions = true
-                            }
-                        )
-                    } else {
-                        IntroPage(page)
-                    }
-                }
+            when (step) {
+                IntroStep.Welcome -> WelcomePage(
+                    onContinue = {
+                        if (supportsSharedStorage) step = IntroStep.Storage
+                        else finishWithPrivateStorage()
+                    },
+                    enabled = !isFinishing,
+                )
 
-                // Bottom controls:
-                // - shared-capable platforms: hide on final page to force explicit storage selection
-                // - iOS/private-only: show and finish setup on the last page
-                val showBottomBar = if (supportsSharedStorage) {
-                    pagerState.currentPage < pageCount - 1
-                } else {
-                    true
+                IntroStep.Storage -> StorageSelectionPage(
+                    onBack = {
+                        permissionDenied = false
+                        step = IntroStep.Welcome
+                    },
+                    onPrivateSelected = ::finishWithPrivateStorage,
+                    onSharedSelected = {
+                        if (!isFinishing) {
+                            permissionDenied = false
+                            requestPermissions = true
+                        }
+                    },
+                    permissionDenied = permissionDenied,
+                    enabled = !isFinishing && !requestPermissions,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun WelcomePage(
+    onContinue: () -> Unit,
+    enabled: Boolean,
+) {
+    Column(
+        modifier = Modifier
+            .widthIn(max = 560.dp)
+            .fillMaxSize()
+            .padding(vertical = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(
+                modifier = Modifier.padding(vertical = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                NotesPreview()
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Text(
+                    text = stringResource(Res.string.welcome_to_markor),
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = stringResource(Res.string.intro_description),
+                    modifier = Modifier.widthIn(max = 440.dp),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Button(
+                onClick = onContinue,
+                enabled = enabled,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 52.dp),
+                shape = RoundedCornerShape(18.dp),
+            ) {
+                Text(
+                    text = stringResource(Res.string.get_started),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CloudOff,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    text = stringResource(Res.string.intro_local_first),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun NotesPreview() {
+    val outline = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f)
+    Row(
+        modifier = Modifier
+            .widthIn(max = 400.dp)
+            .fillMaxWidth()
+            .height(228.dp)
+            .clearAndSetSemantics { },
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Column(
+            modifier = Modifier.weight(1.08f),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            PreviewNote(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1.2f),
+                accent = MaterialTheme.colorScheme.secondaryContainer,
+                border = outline,
+                lineFractions = listOf(0.86f, 0.62f, 0.74f),
+                showCheck = true,
+                showPin = false,
+            )
+            PreviewNote(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.8f),
+                accent = MaterialTheme.colorScheme.primaryContainer,
+                border = outline,
+                lineFractions = listOf(0.7f, 0.48f),
+                showCheck = false,
+                showPin = false,
+            )
+        }
+        Column(
+            modifier = Modifier.weight(0.92f),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            PreviewNote(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.76f),
+                accent = MaterialTheme.colorScheme.tertiaryContainer,
+                border = outline,
+                lineFractions = listOf(0.78f, 0.52f),
+                showCheck = false,
+                showPin = true,
+            )
+            PreviewNote(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1.24f),
+                accent = MaterialTheme.colorScheme.surfaceContainerHighest,
+                border = outline,
+                lineFractions = listOf(0.9f, 0.66f, 0.8f),
+                showCheck = false,
+                showPin = false,
+            )
+        }
+    }
+}
+
+@Composable
+private fun PreviewNote(
+    modifier: Modifier,
+    accent: Color,
+    border: Color,
+    lineFractions: List<Float>,
+    showCheck: Boolean,
+    showPin: Boolean,
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(18.dp),
+        color = accent.copy(alpha = 0.32f).compositeOver(MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, border),
+        shadowElevation = 1.dp,
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(9.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.42f)
+                        .height(9.dp)
+                        .background(accent, CircleShape),
+                )
+                if (showPin) {
+                    Icon(
+                        imageVector = Icons.Default.PushPin,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.72f),
+                    )
                 }
-                if (showBottomBar) {
-                    IntroBottomBar(
-                        pagerState = pagerState,
-                        onBack = {
-                            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
-                        },
-                        onNext = {
-                            scope.launch {
-                                if (!supportsSharedStorage && pagerState.currentPage == pageCount - 1) {
-                                    viewModel.setStorageMode(
-                                        isExternal = false,
-                                        internalPath = systemInternalFilesDir
-                                    )
-                                    onIntroFinished()
-                                } else {
-                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                                }
+            }
+            lineFractions.forEachIndexed { index, fraction ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(7.dp),
+                ) {
+                    if (showCheck) {
+                        Surface(
+                            modifier = Modifier.size(14.dp),
+                            shape = CircleShape,
+                            color = if (index == 0) accent else Color.Transparent,
+                            border = BorderStroke(1.dp, border),
+                        ) {
+                            if (index == 0) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(2.dp),
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                                )
                             }
                         }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(fraction)
+                            .height(6.dp)
+                            .background(
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                                CircleShape,
+                            ),
                     )
                 }
             }
@@ -183,272 +388,179 @@ fun IntroScreen(
 
 @Composable
 private fun StorageSelectionPage(
+    onBack: () -> Unit,
     onPrivateSelected: () -> Unit,
-    onSharedSelected: () -> Unit
+    onSharedSelected: () -> Unit,
+    permissionDenied: Boolean,
+    enabled: Boolean,
 ) {
     Column(
         modifier = Modifier
+            .widthIn(max = 560.dp)
             .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 12.dp),
     ) {
-        Icon(
-            imageVector = Icons.Default.Save,
-            contentDescription = null,
-            modifier = Modifier.size(64.dp),
-            tint = MaterialTheme.colorScheme.primary
-        )
+        IconButton(
+            onClick = onBack,
+            modifier = Modifier.size(48.dp),
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(Res.string.back),
+            )
+        }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
         Text(
             text = stringResource(Res.string.choose_storage_location),
-            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-            textAlign = TextAlign.Center
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.SemiBold,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = stringResource(Res.string.select_storage_location),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(36.dp))
 
-        StorageOptionCard(
+        StorageOption(
             title = stringResource(Res.string.private_storage),
             description = stringResource(Res.string.storage_internal_description),
             icon = Icons.Default.Lock,
+            recommended = true,
+            enabled = enabled,
             onClick = onPrivateSelected,
-            recommended = true
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
-        StorageOptionCard(
+        StorageOption(
             title = stringResource(Res.string.shared_storage),
             description = stringResource(Res.string.storage_external_description),
-            icon = Icons.Default.FolderShared,
+            icon = Icons.Default.FolderOpen,
+            recommended = false,
+            enabled = enabled,
             onClick = onSharedSelected,
-            recommended = false
         )
+
+        if (permissionDenied) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(Res.string.storage_permission_denied),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 @Composable
-private fun StorageOptionCard(
+private fun StorageOption(
     title: String,
     description: String,
     icon: ImageVector,
+    recommended: Boolean,
+    enabled: Boolean,
     onClick: () -> Unit,
-    recommended: Boolean
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
+    Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (recommended) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer
+        enabled = enabled,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 112.dp),
+        shape = RoundedCornerShape(20.dp),
+        color = if (recommended) {
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
+        } else {
+            MaterialTheme.colorScheme.surface
+        },
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (recommended) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
+            } else {
+                MaterialTheme.colorScheme.outlineVariant
+            },
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (recommended) 4.dp else 0.dp)
     ) {
         Row(
-            modifier = Modifier.padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.padding(18.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Surface(
+                modifier = Modifier.size(44.dp),
                 shape = CircleShape,
-                color = if (recommended) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                    alpha = 0.1f
-                ),
-                modifier = Modifier.size(48.dp)
+                color = if (recommended) {
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHighest
+                },
             ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                        tint = if (recommended) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        modifier = Modifier.size(22.dp),
+                        tint = if (recommended) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
                     )
                 }
             }
 
-            Column(modifier = Modifier.padding(start = 16.dp).weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = if (recommended) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
-                )
-                if (recommended) {
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Surface(
-                        shape = RoundedCornerShape(8.dp),
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.recommended),
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    if (recommended) {
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.recommended),
+                                modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        }
                     }
                 }
-                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = if (recommended) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
             Icon(
-                imageVector = Icons.Default.ChevronRight,
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = null,
-                tint = if (recommended) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                    alpha = 0.5f
-                )
+                modifier = Modifier.size(20.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-        }
-    }
-}
-
-@Composable
-private fun IntroPage(page: Int) {
-    val (data, color) = when (page) {
-        0 -> Triple(
-            stringResource(Res.string.welcome_to_markor),
-            stringResource(Res.string.intro_description),
-            Icons.Filled.Edit
-        ) to MaterialTheme.colorScheme.primary
-
-        1 -> Triple(
-            stringResource(Res.string.write_quickly),
-            stringResource(Res.string.intro_description),
-            Icons.AutoMirrored.Filled.NoteAdd
-        ) to MaterialTheme.colorScheme.secondary
-
-        2 -> Triple(
-            stringResource(Res.string.stay_organized),
-            stringResource(Res.string.stay_organized_description),
-            Icons.Filled.Search
-        ) to MaterialTheme.colorScheme.tertiary
-
-        else -> Triple("", "", Icons.Filled.Close) to Color.Gray
-    }
-    val (title, description, icon) = data
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 40.dp, vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Card(
-            modifier = Modifier
-                .size(200.dp)
-                .padding(16.dp),
-            shape = RoundedCornerShape(48.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = color.copy(alpha = 0.1f)
-            ),
-            elevation = CardDefaults.cardElevation(0.dp)
-        ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(80.dp),
-                    tint = color
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(48.dp))
-
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineLarge.copy(
-                fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.5).sp
-            ),
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = description,
-            style = MaterialTheme.typography.bodyLarge.copy(
-                lineHeight = 28.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            ),
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
-private fun IntroBottomBar(
-    pagerState: PagerState,
-    onBack: () -> Unit,
-    onNext: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(24.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Back Button
-        Box(modifier = Modifier.width(80.dp)) {
-            if (pagerState.currentPage > 0) {
-                TextButton(onClick = onBack) {
-                    Text(
-                        stringResource(Res.string.back),
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
-                    )
-                }
-            }
-        }
-
-        // Indicator
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            repeat(pagerState.pageCount) { index ->
-                val active = pagerState.currentPage == index
-                val width by animateDpAsState(if (active) 24.dp else 8.dp, label = "indicatorWidth")
-                val alpha by animateFloatAsState(if (active) 1f else 0.3f, label = "indicatorAlpha")
-
-                Box(
-                    modifier = Modifier
-                        .height(8.dp)
-                        .width(width)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = alpha))
-                )
-            }
-        }
-
-        // Next Button
-        Box(modifier = Modifier.width(120.dp), contentAlignment = Alignment.CenterEnd) {
-            FilledTonalButton(
-                onClick = onNext,
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(
-                    stringResource(Res.string.next),
-                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
-                )
-            }
         }
     }
 }

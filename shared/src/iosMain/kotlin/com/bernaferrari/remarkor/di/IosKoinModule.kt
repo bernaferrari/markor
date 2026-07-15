@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import com.bernaferrari.remarkor.data.local.createDataStore
 import com.bernaferrari.remarkor.data.local.db.NoteMetadataDao
 import com.bernaferrari.remarkor.data.local.db.NoteMetadataDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.bernaferrari.remarkor.data.local.db.getNoteMetadataDatabase
 import com.bernaferrari.remarkor.data.local.db.getNoteMetadataDatabaseBuilder
 import com.bernaferrari.remarkor.di.NotebookPaths
@@ -75,7 +76,10 @@ actual class PlatformDiModule {
 
     @Single
     fun provideDatabase(): NoteMetadataDatabase =
-        getNoteMetadataDatabase(getNoteMetadataDatabaseBuilder())
+        getNoteMetadataDatabase(
+            getNoteMetadataDatabaseBuilder(),
+            BundledSQLiteDriver(),
+        )
 
     @Single
     fun provideNoteMetadataDao(database: NoteMetadataDatabase): NoteMetadataDao =

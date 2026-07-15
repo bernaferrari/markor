@@ -70,6 +70,7 @@ internal fun EditorTab(
     noteAccentColor: Color?,
     isFocusMode: Boolean = false,
     focusRequestNonce: Int = 0,
+    enableSharedElements: Boolean = true,
     autoFocusOnStart: Boolean = false,
     onAutoFocusConsumed: () -> Unit = {},
     onTitleChange: (String) -> Unit,
@@ -150,7 +151,8 @@ internal fun EditorTab(
     SharedElementContainer(
         key = SharedTransitionKeys.fileCard(filePath),
         isSource = false,
-        useSharedBounds = true
+        useSharedBounds = true,
+        enabled = enableSharedElements,
     ) {
         BoxWithConstraints(
             modifier = Modifier
@@ -180,7 +182,8 @@ internal fun EditorTab(
             ) {
                 SharedElementContainer(
                     key = SharedTransitionKeys.fileTitle(filePath),
-                    isSource = false
+                    isSource = false,
+                    enabled = enableSharedElements,
                 ) {
                     BasicTextField(
                         value = title,
