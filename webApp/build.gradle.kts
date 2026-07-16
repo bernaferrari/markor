@@ -19,6 +19,7 @@ kotlin {
     sourceSets {
         wasmJsMain.dependencies {
             implementation(project(":shared"))
+            implementation(npm("sqlite-web-worker", file("../shared/sqlite-web-worker")))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
