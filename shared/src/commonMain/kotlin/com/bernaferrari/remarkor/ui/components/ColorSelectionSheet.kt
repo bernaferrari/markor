@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,9 +14,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -104,14 +103,14 @@ fun ColorSelectionSheet(
                     ) {
                         if (colorInt == null) {
                             Icon(
-                                imageVector = if (isSelected) Icons.Default.Check else Icons.Default.Palette,
+                                imageVector = if (isSelected) MaterialSymbols.Filled.Check else MaterialSymbols.Filled.Palette,
                                 contentDescription = stringResource(Res.string.default_),
                                 tint = if (isSelected) selectionIconTint(color) else MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(24.dp)
                             )
                         } else if (isSelected) {
                             Icon(
-                                imageVector = Icons.Default.Check,
+                                imageVector = MaterialSymbols.Filled.Check,
                                 contentDescription = stringResource(Res.string.selected),
                                 tint = selectionIconTint(color),
                                 modifier = Modifier.size(28.dp)

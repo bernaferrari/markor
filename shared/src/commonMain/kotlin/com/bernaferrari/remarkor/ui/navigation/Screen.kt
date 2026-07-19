@@ -1,14 +1,7 @@
 package com.bernaferrari.remarkor.ui.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.Settings
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
@@ -57,25 +50,25 @@ val bottomNavItems = listOf(
     BottomNavItem(
         screen = Screen.Notebook,
         title = Res.string.notebook,
-        selectedIcon = Icons.Filled.Description,
-        unselectedIcon = Icons.Outlined.Description
+        selectedIcon = MaterialSymbols.Filled.Description,
+        unselectedIcon = MaterialSymbols.Outlined.Description
     ),
     BottomNavItem(
         screen = Screen.Todo,
         title = Res.string.todo,
-        selectedIcon = Icons.Filled.CheckCircle,
-        unselectedIcon = Icons.Outlined.CheckCircle
+        selectedIcon = MaterialSymbols.Filled.CheckCircle,
+        unselectedIcon = MaterialSymbols.Outlined.CheckCircle
     ),
     BottomNavItem(
         screen = Screen.QuickNote,
         title = Res.string.quicknote,
-        selectedIcon = Icons.Filled.Add,
-        unselectedIcon = Icons.Outlined.Add
+        selectedIcon = MaterialSymbols.Filled.Add,
+        unselectedIcon = MaterialSymbols.Outlined.Add
     ),
     BottomNavItem(
         screen = Screen.Settings,
         title = Res.string.settings,
-        selectedIcon = Icons.Filled.Settings,
-        unselectedIcon = Icons.Outlined.Settings
+        selectedIcon = MaterialSymbols.Filled.Settings,
+        unselectedIcon = MaterialSymbols.Outlined.Settings
     )
 )

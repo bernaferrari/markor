@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.screens.main
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -28,27 +30,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.automirrored.filled.Sort
-import androidx.compose.material.icons.automirrored.outlined.List
-import androidx.compose.material.icons.filled.Archive
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SearchOff
-import androidx.compose.material.icons.filled.SelectAll
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Archive
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -139,7 +120,7 @@ internal fun SettingsTopBar(
         navigationIcon = {
             IconButton(onClick = onNavigateBack) {
                 Icon(
-                    Icons.AutoMirrored.Filled.ArrowBack,
+                    MaterialSymbols.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(Res.string.back)
                 )
             }
@@ -174,7 +155,7 @@ internal fun SelectionTopBar(
             navigationIcon = {
                 IconButton(onClick = onClearSelection) {
                     Icon(
-                        Icons.Default.Close,
+                        MaterialSymbols.Filled.Close,
                         contentDescription = stringResource(Res.string.clear_selection)
                     )
                 }
@@ -182,7 +163,7 @@ internal fun SelectionTopBar(
             actions = {
                 IconButton(onClick = onSelectAll) {
                     Icon(
-                        Icons.Default.SelectAll,
+                        MaterialSymbols.Filled.SelectAll,
                         contentDescription = stringResource(Res.string.select_all)
                     )
                 }
@@ -190,9 +171,9 @@ internal fun SelectionTopBar(
                     IconButton(onClick = onToggleFavorite) {
                         Icon(
                             imageVector = if (allSelectedAreFavorite) {
-                                Icons.Default.Star
+                                MaterialSymbols.Filled.Star
                             } else {
-                                Icons.Outlined.StarOutline
+                                MaterialSymbols.Outlined.Star
                             },
                             contentDescription = stringResource(
                                 if (allSelectedAreFavorite) {
@@ -205,14 +186,14 @@ internal fun SelectionTopBar(
                     }
                     IconButton(onClick = onSetColor) {
                         Icon(
-                            Icons.Default.Palette,
+                            MaterialSymbols.Filled.Palette,
                             contentDescription = stringResource(Res.string.note_color)
                         )
                     }
                 }
                 IconButton(onClick = onDelete) {
                     Icon(
-                        Icons.Default.Delete,
+                        MaterialSymbols.Filled.Delete,
                         contentDescription = stringResource(Res.string.delete)
                     )
                 }
@@ -245,22 +226,22 @@ internal fun FilterTabRow(
         Triple(
             FileFilterMode.ALL,
             Res.string.all,
-            Icons.AutoMirrored.Outlined.List to Icons.AutoMirrored.Filled.List
+            MaterialSymbols.AutoMirrored.Outlined.List to MaterialSymbols.AutoMirrored.Filled.List
         ),
         Triple(
             FileFilterMode.FAVORITES,
             Res.string.favorites,
-            Icons.Outlined.StarOutline to Icons.Default.Star
+            MaterialSymbols.Outlined.Star to MaterialSymbols.Filled.Star
         ),
         Triple(
             FileFilterMode.ARCHIVE,
             Res.string.archive,
-            Icons.Outlined.Archive to Icons.Default.Archive
+            MaterialSymbols.Outlined.Archive to MaterialSymbols.Filled.Archive
         ),
         Triple(
             FileFilterMode.TRASH,
             Res.string.trash,
-            Icons.Outlined.Delete to Icons.Default.Delete
+            MaterialSymbols.Outlined.Delete to MaterialSymbols.Filled.Delete
         )
     )
 
@@ -341,7 +322,7 @@ internal fun StandardTopBar(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Search,
+                            imageVector = MaterialSymbols.Filled.Search,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -358,7 +339,7 @@ internal fun StandardTopBar(
             actions = {
                 IconButton(onClick = onToggleGridView) {
                     Icon(
-                        if (isGridView) Icons.AutoMirrored.Filled.List else Icons.Default.GridView,
+                        if (isGridView) MaterialSymbols.AutoMirrored.Filled.List else MaterialSymbols.Filled.GridView,
                         contentDescription = if (isGridView) stringResource(Res.string.switch_to_list_view) else stringResource(
                             Res.string.switch_to_grid_view
                         )
@@ -367,7 +348,7 @@ internal fun StandardTopBar(
                 Box {
                     IconButton(onClick = { showSortMenu = true }) {
                         Icon(
-                            Icons.AutoMirrored.Filled.Sort,
+                            MaterialSymbols.AutoMirrored.Filled.Sort,
                             contentDescription = stringResource(Res.string.sort)
                         )
                     }
@@ -379,7 +360,7 @@ internal fun StandardTopBar(
                             text = { Text(stringResource(Res.string.recent_first)) },
                             leadingIcon = {
                                 if (currentSortOrder == "date") Icon(
-                                    Icons.Default.Check,
+                                    MaterialSymbols.Filled.Check,
                                     contentDescription = null
                                 )
                             },
@@ -392,7 +373,7 @@ internal fun StandardTopBar(
                             text = { Text(stringResource(Res.string.oldest_first)) },
                             leadingIcon = {
                                 if (currentSortOrder == "oldest") Icon(
-                                    Icons.Default.Check,
+                                    MaterialSymbols.Filled.Check,
                                     contentDescription = null
                                 )
                             },
@@ -405,7 +386,7 @@ internal fun StandardTopBar(
                             text = { Text(stringResource(Res.string.name)) },
                             leadingIcon = {
                                 if (currentSortOrder == "name") Icon(
-                                    Icons.Default.Check,
+                                    MaterialSymbols.Filled.Check,
                                     contentDescription = null
                                 )
                             },
@@ -418,7 +399,7 @@ internal fun StandardTopBar(
                 }
                 IconButton(onClick = onOpenSettings) {
                     Icon(
-                        Icons.Default.Settings,
+                        MaterialSymbols.Filled.Settings,
                         contentDescription = stringResource(Res.string.settings)
                     )
                 }

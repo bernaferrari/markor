@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,11 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.TextSnippet
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -71,7 +68,7 @@ fun ExportDialog(
             ExportOption(
                 title = "Share as Markdown",
                 subtitle = "Share the raw markdown file",
-                icon = Icons.Default.Description,
+                icon = MaterialSymbols.Filled.Description,
                 onClick = {
                     scope.launch {
                         isExporting = true
@@ -92,7 +89,7 @@ fun ExportDialog(
             ExportOption(
                 title = "Share as Text",
                 subtitle = "Share as plain text",
-                icon = Icons.AutoMirrored.Filled.TextSnippet,
+                icon = MaterialSymbols.AutoMirrored.Filled.TextSnippet,
                 onClick = {
                     scope.launch {
                         isExporting = true
@@ -108,7 +105,7 @@ fun ExportDialog(
             ExportOption(
                 title = "Copy to Clipboard",
                 subtitle = "Copy content to clipboard",
-                icon = Icons.Default.ContentCopy,
+                icon = MaterialSymbols.Filled.ContentCopy,
                 onClick = {
                     onShareMarkdown()
                 }
@@ -134,7 +131,7 @@ fun ExportDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(
-                        imageVector = Icons.Default.FileDownload,
+                        imageVector = MaterialSymbols.Filled.FileDownload,
                         contentDescription = stringResource(Res.string.export),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)

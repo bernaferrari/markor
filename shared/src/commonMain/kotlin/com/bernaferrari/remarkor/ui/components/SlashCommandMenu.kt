@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -21,19 +23,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
-import androidx.compose.material.icons.filled.CheckBox
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.FormatBold
-import androidx.compose.material.icons.filled.FormatItalic
-import androidx.compose.material.icons.filled.FormatListNumbered
-import androidx.compose.material.icons.filled.FormatQuote
-import androidx.compose.material.icons.filled.FormatStrikethrough
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material.icons.filled.Title
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -106,7 +95,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.heading_1_label,
         "h1",
-        Icons.Default.Title,
+        MaterialSymbols.Filled.Title,
         Res.string.heading_1_description,
         "# ",
         0
@@ -114,7 +103,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.heading_2_label,
         "h2",
-        Icons.Default.Title,
+        MaterialSymbols.Filled.Title,
         Res.string.heading_2_description,
         "## ",
         0
@@ -122,7 +111,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.heading_3_label,
         "h3",
-        Icons.Default.Title,
+        MaterialSymbols.Filled.Title,
         Res.string.heading_3_description,
         "### ",
         0
@@ -132,7 +121,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.bullet_list,
         "bullet",
-        Icons.AutoMirrored.Filled.FormatListBulleted,
+        MaterialSymbols.AutoMirrored.Filled.FormatListBulleted,
         Res.string.bullet_list_description_label,
         "- ",
         0
@@ -140,7 +129,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.numbered_list,
         "num",
-        Icons.Default.FormatListNumbered,
+        MaterialSymbols.Filled.FormatListNumbered,
         Res.string.numbered_list_description_label,
         "1. ",
         0
@@ -148,7 +137,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.task_list_label,
         "task",
-        Icons.Default.CheckBox,
+        MaterialSymbols.Filled.CheckBox,
         Res.string.task_list_description,
         "- [ ] ",
         0
@@ -158,7 +147,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.quote_label,
         "quote",
-        Icons.Default.FormatQuote,
+        MaterialSymbols.Filled.FormatQuote,
         Res.string.quote_description,
         "> ",
         0
@@ -166,7 +155,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.code_block_label,
         "code",
-        Icons.Default.Code,
+        MaterialSymbols.Filled.Code,
         Res.string.code_block_description,
         "```\n\n```",
         4
@@ -174,7 +163,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.inline_code_label,
         "inline",
-        Icons.Default.Code,
+        MaterialSymbols.Filled.Code,
         Res.string.inline_code_description,
         "`code`",
         1
@@ -184,7 +173,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.divider_label,
         "hr",
-        Icons.Default.Remove,
+        MaterialSymbols.Filled.Remove,
         Res.string.divider_description,
         "\n---\n",
         0
@@ -192,7 +181,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.link,
         "link",
-        Icons.Default.Link,
+        MaterialSymbols.Filled.Link,
         Res.string.link_description,
         "[text](url)",
         4
@@ -200,7 +189,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.image_label,
         "img",
-        Icons.Default.Image,
+        MaterialSymbols.Filled.Image,
         Res.string.image_description,
         "![alt](url)",
         4
@@ -210,7 +199,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.bold_label,
         "bold",
-        Icons.Default.FormatBold,
+        MaterialSymbols.Filled.FormatBold,
         Res.string.bold_description,
         "**text**",
         2
@@ -218,7 +207,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.italic_label,
         "italic",
-        Icons.Default.FormatItalic,
+        MaterialSymbols.Filled.FormatItalic,
         Res.string.italic_description,
         "*text*",
         1
@@ -226,7 +215,7 @@ val slashCommands = listOf(
     SlashCommand(
         Res.string.strikethrough_label,
         "strike",
-        Icons.Default.FormatStrikethrough,
+        MaterialSymbols.Filled.FormatStrikethrough,
         Res.string.strikethrough_description,
         "~~text~~",
         2

@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,15 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DeleteOutline
-import androidx.compose.material.icons.filled.ErrorOutline
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.ImageNotSupported
-import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -100,7 +93,7 @@ fun AssetManagerSheet(
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            icon = { Icon(Icons.Default.Delete, contentDescription = null) },
+            icon = { Icon(MaterialSymbols.Filled.Delete, contentDescription = null) },
             title = {
                 Text(
                     "Delete ${if (selectedAssets.size == orphanedAssets.size && orphanedAssets.isNotEmpty()) "all orphaned" else "selected"} images?",
@@ -177,7 +170,7 @@ fun AssetManagerSheet(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        Icons.Default.ErrorOutline,
+                        MaterialSymbols.Filled.ErrorOutline,
                         contentDescription = null,
                         modifier = Modifier.size(48.dp),
                         tint = MaterialTheme.colorScheme.error
@@ -206,7 +199,7 @@ fun AssetManagerSheet(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        Icons.Default.ImageNotSupported,
+                        MaterialSymbols.Filled.ImageNotSupported,
                         contentDescription = null,
                         modifier = Modifier.size(48.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
@@ -231,12 +224,12 @@ fun AssetManagerSheet(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     StatChip(
-                        icon = Icons.Default.Image,
+                        icon = MaterialSymbols.Filled.Image,
                         label = "${allAssets.size} image${if (allAssets.size != 1) "s" else ""}"
                     )
                     if (orphanedAssets.isNotEmpty()) {
                         StatChip(
-                            icon = Icons.Default.DeleteOutline,
+                            icon = MaterialSymbols.Filled.DeleteOutline,
                             label = "${orphanedAssets.size} unused",
                             color = MaterialTheme.colorScheme.error
                         )
@@ -263,7 +256,7 @@ fun AssetManagerSheet(
                             modifier = Modifier.weight(1f)
                         ) {
                             Icon(
-                                if (selectedAssets.size == orphanedAssets.size) Icons.Default.Close else Icons.Default.SelectAll,
+                                if (selectedAssets.size == orphanedAssets.size) MaterialSymbols.Filled.Close else MaterialSymbols.Filled.SelectAll,
                                 contentDescription = null,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -282,7 +275,7 @@ fun AssetManagerSheet(
                             modifier = Modifier.weight(1f)
                         ) {
                             Icon(
-                                Icons.Default.Delete,
+                                MaterialSymbols.Filled.Delete,
                                 contentDescription = null,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -403,7 +396,7 @@ private fun AssetItem(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            Icons.Default.Image,
+                            MaterialSymbols.Filled.Image,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(24.dp)
@@ -447,7 +440,7 @@ private fun AssetItem(
                         color = MaterialTheme.colorScheme.error
                     ) {
                         Icon(
-                            Icons.Default.Check,
+                            MaterialSymbols.Filled.Check,
                             contentDescription = null,
                             modifier = Modifier.padding(4.dp).size(16.dp),
                             tint = MaterialTheme.colorScheme.onError
@@ -468,7 +461,7 @@ private fun AssetItem(
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                 ) {
                     Icon(
-                        Icons.Default.Check,
+                        MaterialSymbols.Filled.Check,
                         contentDescription = stringResource(Res.string.in_use),
                         modifier = Modifier.padding(4.dp).size(16.dp),
                         tint = MaterialTheme.colorScheme.primary

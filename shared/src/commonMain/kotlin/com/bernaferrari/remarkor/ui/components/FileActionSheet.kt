@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,16 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Label
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.PushPin
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -77,25 +69,25 @@ fun FileActionSheet(
             )
 
             ActionItem(
-                icon = Icons.Default.Edit,
+                icon = MaterialSymbols.Filled.Edit,
                 label = stringResource(Res.string.rename),
                 onClick = onRename
             )
 
             ActionItem(
-                icon = Icons.Default.Share,
+                icon = MaterialSymbols.Filled.Share,
                 label = stringResource(Res.string.share),
                 onClick = onShare
             )
 
             ActionItem(
-                icon = Icons.Default.PushPin,
+                icon = MaterialSymbols.Filled.PushPin,
                 label = if (isPinned) "Unpin" else "Pin",
                 onClick = onTogglePin
             )
 
             ActionItem(
-                icon = if (isFavorite) Icons.Default.Star else Icons.Outlined.StarOutline,
+                icon = if (isFavorite) MaterialSymbols.Filled.Star else MaterialSymbols.Outlined.Star,
                 label = stringResource(
                     if (isFavorite) Res.string.remove_from_favorites else Res.string.add_to_favorites
                 ),
@@ -103,7 +95,7 @@ fun FileActionSheet(
             )
 
             ActionItem(
-                icon = Icons.AutoMirrored.Filled.Label,
+                icon = MaterialSymbols.AutoMirrored.Filled.Label,
                 label = stringResource(Res.string.labels),
                 onClick = onEditLabels
             )
@@ -111,21 +103,21 @@ fun FileActionSheet(
             // Manage Assets - only show if file has assets
             if (hasAssets && onManageAssets != null) {
                 ActionItem(
-                    icon = Icons.Default.Image,
+                    icon = MaterialSymbols.Filled.Image,
                     label = stringResource(Res.string.manage_images),
                     onClick = onManageAssets
                 )
             }
 
             ActionItem(
-                icon = Icons.Default.Delete,
+                icon = MaterialSymbols.Filled.Delete,
                 label = stringResource(Res.string.delete),
                 color = MaterialTheme.colorScheme.error,
                 onClick = onDelete
             )
 
             ActionItem(
-                icon = Icons.Default.Info,
+                icon = MaterialSymbols.Filled.Info,
                 label = stringResource(Res.string.properties),
                 onClick = onInfo
             )

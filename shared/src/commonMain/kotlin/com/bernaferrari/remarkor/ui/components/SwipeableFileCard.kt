@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -8,10 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -101,7 +99,7 @@ fun SwipeableFileCard(
                 when (direction) {
                     SwipeToDismissBoxValue.StartToEnd -> {
                         Icon(
-                            imageVector = if (isFavorite) Icons.Outlined.StarOutline else Icons.Filled.Star,
+                            imageVector = if (isFavorite) MaterialSymbols.Outlined.Star else MaterialSymbols.Filled.Star,
                             contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
                             tint = iconColor,
                             modifier = Modifier.scale(scale).size(28.dp)
@@ -110,7 +108,7 @@ fun SwipeableFileCard(
 
                     SwipeToDismissBoxValue.EndToStart -> {
                         Icon(
-                            imageVector = Icons.Filled.Delete,
+                            imageVector = MaterialSymbols.Filled.Delete,
                             contentDescription = stringResource(Res.string.delete),
                             tint = iconColor,
                             modifier = Modifier.scale(scale).size(28.dp)
@@ -163,7 +161,7 @@ fun FavoriteIndicator(
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
-                    imageVector = Icons.Filled.Star,
+                    imageVector = MaterialSymbols.Filled.Star,
                     contentDescription = stringResource(Res.string.favorite),
                     tint = MaterialTheme.colorScheme.onTertiaryContainer,
                     modifier = Modifier.size(14.dp)

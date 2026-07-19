@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,16 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
-import androidx.compose.material.icons.filled.CheckBox
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.FormatListNumbered
-import androidx.compose.material.icons.filled.FormatQuote
-import androidx.compose.material.icons.filled.FormatStrikethrough
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material.icons.filled.Title
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -126,7 +118,7 @@ fun FormatToolbar(
                         shape = cookieShape
                     )
                     ExpressiveActionButton(
-                        icon = Icons.Default.Link,
+                        icon = MaterialSymbols.Filled.Link,
                         description = "Link",
                         action = EditorAction.LINK,
                         onAction = onAction,
@@ -143,39 +135,39 @@ fun FormatToolbar(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     CompactActionButton(
-                        Icons.Default.FormatStrikethrough,
+                        MaterialSymbols.Filled.FormatStrikethrough,
                         "Strike",
                         onAction,
                         EditorAction.STRIKETHROUGH
                     )
-                    CompactActionButton(Icons.Default.Code, "Code", onAction, EditorAction.CODE)
+                    CompactActionButton(MaterialSymbols.Filled.Code, "Code", onAction, EditorAction.CODE)
                     CompactActionButton(
-                        Icons.Default.Title,
+                        MaterialSymbols.Filled.Title,
                         "Header",
                         onAction,
                         EditorAction.HEADER
                     )
                     CompactActionButton(
-                        Icons.Default.FormatQuote,
+                        MaterialSymbols.Filled.FormatQuote,
                         "Quote",
                         onAction,
                         EditorAction.QUOTE
                     )
-                    CompactActionButton(Icons.Default.Image, "Image", onAction, EditorAction.IMAGE)
+                    CompactActionButton(MaterialSymbols.Filled.Image, "Image", onAction, EditorAction.IMAGE)
                     CompactActionButton(
-                        Icons.AutoMirrored.Filled.FormatListBulleted,
+                        MaterialSymbols.AutoMirrored.Filled.FormatListBulleted,
                         stringResource(Res.string.bullet_list_label),
                         onAction,
                         EditorAction.LIST_BULLET
                     )
                     CompactActionButton(
-                        Icons.Default.FormatListNumbered,
+                        MaterialSymbols.Filled.FormatListNumbered,
                         stringResource(Res.string.numbered_list_label),
                         onAction,
                         EditorAction.LIST_NUMBERED
                     )
                     CompactActionButton(
-                        Icons.Default.CheckBox,
+                        MaterialSymbols.Filled.CheckBox,
                         stringResource(Res.string.task_list),
                         onAction,
                         EditorAction.LIST_TASK

@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.screens.main
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -30,27 +32,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.automirrored.filled.Sort
-import androidx.compose.material.icons.automirrored.outlined.List
-import androidx.compose.material.icons.filled.Archive
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SearchOff
-import androidx.compose.material.icons.filled.SelectAll
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Archive
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -145,7 +126,7 @@ internal fun SearchScreen(
                 navigationIcon = {
                     IconButton(onClick = onClose) {
                         Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
+                            MaterialSymbols.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(Res.string.back)
                         )
                     }
@@ -174,7 +155,7 @@ internal fun SearchScreen(
                     if (query.isNotEmpty()) {
                         IconButton(onClick = { onQueryChange("") }) {
                             Icon(
-                                Icons.Default.Close,
+                                MaterialSymbols.Filled.Close,
                                 contentDescription = stringResource(Res.string.clear_query)
                             )
                         }
@@ -200,7 +181,7 @@ internal fun SearchScreen(
                     subtitle = if (query.isBlank()) stringResource(Res.string.create_note_to_start_searching) else stringResource(
                         Res.string.try_different_search_term
                     ),
-                    icon = Icons.Default.SearchOff
+                    icon = MaterialSymbols.Filled.SearchOff
                 )
             }
         } else {
@@ -248,6 +229,6 @@ internal fun EmptyStateMessage(title: String, subtitle: String) {
     EmptyState(
         title = title,
         subtitle = subtitle,
-        icon = Icons.Default.Info
+        icon = MaterialSymbols.Filled.Info
     )
 }

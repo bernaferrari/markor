@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.screens
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -31,17 +33,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.BrightnessAuto
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.outlined.Folder
-import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Icon
@@ -175,7 +166,7 @@ fun SettingsScreen(
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                imageVector = MaterialSymbols.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = stringResource(Res.string.back)
                             )
                         }
@@ -633,7 +624,7 @@ private fun StorageModeSettingItem(
                     ),
                 ) {
                     Icon(
-                        imageVector = if (isExternalStorageEnabled) Icons.Outlined.Lock else Icons.Default.Lock,
+                        imageVector = if (isExternalStorageEnabled) MaterialSymbols.Outlined.Lock else MaterialSymbols.Filled.Lock,
                         contentDescription = null,
                         modifier = Modifier.size(ToggleButtonDefaults.IconSize),
                     )
@@ -661,7 +652,7 @@ private fun StorageModeSettingItem(
                     ),
                 ) {
                     Icon(
-                        imageVector = if (!isExternalStorageEnabled) Icons.Outlined.Folder else Icons.Default.Folder,
+                        imageVector = if (!isExternalStorageEnabled) MaterialSymbols.Outlined.Folder else MaterialSymbols.Filled.Folder,
                         contentDescription = null,
                         modifier = Modifier.size(ToggleButtonDefaults.IconSize),
                     )
@@ -684,9 +675,9 @@ private fun ThemeModeSettingItem(
     val hapticHelper = rememberHapticHelper()
 
     val modeOptions = listOf(
-        Triple(ThemeModeOption.AUTO, Res.string.auto, Icons.Default.BrightnessAuto),
-        Triple(ThemeModeOption.LIGHT, Res.string.light, Icons.Default.LightMode),
-        Triple(ThemeModeOption.DARK, Res.string.dark, Icons.Default.DarkMode)
+        Triple(ThemeModeOption.AUTO, Res.string.auto, MaterialSymbols.Filled.BrightnessAuto),
+        Triple(ThemeModeOption.LIGHT, Res.string.light, MaterialSymbols.Filled.LightMode),
+        Triple(ThemeModeOption.DARK, Res.string.dark, MaterialSymbols.Filled.DarkMode)
     )
 
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 0.dp)) {
@@ -897,9 +888,9 @@ private fun ThemeSwatch(
                             rotationZ = -orbRotation
                         },
                     imageVector = when {
-                        isSelected -> Icons.Default.Check
-                        isDynamic -> Icons.Default.Palette
-                        else -> Icons.Default.Check
+                        isSelected -> MaterialSymbols.Filled.Check
+                        isDynamic -> MaterialSymbols.Filled.Palette
+                        else -> MaterialSymbols.Filled.Check
                     },
                     tint = Color.White.copy(alpha = 1f),
                 )

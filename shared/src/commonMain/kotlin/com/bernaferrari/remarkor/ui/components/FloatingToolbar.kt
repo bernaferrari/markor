@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -17,13 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CenterFocusStrong
-import androidx.compose.material.icons.filled.CenterFocusWeak
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.FormatBold
-import androidx.compose.material.icons.filled.FormatItalic
-import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -86,7 +81,7 @@ fun FloatingSelectionToolbar(
                     modifier = Modifier.padding(8.dp)
                 ) {
                     FloatingToolbarButton(
-                        icon = Icons.Default.FormatBold,
+                        icon = MaterialSymbols.Filled.FormatBold,
                         contentDescription = stringResource(Res.string.bold),
                         onClick = {
                             hapticHelper.performLightClick()
@@ -94,7 +89,7 @@ fun FloatingSelectionToolbar(
                         }
                     )
                     FloatingToolbarButton(
-                        icon = Icons.Default.FormatItalic,
+                        icon = MaterialSymbols.Filled.FormatItalic,
                         contentDescription = stringResource(Res.string.italic),
                         onClick = {
                             hapticHelper.performLightClick()
@@ -102,7 +97,7 @@ fun FloatingSelectionToolbar(
                         }
                     )
                     FloatingToolbarButton(
-                        icon = Icons.Default.Code,
+                        icon = MaterialSymbols.Filled.Code,
                         contentDescription = "Code",
                         onClick = {
                             hapticHelper.performLightClick()
@@ -119,7 +114,7 @@ fun FloatingSelectionToolbar(
                     )
 
                     FloatingToolbarButton(
-                        icon = Icons.Default.Link,
+                        icon = MaterialSymbols.Filled.Link,
                         contentDescription = "Link",
                         onClick = {
                             hapticHelper.performLightClick()
@@ -220,7 +215,7 @@ fun FocusModeToggle(
             modifier = Modifier.padding(8.dp)
         ) {
             Icon(
-                imageVector = if (isFocusMode) Icons.Default.CenterFocusStrong else Icons.Default.CenterFocusWeak,
+                imageVector = if (isFocusMode) MaterialSymbols.Filled.CenterFocusStrong else MaterialSymbols.Filled.CenterFocusWeak,
                 contentDescription = if (isFocusMode) "Exit Focus Mode" else "Enter Focus Mode",
                 tint = iconColor,
                 modifier = Modifier.size(24.dp)

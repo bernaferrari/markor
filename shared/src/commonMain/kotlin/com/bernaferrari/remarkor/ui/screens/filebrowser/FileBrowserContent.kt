@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.screens.filebrowser
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -35,20 +37,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.FolderOpen
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Restore
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.StarOutline
-import androidx.compose.material.icons.outlined.Archive
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -544,7 +532,7 @@ fun FileBrowserContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = MaterialSymbols.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -585,7 +573,7 @@ fun FileBrowserContent(
                             EmptyState(
                                 title = stringResource(Res.string.no_favorites_yet),
                                 subtitle = stringResource(Res.string.no_favorites_yet_description),
-                                icon = Icons.Outlined.StarOutline
+                                icon = MaterialSymbols.Outlined.Star
                             )
                         }
 
@@ -593,7 +581,7 @@ fun FileBrowserContent(
                             EmptyState(
                                 title = stringResource(Res.string.trash_is_empty),
                                 subtitle = stringResource(Res.string.trash_is_empty_description),
-                                icon = Icons.Default.Delete
+                                icon = MaterialSymbols.Filled.Delete
                             )
                         }
 
@@ -601,7 +589,7 @@ fun FileBrowserContent(
                             EmptyState(
                                 title = stringResource(Res.string.archive_is_empty),
                                 subtitle = stringResource(Res.string.archive_is_empty_description),
-                                icon = Icons.Outlined.Archive,
+                                icon = MaterialSymbols.Outlined.Archive,
                             )
                         }
 
@@ -798,7 +786,7 @@ fun FileBrowserContent(
                             contentColor = MaterialTheme.colorScheme.onErrorContainer
                         )
                     ) {
-                        Icon(Icons.Default.DeleteForever, contentDescription = null)
+                        Icon(MaterialSymbols.Filled.DeleteForever, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
                         Text(
                             "Empty Trash",
@@ -848,7 +836,7 @@ fun FileBrowserContent(
                             )
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Add,
+                                imageVector = MaterialSymbols.Filled.Add,
                                 contentDescription = stringResource(Res.string.create_new)
                             )
                             Spacer(Modifier.width(8.dp))
@@ -875,7 +863,7 @@ fun FileBrowserContent(
                                 .height(56.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.KeyboardArrowUp,
+                                imageVector = MaterialSymbols.Filled.KeyboardArrowUp,
                                 contentDescription = stringResource(Res.string.more_create_options)
                             )
                         }
@@ -890,7 +878,7 @@ fun FileBrowserContent(
                     ) {
                         DropdownMenuItem(
                             text = { Text("New Folder", fontWeight = FontWeight.Medium) },
-                            leadingIcon = { Icon(Icons.Default.Folder, null) },
+                            leadingIcon = { Icon(MaterialSymbols.Filled.Folder, null) },
                             onClick = {
                                 haptic.performSuccess()
                                 viewModel.setFilterMode(FileFilterMode.ALL)

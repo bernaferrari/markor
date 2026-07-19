@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -17,10 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.PushPin
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -183,7 +181,7 @@ fun FileGridItem(
                     ) {
                         if (isPinned) {
                             Icon(
-                                imageVector = Icons.Default.PushPin,
+                                imageVector = MaterialSymbols.Filled.PushPin,
                                 contentDescription = "Pinned",
                                 tint = MaterialTheme.colorScheme.tertiary,
                                 modifier = Modifier.size(16.dp),
@@ -200,7 +198,7 @@ fun FileGridItem(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Folder,
+                            imageVector = MaterialSymbols.Filled.Folder,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
@@ -254,7 +252,7 @@ fun FileGridItem(
                         }
                         if (isFavorite) {
                             Icon(
-                                imageVector = Icons.Default.Star,
+                                imageVector = MaterialSymbols.Filled.Star,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.tertiary,
                                 modifier = Modifier.size(16.dp),

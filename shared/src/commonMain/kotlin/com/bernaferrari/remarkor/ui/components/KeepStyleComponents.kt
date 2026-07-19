@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -17,13 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Assignment
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFloatingActionButton
@@ -61,7 +56,7 @@ fun KeepStyleSearchBar(
     placeholder: String = "Search notes...",
     leadingIcon: @Composable () -> Unit = {
         Icon(
-            Icons.Default.Search,
+            MaterialSymbols.Filled.Search,
             contentDescription = stringResource(Res.string.search)
         )
     },
@@ -120,7 +115,7 @@ fun KeepStyleSearchBar(
                     modifier = Modifier.size(24.dp)
                 ) {
                     Icon(
-                        Icons.Default.Clear,
+                        MaterialSymbols.Filled.Clear,
                         contentDescription = stringResource(Res.string.clear_search),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -182,7 +177,7 @@ fun NoteColorPicker(
             ) {
                 if (isSelected) {
                     Icon(
-                        Icons.Default.Check,
+                        MaterialSymbols.Filled.Check,
                         contentDescription = stringResource(Res.string.selected),
                         tint = if (color != null) {
                             val c = Color(color)
@@ -238,7 +233,7 @@ fun QuickCreateFab(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.Assignment, "New List")
+                    Icon(MaterialSymbols.AutoMirrored.Filled.Assignment, "New List")
                 }
 
                 // New Folder option
@@ -251,7 +246,7 @@ fun QuickCreateFab(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                     contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                 ) {
-                    Icon(Icons.Default.Folder, "New Folder")
+                    Icon(MaterialSymbols.Filled.Folder, "New Folder")
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -273,7 +268,7 @@ fun QuickCreateFab(
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         ) {
             Icon(
-                Icons.Default.Add,
+                MaterialSymbols.Filled.Add,
                 contentDescription = stringResource(Res.string.create_new),
                 modifier = Modifier.size(28.dp)
             )
