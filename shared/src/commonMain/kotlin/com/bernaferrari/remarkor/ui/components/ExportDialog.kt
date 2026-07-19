@@ -38,6 +38,14 @@ import kotlinx.coroutines.launch
 import com.bernaferrari.remarkor.util.formatExportTimestamp
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.export
+import markor.shared.generated.resources.cancel
+import markor.shared.generated.resources.copy_to_clipboard
+import markor.shared.generated.resources.copy_to_clipboard_description
+import markor.shared.generated.resources.share_as_markdown
+import markor.shared.generated.resources.share_as_markdown_description
+import markor.shared.generated.resources.share_as_text
+import markor.shared.generated.resources.share_as_text_description
+import markor.shared.generated.resources.share_text_label
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -62,12 +70,27 @@ fun ExportDialog(
 ) {
     var isExporting by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val shareMarkdownTitle = stringResource(Res.string.share_as_markdown)
+    val shareMarkdownDescription = stringResource(Res.string.share_as_markdown_description)
+    val shareTextTitle = stringResource(Res.string.share_as_text)
+    val shareTextDescription = stringResource(Res.string.share_as_text_description)
+    val shareTextLabel = stringResource(Res.string.share_text_label)
+    val copyTitle = stringResource(Res.string.copy_to_clipboard)
+    val copyDescription = stringResource(Res.string.copy_to_clipboard_description)
 
-    val exportOptions = remember {
+    val exportOptions = remember(
+        shareMarkdownTitle,
+        shareMarkdownDescription,
+        shareTextTitle,
+        shareTextDescription,
+        shareTextLabel,
+        copyTitle,
+        copyDescription,
+    ) {
         listOf(
             ExportOption(
-                title = "Share as Markdown",
-                subtitle = "Share the raw markdown file",
+                title = shareMarkdownTitle,
+                subtitle = shareMarkdownDescription,
                 icon = MaterialSymbols.Filled.Description,
                 onClick = {
                     scope.launch {
@@ -76,7 +99,7 @@ fun ExportDialog(
                             shareService.shareFile(
                                 fileName = fileName,
                                 content = markdownContent.encodeToByteArray(),
-                                title = "Share as Markdown",
+                                title = shareMarkdownTitle,
                                 mimeType = "text/markdown"
                             )
                             onShareMarkdown()
@@ -87,14 +110,14 @@ fun ExportDialog(
                 }
             ),
             ExportOption(
-                title = "Share as Text",
-                subtitle = "Share as plain text",
+                title = shareTextTitle,
+                subtitle = shareTextDescription,
                 icon = MaterialSymbols.AutoMirrored.Filled.TextSnippet,
                 onClick = {
                     scope.launch {
                         isExporting = true
                         try {
-                            shareService.shareText(markdownContent, "Share Text")
+                            shareService.shareText(markdownContent, shareTextLabel)
                             onShareMarkdown()
                         } finally {
                             isExporting = false
@@ -103,8 +126,8 @@ fun ExportDialog(
                 }
             ),
             ExportOption(
-                title = "Copy to Clipboard",
-                subtitle = "Copy content to clipboard",
+                title = copyTitle,
+                subtitle = copyDescription,
                 icon = MaterialSymbols.Filled.ContentCopy,
                 onClick = {
                     onShareMarkdown()
@@ -172,7 +195,7 @@ fun ExportDialog(
                     onClick = onDismiss,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(Res.string.cancel))
                 }
             }
         }

@@ -75,7 +75,34 @@ import com.bernaferrari.remarkor.domain.model.BlockDocument
 import com.bernaferrari.remarkor.domain.model.BlockType
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.delete
+import markor.shared.generated.resources.bullet_list
+import markor.shared.generated.resources.change_block_type
+import markor.shared.generated.resources.code_block_label
+import markor.shared.generated.resources.copy
+import markor.shared.generated.resources.cut
+import markor.shared.generated.resources.divider_label
+import markor.shared.generated.resources.drag_to_reorder
+import markor.shared.generated.resources.heading_1_label
+import markor.shared.generated.resources.heading_2_label
+import markor.shared.generated.resources.heading_3_label
+import markor.shared.generated.resources.heading_4_label
+import markor.shared.generated.resources.heading_5_label
+import markor.shared.generated.resources.heading_6_label
+import markor.shared.generated.resources.image_label
+import markor.shared.generated.resources.image_description_hint
+import markor.shared.generated.resources.list_item_hint
+import markor.shared.generated.resources.more_options
+import markor.shared.generated.resources.move_down
+import markor.shared.generated.resources.move_up
+import markor.shared.generated.resources.numbered_list
+import markor.shared.generated.resources.numbered_item_hint
+import markor.shared.generated.resources.paragraph
+import markor.shared.generated.resources.quote_label
+import markor.shared.generated.resources.quote_hint
 import markor.shared.generated.resources.tap_to_add_block
+import markor.shared.generated.resources.task
+import markor.shared.generated.resources.type_something_hint
+import markor.shared.generated.resources.code_hint
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.roundToInt
 
@@ -350,7 +377,7 @@ private fun BlockItem(
             ) {
                 Icon(
                     imageVector = MaterialSymbols.Filled.DragIndicator,
-                    contentDescription = "Drag to reorder",
+                    contentDescription = stringResource(Res.string.drag_to_reorder),
                     tint = if (isDragging) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .size(20.dp)
@@ -371,7 +398,7 @@ private fun BlockItem(
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                         Icon(
                             imageVector = getBlockTypeIcon(block.type),
-                            contentDescription = "Change block type",
+                            contentDescription = stringResource(Res.string.change_block_type),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.size(18.dp)
                         )
@@ -402,7 +429,7 @@ private fun BlockItem(
                         }
                     HorizontalDivider()
                     DropdownMenuItem(
-                        text = { Text("Move Up") },
+                        text = { Text(stringResource(Res.string.move_up)) },
                         leadingIcon = {
                             Icon(
                                 MaterialSymbols.Filled.ArrowUpward,
@@ -417,7 +444,7 @@ private fun BlockItem(
                         enabled = index > 0
                     )
                     DropdownMenuItem(
-                        text = { Text("Move Down") },
+                        text = { Text(stringResource(Res.string.move_down)) },
                         leadingIcon = {
                             Icon(
                                 MaterialSymbols.Filled.ArrowDownward,
@@ -490,7 +517,7 @@ private fun BlockItem(
                         Box {
                             if (block.content.isEmpty()) {
                                 Text(
-                                    text = block.getPlaceholder(),
+                                    text = getBlockPlaceholder(block.type),
                                     style = getBlockTextStyle(block.type),
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
                                 )
@@ -514,7 +541,7 @@ private fun BlockItem(
                     ) {
                         Icon(
                             imageVector = MaterialSymbols.Filled.MoreVert,
-                            contentDescription = "More actions",
+                            contentDescription = stringResource(Res.string.more_options),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(18.dp)
                         )
@@ -535,7 +562,7 @@ private fun BlockItem(
                     )
                     HorizontalDivider()
                     DropdownMenuItem(
-                        text = { Text("Copy") },
+                        text = { Text(stringResource(Res.string.copy)) },
                         leadingIcon = {
                             Icon(
                                 MaterialSymbols.Filled.ContentCopy,
@@ -546,7 +573,7 @@ private fun BlockItem(
                         onClick = { /* TODO: Copy to clipboard */ showBlockMenu = false }
                     )
                     DropdownMenuItem(
-                        text = { Text("Cut") },
+                        text = { Text(stringResource(Res.string.cut)) },
                         leadingIcon = {
                             Icon(
                                 MaterialSymbols.Filled.ContentCut,
@@ -625,22 +652,45 @@ private fun getBlockTypeIcon(type: BlockType): ImageVector = when (type) {
     BlockType.IMAGE -> MaterialSymbols.Filled.Image
 }
 
-private fun getBlockTypeName(type: BlockType): String = when (type) {
-    BlockType.PARAGRAPH -> "Paragraph"
-    BlockType.HEADING1 -> "Heading 1"
-    BlockType.HEADING2 -> "Heading 2"
-    BlockType.HEADING3 -> "Heading 3"
-    BlockType.HEADING4 -> "Heading 4"
-    BlockType.HEADING5 -> "Heading 5"
-    BlockType.HEADING6 -> "Heading 6"
-    BlockType.BULLET_LIST -> "Bullet List"
-    BlockType.NUMBERED_LIST -> "Numbered List"
-    BlockType.TASK_LIST -> "Task"
-    BlockType.QUOTE -> "Quote"
-    BlockType.CODE_BLOCK -> "Code Block"
-    BlockType.DIVIDER -> "Divider"
-    BlockType.IMAGE -> "Image"
-}
+@Composable
+private fun getBlockTypeName(type: BlockType): String =
+    stringResource(
+        when (type) {
+            BlockType.PARAGRAPH -> Res.string.paragraph
+            BlockType.HEADING1 -> Res.string.heading_1_label
+            BlockType.HEADING2 -> Res.string.heading_2_label
+            BlockType.HEADING3 -> Res.string.heading_3_label
+            BlockType.HEADING4 -> Res.string.heading_4_label
+            BlockType.HEADING5 -> Res.string.heading_5_label
+            BlockType.HEADING6 -> Res.string.heading_6_label
+            BlockType.BULLET_LIST -> Res.string.bullet_list
+            BlockType.NUMBERED_LIST -> Res.string.numbered_list
+            BlockType.TASK_LIST -> Res.string.task
+            BlockType.QUOTE -> Res.string.quote_label
+            BlockType.CODE_BLOCK -> Res.string.code_block_label
+            BlockType.DIVIDER -> Res.string.divider_label
+            BlockType.IMAGE -> Res.string.image_label
+        },
+    )
+
+@Composable
+private fun getBlockPlaceholder(type: BlockType): String =
+    when (type) {
+        BlockType.PARAGRAPH -> stringResource(Res.string.type_something_hint)
+        BlockType.HEADING1 -> stringResource(Res.string.heading_1_label)
+        BlockType.HEADING2 -> stringResource(Res.string.heading_2_label)
+        BlockType.HEADING3 -> stringResource(Res.string.heading_3_label)
+        BlockType.HEADING4 -> stringResource(Res.string.heading_4_label)
+        BlockType.HEADING5 -> stringResource(Res.string.heading_5_label)
+        BlockType.HEADING6 -> stringResource(Res.string.heading_6_label)
+        BlockType.BULLET_LIST -> stringResource(Res.string.list_item_hint)
+        BlockType.NUMBERED_LIST -> stringResource(Res.string.numbered_item_hint)
+        BlockType.TASK_LIST -> stringResource(Res.string.task)
+        BlockType.QUOTE -> stringResource(Res.string.quote_hint)
+        BlockType.CODE_BLOCK -> stringResource(Res.string.code_hint)
+        BlockType.DIVIDER -> ""
+        BlockType.IMAGE -> stringResource(Res.string.image_description_hint)
+    }
 
 @Composable
 private fun getBlockTextStyle(type: BlockType): TextStyle = when (type) {

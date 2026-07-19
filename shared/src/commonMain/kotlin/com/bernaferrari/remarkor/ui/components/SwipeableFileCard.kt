@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.delete
+import markor.shared.generated.resources.add_to_favorites
+import markor.shared.generated.resources.remove_from_favorites
 import markor.shared.generated.resources.favorite
 import org.jetbrains.compose.resources.stringResource
 
@@ -100,7 +102,9 @@ fun SwipeableFileCard(
                     SwipeToDismissBoxValue.StartToEnd -> {
                         Icon(
                             imageVector = if (isFavorite) MaterialSymbols.Outlined.Star else MaterialSymbols.Filled.Star,
-                            contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                            contentDescription = stringResource(
+                                if (isFavorite) Res.string.remove_from_favorites else Res.string.add_to_favorites,
+                            ),
                             tint = iconColor,
                             modifier = Modifier.scale(scale).size(28.dp)
                         )

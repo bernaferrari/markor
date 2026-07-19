@@ -30,6 +30,8 @@ import markor.shared.generated.resources.labels
 import markor.shared.generated.resources.manage_images
 import markor.shared.generated.resources.properties
 import markor.shared.generated.resources.rename
+import markor.shared.generated.resources.pin
+import markor.shared.generated.resources.unpin
 import markor.shared.generated.resources.remove_from_favorites
 import markor.shared.generated.resources.share
 import org.jetbrains.compose.resources.stringResource
@@ -82,7 +84,7 @@ fun FileActionSheet(
 
             ActionItem(
                 icon = MaterialSymbols.Filled.PushPin,
-                label = if (isPinned) "Unpin" else "Pin",
+                label = stringResource(if (isPinned) Res.string.unpin else Res.string.pin),
                 onClick = onTogglePin
             )
 

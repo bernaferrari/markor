@@ -34,7 +34,7 @@ jobs:
 
       - name: Run common tests and build web dist
         run: >-
-          ./gradlew :shared:jvmTest :webApp:wasmJsBrowserDistribution
+          ./gradlew :shared:wasmJsBrowserTest :webApp:wasmJsBrowserDistribution
           --no-daemon --parallel --build-cache --configuration-cache
 
       - name: Verify web dist

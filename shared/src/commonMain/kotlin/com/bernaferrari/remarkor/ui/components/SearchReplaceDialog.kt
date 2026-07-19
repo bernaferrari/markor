@@ -34,6 +34,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.find
+import markor.shared.generated.resources.all
+import markor.shared.generated.resources.close
+import markor.shared.generated.resources.find_next
+import markor.shared.generated.resources.find_text_hint
+import markor.shared.generated.resources.hide_replace
+import markor.shared.generated.resources.replace
+import markor.shared.generated.resources.replace_with_hint
 import org.jetbrains.compose.resources.stringResource
 
 
@@ -81,14 +88,14 @@ fun AdvancedSearchReplaceDialog(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(if (isReplaceVisible) "Hide Replace" else "Replace")
+                        Text(stringResource(if (isReplaceVisible) Res.string.hide_replace else Res.string.replace))
                     }
                 }
 
                 TextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = { Text("Find text...") },
+                    placeholder = { Text(stringResource(Res.string.find_text_hint)) },
                     leadingIcon = {
                         Icon(
                             MaterialSymbols.Filled.Search,
@@ -116,7 +123,7 @@ fun AdvancedSearchReplaceDialog(
                         TextField(
                             value = replaceQuery,
                             onValueChange = { replaceQuery = it },
-                            placeholder = { Text("Replace with...") },
+                            placeholder = { Text(stringResource(Res.string.replace_with_hint)) },
                             leadingIcon = {
                                 Icon(
                                     MaterialSymbols.Filled.FindReplace,
@@ -150,7 +157,7 @@ fun AdvancedSearchReplaceDialog(
                                 shape = MaterialTheme.shapes.medium,
                                 contentPadding = PaddingValues(horizontal = 8.dp)
                             ) {
-                                Text("Replace", maxLines = 1)
+                                Text(stringResource(Res.string.replace), maxLines = 1)
                             }
                             FilledTonalButton(
                                 onClick = { onReplaceAll(searchQuery, replaceQuery) },
@@ -159,7 +166,7 @@ fun AdvancedSearchReplaceDialog(
                                 shape = MaterialTheme.shapes.medium,
                                 contentPadding = PaddingValues(horizontal = 8.dp)
                             ) {
-                                Text("All", maxLines = 1)
+                                Text(stringResource(Res.string.all), maxLines = 1)
                             }
                         }
                     }
@@ -174,7 +181,7 @@ fun AdvancedSearchReplaceDialog(
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Close")
+                        Text(stringResource(Res.string.close))
                     }
                     Button(
                         onClick = { onFindNext(searchQuery) },
@@ -182,7 +189,7 @@ fun AdvancedSearchReplaceDialog(
                         modifier = Modifier.weight(1.5f),
                         shape = MaterialTheme.shapes.medium
                     ) {
-                        Text("Find Next", maxLines = 1)
+                        Text(stringResource(Res.string.find_next), maxLines = 1)
                     }
                 }
             }

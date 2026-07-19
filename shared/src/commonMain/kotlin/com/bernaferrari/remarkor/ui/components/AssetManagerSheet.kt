@@ -53,9 +53,23 @@ import com.bernaferrari.remarkor.domain.repository.IAssetRepository
 import kotlinx.coroutines.launch
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.delete
+import markor.shared.generated.resources.cancel
+import markor.shared.generated.resources.close
+import markor.shared.generated.resources.delete_all_orphaned_images_question
+import markor.shared.generated.resources.delete_images_count_warning
+import markor.shared.generated.resources.delete_selected_images_question
+import markor.shared.generated.resources.deselect_all
+import markor.shared.generated.resources.error_loading_images
+import markor.shared.generated.resources.failed_to_load_images
+import markor.shared.generated.resources.image_count
+import markor.shared.generated.resources.images_added_here
 import markor.shared.generated.resources.in_use
 import markor.shared.generated.resources.manage_images
+import markor.shared.generated.resources.no_images_attached
+import markor.shared.generated.resources.select_unused
+import markor.shared.generated.resources.unused_with_arg
 import okio.Path
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -68,6 +82,7 @@ fun AssetManagerSheet(
     onAssetsDeleted: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
+    val failedToLoadImages = stringResource(Res.string.failed_to_load_images)
 
     var allAssets by remember { mutableStateOf<List<AssetInfo>>(emptyList()) }
     var orphanedAssets by remember { mutableStateOf<List<AssetInfo>>(emptyList()) }
@@ -84,7 +99,7 @@ fun AssetManagerSheet(
             allAssets = assetManager.listAssets(filePath)
             orphanedAssets = assetManager.findOrphanedAssets(filePath, content)
         } catch (e: Exception) {
-            loadError = "Failed to load images: ${e.message}"
+            loadError = "$failedToLoadImages: ${e.message.orEmpty()}"
         }
         isLoading = false
     }
@@ -96,13 +111,23 @@ fun AssetManagerSheet(
             icon = { Icon(MaterialSymbols.Filled.Delete, contentDescription = null) },
             title = {
                 Text(
-                    "Delete ${if (selectedAssets.size == orphanedAssets.size && orphanedAssets.isNotEmpty()) "all orphaned" else "selected"} images?",
+                    stringResource(
+                        if (selectedAssets.size == orphanedAssets.size && orphanedAssets.isNotEmpty()) {
+                            Res.string.delete_all_orphaned_images_question
+                        } else {
+                            Res.string.delete_selected_images_question
+                        },
+                    ),
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
                 )
             },
             text = {
                 Text(
-                    "This will permanently delete ${selectedAssets.size} image${if (selectedAssets.size != 1) "s" else ""}. This action cannot be undone.",
+                    pluralStringResource(
+                        Res.plurals.delete_images_count_warning,
+                        selectedAssets.size,
+                        selectedAssets.size,
+                    ),
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
@@ -134,7 +159,7 @@ fun AssetManagerSheet(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirm = false }) {
-                    Text("Cancel")
+                    Text(stringResource(Res.string.cancel))
                 }
             }
         )
@@ -177,7 +202,7 @@ fun AssetManagerSheet(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        "Error loading images",
+                        stringResource(Res.string.error_loading_images),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.error
                     )
@@ -188,7 +213,7 @@ fun AssetManagerSheet(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = onDismiss) {
-                        Text("Close")
+                        Text(stringResource(Res.string.close))
                     }
                 }
             } else if (allAssets.isEmpty()) {
@@ -206,12 +231,12 @@ fun AssetManagerSheet(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        "No images attached",
+                        stringResource(Res.string.no_images_attached),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        "Images you add to this note will appear here",
+                        stringResource(Res.string.images_added_here),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -225,12 +250,12 @@ fun AssetManagerSheet(
                 ) {
                     StatChip(
                         icon = MaterialSymbols.Filled.Image,
-                        label = "${allAssets.size} image${if (allAssets.size != 1) "s" else ""}"
+                        label = pluralStringResource(Res.plurals.image_count, allAssets.size, allAssets.size)
                     )
                     if (orphanedAssets.isNotEmpty()) {
                         StatChip(
                             icon = MaterialSymbols.Filled.DeleteOutline,
-                            label = "${orphanedAssets.size} unused",
+                            label = stringResource(Res.string.unused_with_arg, orphanedAssets.size),
                             color = MaterialTheme.colorScheme.error
                         )
                     }
@@ -261,7 +286,15 @@ fun AssetManagerSheet(
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(if (selectedAssets.size == orphanedAssets.size) "Deselect all" else "Select unused")
+                            Text(
+                                stringResource(
+                                    if (selectedAssets.size == orphanedAssets.size) {
+                                        Res.string.deselect_all
+                                    } else {
+                                        Res.string.select_unused
+                                    },
+                                ),
+                            )
                         }
 
                         // Delete selected

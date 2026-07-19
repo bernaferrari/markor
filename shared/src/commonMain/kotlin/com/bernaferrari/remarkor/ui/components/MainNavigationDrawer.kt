@@ -21,6 +21,13 @@ import androidx.compose.ui.unit.dp
 import com.bernaferrari.remarkor.domain.model.NoteLabel
 import com.bernaferrari.remarkor.ui.viewmodel.FileFilterMode
 import kotlinx.coroutines.launch
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.archive
+import markor.shared.generated.resources.markor
+import markor.shared.generated.resources.notes
+import markor.shared.generated.resources.settings
+import markor.shared.generated.resources.trash
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun MainNavigationDrawer(
@@ -42,7 +49,7 @@ fun MainNavigationDrawer(
                 Spacer(Modifier.height(12.dp))
 
                 Text(
-                    "Markor",
+                    stringResource(Res.string.markor),
                     modifier = Modifier.padding(16.dp),
                     style = MaterialTheme.typography.titleLarge
                 )
@@ -51,7 +58,7 @@ fun MainNavigationDrawer(
                 Spacer(Modifier.height(12.dp))
 
                 NavigationDrawerItem(
-                    label = { Text("Notes") },
+                    label = { Text(stringResource(Res.string.notes)) },
                     icon = { Icon(MaterialSymbols.Outlined.Description, null) },
                     selected = currentFilterMode == FileFilterMode.ALL,
                     onClick = {
@@ -62,7 +69,7 @@ fun MainNavigationDrawer(
                 )
 
                 NavigationDrawerItem(
-                    label = { Text("Archive") },
+                    label = { Text(stringResource(Res.string.archive)) },
                     icon = { Icon(MaterialSymbols.Outlined.Archive, null) },
                     selected = currentFilterMode == FileFilterMode.ARCHIVE,
                     onClick = {
@@ -73,7 +80,7 @@ fun MainNavigationDrawer(
                 )
 
                 NavigationDrawerItem(
-                    label = { Text("Trash") },
+                    label = { Text(stringResource(Res.string.trash)) },
                     icon = { Icon(MaterialSymbols.Outlined.Delete, null) },
                     selected = currentFilterMode == FileFilterMode.TRASH,
                     onClick = {
@@ -86,7 +93,7 @@ fun MainNavigationDrawer(
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                 NavigationDrawerItem(
-                    label = { Text("Settings") },
+                    label = { Text(stringResource(Res.string.settings)) },
                     icon = { Icon(MaterialSymbols.Outlined.Settings, null) },
                     selected = false,
                     onClick = {

@@ -116,6 +116,8 @@ import markor.shared.generated.resources.favorite
 import markor.shared.generated.resources.folder
 import markor.shared.generated.resources.more
 import markor.shared.generated.resources.more_create_options
+import markor.shared.generated.resources.new_folder
+import markor.shared.generated.resources.new_note
 import markor.shared.generated.resources.no_favorites_yet
 import markor.shared.generated.resources.no_favorites_yet_description
 import markor.shared.generated.resources.notebook_is_empty
@@ -841,7 +843,7 @@ fun FileBrowserContent(
                             )
                             Spacer(Modifier.width(8.dp))
                             Text(
-                                "New Note",
+                                stringResource(Res.string.new_note),
                                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                             )
                         }
@@ -877,7 +879,7 @@ fun FileBrowserContent(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                     ) {
                         DropdownMenuItem(
-                            text = { Text("New Folder", fontWeight = FontWeight.Medium) },
+                            text = { Text(stringResource(Res.string.new_folder), fontWeight = FontWeight.Medium) },
                             leadingIcon = { Icon(MaterialSymbols.Filled.Folder, null) },
                             onClick = {
                                 haptic.performSuccess()
