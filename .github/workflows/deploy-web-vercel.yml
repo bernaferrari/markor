@@ -3,7 +3,29 @@ name: Deploy Web to Vercel
 on:
   push:
     branches: [main]
+    paths:
+      - 'shared/**'
+      - 'webApp/**'
+      - 'gradle/**'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
+      - 'build.gradle.kts'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'scripts/verify-web-deploy.sh'
+      - 'scripts/deploy-web-vercel.sh'
   pull_request:
+    paths:
+      - 'shared/**'
+      - 'webApp/**'
+      - 'gradle/**'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
+      - 'build.gradle.kts'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'scripts/verify-web-deploy.sh'
+      - 'scripts/deploy-web-vercel.sh'
   workflow_dispatch:
 
 concurrency:
@@ -31,7 +53,7 @@ jobs:
           node-version: 26
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build and verify web dist
         run: ./scripts/verify-web-deploy.sh --ci

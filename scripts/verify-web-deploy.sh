@@ -10,13 +10,15 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST="$ROOT/webApp/build/dist/wasmJs/productionExecutable"
 CI_MODE=false
 SERVE_MODE=false
+SKIP_BUILD=false
 
 for arg in "$@"; do
   case "$arg" in
     --ci) CI_MODE=true ;;
+    --skip-build) SKIP_BUILD=true ;;
     --serve) SERVE_MODE=true ;;
     -h|--help)
-      echo "Usage: $0 [--ci] [--serve]"
+      echo "Usage: $0 [--ci] [--skip-build] [--serve]"
       exit 0
       ;;
     *)
@@ -29,7 +31,10 @@ done
 cd "$ROOT"
 
 echo "==> Building wasm web distribution"
-./gradlew :webApp:wasmJsBrowserDistribution --no-daemon
+if [[ "$SKIP_BUILD" == false ]]; then
+  ./gradlew :webApp:wasmJsBrowserDistribution \
+    --no-daemon --parallel --build-cache --configuration-cache
+fi
 
 echo "==> Staging Vercel config in dist"
 cp "$ROOT/webApp/vercel.json" "$DIST/vercel.json"
