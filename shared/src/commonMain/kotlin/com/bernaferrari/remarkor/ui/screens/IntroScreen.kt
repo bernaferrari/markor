@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.screens
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,14 +23,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CloudOff
-import androidx.compose.material.icons.filled.FolderOpen
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -217,7 +211,7 @@ private fun WelcomePage(
                 )
                 Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    imageVector = MaterialSymbols.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null,
                     modifier = Modifier.size(ButtonDefaults.IconSize),
                 )
@@ -230,7 +224,7 @@ private fun WelcomePage(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 Icon(
-                    imageVector = Icons.Default.CloudOff,
+                    imageVector = MaterialSymbols.Filled.CloudOff,
                     contentDescription = null,
                     modifier = Modifier.size(16.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -342,7 +336,7 @@ private fun PreviewNote(
                 )
                 if (showPin) {
                     Icon(
-                        imageVector = Icons.Default.PushPin,
+                        imageVector = MaterialSymbols.Filled.PushPin,
                         contentDescription = null,
                         modifier = Modifier.size(14.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.72f),
@@ -363,7 +357,7 @@ private fun PreviewNote(
                         ) {
                             if (index == 0) {
                                 Icon(
-                                    imageVector = Icons.Default.Check,
+                                    imageVector = MaterialSymbols.Filled.Check,
                                     contentDescription = null,
                                     modifier = Modifier.padding(2.dp),
                                     tint = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -406,7 +400,7 @@ private fun StorageSelectionPage(
             modifier = Modifier.size(48.dp),
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                imageVector = MaterialSymbols.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(Res.string.back),
             )
         }
@@ -432,7 +426,7 @@ private fun StorageSelectionPage(
         StorageOption(
             title = stringResource(Res.string.private_storage),
             description = stringResource(Res.string.storage_internal_description),
-            icon = Icons.Default.Lock,
+            icon = MaterialSymbols.Filled.Lock,
             recommended = true,
             enabled = enabled,
             onClick = onPrivateSelected,
@@ -443,7 +437,7 @@ private fun StorageSelectionPage(
         StorageOption(
             title = stringResource(Res.string.shared_storage),
             description = stringResource(Res.string.storage_external_description),
-            icon = Icons.Default.FolderOpen,
+            icon = MaterialSymbols.Filled.FolderOpen,
             recommended = false,
             enabled = enabled,
             onClick = onSharedSelected,
@@ -556,7 +550,7 @@ private fun StorageOption(
             }
 
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                imageVector = MaterialSymbols.AutoMirrored.Filled.ArrowForward,
                 contentDescription = null,
                 modifier = Modifier.size(20.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,

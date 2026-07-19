@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -28,24 +30,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
-import androidx.compose.material.icons.automirrored.filled.Notes
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.CheckBox
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.ContentCut
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DragIndicator
-import androidx.compose.material.icons.filled.FormatListNumbered
-import androidx.compose.material.icons.filled.FormatQuote
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material.icons.filled.Title
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -365,7 +349,7 @@ private fun BlockItem(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.DragIndicator,
+                    imageVector = MaterialSymbols.Filled.DragIndicator,
                     contentDescription = "Drag to reorder",
                     tint = if (isDragging) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
@@ -421,7 +405,7 @@ private fun BlockItem(
                         text = { Text("Move Up") },
                         leadingIcon = {
                             Icon(
-                                Icons.Default.ArrowUpward,
+                                MaterialSymbols.Filled.ArrowUpward,
                                 null,
                                 Modifier.size(18.dp)
                             )
@@ -436,7 +420,7 @@ private fun BlockItem(
                         text = { Text("Move Down") },
                         leadingIcon = {
                             Icon(
-                                Icons.Default.ArrowDownward,
+                                MaterialSymbols.Filled.ArrowDownward,
                                 null,
                                 Modifier.size(18.dp)
                             )
@@ -529,7 +513,7 @@ private fun BlockItem(
                         modifier = Modifier.size(28.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.MoreVert,
+                            imageVector = MaterialSymbols.Filled.MoreVert,
                             contentDescription = "More actions",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(18.dp)
@@ -543,7 +527,7 @@ private fun BlockItem(
                 ) {
                     DropdownMenuItem(
                         text = { Text(stringResource(Res.string.delete)) },
-                        leadingIcon = { Icon(Icons.Default.Delete, null, Modifier.size(18.dp)) },
+                        leadingIcon = { Icon(MaterialSymbols.Filled.Delete, null, Modifier.size(18.dp)) },
                         onClick = {
                             onDelete()
                             showBlockMenu = false
@@ -554,7 +538,7 @@ private fun BlockItem(
                         text = { Text("Copy") },
                         leadingIcon = {
                             Icon(
-                                Icons.Default.ContentCopy,
+                                MaterialSymbols.Filled.ContentCopy,
                                 null,
                                 Modifier.size(18.dp)
                             )
@@ -565,7 +549,7 @@ private fun BlockItem(
                         text = { Text("Cut") },
                         leadingIcon = {
                             Icon(
-                                Icons.Default.ContentCut,
+                                MaterialSymbols.Filled.ContentCut,
                                 null,
                                 Modifier.size(18.dp)
                             )
@@ -609,7 +593,7 @@ private fun AddBlockButton(onClick: () -> Unit) {
             modifier = Modifier.padding(20.dp)
         ) {
             Icon(
-                imageVector = Icons.Default.Add,
+                imageVector = MaterialSymbols.Filled.Add,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
@@ -625,20 +609,20 @@ private fun AddBlockButton(onClick: () -> Unit) {
 }
 
 private fun getBlockTypeIcon(type: BlockType): ImageVector = when (type) {
-    BlockType.PARAGRAPH -> Icons.AutoMirrored.Filled.Notes
-    BlockType.HEADING1 -> Icons.Default.Title
-    BlockType.HEADING2 -> Icons.Default.Title
-    BlockType.HEADING3 -> Icons.Default.Title
-    BlockType.HEADING4 -> Icons.Default.Title
-    BlockType.HEADING5 -> Icons.Default.Title
-    BlockType.HEADING6 -> Icons.Default.Title
-    BlockType.BULLET_LIST -> Icons.AutoMirrored.Filled.FormatListBulleted
-    BlockType.NUMBERED_LIST -> Icons.Default.FormatListNumbered
-    BlockType.TASK_LIST -> Icons.Default.CheckBox
-    BlockType.QUOTE -> Icons.Default.FormatQuote
-    BlockType.CODE_BLOCK -> Icons.Default.Code
-    BlockType.DIVIDER -> Icons.Default.Remove
-    BlockType.IMAGE -> Icons.Default.Image
+    BlockType.PARAGRAPH -> MaterialSymbols.AutoMirrored.Filled.Notes
+    BlockType.HEADING1 -> MaterialSymbols.Filled.Title
+    BlockType.HEADING2 -> MaterialSymbols.Filled.Title
+    BlockType.HEADING3 -> MaterialSymbols.Filled.Title
+    BlockType.HEADING4 -> MaterialSymbols.Filled.Title
+    BlockType.HEADING5 -> MaterialSymbols.Filled.Title
+    BlockType.HEADING6 -> MaterialSymbols.Filled.Title
+    BlockType.BULLET_LIST -> MaterialSymbols.AutoMirrored.Filled.FormatListBulleted
+    BlockType.NUMBERED_LIST -> MaterialSymbols.Filled.FormatListNumbered
+    BlockType.TASK_LIST -> MaterialSymbols.Filled.CheckBox
+    BlockType.QUOTE -> MaterialSymbols.Filled.FormatQuote
+    BlockType.CODE_BLOCK -> MaterialSymbols.Filled.Code
+    BlockType.DIVIDER -> MaterialSymbols.Filled.Remove
+    BlockType.IMAGE -> MaterialSymbols.Filled.Image
 }
 
 private fun getBlockTypeName(type: BlockType): String = when (type) {

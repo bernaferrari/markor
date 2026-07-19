@@ -6,7 +6,6 @@ appfunctionsService = "1.0.0-alpha09"
 assertj = "3.27.7"
 coil = "3.5.0"
 composeMaterial3 = "1.12.0-alpha03"
-composeMaterialIcons = "1.7.3"
 composeMultiplatform = "1.12.0-beta02"
 coreKtx = "1.19.0"
 coroutines = "1.11.0"
@@ -48,7 +47,6 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" 
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-components-ui-tooling-preview = { module = "org.jetbrains.compose.components:components-ui-tooling-preview", version.ref = "composeMultiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
-compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "composeMaterialIcons" }
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMaterial3" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }

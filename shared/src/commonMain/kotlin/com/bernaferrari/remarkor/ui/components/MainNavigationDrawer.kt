@@ -1,13 +1,10 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Archive
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -55,7 +52,7 @@ fun MainNavigationDrawer(
 
                 NavigationDrawerItem(
                     label = { Text("Notes") },
-                    icon = { Icon(Icons.Outlined.Description, null) },
+                    icon = { Icon(MaterialSymbols.Outlined.Description, null) },
                     selected = currentFilterMode == FileFilterMode.ALL,
                     onClick = {
                         scope.launch { drawerState.close() }
@@ -66,7 +63,7 @@ fun MainNavigationDrawer(
 
                 NavigationDrawerItem(
                     label = { Text("Archive") },
-                    icon = { Icon(Icons.Outlined.Archive, null) },
+                    icon = { Icon(MaterialSymbols.Outlined.Archive, null) },
                     selected = currentFilterMode == FileFilterMode.ARCHIVE,
                     onClick = {
                         scope.launch { drawerState.close() }
@@ -77,7 +74,7 @@ fun MainNavigationDrawer(
 
                 NavigationDrawerItem(
                     label = { Text("Trash") },
-                    icon = { Icon(Icons.Outlined.Delete, null) },
+                    icon = { Icon(MaterialSymbols.Outlined.Delete, null) },
                     selected = currentFilterMode == FileFilterMode.TRASH,
                     onClick = {
                         scope.launch { drawerState.close() }
@@ -90,7 +87,7 @@ fun MainNavigationDrawer(
 
                 NavigationDrawerItem(
                     label = { Text("Settings") },
-                    icon = { Icon(Icons.Outlined.Settings, null) },
+                    icon = { Icon(MaterialSymbols.Outlined.Settings, null) },
                     selected = false,
                     onClick = {
                         scope.launch { drawerState.close() }

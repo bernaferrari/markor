@@ -107,7 +107,6 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.androidx.navigation3.ui)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
-            implementation(libs.compose.material.icons.extended)
             implementation(libs.coil.compose)
             // Room 3 common schema (entities/DAO/DB); drivers are platform-specific.
             implementation(libs.androidx.room.runtime)

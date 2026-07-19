@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,11 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.FindReplace
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
@@ -79,7 +76,7 @@ fun AdvancedSearchReplaceDialog(
                     // Toggle Replace Mode
                     TextButton(onClick = { isReplaceVisible = !isReplaceVisible }) {
                         Icon(
-                            imageVector = if (isReplaceVisible) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                            imageVector = if (isReplaceVisible) MaterialSymbols.Filled.ExpandLess else MaterialSymbols.Filled.ExpandMore,
                             contentDescription = null,
                             modifier = Modifier.size(16.dp)
                         )
@@ -94,7 +91,7 @@ fun AdvancedSearchReplaceDialog(
                     placeholder = { Text("Find text...") },
                     leadingIcon = {
                         Icon(
-                            Icons.Default.Search,
+                            MaterialSymbols.Filled.Search,
                             contentDescription = null,
                             modifier = Modifier.size(20.dp)
                         )
@@ -122,7 +119,7 @@ fun AdvancedSearchReplaceDialog(
                             placeholder = { Text("Replace with...") },
                             leadingIcon = {
                                 Icon(
-                                    Icons.Default.FindReplace,
+                                    MaterialSymbols.Filled.FindReplace,
                                     contentDescription = null,
                                     modifier = Modifier.size(20.dp)
                                 )

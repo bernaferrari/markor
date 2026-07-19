@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,11 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.FolderZip
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -73,7 +70,7 @@ fun ShareDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    imageVector = Icons.Default.Share,
+                    imageVector = MaterialSymbols.Filled.Share,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
@@ -107,7 +104,7 @@ fun ShareDialog(
 
                 // Share as Markdown only
                 ShareOption(
-                    icon = Icons.Default.Description,
+                    icon = MaterialSymbols.Filled.Description,
                     title = stringResource(Res.string.share_as_markdown),
                     subtitle = stringResource(Res.string.share_text_only_description),
                     onClick = {
@@ -130,7 +127,7 @@ fun ShareDialog(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     ShareOption(
-                        icon = Icons.Default.FolderZip,
+                        icon = MaterialSymbols.Filled.FolderZip,
                         title = stringResource(Res.string.share_with_images),
                         subtitle = stringResource(Res.string.share_with_images_description),
                         onClick = {
@@ -240,7 +237,7 @@ private fun ShareOption(
 
             if (enabled) {
                 Icon(
-                    Icons.Default.ChevronRight,
+                    MaterialSymbols.Filled.ChevronRight,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)

@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.components
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,11 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -59,7 +56,7 @@ fun CreateFolderDialog(
 
     PremiumInputDialog(
         title = "New Folder",
-        icon = Icons.Default.Folder,
+        icon = MaterialSymbols.Filled.Folder,
         value = folderName,
         onValueChange = { folderName = it },
         label = stringResource(Res.string.folder_name),
@@ -79,7 +76,7 @@ fun RenameDialog(
 
     PremiumInputDialog(
         title = stringResource(Res.string.rename),
-        icon = Icons.Default.Edit,
+        icon = MaterialSymbols.Filled.Edit,
         value = newName,
         onValueChange = { newName = it },
         label = stringResource(Res.string.name),
@@ -99,7 +96,7 @@ fun DeleteDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        icon = { Icon(Icons.Default.Delete, contentDescription = null) },
+        icon = { Icon(MaterialSymbols.Filled.Delete, contentDescription = null) },
         title = {
             Text(
                 text = "Delete ${if (count > 1) "$count items" else "item"}?",
@@ -247,7 +244,7 @@ fun CreateFileDialog(
 
     PremiumInputDialog(
         title = "New Note",
-        icon = Icons.Default.Create,
+        icon = MaterialSymbols.Filled.Create,
         value = fileName,
         onValueChange = { fileName = it },
         label = stringResource(Res.string.file_name),

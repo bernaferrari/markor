@@ -1,5 +1,7 @@
 package com.bernaferrari.remarkor.ui.screens.filebrowser
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -35,19 +37,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.FolderOpen
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Restore
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -138,7 +127,7 @@ internal fun EmptyListState() {
     EmptyState(
         title = stringResource(Res.string.notebook_is_empty),
         subtitle = stringResource(Res.string.notebook_is_empty_description),
-        icon = Icons.Default.FolderOpen
+        icon = MaterialSymbols.Filled.FolderOpen
     )
 }
 
@@ -256,7 +245,7 @@ internal fun FileItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = if (file.isDirectory) Icons.Default.Folder else Icons.Default.Description,
+                        imageVector = if (file.isDirectory) MaterialSymbols.Filled.Folder else MaterialSymbols.Filled.Description,
                         contentDescription = null,
                         tint = iconTintColor,
                         modifier = Modifier.size(24.dp)
@@ -359,7 +348,7 @@ internal fun FileItem(
                             }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Restore,
+                                imageVector = MaterialSymbols.Filled.Restore,
                                 contentDescription = stringResource(Res.string.restore),
                                 tint = MaterialTheme.colorScheme.primary
                             )
@@ -371,7 +360,7 @@ internal fun FileItem(
                             }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.DeleteForever,
+                                imageVector = MaterialSymbols.Filled.DeleteForever,
                                 contentDescription = stringResource(Res.string.delete_permanently),
                                 tint = MaterialTheme.colorScheme.error
                             )
@@ -386,7 +375,7 @@ internal fun FileItem(
                             }
                         ) {
                             Icon(
-                                imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                                imageVector = if (isFavorite) MaterialSymbols.Filled.Star else MaterialSymbols.Outlined.Star,
                                 contentDescription = stringResource(
                                     if (isFavorite) Res.string.remove_from_favorites else Res.string.add_to_favorites
                                 ),
@@ -405,7 +394,7 @@ internal fun FileItem(
                             }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.MoreVert,
+                                imageVector = MaterialSymbols.Filled.MoreVert,
                                 contentDescription = stringResource(Res.string.more),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(24.dp)

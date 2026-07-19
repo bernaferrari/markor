@@ -1,24 +1,11 @@
 package com.bernaferrari.remarkor.ui.screens.editor
 
+import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.automirrored.filled.Redo
-import androidx.compose.material.icons.automirrored.filled.Undo
-import androidx.compose.material.icons.filled.Archive
-import androidx.compose.material.icons.filled.CenterFocusStrong
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.EditNote
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -75,7 +62,7 @@ internal fun EditorTopBar(
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(
-                    imageVector = if (embeddedInDialog) Icons.Default.Close else Icons.AutoMirrored.Filled.ArrowBack,
+                    imageVector = if (embeddedInDialog) MaterialSymbols.Filled.Close else MaterialSymbols.AutoMirrored.Filled.ArrowBack,
                     contentDescription = if (embeddedInDialog) "Close" else "Back",
                 )
             }
@@ -90,7 +77,7 @@ internal fun EditorTopBar(
                 ),
             ) {
                 Icon(
-                    imageVector = if (!isPreviewMode) Icons.Default.Visibility else Icons.Default.EditNote,
+                    imageVector = if (!isPreviewMode) MaterialSymbols.Filled.Visibility else MaterialSymbols.Filled.EditNote,
                     contentDescription = if (isPreviewMode) "Edit" else "Preview",
                 )
             }
@@ -105,7 +92,7 @@ internal fun EditorTopBar(
                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 ),
             ) {
-                Icon(Icons.Default.Palette, contentDescription = "Color")
+                Icon(MaterialSymbols.Filled.Palette, contentDescription = "Color")
             }
 
             Spacer(modifier = Modifier.width(4.dp))
@@ -121,7 +108,7 @@ internal fun EditorTopBar(
                     ),
                 ) {
                     Icon(
-                        Icons.Default.MoreVert,
+                        MaterialSymbols.Filled.MoreVert,
                         contentDescription = stringResource(Res.string.more_options),
                     )
                 }
@@ -134,7 +121,7 @@ internal fun EditorTopBar(
                         text = {
                             Text(stringResource(if (isArchived) Res.string.unarchive else Res.string.archive))
                         },
-                        leadingIcon = { Icon(Icons.Default.Archive, null) },
+                        leadingIcon = { Icon(MaterialSymbols.Filled.Archive, null) },
                         onClick = {
                             showOverflowMenu = false
                             onArchive()
@@ -142,7 +129,7 @@ internal fun EditorTopBar(
                     )
                     DropdownMenuItem(
                         text = { Text("Undo") },
-                        leadingIcon = { Icon(Icons.AutoMirrored.Filled.Undo, null) },
+                        leadingIcon = { Icon(MaterialSymbols.AutoMirrored.Filled.Undo, null) },
                         onClick = {
                             onUndo()
                             showOverflowMenu = false
@@ -151,7 +138,7 @@ internal fun EditorTopBar(
                     )
                     DropdownMenuItem(
                         text = { Text("Redo") },
-                        leadingIcon = { Icon(Icons.AutoMirrored.Filled.Redo, null) },
+                        leadingIcon = { Icon(MaterialSymbols.AutoMirrored.Filled.Redo, null) },
                         onClick = {
                             onRedo()
                             showOverflowMenu = false
@@ -161,7 +148,7 @@ internal fun EditorTopBar(
                     HorizontalDivider()
                     DropdownMenuItem(
                         text = { Text("Find & Replace") },
-                        leadingIcon = { Icon(Icons.Default.Search, null) },
+                        leadingIcon = { Icon(MaterialSymbols.Filled.Search, null) },
                         onClick = {
                             onFindReplace()
                             showOverflowMenu = false
@@ -170,7 +157,7 @@ internal fun EditorTopBar(
                     HorizontalDivider()
                     DropdownMenuItem(
                         text = { Text(stringResource(Res.string.document_outline)) },
-                        leadingIcon = { Icon(Icons.AutoMirrored.Filled.List, null) },
+                        leadingIcon = { Icon(MaterialSymbols.AutoMirrored.Filled.List, null) },
                         onClick = {
                             onShowOutline()
                             showOverflowMenu = false
@@ -179,7 +166,7 @@ internal fun EditorTopBar(
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(Res.string.document_info)) },
-                        leadingIcon = { Icon(Icons.Default.Info, null) },
+                        leadingIcon = { Icon(MaterialSymbols.Filled.Info, null) },
                         onClick = {
                             onShowDocumentInfo()
                             showOverflowMenu = false
@@ -188,7 +175,7 @@ internal fun EditorTopBar(
                     HorizontalDivider()
                     DropdownMenuItem(
                         text = { Text(stringResource(Res.string.export)) },
-                        leadingIcon = { Icon(Icons.Default.Share, null) },
+                        leadingIcon = { Icon(MaterialSymbols.Filled.Share, null) },
                         onClick = {
                             onExport()
                             showOverflowMenu = false
@@ -196,7 +183,7 @@ internal fun EditorTopBar(
                     )
                     DropdownMenuItem(
                         text = { Text(if (isFocusMode) "Exit Focus Mode" else "Focus Mode") },
-                        leadingIcon = { Icon(Icons.Default.CenterFocusStrong, null) },
+                        leadingIcon = { Icon(MaterialSymbols.Filled.CenterFocusStrong, null) },
                         onClick = {
                             onToggleFocusMode()
                             showOverflowMenu = false
