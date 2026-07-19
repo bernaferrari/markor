@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.labels
+import markor.shared.generated.resources.cancel
+import markor.shared.generated.resources.save
 import markor.shared.generated.resources.separate_labels_with_commas
 import org.jetbrains.compose.resources.stringResource
 
@@ -92,7 +94,7 @@ fun LabelsDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel", style = MaterialTheme.typography.labelLarge)
+                        Text(stringResource(Res.string.cancel), style = MaterialTheme.typography.labelLarge)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
@@ -104,7 +106,7 @@ fun LabelsDialog(
                             onConfirm(labels)
                         }
                     ) {
-                        Text("Save", style = MaterialTheme.typography.labelLarge)
+                        Text(stringResource(Res.string.save), style = MaterialTheme.typography.labelLarge)
                     }
                 }
             }

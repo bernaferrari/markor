@@ -43,6 +43,9 @@ import com.bernaferrari.remarkor.domain.repository.FileInfo
 import com.bernaferrari.remarkor.ui.theme.MarkorTheme
 import com.bernaferrari.remarkor.util.resolveImageUrl
 import okio.Path
+import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.pinned
+import org.jetbrains.compose.resources.stringResource
 
 private val noteTextExtensions = setOf("md", "markdown", "txt", "org", "todo", "rst", "adoc")
 
@@ -182,7 +185,7 @@ fun FileGridItem(
                         if (isPinned) {
                             Icon(
                                 imageVector = MaterialSymbols.Filled.PushPin,
-                                contentDescription = "Pinned",
+                                contentDescription = stringResource(Res.string.pinned),
                                 tint = MaterialTheme.colorScheme.tertiary,
                                 modifier = Modifier.size(16.dp),
                             )

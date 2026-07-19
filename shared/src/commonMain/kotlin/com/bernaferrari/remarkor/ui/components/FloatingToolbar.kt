@@ -35,7 +35,11 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.bold
+import markor.shared.generated.resources.code
 import markor.shared.generated.resources.italic
+import markor.shared.generated.resources.link
+import markor.shared.generated.resources.enter_focus_mode
+import markor.shared.generated.resources.exit_focus_mode
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -98,7 +102,7 @@ fun FloatingSelectionToolbar(
                     )
                     FloatingToolbarButton(
                         icon = MaterialSymbols.Filled.Code,
-                        contentDescription = "Code",
+                        contentDescription = stringResource(Res.string.code),
                         onClick = {
                             hapticHelper.performLightClick()
                             onCode()
@@ -115,7 +119,7 @@ fun FloatingSelectionToolbar(
 
                     FloatingToolbarButton(
                         icon = MaterialSymbols.Filled.Link,
-                        contentDescription = "Link",
+                        contentDescription = stringResource(Res.string.link),
                         onClick = {
                             hapticHelper.performLightClick()
                             onLink()
@@ -216,7 +220,9 @@ fun FocusModeToggle(
         ) {
             Icon(
                 imageVector = if (isFocusMode) MaterialSymbols.Filled.CenterFocusStrong else MaterialSymbols.Filled.CenterFocusWeak,
-                contentDescription = if (isFocusMode) "Exit Focus Mode" else "Enter Focus Mode",
+                contentDescription = stringResource(
+                    if (isFocusMode) Res.string.exit_focus_mode else Res.string.enter_focus_mode,
+                ),
                 tint = iconColor,
                 modifier = Modifier.size(24.dp)
             )

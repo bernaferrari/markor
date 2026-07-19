@@ -98,6 +98,7 @@ import markor.shared.generated.resources.blue
 import markor.shared.generated.resources.close
 import markor.shared.generated.resources.cyan
 import markor.shared.generated.resources.dark
+import markor.shared.generated.resources.default_documents_markor
 import markor.shared.generated.resources.display_line_numbers
 import markor.shared.generated.resources.dynamic
 import markor.shared.generated.resources.editor
@@ -294,7 +295,7 @@ fun SettingsScreen(
                 { index, itemCount ->
                     ClickableSettingItem(
                         title = stringResource(Res.string.notebook_directory),
-                        subtitle = notebookDirectory.ifEmpty { "Default (Documents/Markor)" },
+                        subtitle = notebookDirectory.ifEmpty { stringResource(Res.string.default_documents_markor) },
                         onClick = {
                             editingStorageKey = "notebook"
                             currentStorageValue = notebookDirectory

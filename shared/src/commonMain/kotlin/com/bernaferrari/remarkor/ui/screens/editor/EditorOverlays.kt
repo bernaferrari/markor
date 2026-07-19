@@ -21,6 +21,7 @@ import com.bernaferrari.remarkor.ui.components.OutlinePanel
 import com.bernaferrari.remarkor.ui.components.SlashCommandMenu
 import com.bernaferrari.remarkor.ui.components.applySlashCommand
 import markor.shared.generated.resources.Res
+import markor.shared.generated.resources.share_markdown
 import markor.shared.generated.resources.characters_no_spaces_with_arg
 import markor.shared.generated.resources.characters_with_arg
 import markor.shared.generated.resources.close
@@ -59,6 +60,7 @@ internal fun EditorOverlays(
     onDismissColorSheet: () -> Unit,
     onColorSelected: (Int?) -> Unit,
 ) {
+    val shareMarkdownTitle = stringResource(Res.string.share_markdown)
     if (showSearchDialog) {
         AdvancedSearchReplaceDialog(
             onDismiss = onDismissSearch,
@@ -142,7 +144,7 @@ internal fun EditorOverlays(
                 shareService.shareFile(
                     fileName = doc.name,
                     content = content.text.encodeToByteArray(),
-                    title = "Share Markdown",
+                    title = shareMarkdownTitle,
                     mimeType = "text/markdown",
                 )
             },

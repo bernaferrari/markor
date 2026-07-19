@@ -32,6 +32,16 @@ import markor.shared.generated.resources.export
 import markor.shared.generated.resources.archive
 import markor.shared.generated.resources.more_options
 import markor.shared.generated.resources.unarchive
+import markor.shared.generated.resources.back
+import markor.shared.generated.resources.close
+import markor.shared.generated.resources.color
+import markor.shared.generated.resources.edit
+import markor.shared.generated.resources.exit_focus_mode
+import markor.shared.generated.resources.find_and_replace
+import markor.shared.generated.resources.focus_mode
+import markor.shared.generated.resources.preview
+import markor.shared.generated.resources.redo
+import markor.shared.generated.resources.undo
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -63,7 +73,7 @@ internal fun EditorTopBar(
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = if (embeddedInDialog) MaterialSymbols.Filled.Close else MaterialSymbols.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = if (embeddedInDialog) "Close" else "Back",
+                    contentDescription = stringResource(if (embeddedInDialog) Res.string.close else Res.string.back),
                 )
             }
         },
@@ -78,7 +88,7 @@ internal fun EditorTopBar(
             ) {
                 Icon(
                     imageVector = if (!isPreviewMode) MaterialSymbols.Filled.Visibility else MaterialSymbols.Filled.EditNote,
-                    contentDescription = if (isPreviewMode) "Edit" else "Preview",
+                    contentDescription = stringResource(if (isPreviewMode) Res.string.edit else Res.string.preview),
                 )
             }
 
@@ -92,7 +102,7 @@ internal fun EditorTopBar(
                     contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 ),
             ) {
-                Icon(MaterialSymbols.Filled.Palette, contentDescription = "Color")
+                Icon(MaterialSymbols.Filled.Palette, contentDescription = stringResource(Res.string.color))
             }
 
             Spacer(modifier = Modifier.width(4.dp))
@@ -128,7 +138,7 @@ internal fun EditorTopBar(
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text("Undo") },
+                        text = { Text(stringResource(Res.string.undo)) },
                         leadingIcon = { Icon(MaterialSymbols.AutoMirrored.Filled.Undo, null) },
                         onClick = {
                             onUndo()
@@ -137,7 +147,7 @@ internal fun EditorTopBar(
                         enabled = canUndo,
                     )
                     DropdownMenuItem(
-                        text = { Text("Redo") },
+                        text = { Text(stringResource(Res.string.redo)) },
                         leadingIcon = { Icon(MaterialSymbols.AutoMirrored.Filled.Redo, null) },
                         onClick = {
                             onRedo()
@@ -147,7 +157,7 @@ internal fun EditorTopBar(
                     )
                     HorizontalDivider()
                     DropdownMenuItem(
-                        text = { Text("Find & Replace") },
+                        text = { Text(stringResource(Res.string.find_and_replace)) },
                         leadingIcon = { Icon(MaterialSymbols.Filled.Search, null) },
                         onClick = {
                             onFindReplace()
@@ -182,7 +192,7 @@ internal fun EditorTopBar(
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text(if (isFocusMode) "Exit Focus Mode" else "Focus Mode") },
+                        text = { Text(stringResource(if (isFocusMode) Res.string.exit_focus_mode else Res.string.focus_mode)) },
                         leadingIcon = { Icon(MaterialSymbols.Filled.CenterFocusStrong, null) },
                         onClick = {
                             onToggleFocusMode()

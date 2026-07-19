@@ -41,10 +41,23 @@ import com.bernaferrari.remarkor.domain.repository.FileInfo
 import kotlinx.coroutines.delay
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.delete
+import markor.shared.generated.resources.cancel
+import markor.shared.generated.resources.close
+import markor.shared.generated.resources.create
+import markor.shared.generated.resources.delete_files_warning
+import markor.shared.generated.resources.delete_items_question
+import markor.shared.generated.resources.file
 import markor.shared.generated.resources.file_name
+import markor.shared.generated.resources.folder
 import markor.shared.generated.resources.folder_name
 import markor.shared.generated.resources.name
+import markor.shared.generated.resources.new_folder
+import markor.shared.generated.resources.new_note
+import markor.shared.generated.resources.path_with_arg
 import markor.shared.generated.resources.rename
+import markor.shared.generated.resources.size_bytes_with_arg
+import markor.shared.generated.resources.type_with_arg
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -55,12 +68,12 @@ fun CreateFolderDialog(
     var folderName by remember { mutableStateOf("") }
 
     PremiumInputDialog(
-        title = "New Folder",
+        title = stringResource(Res.string.new_folder),
         icon = MaterialSymbols.Filled.Folder,
         value = folderName,
         onValueChange = { folderName = it },
         label = stringResource(Res.string.folder_name),
-        confirmText = "Create",
+        confirmText = stringResource(Res.string.create),
         onDismiss = onDismiss,
         onConfirm = { onConfirm(folderName) }
     )
@@ -99,13 +112,13 @@ fun DeleteDialog(
         icon = { Icon(MaterialSymbols.Filled.Delete, contentDescription = null) },
         title = {
             Text(
-                text = "Delete ${if (count > 1) "$count items" else "item"}?",
+                text = pluralStringResource(Res.plurals.delete_items_question, count, count),
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
             )
         },
         text = {
             Text(
-                "This action cannot be undone. Are you sure you want to delete these files?",
+                stringResource(Res.string.delete_files_warning),
                 style = MaterialTheme.typography.bodyMedium
             )
         },
@@ -125,7 +138,7 @@ fun DeleteDialog(
                 haptic.performLightClick()
                 onDismiss()
             }) {
-                Text("Cancel")
+                Text(stringResource(Res.string.cancel))
             }
         },
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -138,19 +151,28 @@ fun FilePropertiesDialog(
     file: FileInfo,
     onDismiss: () -> Unit,
 ) {
+    val folderLabel = stringResource(Res.string.folder)
+    val fileLabel = stringResource(Res.string.file)
+    val fileType = if (file.isDirectory) folderLabel else file.extension.ifBlank { fileLabel }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(file.name) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Path: ${file.path}", style = MaterialTheme.typography.bodyMedium)
-                Text("Type: ${if (file.isDirectory) "Folder" else file.extension.ifBlank { "File" }}", style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(Res.string.path_with_arg, file.path), style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    stringResource(
+                        Res.string.type_with_arg,
+                        fileType,
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
                 if (!file.isDirectory) {
-                    Text("Size: ${file.size} bytes", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(Res.string.size_bytes_with_arg, file.size), style = MaterialTheme.typography.bodyMedium)
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Close") } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(Res.string.close)) } },
     )
 }
 
@@ -222,7 +244,7 @@ private fun PremiumInputDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel")
+                        Text(stringResource(Res.string.cancel))
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(onClick = onConfirm, enabled = value.isNotEmpty()) {
@@ -243,12 +265,12 @@ fun CreateFileDialog(
     var fileName by remember { mutableStateOf(suggestedName) }
 
     PremiumInputDialog(
-        title = "New Note",
+        title = stringResource(Res.string.new_note),
         icon = MaterialSymbols.Filled.Create,
         value = fileName,
         onValueChange = { fileName = it },
         label = stringResource(Res.string.file_name),
-        confirmText = "Create",
+        confirmText = stringResource(Res.string.create),
         onDismiss = onDismiss,
         onConfirm = { onConfirm(fileName) }
     )
