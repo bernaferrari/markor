@@ -340,6 +340,7 @@ internal fun FileItem(
                                 style = MaterialTheme.typography.bodySmall,
                                 color = previewPalette.body,
                                 maxLines = 2,
+                                modifier = Modifier.padding(top = 4.dp),
                                 overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                             )
                         }

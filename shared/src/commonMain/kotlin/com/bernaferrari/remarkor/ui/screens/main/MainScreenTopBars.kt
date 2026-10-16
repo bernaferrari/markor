@@ -1,5 +1,6 @@
 package com.bernaferrari.remarkor.ui.screens.main
 
+import com.bernaferrari.remarkor.ui.components.MarkorIcons
 import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
 
 import androidx.compose.animation.AnimatedContent
@@ -228,8 +229,7 @@ internal fun FilterTabRow(
         Triple(
             FileFilterMode.ALL,
             Res.string.all,
-            // Not List: that glyph is already the grid/list toggle right above this row.
-            MaterialSymbols.Outlined.Description to MaterialSymbols.Filled.Description
+            MarkorIcons.AllNotes to MarkorIcons.AllNotesFilled
         ),
         Triple(
             FileFilterMode.FAVORITES,
@@ -358,7 +358,7 @@ internal fun StandardTopBar(
             actions = {
                 IconButton(onClick = onToggleGridView) {
                     Icon(
-                        if (isGridView) MaterialSymbols.AutoMirrored.Filled.List else MaterialSymbols.Filled.GridView,
+                        if (isGridView) MarkorIcons.CardList else MarkorIcons.MasonryGrid,
                         contentDescription = if (isGridView) stringResource(Res.string.switch_to_list_view) else stringResource(
                             Res.string.switch_to_grid_view
                         )
@@ -367,7 +367,7 @@ internal fun StandardTopBar(
                 Box {
                     IconButton(onClick = { showSortMenu = true }) {
                         Icon(
-                            MaterialSymbols.AutoMirrored.Filled.Sort,
+                            MarkorIcons.Sort,
                             contentDescription = stringResource(Res.string.sort)
                         )
                     }
