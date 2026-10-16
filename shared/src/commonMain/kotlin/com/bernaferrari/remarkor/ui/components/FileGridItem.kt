@@ -87,14 +87,14 @@ fun FileGridItem(
         resolveNoteSurfaceColor(
             it,
             colorScheme,
-            fallback = colorScheme.surfaceVariant.copy(alpha = 0.3f)
+            fallback = colorScheme.surfaceContainer
         )
     }
     val containerColor = when {
         isSelected -> colorScheme.primaryContainer.copy(alpha = 0.4f)
         color != null -> colorScheme.surfaceContainerLow
         file.isDirectory -> colorScheme.surface
-        else -> colorScheme.surfaceVariant.copy(alpha = 0.3f)
+        else -> colorScheme.surfaceContainer
     }
     val contentSurfaceColor = if (isSelected) containerColor else noteSurfaceColor ?: containerColor
     val effectiveBackground = contentSurfaceColor.compositeOver(colorScheme.surface)
@@ -265,15 +265,20 @@ fun FileGridItem(
 
                     Spacer(modifier = Modifier.height(3.dp))
 
-                    if (!file.preview.isNullOrEmpty()) {
+                    val cardPreview = remember(file.preview, file.name) {
+                        file.preview
+                            ?.let { stripRedundantTitle(it, file.name.substringBeforeLast(".")) }
+                            ?.takeIf { it.isNotBlank() }
+                    }
+                    if (cardPreview != null) {
                         val previewText = remember(
-                            file.preview,
+                            cardPreview,
                             colorScheme,
                             effectiveBackground,
                             accentOverride
                         ) {
                             renderGridMarkdown(
-                                file.preview,
+                                cardPreview,
                                 colorScheme,
                                 backgroundColor = effectiveBackground,
                                 accentColorOverride = accentOverride
@@ -281,11 +286,7 @@ fun FileGridItem(
                         }
                         Text(
                             text = previewText,
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontSize = 10.sp,
-                                lineHeight = 13.sp,
-                                letterSpacing = 0.1.sp
-                            ),
+                            style = MaterialTheme.typography.bodySmall,
                             color = previewPalette.body,
                             maxLines = 8,
                             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis

@@ -33,6 +33,9 @@
     <string name="deleted_permanently">Deleted permanently</string>
     <string name="moved_to_trash">Moved to trash</string>
     <string name="file_restored">File restored</string>
+    <string name="empty_trash">Empty trash</string>
+    <string name="empty_trash_question">Empty trash?</string>
+    <string name="empty_trash_warning">All notes in the trash will be permanently deleted. This can\'t be undone.</string>
     <string name="trash_emptied">Trash emptied</string>
     <string name="notebook">Notebook</string>
     <string name="todo">Todo</string>
@@ -228,6 +231,7 @@
     <string name="bold">Bold</string>
     <string name="italic">Italic</string>
     <string name="horizontal_rule">Horizontal rule</string>
+    <string name="heading">Heading</string>
     <string name="clear_search">Clear search</string>
     <string name="selected">Selected</string>
     <string name="create_new">Create new</string>

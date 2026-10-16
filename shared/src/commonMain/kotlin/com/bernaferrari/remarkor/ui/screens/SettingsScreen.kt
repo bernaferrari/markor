@@ -119,6 +119,7 @@ import markor.shared.generated.resources.red
 import markor.shared.generated.resources.settings
 import markor.shared.generated.resources.shared
 import markor.shared.generated.resources.storage
+import markor.shared.generated.resources.private_storage
 import markor.shared.generated.resources.storage_mode
 import markor.shared.generated.resources.teal
 import markor.shared.generated.resources.version
@@ -286,7 +287,7 @@ fun SettingsScreen(
                     } else {
                         InfoSettingItem(
                             title = stringResource(Res.string.storage_mode),
-                            value = "Private (iOS)",
+                            value = stringResource(Res.string.private_storage),
                             index = index,
                             itemCount = itemCount
                         )

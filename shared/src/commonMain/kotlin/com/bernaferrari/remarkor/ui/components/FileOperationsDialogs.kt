@@ -46,6 +46,9 @@ import markor.shared.generated.resources.close
 import markor.shared.generated.resources.create
 import markor.shared.generated.resources.delete_files_warning
 import markor.shared.generated.resources.delete_items_question
+import markor.shared.generated.resources.empty_trash
+import markor.shared.generated.resources.empty_trash_question
+import markor.shared.generated.resources.empty_trash_warning
 import markor.shared.generated.resources.file
 import markor.shared.generated.resources.file_name
 import markor.shared.generated.resources.folder
@@ -128,9 +131,61 @@ fun DeleteDialog(
                     haptic.performHeavyClick()
                     onConfirm()
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                )
             ) {
                 Text(stringResource(Res.string.delete))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = {
+                haptic.performLightClick()
+                onDismiss()
+            }) {
+                Text(stringResource(Res.string.cancel))
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
+@Composable
+fun EmptyTrashDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    val haptic = rememberHapticHelper()
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = { Icon(MaterialSymbols.Filled.DeleteForever, contentDescription = null) },
+        title = {
+            Text(
+                text = stringResource(Res.string.empty_trash_question),
+                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
+            )
+        },
+        text = {
+            Text(
+                stringResource(Res.string.empty_trash_warning),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    haptic.performHeavyClick()
+                    onConfirm()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                )
+            ) {
+                Text(stringResource(Res.string.empty_trash))
             }
         },
         dismissButton = {
