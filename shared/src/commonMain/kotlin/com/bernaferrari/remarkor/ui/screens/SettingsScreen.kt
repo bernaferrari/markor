@@ -1,5 +1,22 @@
 package com.bernaferrari.remarkor.ui.screens
 
+import markor.shared.generated.resources.based_on_markor
+import markor.shared.generated.resources.version_with_arg
+import markor.shared.generated.resources.view_on_github
+import markor.shared.generated.resources.about_tagline
+import markor.shared.generated.resources.app_name
+import com.bernaferrari.remarkor.ui.components.GitHubMark
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.material3.toShape
+import androidx.compose.material3.MaterialShapes
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.width
+import markor.shared.generated.resources.storage_shared_android_only
+import markor.shared.generated.resources.storage_private_browser_note
+import markor.shared.generated.resources.storage_internal_description
+import com.bernaferrari.remarkor.ui.components.storesNotesInBrowser
+import androidx.compose.ui.platform.LocalUriHandler
 import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
 
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -113,7 +130,6 @@ import markor.shared.generated.resources.notebook_directory
 import markor.shared.generated.resources.orange
 import markor.shared.generated.resources.pink
 import markor.shared.generated.resources.private
-import markor.shared.generated.resources.project_license
 import markor.shared.generated.resources.purple
 import markor.shared.generated.resources.red
 import markor.shared.generated.resources.settings
@@ -122,7 +138,6 @@ import markor.shared.generated.resources.storage
 import markor.shared.generated.resources.private_storage
 import markor.shared.generated.resources.storage_mode
 import markor.shared.generated.resources.teal
-import markor.shared.generated.resources.version
 import markor.shared.generated.resources.word_wrap
 import markor.shared.generated.resources.wrap_text_to_fit_screen
 import org.jetbrains.compose.resources.stringResource
@@ -252,7 +267,8 @@ fun SettingsScreen(
             // Storage Section
             var editingStorageKey by remember { mutableStateOf<String?>(null) }
             var currentStorageValue by remember { mutableStateOf("") }
-            var showProjectLicenseDialog by remember { mutableStateOf(false) }
+            var showStorageInfoDialog by remember { mutableStateOf(false) }
+            val uriHandler = LocalUriHandler.current
 
             if (editingStorageKey != null) {
                 RenameDialog(
@@ -267,12 +283,8 @@ fun SettingsScreen(
                 )
             }
 
-            if (showProjectLicenseDialog) {
-                LicenseDialog(
-                    title = stringResource(Res.string.project_license),
-                    body = PROJECT_LICENSE_TEXT,
-                    onDismiss = { showProjectLicenseDialog = false }
-                )
+            if (showStorageInfoDialog) {
+                PrivateStorageInfoDialog(onDismiss = { showStorageInfoDialog = false })
             }
 
             val storageItems = listOf<SegmentedSectionItem>(
@@ -285,9 +297,11 @@ fun SettingsScreen(
                             itemCount = itemCount
                         )
                     } else {
-                        InfoSettingItem(
+                        // Only one mode exists here, so the row explains it instead of offering a choice.
+                        ClickableSettingItem(
                             title = stringResource(Res.string.storage_mode),
-                            value = stringResource(Res.string.private_storage),
+                            subtitle = stringResource(Res.string.private_storage),
+                            onClick = { showStorageInfoDialog = true },
                             index = index,
                             itemCount = itemCount
                         )
@@ -313,29 +327,9 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(MarkorTheme.spacing.small))
 
             // About Section
-            val aboutItems = listOf<SegmentedSectionItem>(
-                { index, itemCount ->
-                    InfoSettingItem(
-                        title = stringResource(Res.string.version),
-                        value = "2.15.2-Expressive",
-                        index = index,
-                        itemCount = itemCount
-                    )
-                },
-                { index, itemCount ->
-                    ClickableSettingItem(
-                        title = stringResource(Res.string.project_license),
-                        subtitle = "Apache License 2.0",
-                        onClick = { showProjectLicenseDialog = true },
-                        index = index,
-                        itemCount = itemCount
-                    )
-                }
-            )
-            SegmentedSettingsSection(
-                title = stringResource(Res.string.about),
-                items = aboutItems
-            )
+            SettingsSection(title = stringResource(Res.string.about)) {
+                AboutCard(onOpenRepository = { uriHandler.openUri(PROJECT_REPOSITORY_URL) })
+            }
 
             // Keep final items above gesture/navigation area while preserving edge-to-edge.
             Spacer(modifier = Modifier.height(MarkorTheme.spacing.small))
@@ -344,21 +338,98 @@ fun SettingsScreen(
     }
 }
 
-private const val PROJECT_LICENSE_TEXT = """
-Markor Compose Port
+private const val PROJECT_REPOSITORY_URL = "https://github.com/bernaferrari/markor"
 
-Copyright 2017-2025 Gregor Santner
+private const val APP_VERSION = "2.15.2"
 
-Licensed under the Apache License, Version 2.0.
-You may obtain a copy of the License at:
-http://www.apache.org/licenses/LICENSE-2.0
+/**
+ * One card instead of "Version" and "License" rows: who the app is, where the code lives,
+ * and credit to the original project. The version is fine print, not a row of its own.
+ */
+@Composable
+private fun AboutCard(onOpenRepository: () -> Unit) {
+    val hapticHelper = rememberHapticHelper()
+    Surface(
+        shape = MaterialTheme.shapes.extraLarge,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(MaterialShapes.Cookie9Sided.toShape())
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        MaterialSymbols.Filled.EditNote,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Text(
+                        stringResource(Res.string.app_name),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        stringResource(Res.string.about_tagline),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
 
-Unless required by applicable law or agreed to in writing, software distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied.
+            Button(
+                onClick = {
+                    hapticHelper.performLightClick()
+                    onOpenRepository()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = ButtonDefaults.MediumContainerHeight),
+                shapes = ButtonDefaults.shapesFor(ButtonDefaults.MediumContainerHeight),
+                contentPadding = ButtonDefaults.contentPaddingFor(ButtonDefaults.MediumContainerHeight),
+            ) {
+                Icon(
+                    GitHubMark,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.iconSizeFor(ButtonDefaults.MediumContainerHeight))
+                )
+                Spacer(Modifier.width(ButtonDefaults.iconSpacingFor(ButtonDefaults.MediumContainerHeight)))
+                Text(
+                    stringResource(Res.string.view_on_github),
+                    style = ButtonDefaults.textStyleFor(ButtonDefaults.MediumContainerHeight)
+                )
+            }
 
-See LICENSE.txt in the project root for the full license text.
-"""
+            Text(
+                stringResource(Res.string.version_with_arg, APP_VERSION) + " · " +
+                    stringResource(Res.string.based_on_markor),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+/** Breathing room between a setting's title and its subtitle. */
+private val SettingSubtitleGap = 4.dp
 
 private typealias SegmentedSectionItem = @Composable (Int, Int) -> Unit
 
@@ -468,8 +539,9 @@ private fun SwitchSettingItem(
         supportingContent = {
             Text(
                 subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = SettingSubtitleGap)
             )
         },
         trailingContent = {
@@ -509,9 +581,10 @@ private fun InfoSettingItem(
             supportingContent = {
                 Text(
                     value,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1
+                    maxLines = 1,
+                    modifier = Modifier.padding(top = SettingSubtitleGap)
                 )
             },
             colors = ListItemDefaults.colors(containerColor = Color.Transparent)
@@ -534,8 +607,9 @@ private fun ClickableSettingItem(
         supportingContent = {
             Text(
                 subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = SettingSubtitleGap)
             )
         },
         content = {
@@ -902,26 +976,18 @@ private fun ThemeSwatch(
 }
 
 @Composable
-private fun LicenseDialog(
-    title: String,
-    body: String,
-    onDismiss: () -> Unit
-) {
+private fun PrivateStorageInfoDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(title) },
+        icon = { Icon(MaterialSymbols.Filled.Lock, contentDescription = null) },
+        title = { Text(stringResource(Res.string.private_storage)) },
         text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 360.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Text(
-                    text = body.trimIndent(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(stringResource(Res.string.storage_internal_description))
+                if (storesNotesInBrowser()) {
+                    Text(stringResource(Res.string.storage_private_browser_note))
+                }
+                Text(stringResource(Res.string.storage_shared_android_only))
             }
         },
         confirmButton = {
