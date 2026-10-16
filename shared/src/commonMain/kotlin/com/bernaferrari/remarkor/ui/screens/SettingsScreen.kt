@@ -617,7 +617,7 @@ private fun StorageModeSettingItem(
                         }
                     },
                     shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
-                    colors = ToggleButtonDefaults.toggleButtonColors(
+                    colors = ToggleButtonDefaults.colors(
                         checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                         checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -645,7 +645,7 @@ private fun StorageModeSettingItem(
                         }
                     },
                     shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
-                    colors = ToggleButtonDefaults.toggleButtonColors(
+                    colors = ToggleButtonDefaults.colors(
                         checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                         checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -702,7 +702,7 @@ private fun ThemeModeSettingItem(
                         modeOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                         else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                     },
-                    colors = ToggleButtonDefaults.toggleButtonColors(
+                    colors = ToggleButtonDefaults.colors(
                         checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
                         checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,

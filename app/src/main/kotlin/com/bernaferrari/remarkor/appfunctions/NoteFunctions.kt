@@ -1,6 +1,7 @@
 package com.bernaferrari.remarkor.appfunctions
 
 import androidx.appfunctions.AppFunctionAppUnknownException
+import android.annotation.SuppressLint
 import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionElementNotFoundException
 import androidx.appfunctions.AppFunctionInvalidArgumentException
@@ -21,6 +22,8 @@ import org.koin.core.annotation.Single
  * Exposes Markor note-taking capabilities to Android AppFunctions (on-device AI agents).
  */
 @Single
+// AppFunctions compiler alpha13 still requires this restricted context (b/500281348).
+@SuppressLint("RestrictedApi")
 class NoteFunctions(
     private val fileRepository: IFileRepository,
     private val documentRepository: IDocumentRepository,

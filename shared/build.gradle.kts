@@ -39,7 +39,9 @@ kotlin {
 
     android {
         namespace = "com.bernaferrari.remarkor.shared"
-        compileSdk = 37
+        compileSdk {
+            version = release(37) { minorApiLevel = 2 }
+        }
         minSdk = 26
         androidResources.enable = true
 
@@ -125,6 +127,7 @@ kotlin {
             dependsOn(nativeStorageMain)
         }
         androidMain.dependencies {
+            implementation(libs.androidx.material3)
             implementation(libs.koin.android)
         }
 
