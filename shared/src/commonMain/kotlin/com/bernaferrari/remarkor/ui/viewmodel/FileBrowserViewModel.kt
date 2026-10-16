@@ -79,6 +79,14 @@ class FileBrowserViewModel(
     private val _trashFiles = MutableStateFlow<List<FileInfo>>(emptyList())
     val trashFiles: StateFlow<List<FileInfo>> = _trashFiles.asStateFlow()
 
+    // Whether each list has been loaded at least once. Until then an empty list means
+    // "not loaded yet", not "no notes", so the UI must not show an empty state.
+    private val _hasLoadedFiles = MutableStateFlow(false)
+    val hasLoadedFiles: StateFlow<Boolean> = _hasLoadedFiles.asStateFlow()
+
+    private val _hasLoadedTrash = MutableStateFlow(false)
+    val hasLoadedTrash: StateFlow<Boolean> = _hasLoadedTrash.asStateFlow()
+
     private val _selectedFiles = MutableStateFlow<Set<Path>>(emptySet())
     val selectedFiles: StateFlow<Set<Path>> = _selectedFiles.asStateFlow()
 
@@ -168,6 +176,12 @@ class FileBrowserViewModel(
             _errorMessage.value =
                 getString(Res.string.failed_to_load_files_with_arg, e.message ?: "")
             messageManager.error(getString(Res.string.failed_to_load_files))
+            // Stop waiting on a load that failed; the empty state is the honest answer now.
+            if (_filterMode.value == FileFilterMode.TRASH) {
+                _hasLoadedTrash.value = true
+            } else {
+                _hasLoadedFiles.value = true
+            }
         } finally {
             _isLoading.value = false
         }
@@ -207,17 +221,23 @@ class FileBrowserViewModel(
     private suspend fun refreshFiles() {
         val path = currentPathString?.toPath() ?: return
 
+        // Each mode only writes its own list. Clearing the other one made switching
+        // Trash -> All show an empty list until the reload finished, and a slow trash
+        // refresh finishing after the All refresh would wipe the notes list for good.
         if (_filterMode.value == FileFilterMode.TRASH) {
-            _trashFiles.value = fileRepository.listTrash()
-            _files.value = emptyList()
+            loadTrashFiles()
         } else {
-            _files.value = fileRepository.listFiles(path)
-            _trashFiles.value = emptyList()
+            val loaded = fileRepository.listFiles(path)
+            // Drop results for a folder the user already navigated away from.
+            if (currentPathString?.toPath() != path) return
+            _files.value = loaded
+            _hasLoadedFiles.value = true
         }
     }
 
     suspend fun loadTrashFiles() {
         _trashFiles.value = fileRepository.listTrash()
+        _hasLoadedTrash.value = true
     }
 
     fun deleteFile(path: Path) {
