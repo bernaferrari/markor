@@ -162,7 +162,12 @@ fun FileBrowserContent(
     val favorites by viewModel.favorites.collectAsState()
     val filterMode by viewModel.filterMode.collectAsState()
     val noteMetadataByPath by viewModel.noteMetadataByPath.collectAsState()
+    val hasLoadedFiles by viewModel.hasLoadedFiles.collectAsState()
+    val hasLoadedTrash by viewModel.hasLoadedTrash.collectAsState()
     var isLoading by remember { mutableStateOf(false) }
+    // Before the list for the current mode has loaded once, an empty list is not "no notes".
+    val isAwaitingFirstLoad =
+        if (filterMode == FileFilterMode.TRASH) !hasLoadedTrash else !hasLoadedFiles
     var isNavigatingUp by remember { mutableStateOf(false) }
     val haptic = rememberHapticHelper()
 
@@ -502,7 +507,7 @@ fun FileBrowserContent(
         Column(modifier = Modifier.fillMaxSize()) {
             // M3 Standard: LinearProgressIndicator
             AnimatedVisibility(
-                visible = isLoading,
+                visible = isLoading || isAwaitingFirstLoad,
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
@@ -562,7 +567,7 @@ fun FileBrowserContent(
             // Filtered files based on current mode - use displayedFiles from parent scope
             val trashFiles by viewModel.trashFiles.collectAsState()
 
-            if (isLoading && visibleFiles.isEmpty()) {
+            if ((isLoading || isAwaitingFirstLoad) && visibleFiles.isEmpty()) {
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     // Content is empty during loading (indicator at top)
                 }
