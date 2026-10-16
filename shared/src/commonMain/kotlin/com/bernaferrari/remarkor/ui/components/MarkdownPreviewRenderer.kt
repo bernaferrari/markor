@@ -100,8 +100,16 @@ private fun renderMarkdown(
             )
         }
 
+        // Checkboxes - must run before bullets, which would otherwise turn "- [ ]" into "• [ ]"
+        val taskMatch = Regex("^(?:[-*+]\\s+)?\\[([ xX])\\]\\s+(.+)$").find(content)
+        if (taskMatch != null) {
+            val isChecked = taskMatch.groupValues[1].lowercase() == "x"
+            val checkbox = if (isChecked) "☑ " else "☐ "
+            content = checkbox + taskMatch.groupValues[2]
+        }
+
         // Lists - replace markers with bullet
-        val listMatch = Regex("^[-*+]\\s+(.+)$").find(content)
+        val listMatch = if (taskMatch == null) Regex("^[-*+]\\s+(.+)$").find(content) else null
         if (listMatch != null) {
             content = "• " + listMatch.groupValues[1]
         }
@@ -112,13 +120,6 @@ private fun renderMarkdown(
             content = numberedMatch.groupValues[1] + ". " + numberedMatch.groupValues[2]
         }
 
-        // Checkboxes
-        val taskMatch = Regex("^-?\\s?\\[([ xX])\\]\\s+(.+)$").find(content)
-        if (taskMatch != null) {
-            val isChecked = taskMatch.groupValues[1].lowercase() == "x"
-            val checkbox = if (isChecked) "☑ " else "☐ "
-            content = checkbox + taskMatch.groupValues[2]
-        }
 
         // Skip empty lines
         if (content.isEmpty()) return@forEachIndexed
@@ -227,4 +228,18 @@ private fun processInlineStyles(text: String, palette: MarkdownColorPalette): In
     }
 
     return InlineResult(result, styles)
+}
+
+/**
+ * Drops a leading `# Heading` that just repeats the file name (e.g. `quicknote.md` starting
+ * with `# Quick Note`), since cards and rows already show the name as their title.
+ */
+fun stripRedundantTitle(preview: String, fileBaseName: String): String {
+    val lines = preview.lines()
+    val first = lines.indexOfFirst { it.isNotBlank() }
+    if (first < 0) return preview
+    val heading = Regex("^#[ \\t]+(.+)$").find(lines[first].trim())?.groupValues?.get(1) ?: return preview
+    fun normalize(value: String) = value.lowercase().filter { it.isLetterOrDigit() }
+    if (normalize(heading) != normalize(fileBaseName)) return preview
+    return lines.drop(first + 1).dropWhile { it.isBlank() }.joinToString("\n")
 }

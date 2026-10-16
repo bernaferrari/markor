@@ -5,6 +5,7 @@ import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -14,6 +15,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -226,7 +228,8 @@ internal fun FilterTabRow(
         Triple(
             FileFilterMode.ALL,
             Res.string.all,
-            MaterialSymbols.AutoMirrored.Outlined.List to MaterialSymbols.AutoMirrored.Filled.List
+            // Not List: that glyph is already the grid/list toggle right above this row.
+            MaterialSymbols.Outlined.Description to MaterialSymbols.Filled.Description
         ),
         Triple(
             FileFilterMode.FAVORITES,
@@ -249,46 +252,62 @@ internal fun FilterTabRow(
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         tonalElevation = 0.dp
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            filters.forEachIndexed { index, (mode, labelRes, icons) ->
-                val isSelected = mode == currentFilterMode
-                ToggleButton(
-                    modifier = Modifier.weight(1f),
-                    checked = isSelected,
-                    onCheckedChange = { checked ->
-                        if (checked && mode != currentFilterMode) {
-                            hapticHelper.performLightClick()
-                            onFilterModeChange(mode)
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+            // Four labelled segments don't fit on compact phones (labels wrapped mid-word),
+            // so below this width only the selected segment keeps its label and grows.
+            val showAllLabels = maxWidth >= 480.dp
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                filters.forEachIndexed { index, (mode, labelRes, icons) ->
+                    val isSelected = mode == currentFilterMode
+                    val showLabel = showAllLabels || isSelected
+                    val weight by animateFloatAsState(
+                        targetValue = if (showAllLabels || !isSelected) 1f else 2.4f,
+                        animationSpec = MaterialTheme.motionScheme.fastSpatialSpec(),
+                    )
+                    val label = stringResource(labelRes)
+                    ToggleButton(
+                        modifier = Modifier.weight(weight),
+                        checked = isSelected,
+                        onCheckedChange = { checked ->
+                            if (checked && mode != currentFilterMode) {
+                                hapticHelper.performLightClick()
+                                onFilterModeChange(mode)
+                            }
+                        },
+                        shapes = when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            filters.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        },
+                        colors = ToggleButtonDefaults.colors(
+                            checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        ),
+                        contentPadding = PaddingValues(horizontal = 12.dp),
+                    ) {
+                        Icon(
+                            imageVector = if (isSelected) icons.second else icons.first,
+                            contentDescription = if (showLabel) null else label,
+                            modifier = Modifier.size(ToggleButtonDefaults.IconSize),
+                        )
+                        if (showLabel) {
+                            Spacer(modifier = Modifier.size(ToggleButtonDefaults.IconSpacing))
+                            Text(
+                                text = label,
+                                style = MaterialTheme.typography.labelLarge,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
                         }
-                    },
-                    shapes = when (index) {
-                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                        filters.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                    },
-                    colors = ToggleButtonDefaults.colors(
-                        checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    ),
-                ) {
-                    Icon(
-                        imageVector = if (isSelected) icons.second else icons.first,
-                        contentDescription = null,
-                        modifier = Modifier.size(ToggleButtonDefaults.IconSize),
-                    )
-                    Spacer(modifier = Modifier.size(ToggleButtonDefaults.IconSpacing))
-                    Text(
-                        text = stringResource(labelRes),
-                        style = MaterialTheme.typography.labelLarge,
-                    )
+                    }
                 }
             }
         }

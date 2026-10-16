@@ -1,5 +1,12 @@
 package com.bernaferrari.remarkor.ui.screens.filebrowser
 
+import markor.shared.generated.resources.empty_trash
+import com.bernaferrari.remarkor.ui.components.EmptyTrashDialog
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.material3.SplitButtonLayout
+import androidx.compose.material3.SplitButtonDefaults
 import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
 
 import androidx.compose.animation.AnimatedVisibility
@@ -773,26 +780,38 @@ fun FileBrowserContent(
                     .padding(bottom = 32.dp, start = 24.dp, end = 24.dp)
             ) {
                 if (isTrashMode && trashFiles.isNotEmpty()) {
-                    // Empty Trash Button
-                    FilledTonalButton(
+                    var showEmptyTrashDialog by remember { mutableStateOf(false) }
+                    if (showEmptyTrashDialog) {
+                        EmptyTrashDialog(
+                            onDismiss = { showEmptyTrashDialog = false },
+                            onConfirm = {
+                                showEmptyTrashDialog = false
+                                viewModel.emptyTrash()
+                            }
+                        )
+                    }
+                    Button(
                         onClick = {
-                            haptic.performHeavyClick()
-                            viewModel.emptyTrash()
+                            haptic.performLightClick()
+                            showEmptyTrashDialog = true
                         },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = MaterialTheme.shapes.extraLarge,
-                        colors = ButtonDefaults.filledTonalButtonColors(
+                        modifier = Modifier.heightIn(min = ButtonDefaults.MediumContainerHeight),
+                        shapes = ButtonDefaults.shapesFor(ButtonDefaults.MediumContainerHeight),
+                        contentPadding = ButtonDefaults.contentPaddingFor(ButtonDefaults.MediumContainerHeight),
+                        colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.errorContainer,
                             contentColor = MaterialTheme.colorScheme.onErrorContainer
                         )
                     ) {
-                        Icon(MaterialSymbols.Filled.DeleteForever, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
+                        Icon(
+                            MaterialSymbols.Filled.DeleteForever,
+                            contentDescription = null,
+                            modifier = Modifier.size(ButtonDefaults.iconSizeFor(ButtonDefaults.MediumContainerHeight))
+                        )
+                        Spacer(Modifier.width(ButtonDefaults.iconSpacingFor(ButtonDefaults.MediumContainerHeight)))
                         Text(
-                            "Empty Trash",
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                            stringResource(Res.string.empty_trash),
+                            style = ButtonDefaults.textStyleFor(ButtonDefaults.MediumContainerHeight)
                         )
                     }
                 } else if (!isTrashMode) {
@@ -819,57 +838,55 @@ fun FileBrowserContent(
                         }
                     }
 
-                    Row(
-                        modifier = Modifier
-                            .height(56.dp),
-                        horizontalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        Button(
-                            onClick = {
-                                haptic.performHeavyClick()
-                                createNote()
-                            },
-                            modifier = Modifier.height(56.dp),
-                            shape = RoundedCornerShape(
-                                topStart = 28.dp,
-                                bottomStart = 28.dp,
-                                topEnd = 10.dp,
-                                bottomEnd = 10.dp
-                            )
-                        ) {
-                            Icon(
-                                imageVector = MaterialSymbols.Filled.Add,
-                                contentDescription = stringResource(Res.string.create_new)
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                stringResource(Res.string.new_note),
-                                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
-                            )
-                        }
-
-                        FilledTonalButton(
-                            onClick = {
-                                haptic.performLightClick()
-                                showAddMenu = !showAddMenu
-                            },
-                            shape = RoundedCornerShape(
-                                topStart = 10.dp,
-                                bottomStart = 10.dp,
-                                topEnd = 28.dp,
-                                bottomEnd = 28.dp
-                            ),
-                            contentPadding = PaddingValues(0.dp),
-                            modifier = Modifier
-                                .width(56.dp)
-                                .height(56.dp)
-                        ) {
-                            Icon(
-                                imageVector = MaterialSymbols.Filled.KeyboardArrowUp,
-                                contentDescription = stringResource(Res.string.more_create_options)
-                            )
-                        }
-                    }
+                    val splitHeight = ButtonDefaults.MediumContainerHeight
+                    val chevronRotation by animateFloatAsState(
+                        targetValue = if (showAddMenu) 180f else 0f,
+                        animationSpec = MaterialTheme.motionScheme.fastSpatialSpec(),
+                    )
+                    SplitButtonLayout(
+                        leadingButton = {
+                            SplitButtonDefaults.LeadingButton(
+                                onClick = {
+                                    haptic.performHeavyClick()
+                                    createNote()
+                                },
+                                modifier = Modifier.heightIn(min = splitHeight),
+                                shapes = SplitButtonDefaults.leadingButtonShapesFor(splitHeight),
+                                contentPadding = SplitButtonDefaults.leadingButtonContentPaddingFor(splitHeight),
+                            ) {
+                                Icon(
+                                    imageVector = MaterialSymbols.Filled.Add,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(ButtonDefaults.iconSizeFor(splitHeight))
+                                )
+                                Spacer(Modifier.width(ButtonDefaults.iconSpacingFor(splitHeight)))
+                                Text(
+                                    stringResource(Res.string.new_note),
+                                    style = ButtonDefaults.textStyleFor(splitHeight)
+                                )
+                            }
+                        },
+                        trailingButton = {
+                            SplitButtonDefaults.TrailingButton(
+                                checked = showAddMenu,
+                                onCheckedChange = {
+                                    haptic.performLightClick()
+                                    showAddMenu = it
+                                },
+                                modifier = Modifier.heightIn(min = splitHeight),
+                                shapes = SplitButtonDefaults.trailingButtonShapesFor(splitHeight),
+                                contentPadding = SplitButtonDefaults.trailingButtonContentPaddingFor(splitHeight),
+                            ) {
+                                Icon(
+                                    imageVector = MaterialSymbols.Filled.KeyboardArrowUp,
+                                    contentDescription = stringResource(Res.string.more_create_options),
+                                    modifier = Modifier
+                                        .size(SplitButtonDefaults.trailingButtonIconSizeFor(splitHeight))
+                                        .graphicsLayer { rotationZ = chevronRotation }
+                                )
+                            }
+                        },
+                    )
 
                     DropdownMenu(
                         expanded = showAddMenu,

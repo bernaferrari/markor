@@ -21,22 +21,25 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import markor.shared.generated.resources.Res
 import markor.shared.generated.resources.bold
+import markor.shared.generated.resources.strikethrough_label
+import markor.shared.generated.resources.quote_label
+import markor.shared.generated.resources.link
+import markor.shared.generated.resources.image_label
+import markor.shared.generated.resources.heading
+import markor.shared.generated.resources.code
 import markor.shared.generated.resources.bullet_list_label
 import markor.shared.generated.resources.horizontal_rule
 import markor.shared.generated.resources.italic
@@ -56,7 +59,6 @@ enum class EditorAction {
 fun FormatToolbar(
     onAction: (EditorAction) -> Unit
 ) {
-    val cookieShape = MaterialShapes.ClamShell.toShape()
     val bottomInset = WindowInsets.navigationBars
         .union(WindowInsets.ime)
         .asPaddingValues()
@@ -85,7 +87,7 @@ fun FormatToolbar(
                 verticalArrangement = Arrangement.spacedBy(6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Primary actions: taller and expressive.
+                // Primary actions: the inline styles people reach for most, larger and morphing on press.
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState())
@@ -98,7 +100,6 @@ fun FormatToolbar(
                         description = stringResource(Res.string.bold),
                         action = EditorAction.BOLD,
                         onAction = onAction,
-                        shape = cookieShape,
                         fontWeight = FontWeight.ExtraBold
                     )
                     ExpressiveActionButton(
@@ -106,27 +107,24 @@ fun FormatToolbar(
                         description = stringResource(Res.string.italic),
                         action = EditorAction.ITALIC,
                         onAction = onAction,
-                        shape = cookieShape,
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.SemiBold
                     )
                     ExpressiveActionButton(
-                        symbol = "—",
-                        description = stringResource(Res.string.horizontal_rule),
-                        action = EditorAction.HORIZONTAL_RULE,
-                        onAction = onAction,
-                        shape = cookieShape
+                        icon = MaterialSymbols.Filled.FormatStrikethrough,
+                        description = stringResource(Res.string.strikethrough_label),
+                        action = EditorAction.STRIKETHROUGH,
+                        onAction = onAction
                     )
                     ExpressiveActionButton(
                         icon = MaterialSymbols.Filled.Link,
-                        description = "Link",
+                        description = stringResource(Res.string.link),
                         action = EditorAction.LINK,
-                        onAction = onAction,
-                        shape = cookieShape
+                        onAction = onAction
                     )
                 }
 
-                // Secondary actions: compact and quick.
+                // Secondary actions: block-level formatting, compact.
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState())
@@ -135,25 +133,11 @@ fun FormatToolbar(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     CompactActionButton(
-                        MaterialSymbols.Filled.FormatStrikethrough,
-                        "Strike",
-                        onAction,
-                        EditorAction.STRIKETHROUGH
-                    )
-                    CompactActionButton(MaterialSymbols.Filled.Code, "Code", onAction, EditorAction.CODE)
-                    CompactActionButton(
                         MaterialSymbols.Filled.Title,
-                        "Header",
+                        stringResource(Res.string.heading),
                         onAction,
                         EditorAction.HEADER
                     )
-                    CompactActionButton(
-                        MaterialSymbols.Filled.FormatQuote,
-                        "Quote",
-                        onAction,
-                        EditorAction.QUOTE
-                    )
-                    CompactActionButton(MaterialSymbols.Filled.Image, "Image", onAction, EditorAction.IMAGE)
                     CompactActionButton(
                         MaterialSymbols.AutoMirrored.Filled.FormatListBulleted,
                         stringResource(Res.string.bullet_list_label),
@@ -172,6 +156,30 @@ fun FormatToolbar(
                         onAction,
                         EditorAction.LIST_TASK
                     )
+                    CompactActionButton(
+                        MaterialSymbols.Filled.FormatQuote,
+                        stringResource(Res.string.quote_label),
+                        onAction,
+                        EditorAction.QUOTE
+                    )
+                    CompactActionButton(
+                        MaterialSymbols.Filled.Code,
+                        stringResource(Res.string.code),
+                        onAction,
+                        EditorAction.CODE
+                    )
+                    CompactActionButton(
+                        MaterialSymbols.Filled.Image,
+                        stringResource(Res.string.image_label),
+                        onAction,
+                        EditorAction.IMAGE
+                    )
+                    CompactActionButton(
+                        MaterialSymbols.Filled.Remove,
+                        stringResource(Res.string.horizontal_rule),
+                        onAction,
+                        EditorAction.HORIZONTAL_RULE
+                    )
                 }
             }
         }
@@ -183,7 +191,6 @@ private fun ExpressiveActionButton(
     description: String,
     action: EditorAction,
     onAction: (EditorAction) -> Unit,
-    shape: Shape,
     symbol: String? = null,
     icon: ImageVector? = null,
     fontWeight: FontWeight = FontWeight.Medium,
@@ -196,7 +203,7 @@ private fun ExpressiveActionButton(
             hapticHelper.performLightClick()
             onAction(action)
         },
-        shape = shape,
+        shapes = IconButtonDefaults.shapes(),
         colors = IconButtonDefaults.filledTonalIconButtonColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.65f),
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -233,7 +240,10 @@ private fun CompactActionButton(
             hapticHelper.performLightClick()
             onAction(action)
         },
-        shape = MaterialTheme.shapes.small,
+        shapes = IconButtonDefaults.shapes(
+            shape = MaterialTheme.shapes.small,
+            pressedShape = MaterialTheme.shapes.extraSmall,
+        ),
         colors = IconButtonDefaults.filledTonalIconButtonColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.65f),
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant

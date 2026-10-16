@@ -1,5 +1,6 @@
 package com.bernaferrari.remarkor.ui.screens.filebrowser
 
+import com.bernaferrari.remarkor.ui.components.stripRedundantTitle
 import com.bernaferrari.remarkor.ui.icons.MaterialSymbols
 
 import androidx.compose.animation.AnimatedVisibility
@@ -159,10 +160,10 @@ internal fun FileItem(
         noteColor != null -> resolveNoteSurfaceColor(
             noteColor,
             colorScheme,
-            fallback = colorScheme.surfaceContainerLow
+            fallback = colorScheme.surfaceContainer
         )
 
-        else -> colorScheme.surfaceContainerLow
+        else -> colorScheme.surfaceContainer
     }
     val effectiveBackground = containerColor.compositeOver(colorScheme.surface)
     val accentOverride = noteColor?.let(::Color)
@@ -199,6 +200,18 @@ internal fun FileItem(
                 else -> colorScheme.secondary
             }
         }
+
+    // Hint at what's inside instead of one generic document glyph for every row.
+    val leadingIcon = remember(file.isDirectory, file.extension, file.preview) {
+        val preview = file.preview.orEmpty()
+        when {
+            file.isDirectory -> MaterialSymbols.Filled.Folder
+            Regex("(?m)^\\s*(?:[-*+]\\s+)?\\[[ xX]\\]\\s").containsMatchIn(preview) ->
+                MaterialSymbols.Filled.Assignment
+            file.extension.lowercase() == "txt" -> MaterialSymbols.Filled.TextSnippet
+            else -> MaterialSymbols.Filled.Description
+        }
+    }
 
     val interactionSource =
         remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
@@ -245,7 +258,7 @@ internal fun FileItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = if (file.isDirectory) MaterialSymbols.Filled.Folder else MaterialSymbols.Filled.Description,
+                        imageVector = leadingIcon,
                         contentDescription = null,
                         tint = iconTintColor,
                         modifier = Modifier.size(24.dp)
@@ -299,8 +312,15 @@ internal fun FileItem(
                             )
                         }
 
-                        val effectivePreview = preview?.takeIf { it.isNotBlank() }
-                            ?: file.preview?.takeIf { it.isNotBlank() }
+                        // Prefer the file preview: it keeps line breaks, so headings and task
+                        // markers render instead of showing as raw "## Inbox - [ ]" text.
+                        // Blank lines are dropped so both preview lines carry content.
+                        val effectivePreview = (file.preview?.takeIf { it.isNotBlank() }
+                            ?: preview?.takeIf { it.isNotBlank() })
+                            ?.let { stripRedundantTitle(it, baseName) }
+                            ?.lineSequence()
+                            ?.filter { it.isNotBlank() }
+                            ?.joinToString("\n")
                         if (!effectivePreview.isNullOrEmpty()) {
                             val previewText = remember(
                                 effectivePreview,
