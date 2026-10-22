@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">رجوع</string>
     <string name="settings">الإعدادات</string>
     <string name="appearance">المظهر</string>
@@ -50,7 +50,7 @@
     <string name="trash">سلة المهملات</string>
     <string name="theme_color">لون السمة</string>
     <string name="dynamic">ديناميكي</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">أزرق</string>
     <string name="red">أحمر</string>
     <string name="amber">كهرماني</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">لا توجد تطابقات</string>
     <string name="create_note_to_start_searching">أنشئ ملاحظة لبدء البحث</string>
     <string name="try_different_search_term">جرب مصطلح بحث آخر</string>
-    <string name="welcome_to_markor">مرحباً بك في Markor</string>
+    <string name="welcome_to_markor">مرحباً بك في Wordkeep</string>
     <string name="intro_description">أنشئ الملاحظات في ثوانٍ وحافظ على حفظ كل شيء تلقائياً بينما تركز أنت على الكتابة.</string>
     <string name="select_storage_location">اختر المكان الذي تريد الاحتفاظ فيه بملاحظاتك.</string>
     <string name="storage_internal_description">تُحفظ الملاحظات داخل التطبيق. لا توجد أذونات مطلوبة. آمن وبسيط.</string>

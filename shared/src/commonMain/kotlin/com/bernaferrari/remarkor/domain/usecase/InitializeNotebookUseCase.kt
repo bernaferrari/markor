@@ -70,7 +70,7 @@ class InitializeNotebookUseCase(
         const val DEFAULT_TODO_CONTENT = """# Todo List
 
 ## Inbox
-- [ ] Welcome to Markor!
+- [ ] Welcome to Wordkeep!
 - [ ] Try creating your first todo item
 
 ## Today
@@ -79,7 +79,7 @@ class InitializeNotebookUseCase(
 """
         const val DEFAULT_QUICKNOTE_CONTENT = """# Quick Note
 
-Welcome to Markor! This is your quick note file for jotting down thoughts.
+Welcome to Wordkeep! This is your quick note file for jotting down thoughts.
 
 ## Ideas
 - 

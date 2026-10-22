@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">پیچھے</string>
     <string name="settings">ترتیبات</string>
     <string name="appearance">شکل و صورت</string>
@@ -50,7 +50,7 @@
     <string name="trash">کوڑے دان</string>
     <string name="theme_color">تھیم کا رنگ</string>
     <string name="dynamic">متحرک</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">نیلا</string>
     <string name="red">سرخ</string>
     <string name="amber">عنبری</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">کوئی نتیجہ نہیں ملا</string>
     <string name="create_note_to_start_searching">تلاش شروع کرنے کے لیے ایک نوٹ بنائیں</string>
     <string name="try_different_search_term">مختلف تلاش کا لفظ استعمال کریں</string>
-    <string name="welcome_to_markor">Markor میں خوش آمدید</string>
+    <string name="welcome_to_markor">Wordkeep میں خوش آمدید</string>
     <string name="intro_description">سیکنڈوں میں نوٹس بنائیں اور لکھتے وقت سب کچھ خود بخود محفوظ رکھیں۔</string>
     <string name="select_storage_location">منتخب کریں کہ آپ اپنے نوٹس کہاں رکھنا چاہتے ہیں۔</string>
     <string name="storage_internal_description">نوٹس ایپ کے اندر محفوظ کیے جاتے ہیں۔ کوئی اجازت درکار نہیں۔ محفوظ اور آسان۔</string>

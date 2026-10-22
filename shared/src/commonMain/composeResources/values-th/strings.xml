@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">ย้อนกลับ</string>
     <string name="settings">การตั้งค่า</string>
     <string name="appearance">รูปลักษณ์</string>
@@ -50,7 +50,7 @@
     <string name="trash">ถังขยะ</string>
     <string name="theme_color">สีธีม</string>
     <string name="dynamic">ไดนามิก</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">สีน้ำเงิน</string>
     <string name="red">สีแดง</string>
     <string name="amber">สีเหลืองอำพัน</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">ไม่พบรายการที่ตรงกัน</string>
     <string name="create_note_to_start_searching">สร้างบันทึกเพื่อเริ่มค้นหา</string>
     <string name="try_different_search_term">ลองใช้คำค้นหาอื่น</string>
-    <string name="welcome_to_markor">ยินดีต้อนรับสู่ Markor</string>
+    <string name="welcome_to_markor">ยินดีต้อนรับสู่ Wordkeep</string>
     <string name="intro_description">สร้างบันทึกในเวลาไม่กี่วินาทีและบันทึกทุกอย่างโดยอัตโนมัติในขณะที่คุณจดจ่อกับการเขียน</string>
     <string name="select_storage_location">เลือกตำแหน่งที่คุณต้องการเก็บสมุดบันทึกของคุณ</string>
     <string name="storage_internal_description">บันทึกจะถูกเก็บไว้ในแอป ไม่ต้องการการอนุญาต ปลอดภัยและเรียบง่าย</string>

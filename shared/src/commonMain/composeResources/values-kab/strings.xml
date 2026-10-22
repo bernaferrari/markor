@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Uɣal</string>
     <string name="settings">Iɣewwaṛen</string>
     <string name="appearance">Udem</string>
@@ -50,7 +50,7 @@
     <string name="trash">Taqecwalt</string>
     <string name="theme_color">Ini n usentel</string>
     <string name="dynamic">Amussnaw</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Anili</string>
     <string name="red">Azeggaɣ</string>
     <string name="amber">Aqaḥwi</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Ulac ayen yemṣadan</string>
     <string name="create_note_to_start_searching">Rnu tazmilt akken ad tebduḍ anadi</string>
     <string name="try_different_search_term">Eɛṛeḍ awal n unadi nniḍen</string>
-    <string name="welcome_to_markor">Ansuf ɣer Markor</string>
+    <string name="welcome_to_markor">Ansuf ɣer Wordkeep</string>
     <string name="intro_description">Snulfu-d tizmilin di kra n tsinin, yal taɣawsa ad tessekles iman-is mi tettarud.</string>
     <string name="select_storage_location">Fren amkan anda tebɣiḍ ad teskelsed tizmilin-ik.</string>
     <string name="storage_internal_description">Tizmilin ttusekelsent deg usnas. Ur yettraju ara tisirag. Yemneɛ u ishel.</string>

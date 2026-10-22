@@ -45,9 +45,9 @@
     <key>UILaunchScreen</key>
     <dict/>
     <key>NSDocumentsFolderUsageDescription</key>
-    <string>Markor needs access to your documents to edit and view markdown files.</string>
+    <string>Wordkeep needs access to your documents to edit and view markdown files.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Markor needs access to your photo library to insert images into notes.</string>
+    <string>Wordkeep needs access to your photo library to insert images into notes.</string>
     <key>UIFileSharingEnabled</key>
     <true/>
     <key>LSSupportsOpeningDocumentsInPlace</key>

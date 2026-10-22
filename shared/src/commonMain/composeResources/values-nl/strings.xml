@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Terug</string>
     <string name="settings">Instellingen</string>
     <string name="appearance">Uiterlijk</string>
@@ -50,7 +50,7 @@
     <string name="trash">Prullenbak</string>
     <string name="theme_color">Themakleur</string>
     <string name="dynamic">Dynamisch</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Blauw</string>
     <string name="red">Rood</string>
     <string name="amber">Amber</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Geen overeenkomsten</string>
     <string name="create_note_to_start_searching">Maak een notitie om te beginnen met zoeken</string>
     <string name="try_different_search_term">Probeer een andere zoekterm</string>
-    <string name="welcome_to_markor">Welkom bij Markor</string>
+    <string name="welcome_to_markor">Welkom bij Wordkeep</string>
     <string name="intro_description">Maak binnen enkele seconden notities en houd alles automatisch opgeslagen terwijl u zich concentreert op het schrijven.</string>
     <string name="select_storage_location">Selecteer waar u uw notities wilt bewaren.</string>
     <string name="storage_internal_description">Notities worden in de app bewaard. Geen machtigingen vereist. Veilig en eenvoudig.</string>

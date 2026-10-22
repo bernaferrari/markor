@@ -1,7 +1,7 @@
-# Re-Markor (Compose + KMP + M3)
+# Wordkeep (Compose + KMP + M3)
 
 <p align="center">
-  <img src="assets/more.png" alt="Re-Markor overview" width="980">
+  <img src="assets/more.png" alt="Wordkeep overview" width="980">
 </p>
 
 <p align="center">
@@ -22,7 +22,7 @@
 
 ---
 
-Re-Markor is a modern, cross-platform port of the original [Markor](https://github.com/gsantner/markor) project. It preserves the core philosophy—plain text files, offline-first workflow, and no account lock-in—while leveraging **Kotlin Multiplatform (KMP)** to bring a unified experience to Android, iOS, and the web.
+Wordkeep is a modern, cross-platform port of the original [Markor](https://github.com/gsantner/markor) project. It preserves the core philosophy—plain text files, offline-first workflow, and no account lock-in—while leveraging **Kotlin Multiplatform (KMP)** to bring a unified experience to Android, iOS, and the web.
 
 **Try it in your browser:** [markor-five.vercel.app](https://markor-five.vercel.app/)
 
@@ -30,7 +30,7 @@ Re-Markor is a modern, cross-platform port of the original [Markor](https://gith
 
 - 📝 **Markdown-First:** Fast editing with live preview and syntax highlighting.
 - 🌍 **Multiplatform:** Shared business logic and UI across Android, iOS, JVM, and Web (Wasm).
-- 🌐 **Web Demo:** Run Markor in the browser via Compose Multiplatform for Web.
+- 🌐 **Web Demo:** Run Wordkeep in the browser via Compose Multiplatform for Web.
 - 📂 **Local-First:** Your data stays on your device in plain text files.
 - 🏷️ **Smart Organization:** Pinned notes, archive, labels, trash, and recents.
 - 🎨 **Modern UX:** A complete redesign using Material 3 and Compose Multiplatform.

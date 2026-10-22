@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">بازگشت</string>
     <string name="settings">تنظیمات</string>
     <string name="appearance">ظاهر</string>
@@ -50,7 +50,7 @@
     <string name="trash">سطل زباله</string>
     <string name="theme_color">رنگ پوسته</string>
     <string name="dynamic">پویا</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">آبی</string>
     <string name="red">قرمز</string>
     <string name="amber">کهربایی</string>

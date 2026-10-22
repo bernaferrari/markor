@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">戻る</string>
     <string name="settings">設定</string>
     <string name="appearance">外観</string>
@@ -50,7 +50,7 @@
     <string name="trash">ゴミ箱</string>
     <string name="theme_color">テーマカラー</string>
     <string name="dynamic">ダイナミック</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">青</string>
     <string name="red">赤</string>
     <string name="amber">アンバー</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">一致するものはありません</string>
     <string name="create_note_to_start_searching">ノートを作成して検索を開始します</string>
     <string name="try_different_search_term">別の検索ワードを試してください</string>
-    <string name="welcome_to_markor">Markor へようこそ</string>
+    <string name="welcome_to_markor">Wordkeep へようこそ</string>
     <string name="intro_description">数秒でノートを作成。執筆に集中している間もすべて自動保存されます。</string>
     <string name="select_storage_location">ノートの保存場所を選択してください。</string>
     <string name="storage_internal_description">ノートはアプリ内に保存されます。権限は不要で、安全かつシンプルです。</string>

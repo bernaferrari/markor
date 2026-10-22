@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">返回</string>
     <string name="settings">设置</string>
     <string name="appearance">外观</string>
@@ -50,7 +50,7 @@
     <string name="trash">回收站</string>
     <string name="theme_color">主题颜色</string>
     <string name="dynamic">动态</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">蓝色</string>
     <string name="red">红色</string>
     <string name="amber">琥珀色</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">无匹配项</string>
     <string name="create_note_to_start_searching">创建笔记以开始搜索</string>
     <string name="try_different_search_term">请尝试不同的搜索词</string>
-    <string name="welcome_to_markor">欢迎使用 Markor</string>
+    <string name="welcome_to_markor">欢迎使用 Wordkeep</string>
     <string name="intro_description">在几秒钟内创建笔记，并在您专注于写作时自动保存一切。</string>
     <string name="select_storage_location">选择您想要保存笔记的位置。</string>
     <string name="storage_internal_description">笔记保存在应用内部。不需要权限。安全简单。</string>

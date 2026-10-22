@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Назад</string>
     <string name="settings">Настройки</string>
     <string name="appearance">Външен вид</string>
@@ -50,7 +50,7 @@
     <string name="trash">Кошче</string>
     <string name="theme_color">Цвят на темата</string>
     <string name="dynamic">Динамичен</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Синьо</string>
     <string name="red">Червено</string>
     <string name="amber">Кехлибар</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Няма съвпадения</string>
     <string name="create_note_to_start_searching">Създайте бележка, за да започнете търсене</string>
     <string name="try_different_search_term">Опитайте с друг термин за търсене</string>
-    <string name="welcome_to_markor">Добре дошли в Markor</string>
+    <string name="welcome_to_markor">Добре дошли в Wordkeep</string>
     <string name="intro_description">Създавайте бележки за секунди и поддържайте всичко автоматично запазено, докато се фокусирате върху писането.</string>
     <string name="select_storage_location">Изберете къде искате да съхранявате бележките си.</string>
     <string name="storage_internal_description">Бележките се пазят в приложението. Не се изискват разрешения. Сигурно и просто.</string>

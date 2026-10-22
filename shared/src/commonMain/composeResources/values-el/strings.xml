@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Πίσω</string>
     <string name="settings">Ρυθμίσεις</string>
     <string name="appearance">Εμφάνιση</string>
@@ -50,7 +50,7 @@
     <string name="trash">Κάδος Απορριμμάτων</string>
     <string name="theme_color">Χρώμα θέματος</string>
     <string name="dynamic">Δυναμικό</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Μπλε</string>
     <string name="red">Κόκκινο</string>
     <string name="amber">Κεχριμπάρι</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Δεν βρέθηκαν αποτελέσματα</string>
     <string name="create_note_to_start_searching">Δημιουργήστε μια σημείωση για να ξεκινήσετε την αναζήτηση</string>
     <string name="try_different_search_term">Δοκιμάστε έναν διαφορετικό όρο αναζήτησης</string>
-    <string name="welcome_to_markor">Καλώς ήρθατε στο Markor</string>
+    <string name="welcome_to_markor">Καλώς ήρθατε στο Wordkeep</string>
     <string name="intro_description">Δημιουργήστε σημειώσεις σε δευτερόλεπτα και κρατήστε τα πάντα αποθηκευμένα αυτόματα όσο εσείς γράφετε.</string>
     <string name="select_storage_location">Επιλέξτε πού θέλετε να αποθηκεύονται οι σημειώσεις σας.</string>
     <string name="storage_internal_description">Οι σημειώσεις φυλάσσονται εντός της εφαρμογής. Δεν απαιτούνται άδειες. Ασφαλές και απλό.</string>

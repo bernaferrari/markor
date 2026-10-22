@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Quay lại</string>
     <string name="settings">Cài đặt</string>
     <string name="appearance">Giao diện</string>
@@ -50,7 +50,7 @@
     <string name="trash">Thùng rác</string>
     <string name="theme_color">Màu giao diện</string>
     <string name="dynamic">Động</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Xanh dương</string>
     <string name="red">Đỏ</string>
     <string name="amber">Hổ phách</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Không có kết quả khớp</string>
     <string name="create_note_to_start_searching">Tạo ghi chú để bắt đầu tìm kiếm</string>
     <string name="try_different_search_term">Hãy thử một từ khóa tìm kiếm khác</string>
-    <string name="welcome_to_markor">Chào mừng đến với Markor</string>
+    <string name="welcome_to_markor">Chào mừng đến với Wordkeep</string>
     <string name="intro_description">Tạo ghi chú trong vài giây và giữ mọi thứ tự động lưu khi bạn tập trung viết.</string>
     <string name="select_storage_location">Chọn nơi bạn muốn lưu các ghi chú.</string>
     <string name="storage_internal_description">Ghi chú được lưu trong ứng dụng. Không cần cấp quyền. An toàn và đơn giản.</string>

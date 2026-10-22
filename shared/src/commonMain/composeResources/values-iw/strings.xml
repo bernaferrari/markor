@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">חזרה</string>
     <string name="settings">הגדרות</string>
     <string name="appearance">מראה</string>
@@ -50,7 +50,7 @@
     <string name="trash">אשפה</string>
     <string name="theme_color">צבע ערכת נושא</string>
     <string name="dynamic">דינמי</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">כחול</string>
     <string name="red">אדום</string>
     <string name="amber">ענבר</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">אין תוצאות מתאימות</string>
     <string name="create_note_to_start_searching">צור פתק כדי להתחיל לחפש</string>
     <string name="try_different_search_term">נסה מונח חיפוש אחר</string>
-    <string name="welcome_to_markor">ברוכים הבאים ל-Markor</string>
+    <string name="welcome_to_markor">ברוכים הבאים ל-Wordkeep</string>
     <string name="intro_description">צור פתקים בשניות והכל יישמר אוטומטית בזמן שאתה מתרכז בכתיבה.</string>
     <string name="select_storage_location">בחר היכן תרצה לשמור את הפתקים שלך.</string>
     <string name="storage_internal_description">הפתקים נשמרים בתוך האפליקציה. אין צורך בהרשאות. בטוח ופשוט.</string>

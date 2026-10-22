@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">ପଛକୁ</string>
     <string name="settings">ସେଟିଂସମୂହ</string>
     <string name="appearance">ରୂପ</string>
@@ -50,7 +50,7 @@
     <string name="trash">ଆବର୍ଜନା ପାତ୍ର</string>
     <string name="theme_color">ଥିମ୍ ରଙ୍ଗ</string>
     <string name="dynamic">ଗତିଶୀଳ</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">ନୀଳ</string>
     <string name="red">ଲାଲ୍</string>
     <string name="amber">ଅମ୍ବର</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">କୌଣସି ଫଳାଫଳ ନାହିଁ</string>
     <string name="create_note_to_start_searching">ସନ୍ଧାନ ଆରମ୍ଭ କରିବାକୁ ଏକ ନୋଟ୍ ସୃଷ୍ଟି କରନ୍ତୁ</string>
     <string name="try_different_search_term">ଏକ ଭିନ୍ନ ସନ୍ଧାନ ଶବ୍ଦ ଚେଷ୍ଟା କରନ୍ତୁ</string>
-    <string name="welcome_to_markor">Markor କୁ ସ୍ୱାଗତ</string>
+    <string name="welcome_to_markor">Wordkeep କୁ ସ୍ୱାଗତ</string>
     <string name="intro_description">ସେକେଣ୍ଡରେ ନୋଟ୍ ତିଆରି କରନ୍ତୁ ଏବଂ ଲେଖିବା ସମୟରେ ସବୁକିଛି ସ୍ୱୟଂଚାଳିତ ଭାବରେ ସେଭ୍ କରନ୍ତୁ।</string>
     <string name="select_storage_location">ଆପଣଙ୍କର ନୋଟ୍ କେଉଁଠାରେ ରଖିବାକୁ ଚାହୁଁଛନ୍ତି ବାଛନ୍ତୁ।</string>
     <string name="storage_internal_description">ନୋଟ୍ ଆପ୍ ଭିତରେ ରଖାଯାଏ। କୌଣସି ଅନୁମତି ଆବଶ୍ୟକ ନାହିଁ। ସୁରକ୍ଷିତ ଏବଂ ସରଳ।</string>

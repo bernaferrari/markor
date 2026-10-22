@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Takaisin</string>
     <string name="settings">Asetukset</string>
     <string name="appearance">Ulkoasu</string>
@@ -50,7 +50,7 @@
     <string name="trash">Roskakori</string>
     <string name="theme_color">Teeman väri</string>
     <string name="dynamic">Dynaaminen</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Sininen</string>
     <string name="red">Punainen</string>
     <string name="amber">Meripihka</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Ei tuloksia</string>
     <string name="create_note_to_start_searching">Luo muistiinpano aloittaaksesi haun</string>
     <string name="try_different_search_term">Kokeile eri hakusanaa</string>
-    <string name="welcome_to_markor">Tervetuloa Markoriin</string>
+    <string name="welcome_to_markor">Tervetuloa Wordkeepiin</string>
     <string name="intro_description">Luo muistiinpanoja sekunneissa ja pidä kaikki automaattisesti tallennettuna kirjoittaessasi.</string>
     <string name="select_storage_location">Valitse, missä haluat säilyttää muistiinpanosi.</string>
     <string name="storage_internal_description">Muistiinpanot säilytetään sovelluksen sisällä. Käyttöoikeuksia ei tarvita. Turvallista ja yksinkertaista.</string>

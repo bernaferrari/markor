@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Tilbage</string>
     <string name="settings">Indstillinger</string>
     <string name="appearance">Udseende</string>
@@ -50,7 +50,7 @@
     <string name="trash">Papirkurv</string>
     <string name="theme_color">Temafarve</string>
     <string name="dynamic">Dynamisk</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Blå</string>
     <string name="red">Rød</string>
     <string name="amber">Rav</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Ingen match fundet</string>
     <string name="create_note_to_start_searching">Opret en note for at starte søgning</string>
     <string name="try_different_search_term">Prøv et andet søgeord</string>
-    <string name="welcome_to_markor">Velkommen til Markor</string>
+    <string name="welcome_to_markor">Velkommen til Wordkeep</string>
     <string name="intro_description">Opret noter på få sekunder og lad alt blive gemt automatisk, mens du fokuserer på at skrive.</string>
     <string name="select_storage_location">Vælg hvor du vil gemme dine noter.</string>
     <string name="storage_internal_description">Noter gemmes inde i appen. Ingen tilladelser kræves. Sikkert og enkelt.</string>

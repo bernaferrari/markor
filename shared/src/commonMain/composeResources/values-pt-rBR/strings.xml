@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Voltar</string>
     <string name="settings">Configurações</string>
     <string name="appearance">Aparência</string>
@@ -50,7 +50,7 @@
     <string name="trash">Lixeira</string>
     <string name="theme_color">Cor do tema</string>
     <string name="dynamic">Dinâmico</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Azul</string>
     <string name="red">Vermelho</string>
     <string name="amber">Âmbar</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Nenhuma correspondência</string>
     <string name="create_note_to_start_searching">Crie uma nota para começar a pesquisar</string>
     <string name="try_different_search_term">Tente um termo de busca diferente</string>
-    <string name="welcome_to_markor">Bem-vindo ao Markor</string>
+    <string name="welcome_to_markor">Bem-vindo ao Wordkeep</string>
     <string name="intro_description">Crie notas em segundos e mantenha tudo salvo automaticamente enquanto você se concentra em escrever.</string>
     <string name="select_storage_location">Selecione onde você deseja manter suas notas.</string>
     <string name="storage_internal_description">As notas são mantidas dentro do aplicativo. Nenhuma permissão é necessária. Seguro e simples.</string>

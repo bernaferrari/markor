@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Bumalik</string>
     <string name="settings">Mga Setting</string>
     <string name="appearance">Hitsura</string>
@@ -50,7 +50,7 @@
     <string name="trash">Basurahan</string>
     <string name="theme_color">Kulay ng Tema</string>
     <string name="dynamic">Dynamic</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Asul</string>
     <string name="red">Pula</string>
     <string name="amber">Amber</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Walang katugma</string>
     <string name="create_note_to_start_searching">Gumawa ng tala para magsimulang maghanap</string>
     <string name="try_different_search_term">Subukan ang ibang search term</string>
-    <string name="welcome_to_markor">Maligayang pagdating sa Markor</string>
+    <string name="welcome_to_markor">Maligayang pagdating sa Wordkeep</string>
     <string name="intro_description">Gumawa ng mga tala sa loob ng ilang segundo at panatilihing naka-auto-save habang nakatuon ka sa pagsusulat.</string>
     <string name="select_storage_location">Piliin kung saan mo gustong itago ang iyong mga tala.</string>
     <string name="storage_internal_description">Ang mga tala ay itinatago sa loob ng app. Walang pahintulot na kinakailangan. Ligtas at simple.</string>
