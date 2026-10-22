@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Назад</string>
     <string name="settings">Поставке</string>
     <string name="appearance">Изглед</string>
@@ -50,7 +50,7 @@
     <string name="trash">Корпа</string>
     <string name="theme_color">Боја теме</string>
     <string name="dynamic">Динамички</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Плава</string>
     <string name="red">Црвена</string>
     <string name="amber">Ћилибар</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Нема поклапања</string>
     <string name="create_note_to_start_searching">Креирајте белешку да бисте започели претрагу</string>
     <string name="try_different_search_term">Покушајте са другим термином за претрагу</string>
-    <string name="welcome_to_markor">Добро дошли у Markor</string>
+    <string name="welcome_to_markor">Добро дошли у Wordkeep</string>
     <string name="intro_description">Креирајте белешке за неколико секунди. Све се аутоматски чува док сте фокусирани на писање.</string>
     <string name="select_storage_location">Изаберите где желите да чувате своје белешке.</string>
     <string name="storage_internal_description">Белешке се чувају унутар апликације. Дозволе нису потребне. Сигурно и једноставно.</string>

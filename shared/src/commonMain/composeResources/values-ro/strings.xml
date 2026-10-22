@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Înapoi</string>
     <string name="settings">Setări</string>
     <string name="appearance">Aspect</string>
@@ -50,7 +50,7 @@
     <string name="trash">Coș de gunoi</string>
     <string name="theme_color">Culoare temă</string>
     <string name="dynamic">Dinamic</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Albastru</string>
     <string name="red">Roșu</string>
     <string name="amber">Chihlimbar</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Nicio potrivire</string>
     <string name="create_note_to_start_searching">Creează o notă pentru a începe căutarea</string>
     <string name="try_different_search_term">Încearcă un alt termen de căutare</string>
-    <string name="welcome_to_markor">Bun venit la Markor</string>
+    <string name="welcome_to_markor">Bun venit la Wordkeep</string>
     <string name="intro_description">Creează note în câteva secunde și păstrează totul salvat automat în timp ce te concentrezi pe scris.</string>
     <string name="select_storage_location">Alege unde vrei să îți păstrezi notele.</string>
     <string name="storage_internal_description">Notele sunt păstrate în interiorul aplicației. Nu necesită permisiuni. Sigur și simplu.</string>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">പിന്നിലേക്ക്</string>
     <string name="settings">ക്രമീകരണങ്ങൾ</string>
     <string name="appearance">രൂപഭാവം</string>
@@ -50,7 +50,7 @@
     <string name="trash">ചവറ്റുകുട്ട</string>
     <string name="theme_color">തീം നിറം</string>
     <string name="dynamic">ഡൈനാമിക്</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">നീല</string>
     <string name="red">ചുവപ്പ്</string>
     <string name="amber">ആംബർ</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">യോജിക്കുന്നവ ഒന്നുമില്ല</string>
     <string name="create_note_to_start_searching">തിരയാൻ ഒരു നോട്ട് സൃഷ്ടിക്കുക</string>
     <string name="try_different_search_term">മറ്റൊരു പദം ഉപയോഗിച്ച് നോക്കുക</string>
-    <string name="welcome_to_markor">Markor-ലേക്ക് സ്വാഗതം</string>
+    <string name="welcome_to_markor">Wordkeep-ലേക്ക് സ്വാഗതം</string>
     <string name="intro_description">നിമിഷങ്ങൾക്കുള്ളിൽ നോട്ടുകൾ സൃഷ്ടിക്കുക, എഴുത്തിൽ ശ്രദ്ധ കേന്ദ്രീകരിക്കുമ്പോൾ എല്ലാം സ്വയം സൂക്ഷിക്കപ്പെടും.</string>
     <string name="select_storage_location">നോട്ടുകൾ എവിടെ സൂക്ഷിക്കണമെന്ന് തിരഞ്ഞെടുക്കുക.</string>
     <string name="storage_internal_description">നോട്ടുകൾ ആപ്പിനുള്ളിൽ സൂക്ഷിക്കുന്നു. അനുമതികൾ ആവശ്യമില്ല. ലളിതവും സുരക്ഷിതവുമാണ്.</string>

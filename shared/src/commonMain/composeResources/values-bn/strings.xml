@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">ফিরে যান</string>
     <string name="settings">সেটিংস</string>
     <string name="appearance">চেহারা</string>
@@ -50,7 +50,7 @@
     <string name="trash">ট্র্যাশ</string>
     <string name="theme_color">থিমের রঙ</string>
     <string name="dynamic">গতিশীল</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">নীল</string>
     <string name="red">লাল</string>
     <string name="amber">অ্যাম্বার</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">কোনো মিল পাওয়া যায়নি</string>
     <string name="create_note_to_start_searching">অনুসন্ধান শুরু করতে একটি নোট তৈরি করুন</string>
     <string name="try_different_search_term">ভিন্ন কোনো শব্দ দিয়ে চেষ্টা করুন</string>
-    <string name="welcome_to_markor">Markor-এ স্বাগতম</string>
+    <string name="welcome_to_markor">Wordkeep-এ স্বাগতম</string>
     <string name="intro_description">কয়েক সেকেন্ডে নোট তৈরি করুন এবং লেখার সময় সবকিছু স্বয়ংক্রিয়ভাবে সংরক্ষিত রাখুন।</string>
     <string name="select_storage_location">আপনার নোট কোথায় রাখতে চান তা নির্বাচন করুন।</string>
     <string name="storage_internal_description">নোটগুলি অ্যাপের ভেতরে রাখা হয়। কোনো অনুমতির প্রয়োজন নেই। নিরাপদ এবং সহজ।</string>

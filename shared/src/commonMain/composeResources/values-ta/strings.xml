@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">பின்னால்</string>
     <string name="settings">அமைப்புகள்</string>
     <string name="appearance">தோற்றம்</string>
@@ -50,7 +50,7 @@
     <string name="trash">குப்பை</string>
     <string name="theme_color">தீம் நிறம்</string>
     <string name="dynamic">மாறும் தன்மை (Dynamic)</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">நீலம்</string>
     <string name="red">சிவப்பு</string>
     <string name="amber">ஆம்பர்</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">பொருத்தங்கள் இல்லை</string>
     <string name="create_note_to_start_searching">தேடத் தொடங்க ஒரு குறிப்பை உருவாக்கவும்</string>
     <string name="try_different_search_term">வேறொரு தேடல் சொல்லை முயற்சிக்கவும்</string>
-    <string name="welcome_to_markor">Markor-க்கு வரவேற்கிறோம்</string>
+    <string name="welcome_to_markor">Wordkeep-க்கு வரவேற்கிறோம்</string>
     <string name="intro_description">நொடிகளில் குறிப்புகளை உருவாக்குங்கள், நீங்கள் எழுதும்போது அனைத்தும் தானாகவே சேமிக்கப்படும்.</string>
     <string name="select_storage_location">உங்கள் குறிப்புகளை எங்கு வைத்திருக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்.</string>
     <string name="storage_internal_description">குறிப்புகள் பயன்பாட்டிற்குள் பாதுகாப்பாக வைக்கப்படும். எந்த அனுமதிகளும் தேவையில்லை. பாதுகாப்பானது மற்றும் எளிமையானது.</string>

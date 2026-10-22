@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">گەڕانەوە</string>
     <string name="settings">ڕێکخستنەکان</string>
     <string name="appearance">ڕووکار</string>
@@ -50,7 +50,7 @@
     <string name="trash">تەنەکەی خۆڵ</string>
     <string name="theme_color">ڕەنگی ڕووکار</string>
     <string name="dynamic">داینامیک</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">شین</string>
     <string name="red">سوور</string>
     <string name="amber">عەنبەری</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">هیچ ئەنجامێک نەدۆزرایەوە</string>
     <string name="create_note_to_start_searching">تێبینییەک دروست بکە بۆ دەستپێکردنی گەڕان</string>
     <string name="try_different_search_term">وشەیەکی تری گەڕان تاقی بکەرەوە</string>
-    <string name="welcome_to_markor">بەخێربێیت بۆ Markor</string>
+    <string name="welcome_to_markor">بەخێربێیت بۆ Wordkeep</string>
     <string name="intro_description">لە چەند چرکەیەکدا تێبینی دروست بکە و هەموو شتێک بە خودکاری پاشکەوت دەکرێت کاتێک تۆ سەرنجت لەسەر نووسینە.</string>
     <string name="select_storage_location">دیاری بکە لە کوێ دەتەوێت تێبینییەکانت هەڵبگریت.</string>
     <string name="storage_internal_description">تێبینییەکان لە ناو ئەپەکەدا هەڵدەگیرێن. پێویستی بە هیچ ڕێپێدانێک نییە. پارێزراو و سادەیە.</string>

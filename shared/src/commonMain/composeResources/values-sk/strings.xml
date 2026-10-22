@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Späť</string>
     <string name="settings">Nastavenia</string>
     <string name="appearance">Vzhľad</string>
@@ -50,7 +50,7 @@
     <string name="trash">Kôš</string>
     <string name="theme_color">Farba témy</string>
     <string name="dynamic">Dynamická</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Modrá</string>
     <string name="red">Červená</string>
     <string name="amber">Jantárová</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Žiadne výsledky</string>
     <string name="create_note_to_start_searching">Vytvorte poznámku, aby ste mohli hľadať</string>
     <string name="try_different_search_term">Skúste iný hľadaný výraz</string>
-    <string name="welcome_to_markor">Vitajte v aplikácii Markor</string>
+    <string name="welcome_to_markor">Vitajte v aplikácii Wordkeep</string>
     <string name="intro_description">Vytvárajte poznámky za pár sekúnd, všetko sa automaticky ukladá, kým sa sústredíte na písanie.</string>
     <string name="select_storage_location">Vyberte, kde chcete uchovávať svoje poznámky.</string>
     <string name="storage_internal_description">Poznámky sa ukladajú v aplikácii. Nevyžadujú sa žiadne povolenia. Bezpečné a jednoduché.</string>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Tagasi</string>
     <string name="settings">Seaded</string>
     <string name="appearance">Välimus</string>
@@ -50,7 +50,7 @@
     <string name="trash">Prügikast</string>
     <string name="theme_color">Teema värv</string>
     <string name="dynamic">Dünaamiline</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Sinine</string>
     <string name="red">Punane</string>
     <string name="amber">Merevaik</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Vasteid ei leitud</string>
     <string name="create_note_to_start_searching">Otsingu alustamiseks looge märge</string>
     <string name="try_different_search_term">Proovi teist otsingusõna</string>
-    <string name="welcome_to_markor">Tere tulemast Markori</string>
+    <string name="welcome_to_markor">Tere tulemast Wordkeepi</string>
     <string name="intro_description">Looge märkmeid sekunditega ja hoidke kõik automaatselt salvestatuna, kuni keskendute kirjutamisele.</string>
     <string name="select_storage_location">Valige, kus soovite oma märkmeid hoida.</string>
     <string name="storage_internal_description">Märkmeid hoitakse rakenduses. Õigusi pole vaja. Turvaline ja lihtne.</string>

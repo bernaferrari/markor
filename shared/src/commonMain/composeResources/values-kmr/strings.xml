@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Paş</string>
     <string name="settings">Mîhengan</string>
     <string name="appearance">Xuyang</string>
@@ -50,7 +50,7 @@
     <string name="trash">Çop</string>
     <string name="theme_color">Rengê Rûkarê</string>
     <string name="dynamic">Dînamîk</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Şîn</string>
     <string name="red">Sor</string>
     <string name="amber">Kehrîbar</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Ti encam nînin</string>
     <string name="create_note_to_start_searching">Ji bo lêgerînê nîşeyekê biafirîne</string>
     <string name="try_different_search_term">Peyvek din a lêgerînê biceribîne</string>
-    <string name="welcome_to_markor">Bi xêr hatî Markor</string>
+    <string name="welcome_to_markor">Bi xêr hatî Wordkeep</string>
     <string name="intro_description">Di çend çirkeyan de nîşeyan biafirînin û dema ku hûn li ser nivîsandinê disekinin her tişt bi xweber tê tomarkirin.</string>
     <string name="select_storage_location">Hilbijêre ku tu dixwazî nîşeyên xwe li ku hilînî.</string>
     <string name="storage_internal_description">Nîşe di nav sepanê de têne girtin. Pêdivî bi destûran nîne. Ewledar û hêsan.</string>

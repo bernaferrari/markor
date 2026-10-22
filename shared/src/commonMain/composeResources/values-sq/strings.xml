@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Mbrapa</string>
     <string name="settings">Cilësimet</string>
     <string name="appearance">Dukja</string>
@@ -50,7 +50,7 @@
     <string name="trash">Kosh</string>
     <string name="theme_color">Ngjyra e temës</string>
     <string name="dynamic">Dinamike</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Blu</string>
     <string name="red">Kuqe</string>
     <string name="amber">Qelibar</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Nuk u gjet asgjë</string>
     <string name="create_note_to_start_searching">Krijoni një shënim për të filluar kërkimin</string>
     <string name="try_different_search_term">Provoni një term tjetër kërkimi</string>
-    <string name="welcome_to_markor">Mirë se vini në Markor</string>
+    <string name="welcome_to_markor">Mirë se vini në Wordkeep</string>
     <string name="intro_description">Krijoni shënime në pak sekonda dhe mbajeni gjithçka të ruajtur automatikisht ndërkohë që përqendroheni në shkrim.</string>
     <string name="select_storage_location">Zgjidhni ku dëshironi t'i mbani shënimet tuaja.</string>
     <string name="storage_internal_description">Shënimet mbahen brenda aplikacionit. Nuk nevojiten leje. Të sigurta dhe të thjeshta.</string>

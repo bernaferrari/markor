@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Vissza</string>
     <string name="settings">Beállítások</string>
     <string name="appearance">Megjelenés</string>
@@ -50,7 +50,7 @@
     <string name="trash">Lomtár</string>
     <string name="theme_color">Téma színe</string>
     <string name="dynamic">Dinamikus</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Kék</string>
     <string name="red">Piros</string>
     <string name="amber">Borostyán</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Nincs találat</string>
     <string name="create_note_to_start_searching">Hozzon létre egy jegyzetet a kereséshez</string>
     <string name="try_different_search_term">Próbáljon meg más keresési kifejezést</string>
-    <string name="welcome_to_markor">Üdvözöljük a Markorban</string>
+    <string name="welcome_to_markor">Üdvözöljük a Wordkeepban</string>
     <string name="intro_description">Hozzon létre jegyzeteket másodpercek alatt, és tartson mindent automatikusan elmentve, miközben az írásra összpontosít.</string>
     <string name="select_storage_location">Válassza ki, hol szeretné tárolni a jegyzeteit.</string>
     <string name="storage_internal_description">A jegyzetek az alkalmazáson belül maradnak. Nincs szükség engedélyekre. Biztonságos és egyszerű.</string>

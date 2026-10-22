@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">ආපසු</string>
     <string name="settings">සැකසුම්</string>
     <string name="appearance">පෙනුම</string>
@@ -50,7 +50,7 @@
     <string name="trash">කුණු කූඩය</string>
     <string name="theme_color">තේමා වර්ණය</string>
     <string name="dynamic">ගතික</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">නිල්</string>
     <string name="red">රතු</string>
     <string name="amber">ඇම්බර්</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">ගැලපීම් නැත</string>
     <string name="create_note_to_start_searching">සෙවීම ආරම්භ කිරීමට සටහනක් සාදන්න</string>
     <string name="try_different_search_term">වෙනත් සෙවුම් පදයක් උත්සාහ කරන්න</string>
-    <string name="welcome_to_markor">Markor වෙත සාදරයෙන් පිළිගනිමු</string>
+    <string name="welcome_to_markor">Wordkeep වෙත සාදරයෙන් පිළිගනිමු</string>
     <string name="intro_description">තත්පර කිහිපයකින් සටහන් සාදන්න, ඔබ ලිවීමට අවධානය යොමු කරන අතරතුර සියල්ල ස්වයංක්‍රීයව සුරැකේ.</string>
     <string name="select_storage_location">ඔබේ සටහන් තබා ගැනීමට අවශ්‍ය ස්ථානය තෝරන්න.</string>
     <string name="storage_internal_description">සටහන් යෙදුම තුළ තබා ඇත. අවසර අවශ්‍ය නොවේ. ආරක්ෂිත සහ සරලයි.</string>

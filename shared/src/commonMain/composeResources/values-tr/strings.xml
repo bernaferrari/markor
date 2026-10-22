@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Geri</string>
     <string name="settings">Ayarlar</string>
     <string name="appearance">Görünüm</string>
@@ -50,7 +50,7 @@
     <string name="trash">Çöp Kutusu</string>
     <string name="theme_color">Tema Rengi</string>
     <string name="dynamic">Dinamik</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Mavi</string>
     <string name="red">Kırmızı</string>
     <string name="amber">Kehribar</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Eşleşme bulunamadı</string>
     <string name="create_note_to_start_searching">Aramaya başlamak için bir not oluşturun</string>
     <string name="try_different_search_term">Farklı bir arama terimi deneyin</string>
-    <string name="welcome_to_markor">Markor'a Hoş Geldiniz</string>
+    <string name="welcome_to_markor">Wordkeep'a Hoş Geldiniz</string>
     <string name="intro_description">Saniyeler içinde notlar oluşturun ve siz yazmaya odaklanırken her şeyin otomatik kaydedilmesini sağlayın.</string>
     <string name="select_storage_location">Notlarınızı nerede tutmak istediğinizi seçin.</string>
     <string name="storage_internal_description">Notlar uygulamanın içinde tutulur. İzin gerekmez. Güvenli ve basit.</string>

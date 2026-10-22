@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">Kembali</string>
     <string name="settings">Pengaturan</string>
     <string name="appearance">Tampilan</string>
@@ -50,7 +50,7 @@
     <string name="trash">Tempat Sampah</string>
     <string name="theme_color">Warna tema</string>
     <string name="dynamic">Dinamis</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Biru</string>
     <string name="red">Merah</string>
     <string name="amber">Amber</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Tidak ada kecocokan</string>
     <string name="create_note_to_start_searching">Buat catatan untuk mulai mencari</string>
     <string name="try_different_search_term">Coba kata kunci pencarian lain</string>
-    <string name="welcome_to_markor">Selamat datang di Markor</string>
+    <string name="welcome_to_markor">Selamat datang di Wordkeep</string>
     <string name="intro_description">Buat catatan dalam hitungan detik dan simpan semuanya secara otomatis saat Anda fokus menulis.</string>
     <string name="select_storage_location">Pilih tempat Anda ingin menyimpan catatan.</string>
     <string name="storage_internal_description">Catatan disimpan di dalam aplikasi. Tidak butuh izin. Aman dan sederhana.</string>

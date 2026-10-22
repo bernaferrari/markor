@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Re-Markor</string>
+    <string name="app_name">Wordkeep</string>
     <string name="back">In palas</string>
     <string name="settings">Impostatziones</string>
     <string name="appearance">Aparèntzia</string>
@@ -50,7 +50,7 @@
     <string name="trash">Rumenta</string>
     <string name="theme_color">Colore de su tema</string>
     <string name="dynamic">Dinàmicu</string>
-    <string name="markor">Markor</string>
+    <string name="markor">Wordkeep</string>
     <string name="blue">Biaitu</string>
     <string name="red">Ruju</string>
     <string name="amber">Ambra</string>
@@ -68,7 +68,7 @@
     <string name="no_matches">Perunu resultadu</string>
     <string name="create_note_to_start_searching">Crea una nota pro chircare</string>
     <string name="try_different_search_term">Proa un'àtera paràula de chirca</string>
-    <string name="welcome_to_markor">Benènnidu a Markor</string>
+    <string name="welcome_to_markor">Benènnidu a Wordkeep</string>
     <string name="intro_description">Crea notas in pagos segundos e sarva totu in automàticu in s'interis chi iscribes.</string>
     <string name="select_storage_location">Seletziona in ue boles sarvare sas notas.</string>
     <string name="storage_internal_description">Notas sarvadas in intro de s'aplicatzione. Seguru e simple.</string>
