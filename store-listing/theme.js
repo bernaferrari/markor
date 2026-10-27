@@ -1,6 +1,6 @@
 // Wordkeep: a notebook page under the whole strip. The ruled lines and paper tone are laid out in panorama
 // coordinates, and each Markdown mark sits on a seam, so neighbouring cards share it and the set reads as one page.
-import {panoramaGradient} from './studio/shapes.js';
+import {panoramaGradient, shapes} from './studio/shapes.js';
 
 function brand(main) {
   const node = document.createElement('div');
@@ -62,6 +62,17 @@ export default {
     if (slide.layout === 'compare') {
       // Each name sits just under its screen.
       for (const label of devices[0].node.parentElement.querySelectorAll('.device-label')) label.style.setProperty('--h', `${devices[0].box.height}px`);
+      // A scalloped "New" sticker on the top corner of each new screen.
+      for (const {spec, box, node} of devices) {
+        if (!/after/.test(spec.role || '')) continue;
+        const sticker = document.createElement('div');
+        sticker.className = 'sticker';
+        sticker.dataset.checkBounds = '';
+        sticker.innerHTML = `<svg viewBox="0 0 150 150" width="150" height="150"><g fill="#2B2219">${shapes.cookie(75, 75, 72)}</g>` +
+          '<text x="75" y="88" text-anchor="middle" font-family="Serif" font-weight="700" font-size="38" fill="#ffdf6e">New</text></svg>';
+        Object.assign(sticker.style, {left: `${box.left + box.width - 96}px`, top: `${box.top - 82}px`});
+        node.parentElement.append(sticker);
+      }
       return;
     }
     if (/stack|pair|duo|drop/.test(slide.layout || '')) return;

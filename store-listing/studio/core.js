@@ -122,7 +122,7 @@ for (const {spec, box} of context.devices) {
   const label = document.createElement('div');
   label.className = `device-label${spec.role ? ` ${spec.role}` : ''}`;
   label.dataset.checkBounds = '';
-  label.textContent = spec.label;
+  label.append(Object.assign(document.createElement('span'), {textContent: spec.label}));
   Object.assign(label.style, {left: `${box.left}px`, width: `${box.width}px`, top: `${box.top}px`});
   main.append(label);
 }
