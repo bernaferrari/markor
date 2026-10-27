@@ -195,7 +195,7 @@
       "feature": "readme-compare",
       "layout": "compare",
       "file": "readme/before-after.jpg",
-      "alt": "The same notes in Markor and in Wordkeep: the home screen and the editor",
+      "alt": "The same notes on the same phone in Markor and in Wordkeep: the home screen and a recipe in the editor",
       "devices": [
         {
           "raw": "compare/markor-home.png",

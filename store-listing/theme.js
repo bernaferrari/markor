@@ -49,6 +49,7 @@ export default {
   /** Frames follow the captured pixels: bezel and corner radius scale with the frame width. */
   layout({main}) {
     for (const node of main.querySelectorAll('.device')) {
+      if (main.classList.contains('compare')) break;
       const image = node.querySelector('img'), width = node.clientWidth, landscape = image.naturalWidth > image.naturalHeight;
       node.style.setProperty('--bezel', `${Math.round(width * (landscape ? .011 : .017))}px`);
       node.style.setProperty('--radius', `${Math.round(width * (landscape ? .03 : .09))}px`);
@@ -59,16 +60,9 @@ export default {
   // and show most of the screen.
   decorate({W, H, slide, devices}) {
     if (slide.layout === 'compare') {
-      // An arrow from each original to its new screen, centred in the gap between the two frames.
-      for (let i = 0; i + 1 < devices.length; i += 2) {
-        const before = devices[i].box, after = devices[i + 1].box;
-        const arrow = document.createElement('div');
-        arrow.className = 'arrow';
-        arrow.dataset.checkBounds = '';
-        arrow.textContent = '→';
-        Object.assign(arrow.style, {left: `${(before.left + before.width + after.left) / 2}px`, top: `${before.top + before.height * .45}px`});
-        devices[i].node.parentElement.append(arrow);
-      }
+      // Each name sits just under its screen.
+      for (const label of devices[0].node.parentElement.querySelectorAll('.device-label')) label.style.setProperty('--h', `${devices[0].box.height}px`);
+      return;
     }
     if (/stack|pair|duo|drop/.test(slide.layout || '')) return;
     for (const {box, spec} of devices) {

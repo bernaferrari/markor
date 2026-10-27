@@ -62,21 +62,20 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
 .readme .hero .left{left:250px;top:330px;width:540px}
 .readme .hero .center{left:890px;top:150px;width:620px;z-index:3}
 .readme .hero .right{left:1610px;top:330px;width:540px}
-/* Before and after: the same notes in Markor and in Wordkeep. Every phone is the same real device;
-   the original sits a little smaller and lower, the new one steps forward, an arrow between them. */
-.readme .compare .device.before{width:400px;top:auto;bottom:40px}
-.readme .compare .device.after{width:470px;top:auto;bottom:40px;z-index:3}
-.readme .compare .pair1.before{left:170px}
-.readme .compare .pair1.after{left:670px}
-.readme .compare .pair2.before{left:1270px}
-.readme .compare .pair2.after{left:1770px}
-.readme .compare .arrow{position:absolute;z-index:4;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:#fffdf7;
-  box-shadow:0 2px 0 #fff,0 14px 30px -10px #4a3420aa;display:flex;align-items:center;justify-content:center;font:600 46px/1 Serif,serif;color:var(--ink)}
-.device-label{font:600 46px/1.2 Serif,serif;letter-spacing:-.01em}
-/* Names share one line above the phones, which stand on one baseline. */
-.readme .compare .device-label{top:96px !important;transform:none}
-.device-label.before{color:#8a7f72;font-weight:500}
+/* Before and after: no device frames, just the two real screens side by side on the paper, the same size,
+   on one baseline, each named by a small tag underneath. */
+.readme .compare .device{--bezel:0px;--radius:44px;width:450px;top:110px;background:none;
+  box-shadow:0 0 0 1px #2B22191f,0 34px 60px -26px #4a3420b0,0 8px 18px -10px #4a342060}
+.readme .compare .device .screen{border-radius:44px;overflow:hidden}
+.readme .compare .pair1.before{left:150px}
+.readme .compare .pair1.after{left:650px}
+.readme .compare .pair2.before{left:1300px}
+.readme .compare .pair2.after{left:1800px}
+.readme .compare .device-label{transform:translateY(calc(var(--h) + 38px));font:600 34px/1 Serif,serif;letter-spacing:.01em}
+.readme .compare .device-label::before{content:attr(data-name)}
+.device-label.before{color:#8a7f72}
 .device-label.after{color:var(--ink)}
-/* Comparison frames: a warm, light phone body, so dark screens stand out from their frame and the frame belongs on paper. */
-.readme .compare .device{background:linear-gradient(160deg,#fbf6ec,#e9dfcd);
-  box-shadow:inset 0 0 0 1.5px #ffffff,inset 0 -2px 0 #d8cab3,0 0 0 1.5px #d6c7ae,0 40px 70px -28px #4a3420a0,0 8px 20px -8px #4a342040}
+/* Each pair shares one sheet of paper, and the new name gets the store headlines' highlighter. */
+.readme .compare .device.before::before{content:'';position:absolute;z-index:-1;left:-50px;top:-50px;width:1050px;height:1140px;border-radius:40px;
+  background:#fffdf8;box-shadow:0 0 0 1px #2B221914,0 2px 0 #ffffff,0 40px 80px -40px #4a342080,0 10px 24px -14px #4a342040}
+.device-label.after{background:linear-gradient(176deg,transparent 46%,var(--hl) 47%,var(--hl) 88%,transparent 89%) 50% 0/196px 100% no-repeat}
