@@ -102,14 +102,6 @@ def launch(clear=False, **extras):
     time.sleep(4)
 
 
-def settle_grid(key):
-    # The grid can draw before note metadata arrives (pinned notes not yet first); switching the
-    # filter away and back redraws it with pins and labels in place.
-    tap('Favorites', key=f'{key}|Favorites')
-    tap('All', key=f'{key}|All')
-    time.sleep(1)
-
-
 def capture(name):
     if args.scene and name not in args.scene:
         return
@@ -140,7 +132,6 @@ def scenes():
 
     launch(clear=True, palette=PALETTE)  # seeds the fictional notebook
     launch(palette=PALETTE)
-    settle_grid('home')
     capture('home')
 
     tap('Lisbon in May')
@@ -167,12 +158,24 @@ def scenes():
     tap('Journal')
     capture('journal')
 
+    # Search runs through every note, folders included, and marks each match.
+    launch(palette=PALETTE)
+    tap('Search notes')
+    shell('input', 'text', 'coffee')
+    time.sleep(2)
+    back()  # hide the keyboard; the results stay
+    capture('search')
+
+    # The same notebook as a list: real file names, extensions and folders.
+    launch(palette=PALETTE)
+    tap('Switch to list view')
+    capture('files')
+
     launch(palette=PALETTE)
     tap('Settings')
     capture('settings')
 
     launch(theme='dark', palette=PALETTE)
-    settle_grid('dark')
     capture('dark')
     tap('Lisbon in May', key='dark|Lisbon in May')
     capture('dark-editor')

@@ -41,7 +41,7 @@ internal object StoreFixtures {
 
                 ## Pack
                 - Linen shirt, light jacket
-                - Film camera and two rolls
+                - Film camera and `2 rolls`
 
                 > Eat the pastéis warm. Always.
             """.trimIndent(),
@@ -61,7 +61,7 @@ internal object StoreFixtures {
                 - [ ] Call the plumber before 5 pm
 
                 ## Errands
-                - [ ] Oat milk, lemons, basil
+                - [ ] Oat milk, coffee beans, basil
                 - [ ] Pick up the film scans
                 - [ ] Return the drill to Marta
 
@@ -140,7 +140,7 @@ internal object StoreFixtures {
             content = """
                 Long day at the studio. The new layout finally **clicks**.
 
-                - Lunch with Ana by the river
+                - Coffee with Ana by the river
                 - Fixed the wobbly shelf, at last
             """.trimIndent(),
         ),
@@ -182,7 +182,7 @@ internal object StoreFixtures {
             content = """
                 - [x] Repot the rosemary
                 - [ ] Basil seeds, *after the frost*
-                - [ ] Water the tomatoes every two days
+                - [ ] Water the tomatoes `every 2 days`
                 - [ ] Ask Rui for lavender cuttings
             """.trimIndent(),
         ),
@@ -190,7 +190,7 @@ internal object StoreFixtures {
             path = "Gift ideas.md",
             color = PINK,
             content = """
-                - **Mum** · ceramic teapot
+                - **Mum** · a hand coffee grinder
                 - **Rui** · climbing shoes
                 - **Ana** · the Lisbon tram print
                 - **Leo** · a good pocket notebook
