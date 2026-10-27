@@ -66,13 +66,16 @@ fun resolveMarkdownColorPalette(
     } else {
         Color.Black.copy(alpha = 0.08f)
     }
+    // The code chip is translucent: measure contrast against what it actually looks like on the
+    // note, not against its raw (black or white) color.
+    val codeSurface = codeBackground.compositeOver(backgroundColor)
     val codeTextFallback = bestContrastColor(
-        codeBackground,
-        listOf(subtle, body, Color.White, Color.Black)
+        codeSurface,
+        listOf(body, subtle, Color.White, Color.Black)
     )
     val codeText = ensureMinContrast(
-        preferred = subtle,
-        background = codeBackground,
+        preferred = body,
+        background = codeSurface,
         fallback = codeTextFallback,
         minRatio = 4.5f
     )
