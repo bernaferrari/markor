@@ -76,6 +76,6 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
 .device-label.before{color:#8a7f72}
 .device-label.after{color:var(--ink)}
 /* Each pair shares one sheet of paper, and the new name gets the store headlines' highlighter. */
-.readme .compare .device.before::before{content:'';position:absolute;z-index:-1;left:-50px;top:-50px;width:1050px;height:1140px;border-radius:40px;
+.readme .compare .device.before::before{content:'';position:absolute;z-index:-1;left:-50px;top:-50px;width:1050px;height:1140px;border-radius:94px;
   background:#fffdf8;box-shadow:0 0 0 1px #2B221914,0 2px 0 #ffffff,0 40px 80px -40px #4a342080,0 10px 24px -14px #4a342040}
 .device-label.after{background:linear-gradient(176deg,transparent 46%,var(--hl) 47%,var(--hl) 88%,transparent 89%) 50% 0/196px 100% no-repeat}
