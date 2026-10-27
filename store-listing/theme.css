@@ -1,0 +1,59 @@
+/* Wordkeep: a notebook page. Warm paper with ruled lines running through the whole strip, serif ink
+   headlines with one phrase marked by a highlighter in a note colour, faint Markdown marks at the seams,
+   and the real app in ink-dark frames. */
+@font-face{font-family:Serif;src:url(fonts/SourceSerif4-Regular.woff2) format('woff2');font-weight:400;font-display:block}
+@font-face{font-family:Serif;src:url(fonts/SourceSerif4-Semibold.woff2) format('woff2');font-weight:600;font-display:block}
+@font-face{font-family:Serif;src:url(fonts/SourceSerif4-Bold.woff2) format('woff2');font-weight:700;font-display:block}
+@font-face{font-family:Mono;src:url(fonts/SourceCodePro-Semibold.woff2) format('woff2');font-weight:600;font-display:block}
+:root{--paper:#F6F0E4;--ink:#2B2219;--hl:#FFDF6E}
+body,.campaign{background:var(--paper);color:var(--ink);font-family:Serif,var(--script-font),serif}
+
+header{left:84px;right:84px;top:150px;z-index:5}
+h1{font-size:116px;line-height:1.02;letter-spacing:-.022em;font-weight:700}
+/* The highlighter: a band over the lower part of the words, slightly ragged at the ends. */
+h1 em{background:linear-gradient(176deg,transparent 52%,var(--hl) 53%,var(--hl) 90%,transparent 91%);
+  padding:0 .1em;margin:0 -.1em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity:.74;max-width:880px}
+
+.brand{position:absolute;z-index:6;left:84px;top:62px;display:flex;align-items:center;gap:14px;
+  font:600 30px/1 Mono,monospace;letter-spacing:-.01em}
+.brand img{width:46px;height:46px;display:block}
+.glyph{position:absolute;z-index:1;font:600 var(--glyph-size,420px)/1 Mono,monospace;color:var(--ink);opacity:.07;white-space:nowrap;
+  transform:translate(-50%,-50%);letter-spacing:-.04em}
+
+.device{--bezel:14px;--radius:78px;background:#2B2219;
+  box-shadow:inset 0 0 0 2px #574636,inset 0 0 0 5px #2B2219,0 3px 0 #ffffff55,0 50px 90px -30px #4a3420aa,0 10px 30px -10px #4a342055}
+
+/* Phone and 7-inch: copy on top, the app large and running off the bottom edge. */
+.phone .one .primary{left:130px;top:560px;width:820px}
+/* Bottom sheets: the phone hangs from the top so the sheet is in view, and the copy moves to the bottom. */
+.phone .drop header{top:auto;bottom:120px}
+.phone .drop .primary{left:130px;top:-330px;width:820px}
+/* Composed: the editor hangs from the top, the preview rises from the bottom, the copy sits between. */
+.phone .stack header{top:950px;text-align:center}
+.phone .stack header p{margin-left:auto;margin-right:auto}
+.phone .stack .primary{left:190px;top:-600px;width:700px}
+.phone .stack .secondary{left:190px;top:1360px;width:700px}
+/* Two phones side by side: dark behind on the left, light settings in front, lower, running off the bottom. */
+.phone .duo .primary{left:60px;top:560px;width:540px}
+.phone .duo .secondary{left:450px;top:800px;width:580px;z-index:3}
+
+.tablet7 header{left:96px;right:96px;top:150px}
+.tablet7 h1{font-size:124px}
+.tablet7 .device{--bezel:18px;--radius:56px}
+.tablet7 .one .primary{left:120px;top:640px;width:960px}
+.tablet7 .stack header{top:770px;text-align:center}
+.tablet7 .stack header p{margin-left:auto;margin-right:auto}
+.tablet7 .stack .primary{left:150px;top:-830px;width:900px}
+.tablet7 .stack .secondary{left:150px;top:1290px;width:900px}
+
+/* 10-inch: copy on the left, the product on the right, running a little off the right edge. */
+.tablet10 header{left:96px;right:auto;top:0;bottom:0;width:500px;display:flex;flex-direction:column;justify-content:center}
+.tablet10 h1{font-size:96px}
+.tablet10 h1 .line{white-space:normal}
+.tablet10 header p{font-size:36px}
+.tablet10 .brand{left:96px;top:70px}
+.tablet10 .device{--bezel:16px;--radius:44px}
+.tablet10 .one .primary{left:640px;top:160px;width:1400px}
+.tablet10 .pair .primary{left:630px;top:70px;width:1000px}
+.tablet10 .pair .secondary{left:870px;top:450px;width:1000px;z-index:3}

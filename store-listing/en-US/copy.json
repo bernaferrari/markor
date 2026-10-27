@@ -1,0 +1,34 @@
+{
+  "home": {
+    "title": "Every note,\n*a plain file*",
+    "body": "Markdown notes that open anywhere."
+  },
+  "write": {
+    "title": "Write it raw,\n*read it clean*",
+    "body": "Live preview is one tap away."
+  },
+  "todo": {
+    "title": "Lists that\n*check off*",
+    "body": "Simple task lists in any note."
+  },
+  "color": {
+    "title": "A color for\n*every note*",
+    "body": "Soft colors, pins and labels."
+  },
+  "folders": {
+    "title": "Folders are\n*real folders*",
+    "body": "Journal, recipes, work. Right on disk."
+  },
+  "outline": {
+    "title": "Jump to\n*any heading*",
+    "body": "Long notes, one tap to each section."
+  },
+  "theme": {
+    "title": "Light, dark,\n*your color*",
+    "body": "Dark mode and twelve color themes."
+  },
+  "private": {
+    "title": "Your words\n*stay yours*",
+    "body": "Kept on your device. No account."
+  }
+}

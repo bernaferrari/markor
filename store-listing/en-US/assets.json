@@ -1,0 +1,212 @@
+{
+  "galleries": {
+    "phone": [
+      {
+        "file": "phone/01-home.jpg",
+        "feature": "home",
+        "slide": 0,
+        "width": 1080,
+        "height": 1920,
+        "bytes": 244041,
+        "sources": [
+          "raw/phone/home.png"
+        ]
+      },
+      {
+        "file": "phone/02-write.jpg",
+        "feature": "write",
+        "slide": 1,
+        "width": 1080,
+        "height": 1920,
+        "bytes": 214369,
+        "sources": [
+          "raw/phone/editor.png",
+          "raw/phone/preview.png"
+        ]
+      },
+      {
+        "file": "phone/03-todo.jpg",
+        "feature": "todo",
+        "slide": 2,
+        "width": 1080,
+        "height": 1920,
+        "bytes": 177837,
+        "sources": [
+          "raw/phone/todo.png"
+        ]
+      },
+      {
+        "file": "phone/04-color.jpg",
+        "feature": "color",
+        "slide": 3,
+        "width": 1080,
+        "height": 1920,
+        "bytes": 198739,
+        "sources": [
+          "raw/phone/color.png"
+        ]
+      },
+      {
+        "file": "phone/05-folders.jpg",
+        "feature": "folders",
+        "slide": 4,
+        "width": 1080,
+        "height": 1920,
+        "bytes": 226082,
+        "sources": [
+          "raw/phone/journal.png"
+        ]
+      },
+      {
+        "file": "phone/06-outline.jpg",
+        "feature": "outline",
+        "slide": 5,
+        "width": 1080,
+        "height": 1920,
+        "bytes": 185795,
+        "sources": [
+          "raw/phone/outline.png"
+        ]
+      },
+      {
+        "file": "phone/07-theme.jpg",
+        "feature": "theme",
+        "slide": 6,
+        "width": 1080,
+        "height": 1920,
+        "bytes": 240866,
+        "sources": [
+          "raw/phone/dark-editor.png",
+          "raw/phone/settings.png"
+        ]
+      },
+      {
+        "file": "phone/08-private.jpg",
+        "feature": "private",
+        "slide": 7,
+        "width": 1080,
+        "height": 1920,
+        "bytes": 180429,
+        "sources": [
+          "raw/phone/storage.png"
+        ]
+      }
+    ],
+    "tablet7": [
+      {
+        "file": "tablet7/01-home.jpg",
+        "feature": "home",
+        "slide": 0,
+        "width": 1200,
+        "height": 1920,
+        "bytes": 295003,
+        "sources": [
+          "raw/tablet7/home.png"
+        ]
+      },
+      {
+        "file": "tablet7/02-write.jpg",
+        "feature": "write",
+        "slide": 1,
+        "width": 1200,
+        "height": 1920,
+        "bytes": 215318,
+        "sources": [
+          "raw/tablet7/editor.png",
+          "raw/tablet7/preview.png"
+        ]
+      },
+      {
+        "file": "tablet7/03-todo.jpg",
+        "feature": "todo",
+        "slide": 2,
+        "width": 1200,
+        "height": 1920,
+        "bytes": 179875,
+        "sources": [
+          "raw/tablet7/todo.png"
+        ]
+      },
+      {
+        "file": "tablet7/04-folders.jpg",
+        "feature": "folders",
+        "slide": 3,
+        "width": 1200,
+        "height": 1920,
+        "bytes": 206899,
+        "sources": [
+          "raw/tablet7/journal.png"
+        ]
+      },
+      {
+        "file": "tablet7/05-theme.jpg",
+        "feature": "theme",
+        "slide": 4,
+        "width": 1200,
+        "height": 1920,
+        "bytes": 302812,
+        "sources": [
+          "raw/tablet7/dark.png"
+        ]
+      }
+    ],
+    "tablet10": [
+      {
+        "file": "tablet10/01-home.jpg",
+        "feature": "home",
+        "slide": 0,
+        "width": 1920,
+        "height": 1200,
+        "bytes": 236460,
+        "sources": [
+          "raw/tablet10/home.png"
+        ]
+      },
+      {
+        "file": "tablet10/02-write.jpg",
+        "feature": "write",
+        "slide": 1,
+        "width": 1920,
+        "height": 1200,
+        "bytes": 252301,
+        "sources": [
+          "raw/tablet10/editor.png",
+          "raw/tablet10/preview.png"
+        ]
+      },
+      {
+        "file": "tablet10/03-todo.jpg",
+        "feature": "todo",
+        "slide": 2,
+        "width": 1920,
+        "height": 1200,
+        "bytes": 179854,
+        "sources": [
+          "raw/tablet10/todo.png"
+        ]
+      },
+      {
+        "file": "tablet10/04-folders.jpg",
+        "feature": "folders",
+        "slide": 3,
+        "width": 1920,
+        "height": 1200,
+        "bytes": 177996,
+        "sources": [
+          "raw/tablet10/journal.png"
+        ]
+      },
+      {
+        "file": "tablet10/05-theme.jpg",
+        "feature": "theme",
+        "slide": 4,
+        "width": 1920,
+        "height": 1200,
+        "bytes": 240737,
+        "sources": [
+          "raw/tablet10/dark.png"
+        ]
+      }
+    ]
+  }
+}
