@@ -48,15 +48,15 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
 .tablet7 .stack .secondary{left:150px;top:1290px;width:900px}
 
 /* 10-inch: copy on the left, the product on the right, running a little off the right edge. */
-.tablet10 header{left:96px;right:auto;top:0;bottom:0;width:500px;display:flex;flex-direction:column;justify-content:center}
+.tablet10 header{left:80px;right:auto;top:0;bottom:0;width:600px;display:flex;flex-direction:column;justify-content:center}
 .tablet10 h1{font-size:96px}
-.tablet10 h1 .line{white-space:normal}
+/* Two lines at most: long lines shrink to fit (studio auto-fit) instead of wrapping. */
 .tablet10 header p{font-size:36px}
-.tablet10 .brand{left:96px;top:70px}
+.tablet10 .brand{left:80px;top:70px}
 .tablet10 .device{--bezel:16px;--radius:44px}
-.tablet10 .one .primary{left:640px;top:160px;width:1400px}
-.tablet10 .pair .primary{left:630px;top:70px;width:1000px}
-.tablet10 .pair .secondary{left:870px;top:450px;width:1000px;z-index:3}
+.tablet10 .one .primary{left:720px;top:160px;width:1400px}
+.tablet10 .pair .primary{left:720px;top:70px;width:960px}
+.tablet10 .pair .secondary{left:900px;top:460px;width:960px;z-index:3}
 
 /* README art: wide and wordless, on the same ruled paper. */
 .readme .hero .left{left:250px;top:330px;width:540px}
