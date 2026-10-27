@@ -62,6 +62,12 @@ android {
             isMinifyEnabled = false
             isDebuggable = true
         }
+        // Play screenshots only: seeds fictional notes (src/storeCapture). Never shipped.
+        create("storeCapture") {
+            initWith(getByName("debug"))
+            applicationIdSuffix = ".storecapture"
+            matchingFallbacks += "debug"
+        }
     }
 
     compileOptions {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Store-capture builds only: an entry point that seeds fictional notes for Play screenshots. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity
+            android:name=".storecapture.StoreCaptureActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme" />
+    </application>
+</manifest>
