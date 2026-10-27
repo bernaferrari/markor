@@ -389,7 +389,7 @@ fun FileBrowserContent(
     }
 
     // View Mode State passed from parent
-    val displayedFiles = viewModel.getFilteredFiles()
+    val displayedFiles by viewModel.filteredFiles.collectAsState()
     var cachedDisplayedFiles by remember { mutableStateOf<List<FileInfo>>(emptyList()) }
     LaunchedEffect(displayedFiles) {
         if (displayedFiles.isNotEmpty()) {

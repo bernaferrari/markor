@@ -12,6 +12,8 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +40,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -62,6 +65,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -70,6 +76,7 @@ import com.bernaferrari.remarkor.ui.components.CreateFileDialog
 import com.bernaferrari.remarkor.ui.components.EmptyState
 import com.bernaferrari.remarkor.ui.components.rememberAdaptiveLayoutInfo
 import com.bernaferrari.remarkor.ui.components.rememberHapticHelper
+import com.bernaferrari.remarkor.ui.components.resolveNoteSurfaceColor
 import com.bernaferrari.remarkor.ui.viewmodel.FileBrowserViewModel
 import com.bernaferrari.remarkor.ui.viewmodel.FileFilterMode
 import com.bernaferrari.remarkor.ui.viewmodel.MainViewModel
@@ -110,6 +117,8 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun SearchScreen(
     query: String,
     results: List<com.bernaferrari.remarkor.domain.repository.FileInfo>,
+    /** Note colors by path, so each result keeps the color it has in the notebook. */
+    noteColors: Map<String, Int?> = emptyMap(),
     onQueryChange: (String) -> Unit,
     onClose: () -> Unit,
     onOpenNote: (String) -> Unit
@@ -189,37 +198,105 @@ internal fun SearchScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                contentPadding = PaddingValues(vertical = 8.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(
                     items = results,
                     key = { it.path.toString() }
                 ) { file ->
+                    val highlight = MaterialTheme.colorScheme.tertiaryContainer
+                    val onHighlight = MaterialTheme.colorScheme.onTertiaryContainer
+                    val title = remember(file.name, query, highlight) {
+                        highlightMatches(file.name.substringBeforeLast('.'), query, highlight, onHighlight)
+                    }
+                    val snippets = remember(file.preview, query, highlight) {
+                        searchSnippets(file.preview.orEmpty(), query)
+                            .map { highlightMatches(it, query, highlight, onHighlight) }
+                    }
+                    val noteColor = noteColors[file.path.toString()]
                     ListItem(
+                        colors = ListItemDefaults.colors(
+                            containerColor = resolveNoteSurfaceColor(noteColor, MaterialTheme.colorScheme)
+                        ),
                         headlineContent = {
                             Text(
-                                text = file.name,
+                                text = title,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
+                                fontWeight = FontWeight.SemiBold
                             )
                         },
                         supportingContent = {
-                            val preview = file.preview?.trim().orEmpty()
-                            if (preview.isNotEmpty()) {
-                                Text(
-                                    text = preview,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
+                            if (snippets.isNotEmpty()) {
+                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                    snippets.forEach { line ->
+                                        Text(
+                                            text = line,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
                             }
                         },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .clip(RoundedCornerShape(20.dp))
                             .clickable { onOpenNote(file.path.toString()) }
                     )
                 }
             }
+        }
+    }
+}
+
+/** Strips list, task, heading and quote markers so a matching line reads as plain text. */
+internal fun plainSearchLine(line: String): String =
+    line.trim()
+        .replace(Regex("^#{1,6}\\s+"), "")
+        .replace(Regex("^>\\s*"), "")
+        .replace(Regex("^(?:[-*+]|\\d+\\.)\\s+"), "")
+        .replace(Regex("^\\[[ xX]]\\s+"), "")
+        .replace("*", "")
+        .replace("`", "")
+        .trim()
+
+/**
+ * Up to [maxLines] lines of [text] that contain [query] (case-insensitive), cleaned of Markdown
+ * markers. With no match in the text (a name-only match, or no query), the first lines instead.
+ */
+internal fun searchSnippets(text: String, query: String, maxLines: Int = 2): List<String> {
+    val lines = text.lines().map(::plainSearchLine).filter { it.isNotEmpty() }
+    val needle = query.trim()
+    val matches = if (needle.isEmpty()) emptyList() else lines.filter { it.contains(needle, ignoreCase = true) }
+    if (matches.isEmpty()) return lines.take(maxLines)
+    return matches.take(maxLines).map { aroundMatch(it, needle) }
+}
+
+/** Starts a long line a few words before the match, so the match stays visible on one line. */
+private fun aroundMatch(line: String, needle: String, lead: Int = 24): String {
+    val at = line.indexOf(needle, ignoreCase = true)
+    if (at <= lead) return line
+    val cut = line.lastIndexOf(' ', at - lead) + 1
+    return if (cut <= 0) line else "…" + line.substring(cut)
+}
+
+/** [text] with every case-insensitive occurrence of [query] marked like a highlighter. */
+internal fun highlightMatches(text: String, query: String, background: Color, foreground: Color): AnnotatedString {
+    val needle = query.trim()
+    return buildAnnotatedString {
+        append(text)
+        if (needle.isEmpty()) return@buildAnnotatedString
+        var start = text.indexOf(needle, ignoreCase = true)
+        while (start >= 0) {
+            addStyle(
+                SpanStyle(background = background, color = foreground, fontWeight = FontWeight.SemiBold),
+                start,
+                start + needle.length
+            )
+            start = text.indexOf(needle, start + needle.length, ignoreCase = true)
         }
     }
 }

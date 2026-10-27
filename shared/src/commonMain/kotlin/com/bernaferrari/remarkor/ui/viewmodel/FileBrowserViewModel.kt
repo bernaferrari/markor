@@ -12,10 +12,12 @@ import com.bernaferrari.remarkor.domain.repository.FileInfo
 import com.bernaferrari.remarkor.domain.repository.IFileRepository
 import com.bernaferrari.remarkor.ui.components.UserMessageManager
 import com.bernaferrari.remarkor.util.nowMillis
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -137,6 +139,37 @@ class FileBrowserViewModel(
     // File Type Filter
     private val _fileTypeFilter = MutableStateFlow(FileTypeFilter.ALL)
     val fileTypeFilter: StateFlow<FileTypeFilter> = _fileTypeFilter.asStateFlow()
+
+    // Every note in the notebook, folders included, for search.
+    private val _searchableNotes = MutableStateFlow<List<FileInfo>>(emptyList())
+    val searchableNotes: StateFlow<List<FileInfo>> = _searchableNotes.asStateFlow()
+
+    /** Lists every note under the notebook root (skipping hidden folders such as the trash). */
+    fun refreshSearchableNotes() {
+        viewModelScope.launch {
+            val root = settingsRepository.getNotebookDirectory.first().ifEmpty { defaultNotebookPath }.toPath()
+            _searchableNotes.value = fileRepository.listFilesRecursively(root).filter { file ->
+                val relative = runCatching { file.path.relativeTo(root) }.getOrNull() ?: return@filter false
+                relative.segments.none { it.startsWith(".") } &&
+                    file.extension.lowercase() in SEARCHABLE_EXTENSIONS
+            }
+        }
+    }
+
+    /**
+     * The files to show, kept in sync with every input of [getFilteredFiles]: the listing, filter,
+     * search, favorites, sort order and note metadata. Metadata (pins, archive, labels) often arrives
+     * after the listing, so reading these values once would leave pinned notes unsorted.
+     */
+    val filteredFiles: StateFlow<List<FileInfo>> =
+        combine(
+            listOf<Flow<Any?>>(
+                _files, _trashFiles, _filterMode, _searchQuery, _searchInContent,
+                _contentSearchResults, favorites, noteMetadataByPath, sortOrder,
+                _currentLabel, _fileTypeFilter,
+            )
+        ) { getFilteredFiles() }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private var currentPathString: String? = null
     private var didRunIndexer = false
@@ -695,5 +728,9 @@ class FileBrowserViewModel(
 
             clearSelection()
         }
+    }
+
+    private companion object {
+        val SEARCHABLE_EXTENSIONS = setOf("md", "markdown", "txt", "todo", "org")
     }
 }

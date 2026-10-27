@@ -132,11 +132,17 @@ internal fun MainScreenPhoneLayout(
     val files by fileBrowserViewModel.files.collectAsState()
     val trashFiles by fileBrowserViewModel.trashFiles.collectAsState()
     val favorites by fileBrowserViewModel.favorites.collectAsState()
+    val noteMetadataByPath by fileBrowserViewModel.noteMetadataByPath.collectAsState()
     var isSearchScreenOpen by rememberSaveable { mutableStateOf(false) }
     var searchQuery by rememberSaveable { mutableStateOf("") }
 
-    val searchableFiles = remember(files, trashFiles) {
-        (files + trashFiles).filter { !it.isDirectory }
+    // Search covers the whole notebook, folders included; until that list arrives, the open folder.
+    val allNotes by fileBrowserViewModel.searchableNotes.collectAsState()
+    LaunchedEffect(isSearchScreenOpen) {
+        if (isSearchScreenOpen) fileBrowserViewModel.refreshSearchableNotes()
+    }
+    val searchableFiles = remember(files, allNotes) {
+        allNotes.ifEmpty { files.filter { !it.isDirectory } }
     }
     val searchResults = remember(searchableFiles, searchQuery) {
         val query = searchQuery.trim().lowercase()
@@ -173,6 +179,7 @@ internal fun MainScreenPhoneLayout(
         SearchScreen(
             query = searchQuery,
             results = searchResults,
+            noteColors = noteMetadataByPath.mapValues { it.value.color },
             onQueryChange = { searchQuery = it },
             onClose = {
                 searchQuery = ""
