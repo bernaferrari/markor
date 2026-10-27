@@ -27,6 +27,7 @@ Wordkeep is a Kotlin Multiplatform port of [Markor](https://github.com/gsantner/
 - `iosApp/`: the Xcode project and Swift entry point.
 - `webApp/`: the Wasm browser entry point for the [web demo](https://markor-five.vercel.app/).
 - `store-listing/`: Google Play screenshots and listing text (see below).
+- `branding/`: the Wordkeep icon master (`wordkeep-icon.svg`) and its 512 px Play icon. The Android adaptive icon in `app/src/main/res/drawable/ic_launcher_*.xml` draws the same artwork.
 - `metadata/`: legacy store metadata from Markor.
 
 ## Building
