@@ -63,7 +63,7 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
 .readme .hero .center{left:890px;top:150px;width:620px;z-index:3}
 .readme .hero .right{left:1610px;top:330px;width:540px}
 /* Before and after: the same notes on one sheet of paper per pair. Markor keeps a thin pencil ring;
-   Wordkeep steps forward in a highlighter-yellow frame with a filled name pill. */
+   Wordkeep steps forward in a highlighter-yellow frame with its name in the store headlines' highlighter. */
 .readme .compare .device{width:450px;top:110px}
 .readme .compare .device .screen{border-radius:44px;overflow:hidden}
 .readme .compare .device.before{--bezel:4px;--radius:48px;background:#2B221940;box-shadow:0 26px 50px -30px #4a3420aa}
@@ -76,6 +76,6 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
 .readme .compare .device.before::before{content:'';position:absolute;z-index:-1;left:-50px;top:-50px;width:1050px;height:1140px;border-radius:98px;
   background:#fffdf8;box-shadow:0 0 0 1px #2B221914,0 2px 0 #ffffff,0 40px 80px -40px #4a342080,0 10px 24px -14px #4a342040}
 .readme .compare .device-label{transform:translateY(calc(var(--h) + 30px));display:flex;justify-content:center}
-.readme .compare .device-label span{padding:12px 32px;border-radius:999px;font:600 36px/1 Serif,serif;letter-spacing:.005em}
-.device-label.before span{color:#7d7266;box-shadow:inset 0 0 0 2.5px #2B221933;font-weight:500}
-.device-label.after span{color:var(--ink);background:#ffdf6e;box-shadow:0 10px 26px -12px #e59a1caa}
+.device-label.before span{font:500 40px/1.2 Serif,serif;color:#8a7f72}
+.device-label.after span{font:600 40px/1.2 Serif,serif;color:var(--ink);padding:0 .14em;
+  background:linear-gradient(176deg,transparent 46%,var(--hl) 47%,var(--hl) 90%,transparent 91%)}
