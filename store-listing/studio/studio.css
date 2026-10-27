@@ -11,6 +11,7 @@ h1 em{font-style:normal}
 h1 ins{text-decoration:none}
 
 /* Devices: the capture keeps its native aspect ratio; themes size and place the frame. */
+.device-label{position:absolute;z-index:4;transform:translateY(calc(-100% - 28px));text-align:center;font-size:40px;line-height:1.2;font-weight:600}
 .device{--bezel:14px;--radius:80px;position:absolute;z-index:2;line-height:0;padding:var(--bezel);border-radius:var(--radius);background:#0b0c10}
 .device .screen{position:relative;overflow:hidden;border-radius:calc(var(--radius) - var(--bezel));background:#000}
 .device img{display:block;width:100%;height:auto;object-fit:contain}

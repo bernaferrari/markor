@@ -1,30 +1,223 @@
 {
   "phone": [
-    {"feature": "home", "layout": "one", "brand": true, "hl": "#FFDF6E", "glyph": "#", "raw": "phone/home.png"},
-    {"feature": "write", "layout": "stack", "hl": "#F7B58F", "glyph": "**",
-     "devices": [{"raw": "phone/editor.png", "role": "primary"}, {"raw": "phone/preview.png", "role": "secondary"}]},
-    {"feature": "todo", "layout": "one", "hl": "#AFCDEA", "glyph": "- [x]", "raw": "phone/todo.png"},
-    {"feature": "color", "layout": "drop", "hl": "#F4BCCB", "glyph": "*", "raw": "phone/color.png"},
-    {"feature": "folders", "layout": "one", "hl": "#E5CF9E", "glyph": ">", "raw": "phone/journal.png"},
-    {"feature": "outline", "layout": "drop", "hl": "#CDB8EA", "glyph": "##", "raw": "phone/outline.png"},
-    {"feature": "theme", "layout": "duo", "hl": "#BDE3A6", "glyph": "~~",
-     "devices": [{"raw": "phone/dark-editor.png", "role": "primary"}, {"raw": "phone/settings.png", "role": "secondary"}]},
-    {"feature": "private", "layout": "one", "hl": "#A3DACB", "glyph": "[ ]", "raw": "phone/storage.png"}
+    {
+      "feature": "home",
+      "layout": "one",
+      "brand": true,
+      "hl": "#FFDF6E",
+      "glyph": "#",
+      "raw": "phone/home.png"
+    },
+    {
+      "feature": "write",
+      "layout": "stack",
+      "hl": "#F7B58F",
+      "glyph": "**",
+      "devices": [
+        {
+          "raw": "phone/editor.png",
+          "role": "primary"
+        },
+        {
+          "raw": "phone/preview.png",
+          "role": "secondary"
+        }
+      ]
+    },
+    {
+      "feature": "todo",
+      "layout": "one",
+      "hl": "#AFCDEA",
+      "glyph": "- [x]",
+      "raw": "phone/todo.png"
+    },
+    {
+      "feature": "color",
+      "layout": "drop",
+      "hl": "#F4BCCB",
+      "glyph": "*",
+      "raw": "phone/color.png"
+    },
+    {
+      "feature": "folders",
+      "layout": "one",
+      "hl": "#E5CF9E",
+      "glyph": ">",
+      "raw": "phone/journal.png"
+    },
+    {
+      "feature": "outline",
+      "layout": "drop",
+      "hl": "#CDB8EA",
+      "glyph": "##",
+      "raw": "phone/outline.png"
+    },
+    {
+      "feature": "theme",
+      "layout": "duo",
+      "hl": "#BDE3A6",
+      "glyph": "~~",
+      "devices": [
+        {
+          "raw": "phone/dark-editor.png",
+          "role": "primary"
+        },
+        {
+          "raw": "phone/settings.png",
+          "role": "secondary"
+        }
+      ]
+    },
+    {
+      "feature": "private",
+      "layout": "one",
+      "hl": "#A3DACB",
+      "glyph": "[ ]",
+      "raw": "phone/storage.png"
+    }
   ],
   "tablet7": [
-    {"feature": "home", "layout": "one", "brand": true, "hl": "#FFDF6E", "glyph": "#", "raw": "tablet7/home.png"},
-    {"feature": "write", "layout": "stack", "hl": "#F7B58F", "glyph": "**",
-     "devices": [{"raw": "tablet7/editor.png", "role": "primary"}, {"raw": "tablet7/preview.png", "role": "secondary"}]},
-    {"feature": "todo", "layout": "one", "hl": "#AFCDEA", "glyph": "- [x]", "raw": "tablet7/todo.png"},
-    {"feature": "folders", "layout": "one", "hl": "#E5CF9E", "glyph": ">", "raw": "tablet7/journal.png"},
-    {"feature": "theme", "layout": "one", "hl": "#BDE3A6", "glyph": "~~", "raw": "tablet7/dark.png"}
+    {
+      "feature": "home",
+      "layout": "one",
+      "brand": true,
+      "hl": "#FFDF6E",
+      "glyph": "#",
+      "raw": "tablet7/home.png"
+    },
+    {
+      "feature": "write",
+      "layout": "stack",
+      "hl": "#F7B58F",
+      "glyph": "**",
+      "devices": [
+        {
+          "raw": "tablet7/editor.png",
+          "role": "primary"
+        },
+        {
+          "raw": "tablet7/preview.png",
+          "role": "secondary"
+        }
+      ]
+    },
+    {
+      "feature": "todo",
+      "layout": "one",
+      "hl": "#AFCDEA",
+      "glyph": "- [x]",
+      "raw": "tablet7/todo.png"
+    },
+    {
+      "feature": "folders",
+      "layout": "one",
+      "hl": "#E5CF9E",
+      "glyph": ">",
+      "raw": "tablet7/journal.png"
+    },
+    {
+      "feature": "theme",
+      "layout": "one",
+      "hl": "#BDE3A6",
+      "glyph": "~~",
+      "raw": "tablet7/dark.png"
+    }
   ],
   "tablet10": [
-    {"feature": "home", "layout": "one", "brand": true, "hl": "#FFDF6E", "glyph": "#", "raw": "tablet10/home.png"},
-    {"feature": "write", "layout": "pair", "hl": "#F7B58F", "glyph": "**",
-     "devices": [{"raw": "tablet10/editor.png", "role": "primary"}, {"raw": "tablet10/preview.png", "role": "secondary"}]},
-    {"feature": "todo", "layout": "one", "hl": "#AFCDEA", "glyph": "- [x]", "raw": "tablet10/todo.png"},
-    {"feature": "folders", "layout": "one", "hl": "#E5CF9E", "glyph": ">", "raw": "tablet10/journal.png"},
-    {"feature": "theme", "layout": "one", "hl": "#BDE3A6", "glyph": "~~", "raw": "tablet10/dark.png"}
+    {
+      "feature": "home",
+      "layout": "one",
+      "brand": true,
+      "hl": "#FFDF6E",
+      "glyph": "#",
+      "raw": "tablet10/home.png"
+    },
+    {
+      "feature": "write",
+      "layout": "pair",
+      "hl": "#F7B58F",
+      "glyph": "**",
+      "devices": [
+        {
+          "raw": "tablet10/editor.png",
+          "role": "primary"
+        },
+        {
+          "raw": "tablet10/preview.png",
+          "role": "secondary"
+        }
+      ]
+    },
+    {
+      "feature": "todo",
+      "layout": "one",
+      "hl": "#AFCDEA",
+      "glyph": "- [x]",
+      "raw": "tablet10/todo.png"
+    },
+    {
+      "feature": "folders",
+      "layout": "one",
+      "hl": "#E5CF9E",
+      "glyph": ">",
+      "raw": "tablet10/journal.png"
+    },
+    {
+      "feature": "theme",
+      "layout": "one",
+      "hl": "#BDE3A6",
+      "glyph": "~~",
+      "raw": "tablet10/dark.png"
+    }
+  ],
+  "readme": [
+    {
+      "feature": "readme-hero",
+      "layout": "hero",
+      "file": "readme/hero.jpg",
+      "alt": "Wordkeep's notes grid, the Markdown editor and a to-do list",
+      "devices": [
+        {
+          "raw": "phone/home.png",
+          "role": "left"
+        },
+        {
+          "raw": "phone/preview.png",
+          "role": "center"
+        },
+        {
+          "raw": "phone/todo.png",
+          "role": "right"
+        }
+      ]
+    },
+    {
+      "feature": "readme-compare",
+      "layout": "compare",
+      "file": "readme/before-after.jpg",
+      "alt": "The same notes in Markor and in Wordkeep: the home screen and the editor",
+      "devices": [
+        {
+          "raw": "compare/markor-home.png",
+          "role": "before pair1",
+          "label": "Markor"
+        },
+        {
+          "raw": "compare/wordkeep-home.png",
+          "role": "after pair1",
+          "label": "Wordkeep"
+        },
+        {
+          "raw": "compare/markor-editor.png",
+          "role": "before pair2",
+          "label": "Markor"
+        },
+        {
+          "raw": "compare/wordkeep-editor.png",
+          "role": "after pair2",
+          "label": "Wordkeep"
+        }
+      ]
+    }
   ]
 }
