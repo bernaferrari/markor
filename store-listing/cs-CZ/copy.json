@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Každá poznámka\n*prostý soubor*",
+    "body": "Markdown poznámky, které otevřete všude."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Pište surově,\n*čtěte čistě*",
+    "body": "Živý náhled na jedno klepnutí."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Seznamy\n*k odškrtnutí*",
+    "body": "Jednoduché úkoly v každé poznámce."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Barva pro\n*každou poznámku*",
+    "body": "Jemné barvy, připnutí a štítky."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Složky jsou\n*skutečné složky*",
+    "body": "Deník, recepty, práce. Přímo na disku."
+  },
+  "search": {
+    "title": "Najděte slovo\n*v každé poznámce*",
+    "body": "Každá shoda zvýrazněná, řádek po řádku."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Skočte na\n*jakýkoli nadpis*",
+    "body": "Každá sekce na jedno klepnutí."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Světlý, tmavý,\n*vaše barva*",
+    "body": "Tmavý režim a dvanáct barevných motivů."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Prosté soubory,\n*žádné závazky*",
+    "body": "Ve vašem zařízení. Bez účtu."
   }
 }

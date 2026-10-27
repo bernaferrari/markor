@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Iga märge,\n*lihtne fail*",
+    "body": "Markdown-märkmed, mis avanevad kõikjal."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Kirjuta toorelt,\n*loe puhtalt*",
+    "body": "Eelvaade on ühe puudutuse kaugusel."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Nimekirjad\n*linnukesega*",
+    "body": "Lihtsad ülesandeloendid igas märkmes."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Oma värv\n*igale märkmele*",
+    "body": "Pehmed värvid, kinnitused ja sildid."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Kaustad on\n*päris kaustad*",
+    "body": "Päevik, retseptid, töö. Otse kettal."
+  },
+  "search": {
+    "title": "Leia iga sõna,\n*igast märkmest*",
+    "body": "Iga vaste esile tõstetud, rida-realt."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Mine otse\n*pealkirjani*",
+    "body": "Iga jaotis ühe puudutusega."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Hele, tume,\n*sinu värv*",
+    "body": "Tume režiim ja kaksteist värviteemat."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Lihtsad failid,\n*ilma lukuta*",
+    "body": "Sinu seadmes. Kontot pole vaja."
   }
 }

@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Çdo shënim,\n*një skedar*",
+    "body": "Shënime Markdown që hapen kudo."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Shkruaj lirshëm,\n*lexo pastër*",
+    "body": "Pamja paraprake, me një prekje."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Lista që\n*shënohen*",
+    "body": "Lista të thjeshta detyrash kudo."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Një ngjyrë\n*për çdo shënim*",
+    "body": "Ngjyra të buta, gozhdime, etiketa."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Dosje që janë\n*dosje të vërteta*",
+    "body": "Ditar, receta, punë. Në disk."
+  },
+  "search": {
+    "title": "Gjej çdo fjalë,\n*në çdo shënim*",
+    "body": "Çdo përputhje e theksuar."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Kalo te\n*çdo titull*",
+    "body": "Një prekje deri te çdo seksion."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "E çelët, e errët,\n*ngjyra jote*",
+    "body": "Modalitet i errët dhe 12 tema."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Thjesht skedarë,\n*pa kufizime*",
+    "body": "Në pajisjen tënde. Pa llogari."
   }
 }

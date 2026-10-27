@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Muistiot ovat\n*vain tiedostoja*",
+    "body": "Markdown-muistiot, auki missä vain."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Kirjoita raakaa,\n*lue siistiä*",
+    "body": "Esikatselu yhdellä napautuksella."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Listat, joihin\n*tulee rasti*",
+    "body": "Tehtävälistat mihin tahansa muistioon."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Oma väri\n*joka muistiolle*",
+    "body": "Värit, kiinnitykset ja tunnisteet."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Aidot kansiot,\n*suoraan levyllä*",
+    "body": "Päiväkirja, reseptit, työ. Laitteella."
+  },
+  "search": {
+    "title": "Etsi mitä vain,\n*mistä tahansa*",
+    "body": "Osumat korostettuina rivi riviltä."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Hyppää suoraan\n*otsikkoon*",
+    "body": "Pitkät muistiot, osio napautuksella."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Vaalea, tumma,\n*sinun värisi*",
+    "body": "Tumma tila ja kaksitoista väriteemaa."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Omat tiedostot,\n*ei lukitusta*",
+    "body": "Laitteellasi. Tiliä ei tarvita."
   }
 }

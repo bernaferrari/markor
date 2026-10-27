@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Hver note,\n*en simpel fil*",
+    "body": "Markdown-noter, der åbner overalt."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Skriv det råt,\n*læs det rent*",
+    "body": "Live-visning er ét tryk væk."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Lister, du\n*kan krydse af*",
+    "body": "Enkle opgavelister i enhver note."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "En farve til\n*hver note*",
+    "body": "Bløde farver, fastgørelse og etiketter."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Mapper er\n*rigtige mapper*",
+    "body": "Dagbog, opskrifter, arbejde. På disken."
+  },
+  "search": {
+    "title": "Find hvert ord,\n*i hver note*",
+    "body": "Hvert match fremhævet, linje for linje."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Hop til\n*hver overskrift*",
+    "body": "Lange noter, ét tryk til hvert afsnit."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Lys, mørk,\n*din farve*",
+    "body": "Mørk tilstand og tolv farvetemaer."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Simple filer,\n*ingen binding*",
+    "body": "På din enhed. Ingen konto nødvendig."
   }
 }

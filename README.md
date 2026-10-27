@@ -23,15 +23,15 @@
 <table>
   <tr>
     <td width="25%"><img src="store-listing/en-US/phone/02-write.jpg" alt="Write it raw, read it clean: the Markdown editor above its preview"></td>
-    <td width="25%"><img src="store-listing/en-US/phone/04-color.jpg" alt="A color for every note: the note color picker"></td>
-    <td width="25%"><img src="store-listing/en-US/phone/05-folders.jpg" alt="Folders are real folders: a journal folder with four entries"></td>
-    <td width="25%"><img src="store-listing/en-US/phone/06-outline.jpg" alt="Jump to any heading: the document outline of a travel note"></td>
+    <td width="25%"><img src="store-listing/en-US/phone/04-search.jpg" alt="Find any word, in any note: search results with every match highlighted"></td>
+    <td width="25%"><img src="store-listing/en-US/phone/06-folders.jpg" alt="Folders are real folders: a journal folder with four entries"></td>
+    <td width="25%"><img src="store-listing/en-US/phone/08-files.jpg" alt="Plain files, no lock-in: the notebook as a list of .md and .txt files"></td>
   </tr>
 </table>
 
 - **Markdown, kept readable.** Headings, bold, quotes and `- [ ]` tasks are highlighted as you type. One tap shows the finished page.
 - **Organized your way.** Pin, star, color and label notes, archive what you are done with, and keep real folders for a journal, recipes or work.
-- **Long notes, short trips.** The outline jumps to any heading. Find and replace, undo and redo, and a focus mode are a menu away.
+- **Find it again.** Search runs through every note and folder and highlights each match in its line. In a long note, the outline jumps to any heading.
 - **Yours to style.** Light or dark, with twelve color themes, including your wallpaper's colors.
 
 ## From Markor to Wordkeep

@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Každá poznámka,\n*obyčajný súbor*",
+    "body": "Poznámky Markdown, ktoré otvoríte všade."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Píšte surovo,\n*čítajte čisto*",
+    "body": "Živý náhľad na jedno ťuknutie."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Zoznamy na\n*odškrtávanie*",
+    "body": "Jednoduché úlohy v každej poznámke."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Farba pre\n*každú poznámku*",
+    "body": "Jemné farby, pripnutie a štítky."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Priečinky,\n*tie skutočné*",
+    "body": "Denník, recepty, práca. Priamo na disku."
+  },
+  "search": {
+    "title": "Nájdite slovo\n*v poznámkach*",
+    "body": "Zhody zvýraznené riadok po riadku."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Skočte na\n*každý nadpis*",
+    "body": "Dlhé poznámky, sekcia na ťuknutie."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Svetlá, tmavá,\n*vaša farba*",
+    "body": "Tmavý režim a dvanásť farebných tém."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Obyčajné súbory,\n*bez uzamknutia*",
+    "body": "Vo vašom zariadení. Bez účtu."
   }
 }

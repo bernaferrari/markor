@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Varje anteckning,\n*en vanlig fil*",
+    "body": "Markdown-filer som öppnas överallt."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Skriv rått,\n*läs rent*",
+    "body": "Förhandsvisning med ett tryck."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Listor att\n*bocka av*",
+    "body": "Enkla uppgiftslistor i varje anteckning."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "En färg för\n*varje anteckning*",
+    "body": "Mjuka färger, nålar och etiketter."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Mappar är\n*riktiga mappar*",
+    "body": "Dagbok, recept, jobb. Direkt på disken."
+  },
+  "search": {
+    "title": "Hitta varje ord,\n*var det än står*",
+    "body": "Varje träff markerad, rad för rad."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Hoppa till\n*valfri rubrik*",
+    "body": "Långa anteckningar, ett tryck per del."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Ljust, mörkt,\n*din färg*",
+    "body": "Mörkt läge och tolv färgteman."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Vanliga filer,\n*inga lås*",
+    "body": "På din enhet. Inget konto behövs."
   }
 }

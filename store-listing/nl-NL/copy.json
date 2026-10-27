@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Elke notitie,\n*gewoon tekst*",
+    "body": "Markdown-notities die overal openen."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Schrijf ruw,\n*lees het mooi*",
+    "body": "Live voorbeeld met één tik."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Lijstjes om\n*af te vinken*",
+    "body": "Simpele takenlijsten in elke notitie."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Een kleur voor\n*elke notitie*",
+    "body": "Zachte kleuren, pins en labels."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Mappen zijn\n*echte mappen*",
+    "body": "Dagboek, recepten, werk. Op je schijf."
+  },
+  "search": {
+    "title": "Vind elk woord,\n*in elke notitie*",
+    "body": "Elke treffer gemarkeerd, per regel."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Spring naar\n*elke kop*",
+    "body": "Lange notities, één tik per sectie."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Licht, donker,\n*jouw kleur*",
+    "body": "Donkere modus en twaalf kleurthema's."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Gewone bestanden\n*zonder lock-in*",
+    "body": "Op je toestel. Geen account nodig."
   }
 }

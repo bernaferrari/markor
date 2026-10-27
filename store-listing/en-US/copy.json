@@ -19,6 +19,10 @@
     "title": "Folders are\n*real folders*",
     "body": "Journal, recipes, work. Right on disk."
   },
+  "search": {
+    "title": "Find any word,\n*in any note*",
+    "body": "Every match highlighted, line by line."
+  },
   "outline": {
     "title": "Jump to\n*any heading*",
     "body": "Long notes, one tap to each section."
@@ -27,8 +31,8 @@
     "title": "Light, dark,\n*your color*",
     "body": "Dark mode and twelve color themes."
   },
-  "private": {
-    "title": "Your words\n*stay yours*",
-    "body": "Kept on your device. No account."
+  "files": {
+    "title": "Plain files,\n*no lock-in*",
+    "body": "On your device. No account needed."
   }
 }

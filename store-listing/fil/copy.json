@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Bawat tala,\n*simpleng file*",
+    "body": "Markdown notes na bukas kahit saan."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Isulat nang raw,\n*makitang maayos*",
+    "body": "Live preview sa isang tap lang."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Mga listahang\n*may tsek*",
+    "body": "Simpleng task list sa kahit anong tala."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Isang kulay\n*sa bawat tala*",
+    "body": "Malalambot na kulay, pin at label."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Ang folder ay\n*tunay na folder*",
+    "body": "Journal, recipe, trabaho. Nasa disk."
+  },
+  "search": {
+    "title": "Hanapin agad\n*sa bawat tala*",
+    "body": "Bawat tugma naka-highlight, bawat linya."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Lumipat sa\n*anumang heading*",
+    "body": "Bawat seksiyon, isang tap lang."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Light o dark,\n*kulay mo*",
+    "body": "Dark mode at 12 tema ng kulay."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Simpleng file,\n*walang lock-in*",
+    "body": "Nasa device mo. Walang account."
   }
 }

@@ -7,7 +7,7 @@
         "slide": 0,
         "width": 1080,
         "height": 1920,
-        "bytes": 244041,
+        "bytes": 244206,
         "sources": [
           "raw/phone/home.png"
         ]
@@ -18,7 +18,7 @@
         "slide": 1,
         "width": 1080,
         "height": 1920,
-        "bytes": 214369,
+        "bytes": 214376,
         "sources": [
           "raw/phone/editor.png",
           "raw/phone/preview.png"
@@ -30,42 +30,42 @@
         "slide": 2,
         "width": 1080,
         "height": 1920,
-        "bytes": 177837,
+        "bytes": 179533,
         "sources": [
           "raw/phone/todo.png"
         ]
       },
       {
-        "file": "phone/04-color.jpg",
-        "feature": "color",
+        "file": "phone/04-search.jpg",
+        "feature": "search",
         "slide": 3,
         "width": 1080,
         "height": 1920,
-        "bytes": 198739,
+        "bytes": 171304,
+        "sources": [
+          "raw/phone/search.png"
+        ]
+      },
+      {
+        "file": "phone/05-color.jpg",
+        "feature": "color",
+        "slide": 4,
+        "width": 1080,
+        "height": 1920,
+        "bytes": 203326,
         "sources": [
           "raw/phone/color.png"
         ]
       },
       {
-        "file": "phone/05-folders.jpg",
+        "file": "phone/06-folders.jpg",
         "feature": "folders",
-        "slide": 4,
-        "width": 1080,
-        "height": 1920,
-        "bytes": 226082,
-        "sources": [
-          "raw/phone/journal.png"
-        ]
-      },
-      {
-        "file": "phone/06-outline.jpg",
-        "feature": "outline",
         "slide": 5,
         "width": 1080,
         "height": 1920,
-        "bytes": 185795,
+        "bytes": 226166,
         "sources": [
-          "raw/phone/outline.png"
+          "raw/phone/journal.png"
         ]
       },
       {
@@ -74,21 +74,21 @@
         "slide": 6,
         "width": 1080,
         "height": 1920,
-        "bytes": 240866,
+        "bytes": 241134,
         "sources": [
           "raw/phone/dark-editor.png",
           "raw/phone/settings.png"
         ]
       },
       {
-        "file": "phone/08-private.jpg",
-        "feature": "private",
+        "file": "phone/08-files.jpg",
+        "feature": "files",
         "slide": 7,
         "width": 1080,
         "height": 1920,
-        "bytes": 180429,
+        "bytes": 190202,
         "sources": [
-          "raw/phone/storage.png"
+          "raw/phone/files.png"
         ]
       }
     ],
@@ -99,7 +99,7 @@
         "slide": 0,
         "width": 1200,
         "height": 1920,
-        "bytes": 295003,
+        "bytes": 296005,
         "sources": [
           "raw/tablet7/home.png"
         ]
@@ -110,43 +110,43 @@
         "slide": 1,
         "width": 1200,
         "height": 1920,
-        "bytes": 215318,
+        "bytes": 215583,
         "sources": [
           "raw/tablet7/editor.png",
           "raw/tablet7/preview.png"
         ]
       },
       {
-        "file": "tablet7/03-todo.jpg",
-        "feature": "todo",
+        "file": "tablet7/03-search.jpg",
+        "feature": "search",
         "slide": 2,
         "width": 1200,
         "height": 1920,
-        "bytes": 179875,
+        "bytes": 162317,
         "sources": [
-          "raw/tablet7/todo.png"
+          "raw/tablet7/search.png"
         ]
       },
       {
-        "file": "tablet7/04-folders.jpg",
-        "feature": "folders",
+        "file": "tablet7/04-theme.jpg",
+        "feature": "theme",
         "slide": 3,
         "width": 1200,
         "height": 1920,
-        "bytes": 206899,
+        "bytes": 303982,
         "sources": [
-          "raw/tablet7/journal.png"
+          "raw/tablet7/dark.png"
         ]
       },
       {
-        "file": "tablet7/05-theme.jpg",
-        "feature": "theme",
+        "file": "tablet7/05-files.jpg",
+        "feature": "files",
         "slide": 4,
         "width": 1200,
         "height": 1920,
-        "bytes": 302812,
+        "bytes": 201518,
         "sources": [
-          "raw/tablet7/dark.png"
+          "raw/tablet7/files.png"
         ]
       }
     ],
@@ -157,7 +157,7 @@
         "slide": 0,
         "width": 1920,
         "height": 1200,
-        "bytes": 236460,
+        "bytes": 236364,
         "sources": [
           "raw/tablet10/home.png"
         ]
@@ -168,43 +168,72 @@
         "slide": 1,
         "width": 1920,
         "height": 1200,
-        "bytes": 252301,
+        "bytes": 252647,
         "sources": [
           "raw/tablet10/editor.png",
           "raw/tablet10/preview.png"
         ]
       },
       {
-        "file": "tablet10/03-todo.jpg",
-        "feature": "todo",
+        "file": "tablet10/03-search.jpg",
+        "feature": "search",
         "slide": 2,
         "width": 1920,
         "height": 1200,
-        "bytes": 179854,
+        "bytes": 145177,
         "sources": [
-          "raw/tablet10/todo.png"
+          "raw/tablet10/search.png"
         ]
       },
       {
-        "file": "tablet10/04-folders.jpg",
-        "feature": "folders",
+        "file": "tablet10/04-theme.jpg",
+        "feature": "theme",
         "slide": 3,
         "width": 1920,
         "height": 1200,
-        "bytes": 177996,
+        "bytes": 242219,
         "sources": [
-          "raw/tablet10/journal.png"
+          "raw/tablet10/dark.png"
         ]
       },
       {
-        "file": "tablet10/05-theme.jpg",
-        "feature": "theme",
+        "file": "tablet10/05-files.jpg",
+        "feature": "files",
         "slide": 4,
         "width": 1920,
         "height": 1200,
-        "bytes": 240737,
+        "bytes": 174297,
         "sources": [
-          "raw/tablet10/dark.png"
+          "raw/tablet10/files.png"
+        ]
+      }
+    ],
+    "readme": [
+      {
+        "file": "readme/hero.jpg",
+        "feature": "readme-hero",
+        "slide": 0,
+        "width": 2400,
+        "height": 1260,
+        "bytes": 293817,
+        "sources": [
+          "raw/phone/home.png",
+          "raw/phone/preview.png",
+          "raw/phone/todo.png"
+        ]
+      },
+      {
+        "file": "readme/before-after.jpg",
+        "feature": "readme-compare",
+        "slide": 1,
+        "width": 2400,
+        "height": 1260,
+        "bytes": 384949,
+        "sources": [
+          "raw/compare/markor-home.png",
+          "raw/compare/wordkeep-home.png",
+          "raw/compare/markor-editor.png",
+          "raw/compare/wordkeep-editor.png"
         ]
       }
     ]

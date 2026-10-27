@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Her not,\n*sade bir dosya*",
+    "body": "Her yerde açılan Markdown notları."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Ham yaz,\n*temiz oku*",
+    "body": "Önizleme bir dokunuş uzağında."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "İşaretlenen\n*listeler*",
+    "body": "Her notta basit görev listeleri."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Her nota\n*bir renk*",
+    "body": "Yumuşak renkler, sabitleme, etiketler."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Klasörler\n*gerçek klasör*",
+    "body": "Günlük, tarifler, iş. Doğrudan diskte."
+  },
+  "search": {
+    "title": "Her sözcüğü bul,\n*her notta*",
+    "body": "Her eşleşme satır satır vurgulanır."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "İstediğin\n*başlığa atla*",
+    "body": "Uzun notlarda her bölüm bir dokunuşta."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Açık, koyu,\n*senin rengin*",
+    "body": "Koyu mod ve on iki renk teması."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Sade dosyalar,\n*kısıtlama yok*",
+    "body": "Cihazında. Hesap gerekmez."
   }
 }

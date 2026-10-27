@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Każda notatka\n*to zwykły plik*",
+    "body": "Notatki Markdown otworzysz wszędzie."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Pisz surowo,\n*czytaj czysto*",
+    "body": "Podgląd na żywo jednym dotknięciem."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Listy do\n*odhaczania*",
+    "body": "Proste listy zadań w każdej notatce."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Kolor dla\n*każdej notatki*",
+    "body": "Łagodne kolory, przypinki i etykiety."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Foldery,\n*te prawdziwe*",
+    "body": "Dziennik, przepisy, praca. Na dysku."
+  },
+  "search": {
+    "title": "Znajdź słowo\n*w każdej notatce*",
+    "body": "Trafienia podświetlone w wierszach."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Skocz do\n*każdego nagłówka*",
+    "body": "Długie notatki, sekcja w jeden dotyk."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Jasny, ciemny,\n*twój kolor*",
+    "body": "Tryb ciemny i dwanaście motywów."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Zwykłe pliki,\n*bez uwiązania*",
+    "body": "Na Twoim urządzeniu. Bez konta."
   }
 }

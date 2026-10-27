@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Cada nota,\n*um arquivo comum*",
+    "body": "Notas Markdown que abrem em todo lugar."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Escreva cru,\n*leia limpo*",
+    "body": "Prévia ao vivo a um toque."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Listas para\n*dar check*",
+    "body": "Listas de tarefas em qualquer nota."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Uma cor para\n*cada nota*",
+    "body": "Cores suaves, fixados e etiquetas."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Pastas que são\n*pastas mesmo*",
+    "body": "Diário, receitas, trabalho. No disco."
+  },
+  "search": {
+    "title": "Ache a palavra\n*em toda nota*",
+    "body": "Cada resultado destacado, linha a linha."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Pule para\n*qualquer título*",
+    "body": "Notas longas, um toque por seção."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Claro, escuro,\n*sua cor*",
+    "body": "Modo escuro e doze temas de cores."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Arquivos comuns,\n*sem amarras*",
+    "body": "No seu aparelho. Sem precisar de conta."
   }
 }

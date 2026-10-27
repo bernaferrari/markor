@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Cada nota,\n*un fitxer simple*",
+    "body": "Notes Markdown que s'obren arreu."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Escriu en brut,\n*llegeix-ho net*",
+    "body": "La vista prèvia, a un toc."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Llistes per\n*anar marcant*",
+    "body": "Llistes de tasques a qualsevol nota."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Un color per\n*a cada nota*",
+    "body": "Colors suaus, fixades i etiquetes."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Les carpetes són\n*carpetes reals*",
+    "body": "Diari, receptes, feina. Al disc."
+  },
+  "search": {
+    "title": "Cerca un mot\n*a qualsevol nota*",
+    "body": "Cada coincidència, ressaltada."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Salta a\n*qualsevol títol*",
+    "body": "Notes llargues, un toc per secció."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Clar, fosc,\n*el teu color*",
+    "body": "Mode fosc i dotze temes de color."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Fitxers simples,\n*sense lligams*",
+    "body": "Al teu dispositiu. Sense compte."
   }
 }

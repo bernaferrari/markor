@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Svaka bilješka,\n*obična datoteka*",
+    "body": "Markdown bilješke, otvaraju se svugdje."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Piši sirovo,\n*čitaj uredno*",
+    "body": "Pregled uživo na jedan dodir."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Popisi s\n*kvačicama*",
+    "body": "Popisi zadataka u svakoj bilješci."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Boja za\n*svaku bilješku*",
+    "body": "Nježne boje, oznake i prikvačivanje."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Mape su\n*prave mape*",
+    "body": "Dnevnik, recepti, posao. Na disku."
+  },
+  "search": {
+    "title": "Nađi svaku riječ\n*u bilješkama*",
+    "body": "Svaki pogodak istaknut, red po red."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Skoči na\n*bilo koji naslov*",
+    "body": "Svaki odjeljak na jedan dodir."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Svijetlo, tamno,\n*tvoja boja*",
+    "body": "Tamni način i dvanaest tema boja."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Obične datoteke,\n*bez okova*",
+    "body": "Na tvom uređaju. Bez računa."
   }
 }

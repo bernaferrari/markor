@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Fiecare notiță,\n*un fișier simplu*",
+    "body": "Notițe Markdown care se deschid oriunde."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Scrie brut,\n*citește curat*",
+    "body": "Previzualizare live dintr-o atingere."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Liste de\n*bifat*",
+    "body": "Liste de sarcini în orice notiță."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "O culoare pentru\n*fiecare notiță*",
+    "body": "Culori blânde, fixări și etichete."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Dosarele sunt\n*dosare reale*",
+    "body": "Jurnal, rețete, muncă. Direct pe disc."
+  },
+  "search": {
+    "title": "Caută cuvinte\n*în orice notiță*",
+    "body": "Fiecare potrivire, evidențiată."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Sari la\n*orice titlu*",
+    "body": "Notițe lungi, o atingere per secțiune."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Deschis, închis,\n*culoarea ta*",
+    "body": "Mod întunecat și douăsprezece teme."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Fișiere simple,\n*fără lanțuri*",
+    "body": "Pe dispozitivul tău. Fără cont."
   }
 }

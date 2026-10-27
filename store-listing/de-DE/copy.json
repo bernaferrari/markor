@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Jede Notiz\n*ist eine Datei*",
+    "body": "Markdown-Notizen, die überall öffnen."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Roh schreiben,\n*sauber lesen*",
+    "body": "Die Vorschau ist einen Tipp entfernt."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Listen zum\n*Abhaken*",
+    "body": "Einfache Aufgabenlisten in jeder Notiz."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Eine Farbe für\n*jede Notiz*",
+    "body": "Sanfte Farben, Pins und Labels."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Ordner sind\n*echte Ordner*",
+    "body": "Tagebuch, Rezepte, Job. Auf dem Gerät."
+  },
+  "search": {
+    "title": "Jedes Wort,\n*in jeder Notiz*",
+    "body": "Jeder Treffer markiert, Zeile für Zeile."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Direkt zu\n*jedem Abschnitt*",
+    "body": "Lange Notizen, ein Tipp pro Abschnitt."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Hell, dunkel,\n*deine Farbe*",
+    "body": "Dunkelmodus und zwölf Farbthemen."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Echte Dateien,\n*keine Bindung*",
+    "body": "Auf deinem Gerät. Kein Konto nötig."
   }
 }

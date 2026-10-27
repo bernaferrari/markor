@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Elke nota,\n*'n gewone lêer*",
+    "body": "Markdown-notas wat oral oopmaak."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Skryf dit rou,\n*lees dit skoon*",
+    "body": "Lewendige voorskou met een tik."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Lyste om\n*af te merk*",
+    "body": "Eenvoudige taaklyste in enige nota."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "'n Kleur vir\n*elke nota*",
+    "body": "Sagte kleure, spelde en etikette."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Vouers is\n*regte vouers*",
+    "body": "Joernaal, resepte, werk. Reg op skyf."
+  },
+  "search": {
+    "title": "Vind 'n woord,\n*in enige nota*",
+    "body": "Elke treffer uitgelig, reël vir reël."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Spring na\n*enige opskrif*",
+    "body": "Lang notas, een tik na elke afdeling."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Lig, donker,\n*jou kleur*",
+    "body": "Donker modus en twaalf kleurtemas."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Gewone lêers,\n*nooit vasgevang*",
+    "body": "Op jou toestel. Geen rekening nodig."
   }
 }

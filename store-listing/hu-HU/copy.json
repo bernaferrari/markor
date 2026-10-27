@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Minden jegyzet\n*egy sima fájl*",
+    "body": "Markdown jegyzetek, bárhol megnyithatók."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Írd nyersen,\n*olvasd szépen*",
+    "body": "Élő előnézet egy koppintásra."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Listák, amiket\n*kipipálhatsz*",
+    "body": "Feladatlisták bármely jegyzetben."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Minden jegyzet\n*saját színnel*",
+    "body": "Lágy színek, kitűzés és címkék."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "A mappák\n*valódi mappák*",
+    "body": "Napló, receptek, munka. A tárhelyen."
+  },
+  "search": {
+    "title": "Minden szót\n*megtalálsz*",
+    "body": "Minden találat kiemelve, soronként."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Ugorj bármely\n*címsorhoz*",
+    "body": "Minden fejezet egy koppintásra."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Világos, sötét,\n*a te színed*",
+    "body": "Sötét mód és tizenkét színtéma."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Sima fájlok,\n*kötöttség nélkül*",
+    "body": "A készülékeden. Fiók nem kell."
   }
 }

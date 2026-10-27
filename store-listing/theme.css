@@ -17,7 +17,7 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
 
 .brand{position:absolute;z-index:6;left:84px;top:62px;display:flex;align-items:center;gap:14px;
   font:600 30px/1 Mono,monospace;letter-spacing:-.01em}
-.brand img{width:46px;height:46px;display:block}
+.brand img{width:46px;height:46px;display:block;border-radius:12px}
 .glyph{position:absolute;z-index:1;font:600 var(--glyph-size,420px)/1 Mono,monospace;color:var(--ink);opacity:.07;white-space:nowrap;
   transform:translate(-50%,-50%);letter-spacing:-.04em}
 
@@ -79,3 +79,7 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
 .device-label.before span{font:500 40px/1.2 Serif,serif;color:#8a7f72}
 .device-label.after span{font:600 40px/1.2 Serif,serif;color:var(--ink);padding:0 .14em;
   background:linear-gradient(176deg,transparent 46%,var(--hl) 47%,var(--hl) 90%,transparent 91%)}
+
+/* Right-to-left languages: the copy reads from the right edge. */
+:root:is(:lang(ar),:lang(fa),:lang(iw),:lang(he),:lang(ur)) header{direction:rtl;text-align:right}
+:root:is(:lang(ar),:lang(fa),:lang(iw),:lang(he),:lang(ur)) .stack header{text-align:center}

@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Hvert notat,\n*en vanlig fil*",
+    "body": "Markdown-notater som åpnes overalt."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Skriv det rått,\n*les det rent*",
+    "body": "Forhåndsvisning med ett trykk."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Lister du\n*krysser av*",
+    "body": "Enkle oppgavelister i alle notater."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "En farge for\n*hvert notat*",
+    "body": "Myke farger, festing og etiketter."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Mapper er\n*ekte mapper*",
+    "body": "Dagbok, oppskrifter, jobb. Rett på disk."
+  },
+  "search": {
+    "title": "Finn hvert ord,\n*i alle notater*",
+    "body": "Alle treff uthevet, linje for linje."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Hopp til\n*hver overskrift*",
+    "body": "Lange notater, ett trykk til hver del."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Lyst, mørkt,\n*din farge*",
+    "body": "Mørk modus og tolv fargetemaer."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Vanlige filer,\n*ingen innlåsing*",
+    "body": "På enheten din. Ingen konto trengs."
   }
 }

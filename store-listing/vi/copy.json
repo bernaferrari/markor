@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Mỗi ghi chú,\n*một tệp thuần*",
+    "body": "Ghi chú Markdown mở được ở mọi nơi."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Viết thô,\n*đọc gọn gàng*",
+    "body": "Xem trước chỉ với một chạm."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Danh sách\n*để đánh dấu*",
+    "body": "Danh sách việc đơn giản trong ghi chú."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Một màu cho\n*mỗi ghi chú*",
+    "body": "Màu dịu nhẹ, ghim và nhãn."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Thư mục là\n*thư mục thật*",
+    "body": "Nhật ký, công thức, công việc. Trên máy."
+  },
+  "search": {
+    "title": "Tìm mọi từ,\n*ở mọi ghi chú*",
+    "body": "Mọi kết quả được tô sáng từng dòng."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Nhảy đến\n*mọi tiêu đề*",
+    "body": "Ghi chú dài, một chạm tới từng phần."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Sáng, tối,\n*màu của bạn*",
+    "body": "Chế độ tối và mười hai chủ đề màu."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "Tệp thuần,\n*không ràng buộc*",
+    "body": "Trên máy bạn. Không cần tài khoản."
   }
 }

@@ -32,6 +32,13 @@
       "raw": "phone/todo.png"
     },
     {
+      "feature": "search",
+      "layout": "one",
+      "hl": "#CDB8EA",
+      "glyph": "##",
+      "raw": "phone/search.png"
+    },
+    {
       "feature": "color",
       "layout": "drop",
       "hl": "#F4BCCB",
@@ -44,13 +51,6 @@
       "hl": "#E5CF9E",
       "glyph": ">",
       "raw": "phone/journal.png"
-    },
-    {
-      "feature": "outline",
-      "layout": "drop",
-      "hl": "#CDB8EA",
-      "glyph": "##",
-      "raw": "phone/outline.png"
     },
     {
       "feature": "theme",
@@ -69,11 +69,11 @@
       ]
     },
     {
-      "feature": "private",
+      "feature": "files",
       "layout": "one",
       "hl": "#A3DACB",
-      "glyph": "[ ]",
-      "raw": "phone/storage.png"
+      "glyph": ".md",
+      "raw": "phone/files.png"
     }
   ],
   "tablet7": [
@@ -102,18 +102,11 @@
       ]
     },
     {
-      "feature": "todo",
+      "feature": "search",
       "layout": "one",
-      "hl": "#AFCDEA",
-      "glyph": "- [x]",
-      "raw": "tablet7/todo.png"
-    },
-    {
-      "feature": "folders",
-      "layout": "one",
-      "hl": "#E5CF9E",
-      "glyph": ">",
-      "raw": "tablet7/journal.png"
+      "hl": "#CDB8EA",
+      "glyph": "##",
+      "raw": "tablet7/search.png"
     },
     {
       "feature": "theme",
@@ -121,6 +114,13 @@
       "hl": "#BDE3A6",
       "glyph": "~~",
       "raw": "tablet7/dark.png"
+    },
+    {
+      "feature": "files",
+      "layout": "one",
+      "hl": "#A3DACB",
+      "glyph": ".md",
+      "raw": "tablet7/files.png"
     }
   ],
   "tablet10": [
@@ -149,18 +149,11 @@
       ]
     },
     {
-      "feature": "todo",
+      "feature": "search",
       "layout": "one",
-      "hl": "#AFCDEA",
-      "glyph": "- [x]",
-      "raw": "tablet10/todo.png"
-    },
-    {
-      "feature": "folders",
-      "layout": "one",
-      "hl": "#E5CF9E",
-      "glyph": ">",
-      "raw": "tablet10/journal.png"
+      "hl": "#CDB8EA",
+      "glyph": "##",
+      "raw": "tablet10/search.png"
     },
     {
       "feature": "theme",
@@ -168,6 +161,13 @@
       "hl": "#BDE3A6",
       "glyph": "~~",
       "raw": "tablet10/dark.png"
+    },
+    {
+      "feature": "files",
+      "layout": "one",
+      "hl": "#A3DACB",
+      "glyph": ".md",
+      "raw": "tablet10/files.png"
     }
   ],
   "readme": [

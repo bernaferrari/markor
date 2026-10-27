@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "Setiap catatan,\n*file biasa*",
+    "body": "Catatan Markdown, buka di mana saja."
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "Tulis mentah,\n*baca rapi*",
+    "body": "Pratinjau langsung, sekali ketuk."
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "Daftar yang\n*bisa dicentang*",
+    "body": "Daftar tugas di catatan mana pun."
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "Satu warna\n*tiap catatan*",
+    "body": "Warna lembut, sematan, dan label."
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "Foldernya\n*folder sungguhan*",
+    "body": "Jurnal, resep, kerja. Langsung di disk."
+  },
+  "search": {
+    "title": "Temukan kata\n*di semua catatan*",
+    "body": "Tiap hasil disorot, baris demi baris."
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "Lompat ke\n*judul mana pun*",
+    "body": "Tiap bagian cukup sekali ketuk."
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "Terang, gelap,\n*warnamu*",
+    "body": "Mode gelap dan dua belas tema warna."
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "File biasa,\n*bebas pindah*",
+    "body": "Di perangkatmu. Tanpa akun."
   }
 }

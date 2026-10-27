@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "每則筆記\n*都是純檔案*",
+    "body": "Markdown 筆記，隨處都能開啟。"
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "原文書寫\n*清爽閱讀*",
+    "body": "輕觸一下即可預覽。"
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "清單\n*逐項打勾*",
+    "body": "任何筆記都能加入待辦清單。"
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "每則筆記\n*一種顏色*",
+    "body": "柔和色彩、釘選和標籤。"
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "資料夾就是\n*真資料夾*",
+    "body": "日記、食譜、工作，都在磁碟上。"
+  },
+  "search": {
+    "title": "任何字詞\n*一搜就找到*",
+    "body": "每個相符處逐行醒目標示。"
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "一鍵跳到\n*任何標題*",
+    "body": "長篇筆記也能輕觸直達各節。"
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "淺色、深色\n*你的顏色*",
+    "body": "深色模式與十二種色彩主題。"
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "純文字檔案\n*不被綁住*",
+    "body": "存在你的裝置上，無需帳號。"
   }
 }

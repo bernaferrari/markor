@@ -1,34 +1,38 @@
 {
   "home": {
-    "title": "",
-    "body": ""
+    "title": "每条笔记\n*都是纯文件*",
+    "body": "Markdown 笔记，随处可打开。"
   },
   "write": {
-    "title": "",
-    "body": ""
+    "title": "原文书写\n*清爽阅读*",
+    "body": "轻点一下即可预览。"
   },
   "todo": {
-    "title": "",
-    "body": ""
+    "title": "清单\n*逐项勾选*",
+    "body": "任何笔记都能加任务清单。"
   },
   "color": {
-    "title": "",
-    "body": ""
+    "title": "每条笔记\n*一种颜色*",
+    "body": "柔和色彩、置顶和标签。"
   },
   "folders": {
-    "title": "",
-    "body": ""
+    "title": "文件夹就是\n*真文件夹*",
+    "body": "日记、菜谱、工作，都在磁盘上。"
+  },
+  "search": {
+    "title": "任何字词\n*一搜即得*",
+    "body": "每处匹配逐行高亮。"
   },
   "outline": {
-    "title": "",
-    "body": ""
+    "title": "一键跳到\n*任意标题*",
+    "body": "长笔记也能一点直达各节。"
   },
   "theme": {
-    "title": "",
-    "body": ""
+    "title": "浅色、深色\n*你的颜色*",
+    "body": "深色模式和十二种配色主题。"
   },
-  "private": {
-    "title": "",
-    "body": ""
+  "files": {
+    "title": "纯文本文件\n*不被绑定*",
+    "body": "存在你的设备上，无需账号。"
   }
 }
