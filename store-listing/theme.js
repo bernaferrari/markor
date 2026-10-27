@@ -58,6 +58,18 @@ export default {
   // Single devices keep their status bar and left side inside the card (landscape may run off the right)
   // and show most of the screen.
   decorate({W, H, slide, devices}) {
+    if (slide.layout === 'compare') {
+      // An arrow from each original to its new screen, centred in the gap between the two frames.
+      for (let i = 0; i + 1 < devices.length; i += 2) {
+        const before = devices[i].box, after = devices[i + 1].box;
+        const arrow = document.createElement('div');
+        arrow.className = 'arrow';
+        arrow.dataset.checkBounds = '';
+        arrow.textContent = '→';
+        Object.assign(arrow.style, {left: `${(before.left + before.width + after.left) / 2}px`, top: `${before.top + before.height * .45}px`});
+        devices[i].node.parentElement.append(arrow);
+      }
+    }
     if (/stack|pair|duo|drop/.test(slide.layout || '')) return;
     for (const {box, spec} of devices) {
       if (box.left < 12 || box.top < 12 || (W < H && box.left + box.width > W - 12)) throw new Error(`Device leaves the card: ${spec.raw}`);

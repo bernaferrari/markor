@@ -62,14 +62,21 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
 .readme .hero .left{left:250px;top:330px;width:540px}
 .readme .hero .center{left:890px;top:150px;width:620px;z-index:3}
 .readme .hero .right{left:1610px;top:330px;width:540px}
-/* Before and after: the same notes in Markor and in Wordkeep, each pair on its own sheet. */
-.readme .compare .device{width:440px;top:230px}
-.readme .compare .device.before{background:#8a8f99;box-shadow:inset 0 0 0 2px #ffffff60,0 40px 80px -30px #4a3420aa}
-.readme .compare .device.before::before{content:'';position:absolute;z-index:-1;left:-70px;top:-150px;width:1040px;height:1150px;border-radius:56px;background:#fffdf7cc;box-shadow:0 2px 0 #ffffff,0 30px 60px -30px #4a342055}
-.readme .compare .pair1.before{left:180px}
-.readme .compare .pair1.after{left:680px}
-.readme .compare .pair2.before{left:1280px}
-.readme .compare .pair2.after{left:1780px}
+/* Before and after: the same notes in Markor and in Wordkeep. Every phone is the same real device;
+   the original sits a little smaller and lower, the new one steps forward, an arrow between them. */
+.readme .compare .device.before{width:400px;top:auto;bottom:40px}
+.readme .compare .device.after{width:470px;top:auto;bottom:40px;z-index:3}
+.readme .compare .pair1.before{left:170px}
+.readme .compare .pair1.after{left:670px}
+.readme .compare .pair2.before{left:1270px}
+.readme .compare .pair2.after{left:1770px}
+.readme .compare .arrow{position:absolute;z-index:4;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:#fffdf7;
+  box-shadow:0 2px 0 #fff,0 14px 30px -10px #4a3420aa;display:flex;align-items:center;justify-content:center;font:600 46px/1 Serif,serif;color:var(--ink)}
 .device-label{font:600 46px/1.2 Serif,serif;letter-spacing:-.01em}
+/* Names share one line above the phones, which stand on one baseline. */
+.readme .compare .device-label{top:96px !important;transform:none}
 .device-label.before{color:#8a7f72;font-weight:500}
 .device-label.after{color:var(--ink)}
+/* Comparison frames: a warm, light phone body, so dark screens stand out from their frame and the frame belongs on paper. */
+.readme .compare .device{background:linear-gradient(160deg,#fbf6ec,#e9dfcd);
+  box-shadow:inset 0 0 0 1.5px #ffffff,inset 0 -2px 0 #d8cab3,0 0 0 1.5px #d6c7ae,0 40px 70px -28px #4a3420a0,0 8px 20px -8px #4a342040}
