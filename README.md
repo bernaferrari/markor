@@ -1,97 +1,54 @@
-# Wordkeep (Compose + KMP + M3)
-
 <p align="center">
-  <img src="assets/more.png" alt="Wordkeep overview" width="980">
+  <img src="app/src/main/ic_launcher-web.png" width="96" alt="Wordkeep icon">
 </p>
 
-<p align="center">
-  <strong>Local-first, Markdown-centric, Multiplatform notes.</strong><br>
-  Built with Kotlin Multiplatform and Compose Multiplatform.
-</p>
+<h1 align="center">Wordkeep</h1>
+
+<p align="center"><strong>Every note, a plain file.</strong></p>
+
+<p align="center">Markdown notes and to-do lists for Android, iOS and the web. Write with syntax highlighting, read a clean preview, and keep every word in a file you own.</p>
 
 <p align="center">
-  <a href="https://markor-five.vercel.app/"><strong>Try the Web Demo</strong></a>
+  <a href="https://play.google.com/store/apps/details?id=com.bernaferrari.remarkor"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="80" alt="Get it on Google Play"></a>
 </p>
+
+<p align="center"><a href="https://markor-five.vercel.app/"><strong>Try the web demo</strong></a></p>
 
 <p align="center">
-  <a href="https://kotlinlang.org/"><img src="https://img.shields.io/badge/Kotlin-2.4.0-blue.svg?logo=kotlin" alt="Kotlin 2.4.0"></a>
-  <a href="https://www.jetbrains.com/lp/compose-multiplatform/"><img src="https://img.shields.io/badge/Compose%20Multiplatform-1.12.0--alpha02-orange.svg?logo=jetpackcompose" alt="Compose Multiplatform"></a>
-  <a href="LICENSE.txt"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-lightgrey.svg" alt="Platforms"></a>
+  <img src="store-listing/en-US/phone/01-home.jpg" height="540" alt="Every note, a plain file: the notebook with colored notes, pinned notes and folders">
+  &nbsp;&nbsp;
+  <img src="store-listing/en-US/phone/02-write.jpg" height="540" alt="Write it raw, read it clean: the Markdown editor above its preview">
 </p>
 
----
+## Everything a notebook needs
 
-Wordkeep is a modern, cross-platform port of the original [Markor](https://github.com/gsantner/markor) project. It preserves the core philosophy—plain text files, offline-first workflow, and no account lock-in—while leveraging **Kotlin Multiplatform (KMP)** to bring a unified experience to Android, iOS, and the web.
+<table>
+  <tr>
+    <td width="25%"><img src="store-listing/en-US/phone/03-todo.jpg" alt="Lists that check off: a weekly to-do list with ticked tasks"></td>
+    <td width="25%"><img src="store-listing/en-US/phone/04-color.jpg" alt="A color for every note: the note color picker"></td>
+    <td width="25%"><img src="store-listing/en-US/phone/05-folders.jpg" alt="Folders are real folders: a journal folder with four entries"></td>
+    <td width="25%"><img src="store-listing/en-US/phone/06-outline.jpg" alt="Jump to any heading: the document outline of a travel note"></td>
+  </tr>
+</table>
 
-**Try it in your browser:** [markor-five.vercel.app](https://markor-five.vercel.app/)
+- **Markdown, kept readable.** Headings, bold, quotes and `- [ ]` tasks are highlighted as you type. One tap shows the finished page.
+- **Organized your way.** Pin, star, color and label notes, archive what you are done with, and keep real folders for a journal, recipes or work.
+- **Long notes, short trips.** The outline jumps to any heading. Find and replace, undo and redo, and a focus mode are a menu away.
+- **Yours to style.** Light or dark, with twelve color themes, including your wallpaper's colors.
 
-## 🚀 Key Features
+## On a bigger screen
 
-- 📝 **Markdown-First:** Fast editing with live preview and syntax highlighting.
-- 🌍 **Multiplatform:** Shared business logic and UI across Android, iOS, JVM, and Web (Wasm).
-- 🌐 **Web Demo:** Run Wordkeep in the browser via Compose Multiplatform for Web.
-- 📂 **Local-First:** Your data stays on your device in plain text files.
-- 🏷️ **Smart Organization:** Pinned notes, archive, labels, trash, and recents.
-- 🎨 **Modern UX:** A complete redesign using Material 3 and Compose Multiplatform.
-- 🖼️ **Asset Aware:** Built-in support for images and attachments within your notes.
+Notes open right over your notebook on tablets, so you never lose your place.
 
-## 📸 Screenshots
+<p align="center">
+  <img src="store-listing/en-US/tablet10/01-home.jpg" width="49%" alt="Wordkeep's notebook on a landscape tablet">
+  <img src="store-listing/en-US/tablet10/02-write.jpg" width="49%" alt="The editor and its preview on a landscape tablet">
+</p>
 
-![Comparison](assets/comparison.png)
+## Private by design
 
-## 🛠️ Tech Stack
+No account, no sign-in. Notes are plain Markdown and text files, kept in the app's private storage or in a shared Documents folder that any sync tool can reach.
 
-This project is a showcase of modern Kotlin Multiplatform development:
+Wordkeep is a modern port of [Markor](https://github.com/gsantner/markor), Gregor Santner's open-source Markdown editor. It keeps Markor's idea, plain text first and offline always, in a new implementation built with Kotlin Multiplatform and Compose. Licensed under [Apache 2.0](LICENSE.txt).
 
-- **UI:** [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/) (Material 3)
-- **Database:** [Room](https://developer.android.com/kotlin/multiplatform/room) (KMP)
-- **Dependency Injection:** [Koin](https://insert-koin.io/)
-- **Navigation:** [Navigation 3](https://developer.android.com/jetpack/compose/navigation)
-- **Preferences:** [DataStore](https://developer.android.com/topic/libraries/architecture/datastore) (KMP)
-- **Concurrency:** [Kotlinx Coroutines](https://github.com/Kotlin/kotlinx.coroutines)
-- **Serialization:** [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization)
-- **Images:** [Coil3](https://coil-kt.github.io/coil/) (KMP)
-- **Theming:** [Material Kolor](https://github.com/jordond/MaterialKolor) (Dynamic Color)
-
-## 🏗️ Project Structure
-
-The project follows a standard KMP layout:
-
-- `shared/`: The heart of the app. Contains common UI (Compose), business logic, and data layers (Room, DataStore).
-- `app/`: Android-specific entry point and resources.
-- `iosApp/`: iOS-specific Xcode project and Swift entry point.
-- `webApp/`: Wasm browser entry point for the GitHub Pages demo.
-- `metadata/`: App store metadata and screenshots.
-
-## 🏁 Getting Started
-
-#### Android
-```bash
-./gradlew :app:installFlavorDefaultDebug
-```
-
-#### iOS
-1. Open `iosApp/iosApp.xcodeproj` in Xcode.
-2. Select a simulator or device.
-3. Click **Run**.
-
-Alternatively, via CLI:
-```bash
-./gradlew :shared:embedAndSignAppleFrameworkForXcode
-```
-
-#### Web (local dev server)
-```bash
-./gradlew :webApp:wasmJsBrowserDevelopmentRun
-```
-
-Production build:
-```bash
-./gradlew :webApp:wasmJsBrowserDistribution
-```
-
-## 📜 Credits & License
-
-- **Original Project:** [Markor](https://github.com/gsantner/markor) by Gregor Santner.
-- **License:** Apache License 2.0. See [LICENSE.txt](LICENSE.txt) for details.
+<sub>Building from source or contributing? See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).</sub>
