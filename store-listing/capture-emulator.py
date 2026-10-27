@@ -179,7 +179,7 @@ def scenes():
 
 
 profiles = {name: (p['captureWidth'], p['captureHeight'], p['captureDensity'])
-            for name, p in json.loads((HERE / 'profiles.json').read_text()).items()}
+            for name, p in json.loads((HERE / 'profiles.json').read_text()).items() if 'captureWidth' in p}
 assert 'Override' not in (shell('wm', 'size') + shell('wm', 'density')).decode(), \
     'Start from an emulator with no display overrides (adb shell wm size reset; wm density reset).'
 adb('install', '-r', apk)
