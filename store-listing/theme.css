@@ -65,7 +65,7 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
 /* Before and after: no device frames, just the two real screens side by side on the paper, the same size,
    on one baseline, each named by a small tag underneath. */
 .readme .compare .device{--bezel:0px;--radius:44px;width:450px;top:110px;background:none;
-  box-shadow:0 0 0 1px #2B22191f,0 34px 60px -26px #4a3420b0,0 8px 18px -10px #4a342060}
+  box-shadow:0 0 0 5px #2B2219}
 .readme .compare .device .screen{border-radius:44px;overflow:hidden}
 .readme .compare .pair1.before{left:150px}
 .readme .compare .pair1.after{left:650px}
