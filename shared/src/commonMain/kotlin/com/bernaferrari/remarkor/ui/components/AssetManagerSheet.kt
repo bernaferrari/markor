@@ -167,6 +167,7 @@ fun AssetManagerSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        scrimColor = sheetScrimColor(),
         shape = MaterialTheme.shapes.extraLarge
     ) {
         Column(

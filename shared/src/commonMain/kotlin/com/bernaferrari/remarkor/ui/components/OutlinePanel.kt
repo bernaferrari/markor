@@ -100,6 +100,7 @@ fun OutlinePanel(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        scrimColor = sheetScrimColor(),
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         modifier = modifier

@@ -54,6 +54,7 @@ fun FileActionSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        scrimColor = sheetScrimColor(),
         containerColor = MaterialTheme.colorScheme.surface,
         dragHandle = { BottomSheetDefaults.DragHandle() },
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
