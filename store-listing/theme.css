@@ -22,9 +22,9 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
   transform:translate(-50%,-50%);letter-spacing:-.04em}
 
 .device{--bezel:14px;--radius:78px;
-  /* One quiet frame for every card: warm paper with a hint of amber, a thin bezel, so the screen leads. */
-  background:linear-gradient(160deg,#fbf4e6 0%,#f1e2c6 55%,#e2c99c 100%);
-  box-shadow:inset 0 0 0 1.5px #ffffffb0,0 0 0 1px #2B22191a,0 50px 90px -30px #4a342099,0 10px 30px -10px #4a342040}
+  /* No frame: the real screen stands on the page by itself, with a hairline edge and a soft shadow. */
+  background:none;
+  box-shadow:0 0 0 1px #2B22191f,0 50px 90px -30px #4a342099,0 10px 30px -10px #4a342040}
 
 /* Phone and 7-inch: copy on top, starting where the device starts, and the app large and running off the bottom edge. */
 .phone .one .primary{left:130px;top:560px;width:820px}
