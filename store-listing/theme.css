@@ -86,7 +86,10 @@ html[data-strip="first"] .glyph.seam-left,html[data-strip="last"] .glyph.seam-ri
 
 /* README comparison: two pairs on the ruled page, notebook then editor, Markor left and Wordkeep right in each.
    All four phones are the same size and height; a small monospace label sits above each. */
-.readme .compare-pairs .device{--radius:46px;--bezel:9px;top:180px;width:480px}
+.readme .compare-pairs header{left:120px;right:120px;top:56px}
+.readme .compare-pairs h1{font-size:108px;white-space:nowrap}
+.readme .compare-pairs header p{margin:14px 0 0;font-size:38px;max-width:none}
+.readme .compare-pairs .device{--radius:46px;--bezel:9px;top:380px;width:480px}
 .readme .compare-pairs .before{background:#2B2219}
 .readme .compare-pairs .before.p1{left:120px}.readme .compare-pairs .after.p1{left:640px}
 .readme .compare-pairs .before.p2{left:1280px}.readme .compare-pairs .after.p2{left:1800px}

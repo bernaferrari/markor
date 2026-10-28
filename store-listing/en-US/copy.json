@@ -38,5 +38,9 @@
   "readme-spread": {
     "title": "A notebook,\n*opened wide*",
     "body": "Tablets and foldables show the whole\nnotebook, with notes open right over it."
+  },
+  "readme-compare": {
+    "title": "From Markor, *rewritten*",
+    "body": "Same idea, plain text first. A whole new notebook around it."
   }
 }
