@@ -86,13 +86,14 @@ html[data-strip="first"] .glyph.seam-left,html[data-strip="last"] .glyph.seam-ri
 
 /* README comparison: two pairs on the ruled page, notebook then editor, Markor left and Wordkeep right in each.
    All four phones are the same size and height; a small monospace label sits above each. */
-.readme .compare-pairs header{left:120px;right:120px;top:56px}
-.readme .compare-pairs h1{font-size:108px;white-space:nowrap}
-.readme .compare-pairs header p{margin:14px 0 0;font-size:38px;max-width:none}
-.readme .compare-pairs .device{--radius:46px;--bezel:9px;top:380px;width:480px}
+.readme .compare-pairs header{left:210px;right:210px;top:40px}
+.readme .compare-pairs h1{font-size:96px;white-space:nowrap}
+.readme .compare-pairs header p{margin:10px 0 0;font-size:34px;max-width:none}
+/* Every screen shows in full, bottom bar included (Wordkeep's New Note button matters). */
+.readme .compare-pairs .device{--radius:42px;--bezel:8px;top:300px;width:430px}
 .readme .compare-pairs .before{background:#2B2219}
-.readme .compare-pairs .before.p1{left:120px}.readme .compare-pairs .after.p1{left:640px}
-.readme .compare-pairs .before.p2{left:1280px}.readme .compare-pairs .after.p2{left:1800px}
+.readme .compare-pairs .before.p1{left:210px}.readme .compare-pairs .after.p1{left:680px}
+.readme .compare-pairs .before.p2{left:1300px}.readme .compare-pairs .after.p2{left:1770px}
 .readme .compare-pairs .device-label{transform:translateY(calc(-100% - 22px));text-align:left;font:600 26px/1 Mono,monospace;letter-spacing:.08em;background:none}
 .readme .compare-pairs .device-label.before{color:#8a7f72}
 .readme .compare-pairs .device-label.after{color:var(--ink)}
