@@ -7,7 +7,7 @@
         "slide": 0,
         "width": 1080,
         "height": 1920,
-        "bytes": 239483,
+        "bytes": 245003,
         "sources": [
           "raw/phone/home.png"
         ]
@@ -18,7 +18,7 @@
         "slide": 1,
         "width": 1080,
         "height": 1920,
-        "bytes": 203427,
+        "bytes": 210846,
         "sources": [
           "raw/phone/editor.png",
           "raw/phone/preview.png"
@@ -30,7 +30,7 @@
         "slide": 2,
         "width": 1080,
         "height": 1920,
-        "bytes": 175418,
+        "bytes": 181549,
         "sources": [
           "raw/phone/todo.png"
         ]
@@ -41,7 +41,7 @@
         "slide": 3,
         "width": 1080,
         "height": 1920,
-        "bytes": 169360,
+        "bytes": 175003,
         "sources": [
           "raw/phone/search.png"
         ]
@@ -52,7 +52,7 @@
         "slide": 4,
         "width": 1080,
         "height": 1920,
-        "bytes": 201464,
+        "bytes": 205455,
         "sources": [
           "raw/phone/color.png"
         ]
@@ -63,7 +63,7 @@
         "slide": 5,
         "width": 1080,
         "height": 1920,
-        "bytes": 222012,
+        "bytes": 230369,
         "sources": [
           "raw/phone/journal.png"
         ]
@@ -74,7 +74,7 @@
         "slide": 6,
         "width": 1080,
         "height": 1920,
-        "bytes": 231050,
+        "bytes": 236318,
         "sources": [
           "raw/phone/dark-editor.png",
           "raw/phone/settings.png"
@@ -86,7 +86,7 @@
         "slide": 7,
         "width": 1080,
         "height": 1920,
-        "bytes": 185481,
+        "bytes": 192638,
         "sources": [
           "raw/phone/files.png"
         ]
@@ -99,7 +99,7 @@
         "slide": 0,
         "width": 1200,
         "height": 1920,
-        "bytes": 291813,
+        "bytes": 302308,
         "sources": [
           "raw/tablet7/home.png"
         ]
@@ -110,7 +110,7 @@
         "slide": 1,
         "width": 1200,
         "height": 1920,
-        "bytes": 209986,
+        "bytes": 216610,
         "sources": [
           "raw/tablet7/editor.png",
           "raw/tablet7/preview.png"
@@ -122,7 +122,7 @@
         "slide": 2,
         "width": 1200,
         "height": 1920,
-        "bytes": 155206,
+        "bytes": 167452,
         "sources": [
           "raw/tablet7/search.png"
         ]
@@ -133,7 +133,7 @@
         "slide": 3,
         "width": 1200,
         "height": 1920,
-        "bytes": 301755,
+        "bytes": 309634,
         "sources": [
           "raw/tablet7/dark.png"
         ]
@@ -144,7 +144,7 @@
         "slide": 4,
         "width": 1200,
         "height": 1920,
-        "bytes": 190196,
+        "bytes": 206806,
         "sources": [
           "raw/tablet7/files.png"
         ]
@@ -157,7 +157,7 @@
         "slide": 0,
         "width": 1920,
         "height": 1200,
-        "bytes": 214280,
+        "bytes": 223778,
         "sources": [
           "raw/tablet10/home.png"
         ]
@@ -168,7 +168,7 @@
         "slide": 1,
         "width": 1920,
         "height": 1200,
-        "bytes": 233786,
+        "bytes": 232422,
         "sources": [
           "raw/tablet10/editor.png",
           "raw/tablet10/preview.png"
@@ -180,7 +180,7 @@
         "slide": 2,
         "width": 1920,
         "height": 1200,
-        "bytes": 137434,
+        "bytes": 144580,
         "sources": [
           "raw/tablet10/search.png"
         ]
@@ -191,7 +191,7 @@
         "slide": 3,
         "width": 1920,
         "height": 1200,
-        "bytes": 221864,
+        "bytes": 228032,
         "sources": [
           "raw/tablet10/dark.png"
         ]
@@ -202,7 +202,7 @@
         "slide": 4,
         "width": 1920,
         "height": 1200,
-        "bytes": 158719,
+        "bytes": 170286,
         "sources": [
           "raw/tablet10/files.png"
         ]
@@ -229,7 +229,7 @@
         "slide": 1,
         "width": 2400,
         "height": 1260,
-        "bytes": 292419,
+        "bytes": 298626,
         "sources": [
           "raw/tablet10/home.png",
           "raw/phone/preview.png"

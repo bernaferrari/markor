@@ -47,13 +47,13 @@ export default {
     glyph(main, ctx, index);
   },
 
-  /** Screens stand unframed; their corner radius scales with the screen width. */
+  /** A slim bezel and corner radius that scale with the device width. */
   layout({main}) {
     for (const node of main.querySelectorAll('.device')) {
       if (main.classList.contains('compare')) break;
       const image = node.querySelector('img'), width = node.clientWidth, landscape = image.naturalWidth > image.naturalHeight;
-      node.style.setProperty('--bezel', '0px');
-      node.style.setProperty('--radius', `${Math.round(width * (landscape ? .025 : .07))}px`);
+      node.style.setProperty('--bezel', `${Math.round(width * (landscape ? .007 : .012))}px`);
+      node.style.setProperty('--radius', `${Math.round(width * (landscape ? .03 : .085))}px`);
     }
   },
 
