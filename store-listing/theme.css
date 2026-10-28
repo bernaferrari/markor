@@ -67,12 +67,12 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
 .readme .hero .right{left:1610px;top:330px;width:540px}
 
 /* Before and after: the same notes on one sheet of paper per pair. Markor keeps a thin pencil ring;
-   Wordkeep steps forward in a highlighter-yellow frame with its name in the store headlines' highlighter. */
+   Wordkeep stands in the same pale cream body as the store cards with its name in the store headlines' highlighter. */
 .readme .compare .device{width:450px;top:110px}
 .readme .compare .device .screen{border-radius:44px;overflow:hidden}
 .readme .compare .device.before{--bezel:4px;--radius:48px;background:#2B221940;box-shadow:0 26px 50px -30px #4a3420aa}
-.readme .compare .device.after{--bezel:9px;--radius:53px;background:linear-gradient(155deg,#fff2a8,#ffdf6e 40%,#f6b93b 78%,#e59a1c);
-  box-shadow:0 0 0 1px #2B221926,0 0 80px -12px #ffcf4a99,0 36px 70px -30px #4a3420cc}
+.readme .compare .device.after{--bezel:9px;--radius:53px;background:linear-gradient(170deg,#fffaf1,#f2e6d1);
+  box-shadow:inset 0 0 0 2px #ffffffb0,inset 0 -3px 0 #c9b38f44,0 0 0 1px #2B22191a,0 36px 70px -30px #4a3420aa}
 .readme .compare .pair1.before{left:150px}
 .readme .compare .pair1.after{left:650px}
 .readme .compare .pair2.before{left:1300px}
@@ -101,3 +101,8 @@ html[data-strip="first"] .glyph.seam-left,html[data-strip="last"] .glyph.seam-ri
 .readme .spread .tablet{--bezel:18px;--radius:48px;left:1020px;top:150px;width:1600px}
 .readme .spread .phone{--bezel:12px;--radius:60px;left:900px;top:520px;width:420px;z-index:4}
 .tablet7 .brand{left:120px}
+/* README "organized" spread: the same left page, three phones at staggered heights on the right. */
+.readme .spread.organize header{width:700px}
+.readme .organize .one{left:880px;top:300px;width:470px;--bezel:9px;--radius:44px}
+.readme .organize .two{left:1380px;top:150px;width:470px;--bezel:9px;--radius:44px}
+.readme .organize .three{left:1880px;top:380px;width:470px;--bezel:9px;--radius:44px}

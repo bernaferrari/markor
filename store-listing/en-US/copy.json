@@ -38,5 +38,9 @@
   "readme-spread": {
     "title": "A notebook,\n*opened wide*",
     "body": "Tablets and foldables show the whole\nnotebook, with notes open right over it."
+  },
+  "readme-organize": {
+    "title": "Organized\n*your way*",
+    "body": "Colors, pins and real folders,\nand every note stays a plain file."
   }
 }

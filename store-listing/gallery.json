@@ -175,7 +175,7 @@
       "feature": "readme-compare",
       "layout": "compare",
       "file": "readme/before-after.jpg",
-      "alt": "The same notes on the same phone in Markor and in Wordkeep: the home screen and a recipe in the editor",
+      "alt": "Markor's file list and editor beside Wordkeep's notes grid and Markdown editor",
       "devices": [
         {
           "raw": "compare/markor-home.png",
@@ -183,7 +183,7 @@
           "label": "Markor"
         },
         {
-          "raw": "compare/wordkeep-home.png",
+          "raw": "phone/home.png",
           "role": "after pair1",
           "label": "Wordkeep"
         },
@@ -193,7 +193,7 @@
           "label": "Markor"
         },
         {
-          "raw": "compare/wordkeep-editor.png",
+          "raw": "phone/editor.png",
           "role": "after pair2",
           "label": "Wordkeep"
         }
@@ -214,6 +214,27 @@
         {
           "raw": "phone/preview.png",
           "role": "phone"
+        }
+      ]
+    },
+    {
+      "feature": "readme-organize",
+      "layout": "spread organize",
+      "file": "readme/organize.jpg",
+      "hl": "#F4BCCB",
+      "alt": "Wordkeep's note color picker, a journal folder, and the notebook as a list of plain .md and .txt files",
+      "devices": [
+        {
+          "raw": "phone/color.png",
+          "role": "one"
+        },
+        {
+          "raw": "phone/journal.png",
+          "role": "two"
+        },
+        {
+          "raw": "phone/files.png",
+          "role": "three"
         }
       ]
     }
