@@ -4,6 +4,9 @@
 import {cardsFor, devicesFor, withCopy, nodesFile, followCallout} from './gallery.js';
 
 const q = new URLSearchParams(location.search);
+// A README strip renders a card as first, middle, last or only of a run, so themes can hide art that sits on the
+// strip's outer seams (html[data-strip="last"] .seam-right, say).
+if (q.get('strip')) document.documentElement.dataset.strip = q.get('strip');
 const json = async (file, optional = false) => {
   const response = await fetch(file);
   if (!response.ok) {

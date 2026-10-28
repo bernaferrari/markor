@@ -55,5 +55,29 @@
     "phone": "contact-phone.jpg",
     "tablet7": "contact-tablet7.jpg",
     "tablet10": "contact-tablet10.jpg"
-  }
+  },
+  "readmeStrips": [
+    {
+      "file": "readme/notebook-1.jpg",
+      "kind": "phone",
+      "cards": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "height": 1200
+    },
+    {
+      "file": "readme/notebook-2.jpg",
+      "kind": "phone",
+      "cards": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "height": 1200
+    }
+  ]
 }

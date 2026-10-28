@@ -15,13 +15,13 @@
 <p align="center"><a href="https://markor-five.vercel.app/"><strong>Try the web demo</strong></a></p>
 
 <p align="center">
-  <img src="store-listing/en-US/readme/hero.jpg" width="100%" alt="Wordkeep's notes grid, a travel note in preview and a weekly to-do list">
+  <img src="store-listing/en-US/readme/notebook-1.jpg" width="100%" alt="Every note, a plain file; write it raw, read it clean; lists that check off; find any word, in any note">
 </p>
 
 ## Everything a notebook needs
 
 <p align="center">
-  <img src="store-listing/en-US/readme/writing.jpg" width="100%" alt="Wordkeep's Markdown editor, preview, task list and search">
+  <img src="store-listing/en-US/readme/notebook-2.jpg" width="100%" alt="A color for every note; folders are real folders; light, dark, your color; plain files, no lock-in">
 </p>
 
 - **Markdown, kept readable.** Headings, bold, quotes and `- [ ]` tasks are highlighted as you type. One tap shows the finished page.
@@ -44,8 +44,9 @@ Wordkeep is a modern port of [Markor](https://github.com/gsantner/markor), Grego
 Notes open right over your notebook on tablets, so you never lose your place.
 
 <p align="center">
-  <img src="store-listing/en-US/readme/tablet-notes.jpg" width="100%" alt="Wordkeep's notebook and preview on a landscape tablet">
+  <img src="store-listing/en-US/readme/big-screen.jpg" width="100%" alt="Wordkeep on a landscape tablet showing the whole notebook, with a phone in front showing the same travel note">
 </p>
+
 ## Private by design
 
 No account, no sign-in. Notes are plain Markdown and text files, kept in the app's private storage or in a shared Documents folder that any sync tool can reach. Licensed under [Apache 2.0](LICENSE.txt).

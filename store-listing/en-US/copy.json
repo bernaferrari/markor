@@ -34,5 +34,9 @@
   "files": {
     "title": "Plain files,\n*no lock-in*",
     "body": "On your device. No account needed."
+  },
+  "readme-spread": {
+    "title": "A notebook,\n*opened wide*",
+    "body": "Tablets and foldables show the whole\nnotebook, with notes open right over it."
   }
 }

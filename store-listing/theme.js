@@ -16,7 +16,8 @@ function glyph(main, {W, H, kind, index, slides}, k) {
   const s = slides[k];
   if (!s || !s.glyph || k >= slides.length - 1) return;
   const node = document.createElement('div');
-  node.className = 'glyph';
+  // The mark of seam k is drawn on card k (its right edge) and card k + 1 (its left edge).
+  node.className = `glyph ${k === index ? 'seam-right' : 'seam-left'}`;
   node.setAttribute('aria-hidden', 'true');
   node.textContent = s.glyph;
   const landscape = W > H;
@@ -41,24 +42,6 @@ export default {
   compose(ctx) {
     const {slide, main, index} = ctx;
     if (slide.hl) main.style.setProperty('--hl', slide.hl);
-    if (/^notebook-(phone(?:-five)?|tablet)$/.test(slide.layout || '')) {
-      const heading = document.createElement('div');
-      heading.className = 'notebook-heading';
-      const eyebrow = document.createElement('div');
-      eyebrow.className = 'notebook-eyebrow';
-      eyebrow.textContent = 'WORDKEEP  /  A NOTEBOOK OF YOUR OWN';
-      const title = document.createElement('div');
-      title.className = 'notebook-title';
-      const highlight = document.createElement('span');
-      highlight.textContent = slide.deckTitle;
-      title.append(highlight);
-      const note = document.createElement('div');
-      note.className = 'notebook-note';
-      note.textContent = slide.deckNote;
-      heading.append(eyebrow, title, note);
-      main.append(heading);
-      return;
-    }
     if (slide.brand) brand(main);
     glyph(main, ctx, index - 1);
     glyph(main, ctx, index);
