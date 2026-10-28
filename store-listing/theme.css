@@ -22,9 +22,10 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
   transform:translate(-50%,-50%);letter-spacing:-.04em}
 
 .device{--bezel:14px;--radius:78px;
-  /* A slim, real-phone bezel: deep ink graphite with a soft sheen and a hairline highlight on the rim. */
-  background:linear-gradient(155deg,#4b423b 0%,#2B2219 38%,#1c1612 100%);
-  box-shadow:inset 0 0 0 1px #ffffff2e,0 0 0 1px #2B221933,0 50px 90px -30px #4a342099,0 10px 30px -10px #4a342040}
+  /* A light phone body in the page's own cream, like QuietGuard's pale mint glass: a white highlight on the
+     rim and a slightly deeper tone at the bottom. */
+  background:linear-gradient(170deg,#fffaf1,#f2e6d1);
+  box-shadow:inset 0 0 0 2px #ffffffb0,inset 0 -3px 0 #c9b38f44,0 0 0 1px #2B22191a,0 50px 90px -30px #4a342088,0 10px 30px -10px #4a342033}
 
 /* Phone and 7-inch: copy on top, starting where the device starts, and the app large and running off the bottom edge. */
 .phone .one .primary{left:130px;top:560px;width:820px}

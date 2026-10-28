@@ -52,8 +52,8 @@ export default {
     for (const node of main.querySelectorAll('.device')) {
       if (main.classList.contains('compare')) break;
       const image = node.querySelector('img'), width = node.clientWidth, landscape = image.naturalWidth > image.naturalHeight;
-      node.style.setProperty('--bezel', `${Math.round(width * (landscape ? .007 : .012))}px`);
-      node.style.setProperty('--radius', `${Math.round(width * (landscape ? .03 : .085))}px`);
+      node.style.setProperty('--bezel', `${Math.round(width * (landscape ? .012 : .02))}px`);
+      node.style.setProperty('--radius', `${Math.round(width * (landscape ? .035 : .09))}px`);
     }
   },
 
