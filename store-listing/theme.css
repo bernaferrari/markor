@@ -84,11 +84,11 @@ html[data-strip="first"] .glyph.seam-left,html[data-strip="last"] .glyph.seam-ri
 .readme .spread .phone{--bezel:12px;--radius:60px;left:900px;top:520px;width:420px;z-index:4}
 .tablet7 .brand{left:120px}
 
-/* README comparison as a spread: the headline on the left page; Markor a step back and smaller, Wordkeep in front.
-   A small monospace label sits above each phone. */
-.readme .compare-spread .device{--radius:44px}
-.readme .compare-spread .before{--bezel:4px;left:1130px;top:330px;width:440px;background:#2B221955;filter:saturate(.85)}
-.readme .compare-spread .after{--bezel:10px;left:1600px;top:160px;width:560px;z-index:3}
-.readme .compare-spread .device-label{transform:translateY(calc(-100% - 22px));text-align:left;font:600 28px/1 Mono,monospace;letter-spacing:.08em;background:none}
+/* README comparison as a spread: the headline on the left page, then Markor and Wordkeep side by side at exactly
+   the same size and height, so only the apps differ. A small monospace label sits above each phone. */
+.readme .compare-spread .device{--radius:46px;--bezel:10px;top:230px;width:520px}
+.readme .compare-spread .before{left:1080px;background:#2B2219}
+.readme .compare-spread .after{left:1660px}
+.readme .compare-spread .device-label{transform:translateY(calc(-100% - 24px));text-align:left;font:600 28px/1 Mono,monospace;letter-spacing:.08em;background:none}
 .readme .compare-spread .device-label.before{color:#8a7f72}
 .readme .compare-spread .device-label.after{color:var(--ink)}
