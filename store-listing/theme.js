@@ -50,7 +50,7 @@ export default {
   /** A slim bezel and corner radius that scale with the device width. */
   layout({main}) {
     for (const node of main.querySelectorAll('.device')) {
-      if (main.classList.contains('compare-spread')) break;
+      if (main.classList.contains('compare-pairs')) break;
       const image = node.querySelector('img'), width = node.clientWidth, landscape = image.naturalWidth > image.naturalHeight;
       node.style.setProperty('--bezel', `${Math.round(width * (landscape ? .012 : .02))}px`);
       node.style.setProperty('--radius', `${Math.round(width * (landscape ? .035 : .09))}px`);

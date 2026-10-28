@@ -34,7 +34,7 @@
 Markor's file list became a notebook of notes you can pin, color and label, and the editor keeps Markdown readable as you type.
 
 <p align="center">
-  <img src="store-listing/en-US/readme/before-after.jpg" width="100%" alt="Markor's dark file list beside Wordkeep's colourful notes grid on the same phone">
+  <img src="store-listing/en-US/readme/before-after.jpg" width="100%" alt="Markor beside Wordkeep: Markor's dark file list and the notes grid, then Markor's editor and Wordkeep's Markdown editor">
 </p>
 
 Wordkeep is a modern port of [Markor](https://github.com/gsantner/markor), Gregor Santner's open-source Markdown editor. It keeps Markor's idea, plain text first and offline always, in a new implementation built with Kotlin Multiplatform and Compose.

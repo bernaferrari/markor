@@ -191,19 +191,29 @@
     },
     {
       "feature": "readme-compare",
-      "layout": "spread compare-spread",
+      "layout": "compare-pairs",
       "file": "readme/before-after.jpg",
       "hl": "#FFDF6E",
-      "alt": "Markor's dark file list beside Wordkeep's colourful notes grid on the same phone",
+      "alt": "Markor beside Wordkeep on the same phone: Markor's dark file list and the notes grid, then Markor's editor and Wordkeep's Markdown editor",
       "devices": [
         {
           "raw": "compare/markor-home.png",
-          "role": "before",
+          "role": "before p1",
           "label": "MARKOR"
         },
         {
           "raw": "phone/home.png",
-          "role": "after",
+          "role": "after p1",
+          "label": "WORDKEEP"
+        },
+        {
+          "raw": "compare/markor-editor.png",
+          "role": "before p2",
+          "label": "MARKOR"
+        },
+        {
+          "raw": "phone/editor.png",
+          "role": "after p2",
           "label": "WORDKEEP"
         }
       ]
