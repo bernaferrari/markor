@@ -52,7 +52,7 @@ export default {
     for (const node of main.querySelectorAll('.device')) {
       if (main.classList.contains('compare')) break;
       const image = node.querySelector('img'), width = node.clientWidth, landscape = image.naturalWidth > image.naturalHeight;
-      node.style.setProperty('--bezel', `${Math.round(width * (landscape ? .011 : .017))}px`);
+      node.style.setProperty('--bezel', `${Math.round(width * (landscape ? .008 : .011))}px`);
       node.style.setProperty('--radius', `${Math.round(width * (landscape ? .03 : .09))}px`);
     }
   },

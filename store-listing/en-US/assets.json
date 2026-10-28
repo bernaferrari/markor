@@ -7,7 +7,7 @@
         "slide": 0,
         "width": 1080,
         "height": 1920,
-        "bytes": 243595,
+        "bytes": 242297,
         "sources": [
           "raw/phone/home.png"
         ]
@@ -18,7 +18,7 @@
         "slide": 1,
         "width": 1080,
         "height": 1920,
-        "bytes": 215577,
+        "bytes": 208260,
         "sources": [
           "raw/phone/editor.png",
           "raw/phone/preview.png"
@@ -30,7 +30,7 @@
         "slide": 2,
         "width": 1080,
         "height": 1920,
-        "bytes": 179451,
+        "bytes": 179246,
         "sources": [
           "raw/phone/todo.png"
         ]
@@ -41,7 +41,7 @@
         "slide": 3,
         "width": 1080,
         "height": 1920,
-        "bytes": 171010,
+        "bytes": 171815,
         "sources": [
           "raw/phone/search.png"
         ]
@@ -52,7 +52,7 @@
         "slide": 4,
         "width": 1080,
         "height": 1920,
-        "bytes": 206304,
+        "bytes": 206045,
         "sources": [
           "raw/phone/color.png"
         ]
@@ -63,7 +63,7 @@
         "slide": 5,
         "width": 1080,
         "height": 1920,
-        "bytes": 225397,
+        "bytes": 228542,
         "sources": [
           "raw/phone/journal.png"
         ]
@@ -74,7 +74,7 @@
         "slide": 6,
         "width": 1080,
         "height": 1920,
-        "bytes": 239968,
+        "bytes": 235930,
         "sources": [
           "raw/phone/dark-editor.png",
           "raw/phone/settings.png"
@@ -86,7 +86,7 @@
         "slide": 7,
         "width": 1080,
         "height": 1920,
-        "bytes": 189373,
+        "bytes": 190916,
         "sources": [
           "raw/phone/files.png"
         ]
@@ -99,7 +99,7 @@
         "slide": 0,
         "width": 1200,
         "height": 1920,
-        "bytes": 297020,
+        "bytes": 298605,
         "sources": [
           "raw/tablet7/home.png"
         ]
@@ -110,7 +110,7 @@
         "slide": 1,
         "width": 1200,
         "height": 1920,
-        "bytes": 217602,
+        "bytes": 212470,
         "sources": [
           "raw/tablet7/editor.png",
           "raw/tablet7/preview.png"
@@ -122,7 +122,7 @@
         "slide": 2,
         "width": 1200,
         "height": 1920,
-        "bytes": 163316,
+        "bytes": 163599,
         "sources": [
           "raw/tablet7/search.png"
         ]
@@ -133,7 +133,7 @@
         "slide": 3,
         "width": 1200,
         "height": 1920,
-        "bytes": 307648,
+        "bytes": 311663,
         "sources": [
           "raw/tablet7/dark.png"
         ]
@@ -144,7 +144,7 @@
         "slide": 4,
         "width": 1200,
         "height": 1920,
-        "bytes": 202894,
+        "bytes": 205122,
         "sources": [
           "raw/tablet7/files.png"
         ]
@@ -157,7 +157,7 @@
         "slide": 0,
         "width": 1920,
         "height": 1200,
-        "bytes": 225501,
+        "bytes": 220568,
         "sources": [
           "raw/tablet10/home.png"
         ]
@@ -168,7 +168,7 @@
         "slide": 1,
         "width": 1920,
         "height": 1200,
-        "bytes": 237760,
+        "bytes": 233592,
         "sources": [
           "raw/tablet10/editor.png",
           "raw/tablet10/preview.png"
@@ -180,7 +180,7 @@
         "slide": 2,
         "width": 1920,
         "height": 1200,
-        "bytes": 144247,
+        "bytes": 141414,
         "sources": [
           "raw/tablet10/search.png"
         ]
@@ -191,7 +191,7 @@
         "slide": 3,
         "width": 1920,
         "height": 1200,
-        "bytes": 235505,
+        "bytes": 230622,
         "sources": [
           "raw/tablet10/dark.png"
         ]
@@ -202,7 +202,7 @@
         "slide": 4,
         "width": 1920,
         "height": 1200,
-        "bytes": 169439,
+        "bytes": 164159,
         "sources": [
           "raw/tablet10/files.png"
         ]
@@ -215,7 +215,7 @@
         "slide": 0,
         "width": 2400,
         "height": 1260,
-        "bytes": 386035,
+        "bytes": 386036,
         "sources": [
           "raw/compare/markor-home.png",
           "raw/compare/wordkeep-home.png",
@@ -229,7 +229,7 @@
         "slide": 1,
         "width": 2400,
         "height": 1260,
-        "bytes": 298790,
+        "bytes": 293558,
         "sources": [
           "raw/tablet10/home.png",
           "raw/phone/preview.png"
