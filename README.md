@@ -21,7 +21,7 @@
 ## Everything a notebook needs
 
 <p align="center">
-  <img src="store-listing/en-US/readme/organize.jpg" width="100%" alt="Wordkeep's note color picker, a journal folder, and the notebook as a list of plain .md and .txt files">
+  <img src="store-listing/en-US/readme/notebook-2.jpg" width="100%" alt="A color for every note; folders are real folders; light, dark, your color; plain files, no lock-in">
 </p>
 
 - **Markdown, kept readable.** Headings, bold, quotes and `- [ ]` tasks are highlighted as you type. One tap shows the finished page.
@@ -31,10 +31,10 @@
 
 ## From Markor to Wordkeep
 
-Markor beside Wordkeep: the file list became a notebook of notes you can pin, color and label, and the editor keeps Markdown readable as you type.
+Markor's file list became a notebook of notes you can pin, color and label, and the editor keeps Markdown readable as you type.
 
 <p align="center">
-  <img src="store-listing/en-US/readme/before-after.jpg" width="100%" alt="Markor's file list and editor beside Wordkeep's notes grid and Markdown editor">
+  <img src="store-listing/en-US/readme/before-after.jpg" width="100%" alt="Markor's dark file list beside Wordkeep's colourful notes grid on the same phone">
 </p>
 
 Wordkeep is a modern port of [Markor](https://github.com/gsantner/markor), Gregor Santner's open-source Markdown editor. It keeps Markor's idea, plain text first and offline always, in a new implementation built with Kotlin Multiplatform and Compose.

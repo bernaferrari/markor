@@ -50,7 +50,7 @@ export default {
   /** A slim bezel and corner radius that scale with the device width. */
   layout({main}) {
     for (const node of main.querySelectorAll('.device')) {
-      if (main.classList.contains('compare')) break;
+      if (main.classList.contains('compare-spread')) break;
       const image = node.querySelector('img'), width = node.clientWidth, landscape = image.naturalWidth > image.naturalHeight;
       node.style.setProperty('--bezel', `${Math.round(width * (landscape ? .012 : .02))}px`);
       node.style.setProperty('--radius', `${Math.round(width * (landscape ? .035 : .09))}px`);
@@ -60,11 +60,6 @@ export default {
   // Single devices keep their status bar and left side inside the card (landscape may run off the right)
   // and show most of the screen.
   decorate({W, H, slide, devices}) {
-    if (slide.layout === 'compare') {
-      // Each name sits just under its screen.
-      for (const label of devices[0].node.parentElement.querySelectorAll('.device-label')) label.style.setProperty('--h', `${devices[0].box.height}px`);
-      return;
-    }
     if (/stack|pair|duo|drop/.test(slide.layout || '')) return;
     for (const {box, spec} of devices) {
       if (box.left < 12 || box.top < 12 || (W < H && box.left + box.width > W - 12)) throw new Error(`Device leaves the card: ${spec.raw}`);

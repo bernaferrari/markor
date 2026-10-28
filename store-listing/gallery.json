@@ -172,34 +172,6 @@
   ],
   "readme": [
     {
-      "feature": "readme-compare",
-      "layout": "compare",
-      "file": "readme/before-after.jpg",
-      "alt": "Markor's file list and editor beside Wordkeep's notes grid and Markdown editor",
-      "devices": [
-        {
-          "raw": "compare/markor-home.png",
-          "role": "before pair1",
-          "label": "Markor"
-        },
-        {
-          "raw": "phone/home.png",
-          "role": "after pair1",
-          "label": "Wordkeep"
-        },
-        {
-          "raw": "compare/markor-editor.png",
-          "role": "before pair2",
-          "label": "Markor"
-        },
-        {
-          "raw": "phone/editor.png",
-          "role": "after pair2",
-          "label": "Wordkeep"
-        }
-      ]
-    },
-    {
       "feature": "readme-spread",
       "layout": "spread",
       "file": "readme/big-screen.jpg",
@@ -218,23 +190,21 @@
       ]
     },
     {
-      "feature": "readme-organize",
-      "layout": "spread organize",
-      "file": "readme/organize.jpg",
-      "hl": "#F4BCCB",
-      "alt": "Wordkeep's note color picker, a journal folder, and the notebook as a list of plain .md and .txt files",
+      "feature": "readme-compare",
+      "layout": "spread compare-spread",
+      "file": "readme/before-after.jpg",
+      "hl": "#FFDF6E",
+      "alt": "Markor's dark file list beside Wordkeep's colourful notes grid on the same phone",
       "devices": [
         {
-          "raw": "phone/color.png",
-          "role": "one"
+          "raw": "compare/markor-home.png",
+          "role": "before",
+          "label": "MARKOR"
         },
         {
-          "raw": "phone/journal.png",
-          "role": "two"
-        },
-        {
-          "raw": "phone/files.png",
-          "role": "three"
+          "raw": "phone/home.png",
+          "role": "after",
+          "label": "WORDKEEP"
         }
       ]
     }
