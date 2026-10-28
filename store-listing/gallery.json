@@ -218,6 +218,76 @@
           "label": "Wordkeep"
         }
       ]
+    },
+    {
+      "feature": "readme-writing",
+      "layout": "notebook-phone",
+      "file": "readme/writing.jpg",
+      "alt": "Wordkeep's Markdown editor, rendered preview, task list, and note search",
+      "deckTitle": "Write it down. Find it again.",
+      "deckNote": "A notebook for the things you want to keep.",
+      "hl": "#F2C090",
+      "devices": [
+        {"raw": "phone/editor.png", "role": "slot1", "label": "01 / WRITE"},
+        {"raw": "phone/preview.png", "role": "slot2", "label": "02 / READ"},
+        {"raw": "phone/todo.png", "role": "slot3", "label": "03 / CHECK"},
+        {"raw": "phone/search.png", "role": "slot4", "label": "04 / FIND"}
+      ]
+    },
+    {
+      "feature": "readme-organize",
+      "layout": "notebook-phone-five",
+      "file": "readme/organize.jpg",
+      "alt": "Wordkeep folders, plain files, note colors, dark editor, and appearance settings",
+      "deckTitle": "Make it your own.",
+      "deckNote": "Keep your notes organized, portable, and comfortable to read.",
+      "hl": "#C6DEAE",
+      "devices": [
+        {"raw": "phone/journal.png", "role": "slot1", "label": "01 / FOLDERS"},
+        {"raw": "phone/files.png", "role": "slot2", "label": "02 / FILES"},
+        {"raw": "phone/color.png", "role": "slot3", "label": "03 / COLOR"},
+        {"raw": "phone/dark-editor.png", "role": "slot4", "label": "04 / DARK"},
+        {"raw": "phone/settings.png", "role": "slot5", "label": "05 / THEMES"}
+      ]
+    },
+    {
+      "feature": "readme-tablet-notes",
+      "layout": "notebook-tablet",
+      "file": "readme/tablet-notes.jpg",
+      "alt": "Wordkeep's notebook and note preview on a landscape tablet",
+      "deckTitle": "A little more room to write.",
+      "deckNote": "The notebook stays in view as you write and read.",
+      "hl": "#F2C090",
+      "devices": [
+        {"raw": "tablet10/home.png", "role": "slot1", "label": "01 / NOTEBOOK"},
+        {"raw": "tablet10/preview.png", "role": "slot2", "label": "02 / PREVIEW"}
+      ]
+    },
+    {
+      "feature": "readme-tablet-writing",
+      "layout": "notebook-tablet",
+      "file": "readme/tablet-writing.jpg",
+      "alt": "Wordkeep's Markdown editor and note search on a landscape tablet",
+      "deckTitle": "Write freely. Find anything.",
+      "deckNote": "Your words stay easy to reach, even on a bigger screen.",
+      "hl": "#CDB8EA",
+      "devices": [
+        {"raw": "tablet10/editor.png", "role": "slot1", "label": "01 / EDIT"},
+        {"raw": "tablet10/search.png", "role": "slot2", "label": "02 / FIND"}
+      ]
+    },
+    {
+      "feature": "readme-tablet-tools",
+      "layout": "notebook-tablet",
+      "file": "readme/tablet-tools.jpg",
+      "alt": "Dark mode and plain files in Wordkeep on a landscape tablet",
+      "deckTitle": "Your notebook, in its element.",
+      "deckNote": "Choose a look, and keep your files close.",
+      "hl": "#C6DEAE",
+      "devices": [
+        {"raw": "tablet10/dark.png", "role": "slot1", "label": "01 / DARK"},
+        {"raw": "tablet10/files.png", "role": "slot2", "label": "02 / FILES"}
+      ]
     }
   ]
 }

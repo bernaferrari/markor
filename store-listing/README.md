@@ -13,3 +13,11 @@ Built with [Screenshot Studio](studio/). Read `~/Documents/screenshot-studio/PLA
 node store-listing/studio/server.cjs 8790        # editor
 node store-listing/studio/export.cjs --locale en-US
 ```
+
+The README's notebook spreads use the same real phone and tablet captures as the store listing, with separate `readme` layouts in `gallery.json`. Edit their titles, labels, and source scenes there; `theme.css` and `theme.js` control the paper, highlighter, and frames. To regenerate only the README images, run:
+
+```sh
+node store-listing/studio/export.cjs --locale en-US --kind readme --strict
+```
+
+The original phone and tablet store artwork has its own gallery entries and can still be exported independently.

@@ -62,6 +62,30 @@ header p{margin:28px 0 0;font-size:42px;line-height:1.28;font-weight:400;opacity
 .readme .hero .left{left:250px;top:330px;width:540px}
 .readme .hero .center{left:890px;top:150px;width:620px;z-index:3}
 .readme .hero .right{left:1610px;top:330px;width:540px}
+
+/* README spreads: a ruled notebook, restrained highlighter and handwritten-file vocabulary. */
+.readme :is(.notebook-phone,.notebook-phone-five,.notebook-tablet)::before{content:'';position:absolute;left:76px;top:0;bottom:0;width:2px;background:#c46956;opacity:.26;z-index:1}
+.readme :is(.notebook-phone,.notebook-phone-five,.notebook-tablet) .notebook-heading{position:absolute;left:140px;top:72px;right:120px;z-index:4}
+.readme :is(.notebook-phone,.notebook-phone-five,.notebook-tablet) .notebook-eyebrow{font:600 25px/1.2 Mono,monospace;letter-spacing:.06em;color:#8c6c55}
+.readme :is(.notebook-phone,.notebook-phone-five,.notebook-tablet) .notebook-title{margin-top:26px;font:700 105px/1.03 Serif,serif;letter-spacing:-.02em;color:var(--ink)}
+.readme :is(.notebook-phone,.notebook-phone-five,.notebook-tablet) .notebook-title span{background:linear-gradient(177deg,transparent 58%,var(--hl) 59%,var(--hl) 92%,transparent 93%);padding:0 .08em;margin-left:-.08em}
+.readme :is(.notebook-phone,.notebook-phone-five,.notebook-tablet) .notebook-note{margin-top:14px;font:400 34px/1.3 Serif,serif;color:#67594a}
+.readme :is(.notebook-phone,.notebook-phone-five,.notebook-tablet) .device{background:#eee1cd;box-shadow:0 0 0 2px #7d654c33,0 28px 60px -30px #4a342066}
+.readme :is(.notebook-phone,.notebook-phone-five,.notebook-tablet) .device-label{transform:translateY(calc(-100% - 20px));text-align:left;font:600 26px/1.2 Mono,monospace;letter-spacing:.02em;color:#77624e}
+.readme .notebook-phone .device{top:385px;width:455px}
+.readme .notebook-phone .slot1{left:140px}
+.readme .notebook-phone .slot2{left:695px}
+.readme .notebook-phone .slot3{left:1250px}
+.readme .notebook-phone .slot4{left:1805px}
+.readme .notebook-phone-five .device{top:385px;width:365px}
+.readme .notebook-phone-five .slot1{left:140px}
+.readme .notebook-phone-five .slot2{left:600px}
+.readme .notebook-phone-five .slot3{left:1060px}
+.readme .notebook-phone-five .slot4{left:1520px}
+.readme .notebook-phone-five .slot5{left:1980px}
+.readme .notebook-tablet .device{top:425px;width:1040px}
+.readme .notebook-tablet .slot1{left:140px}
+.readme .notebook-tablet .slot2{left:1230px}
 /* Before and after: the same notes on one sheet of paper per pair. Markor keeps a thin pencil ring;
    Wordkeep steps forward in a highlighter-yellow frame with its name in the store headlines' highlighter. */
 .readme .compare .device{width:450px;top:110px}

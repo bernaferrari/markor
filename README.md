@@ -20,14 +20,9 @@
 
 ## Everything a notebook needs
 
-<table>
-  <tr>
-    <td width="25%"><img src="store-listing/en-US/phone/02-write.jpg" alt="Write it raw, read it clean: the Markdown editor above its preview"></td>
-    <td width="25%"><img src="store-listing/en-US/phone/04-search.jpg" alt="Find any word, in any note: search results with every match highlighted"></td>
-    <td width="25%"><img src="store-listing/en-US/phone/06-folders.jpg" alt="Folders are real folders: a journal folder with four entries"></td>
-    <td width="25%"><img src="store-listing/en-US/phone/08-files.jpg" alt="Plain files, no lock-in: the notebook as a list of .md and .txt files"></td>
-  </tr>
-</table>
+<p align="center">
+  <img src="store-listing/en-US/readme/writing.jpg" width="100%" alt="Wordkeep's Markdown editor, preview, task list and search">
+</p>
 
 - **Markdown, kept readable.** Headings, bold, quotes and `- [ ]` tasks are highlighted as you type. One tap shows the finished page.
 - **Organized your way.** Pin, star, color and label notes, archive what you are done with, and keep real folders for a journal, recipes or work.
@@ -49,10 +44,8 @@ Wordkeep is a modern port of [Markor](https://github.com/gsantner/markor), Grego
 Notes open right over your notebook on tablets, so you never lose your place.
 
 <p align="center">
-  <img src="store-listing/en-US/tablet10/01-home.jpg" width="49%" alt="Wordkeep's notebook on a landscape tablet">
-  <img src="store-listing/en-US/tablet10/02-write.jpg" width="49%" alt="The editor and its preview on a landscape tablet">
+  <img src="store-listing/en-US/readme/tablet-notes.jpg" width="100%" alt="Wordkeep's notebook and preview on a landscape tablet">
 </p>
-
 ## Private by design
 
 No account, no sign-in. Notes are plain Markdown and text files, kept in the app's private storage or in a shared Documents folder that any sync tool can reach. Licensed under [Apache 2.0](LICENSE.txt).
