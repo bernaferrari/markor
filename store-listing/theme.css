@@ -93,12 +93,12 @@ html[data-strip="first"] .glyph.seam-left,html[data-strip="last"] .glyph.seam-ri
    (its # in faint mono), the tagline under the highlighter and the file it lives in; on the right a 7-inch
    tablet with the whole notebook, and the same note written raw on a phone in front of it. */
 .readme .masthead::before{content:'';position:absolute;left:112px;top:0;bottom:0;width:3px;background:#c46956;opacity:.34;z-index:1}
-.readme .masthead .identity{left:180px;right:auto;top:390px;display:block;color:var(--ink)}
+.readme .masthead .identity{left:180px;right:auto;top:441px;display:block;color:var(--ink)}
 .readme .masthead .identity img{position:absolute;left:0;bottom:-14px;width:76px;height:76px;border-radius:24%;box-shadow:0 10px 24px -12px #2b221966}
 .readme .masthead .identity span{display:block;font-size:176px;font-weight:700;letter-spacing:-.03em;line-height:1}
 .readme .masthead .identity span::before{content:'#';margin-right:26px;font:600 120px/1 Mono,monospace;color:#2b221933;vertical-align:.12em}
-.readme .masthead .identity small{display:block;margin-top:34px;font-size:56px;font-weight:400}
+.readme .masthead .identity small{display:block;margin-top:5px;font-size:56px;font-weight:400}
 .readme .masthead .identity small em{background:linear-gradient(176deg,transparent 52%,var(--hl) 53%,var(--hl) 90%,transparent 91%);padding:0 .1em;margin:0 -.1em}
-.readme .masthead .identity::after{content:'~/Notes/Lisbon in May.md';display:block;margin-top:70px;padding-left:100px;line-height:48px;font:600 32px/48px Mono,monospace;color:#2b221980;letter-spacing:.02em}
+.readme .masthead .identity::after{content:'~/Notes/Lisbon in May.md';display:block;margin-top:30px;padding-left:100px;line-height:48px;font:600 32px/48px Mono,monospace;color:#2b221980;letter-spacing:.02em}
 .readme .masthead .back{left:1540px;top:56px;width:720px;transform:rotate(3deg);z-index:2}
 .readme .masthead .front{left:1150px;top:250px;width:440px;transform:rotate(-4deg);z-index:3}
