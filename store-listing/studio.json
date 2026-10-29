@@ -79,5 +79,13 @@
       ],
       "height": 1200
     }
-  ]
+  ],
+  "capture": {
+    "build": "./gradlew :app:assembleFlavorDefaultStoreCapture -q",
+    "runs": [
+      {
+        "locales": "default"
+      }
+    ]
+  }
 }
