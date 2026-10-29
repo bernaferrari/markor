@@ -176,11 +176,12 @@
       "layout": "masthead",
       "file": "readme/hero.jpg",
       "identity": true,
-      "alt": "Wordkeep: a note written in plain Markdown, and the same note read clean",
+      "alt": "Wordkeep: the whole notebook on a 7-inch tablet, and a note written in plain Markdown on a phone in front",
       "devices": [
         {
-          "raw": "phone/preview.png",
-          "role": "back"
+          "raw": "tablet7/home.png",
+          "role": "back",
+          "frame": "tablet"
         },
         {
           "raw": "phone/editor.png",
