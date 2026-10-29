@@ -111,7 +111,7 @@
       "pair": false,
       "duo": false,
       "drop": false,
-      "hero": {
+      "masthead": {
         "visible": 0.5
       }
     }

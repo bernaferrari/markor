@@ -173,22 +173,18 @@
   "readme": [
     {
       "feature": "readme-hero",
-      "layout": "hero named",
+      "layout": "masthead",
       "file": "readme/hero.jpg",
       "identity": true,
-      "alt": "Wordkeep: the notes grid, a Markdown note as you write it, and a to-do list",
+      "alt": "Wordkeep: a note written in plain Markdown, and the same note read clean",
       "devices": [
         {
-          "raw": "phone/home.png",
-          "role": "left"
+          "raw": "phone/preview.png",
+          "role": "back"
         },
         {
           "raw": "phone/editor.png",
-          "role": "center"
-        },
-        {
-          "raw": "phone/todo.png",
-          "role": "right"
+          "role": "front"
         }
       ]
     },
