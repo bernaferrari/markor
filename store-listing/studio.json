@@ -87,5 +87,30 @@
         "locales": "default"
       }
     ]
+  },
+  "frames": {
+    "tablet": {
+      "bezel": 0.02,
+      "radius": 0.09
+    },
+    "fixed": [
+      "compare-pairs"
+    ]
+  },
+  "bounds": {
+    "margin": 12,
+    "visible": 0.7,
+    "layouts": {
+      "tablet10": {
+        "right": true
+      },
+      "readme": {
+        "right": true
+      },
+      "stack": false,
+      "pair": false,
+      "duo": false,
+      "drop": false
+    }
   }
 }

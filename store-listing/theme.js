@@ -29,6 +29,9 @@ function glyph(main, {W, H, kind, index, slides}, k) {
 }
 
 export default {
+  // The ruled page runs across every seam.
+  continuous: true,
+
   art(ctx) {
     const {W, H} = ctx;
     // College-ruled paper: a faint blue rule every line, starting below a top margin.
@@ -45,25 +48,5 @@ export default {
     if (slide.brand) brand(main);
     glyph(main, ctx, index - 1);
     glyph(main, ctx, index);
-  },
-
-  /** A slim bezel and corner radius that scale with the device width. */
-  layout({main}) {
-    for (const node of main.querySelectorAll('.device')) {
-      if (main.classList.contains('compare-pairs')) break;
-      const image = node.querySelector('img'), width = node.clientWidth, landscape = image.naturalWidth > image.naturalHeight;
-      node.style.setProperty('--bezel', `${Math.round(width * (landscape ? .012 : .02))}px`);
-      node.style.setProperty('--radius', `${Math.round(width * (landscape ? .035 : .09))}px`);
-    }
-  },
-
-  // Single devices keep their status bar and left side inside the card (landscape may run off the right)
-  // and show most of the screen.
-  decorate({W, H, slide, devices}) {
-    if (/stack|pair|duo|drop/.test(slide.layout || '')) return;
-    for (const {box, spec} of devices) {
-      if (box.left < 12 || box.top < 12 || (W < H && box.left + box.width > W - 12)) throw new Error(`Device leaves the card: ${spec.raw}`);
-      if ((H - box.top) / box.height < .7) throw new Error(`Device runs too far off the bottom: ${spec.raw}`);
-    }
   }
 };
