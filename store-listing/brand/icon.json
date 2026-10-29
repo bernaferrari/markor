@@ -6,12 +6,12 @@
       },
       "files": [
         {
-          "path": "branding/wordkeep-icon.svg",
+          "path": "store-listing/brand/icon.svg",
           "shape": "square",
           "scale": 0.667
         },
         {
-          "path": "branding/wordkeep-icon-512.png",
+          "path": "store-listing/brand/icon.png",
           "size": 512,
           "shape": "square",
           "scale": 0.667

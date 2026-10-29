@@ -1,80 +1,79 @@
 # Developing Wordkeep
 
-Wordkeep is a Kotlin Multiplatform port of [Markor](https://github.com/gsantner/markor). One Compose Multiplatform codebase runs on Android, iOS and the web (Wasm).
+A Kotlin Multiplatform port of [Markor](https://github.com/gsantner/markor): one Compose Multiplatform UI in `shared/` for Android, iOS and the web (Wasm). `app/` is the Android app.
 
-<p>
-  <a href="https://kotlinlang.org/"><img src="https://img.shields.io/badge/Kotlin-2.4.0-blue.svg?logo=kotlin" alt="Kotlin 2.4.0"></a>
-  <a href="https://www.jetbrains.com/lp/compose-multiplatform/"><img src="https://img.shields.io/badge/Compose%20Multiplatform-1.12.0--alpha02-orange.svg?logo=jetpackcompose" alt="Compose Multiplatform"></a>
-  <a href="../LICENSE.txt"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License"></a>
-</p>
+[README](../README.md) · [Store listing](../store-listing/README.md) · [Web demo](https://markor-five.vercel.app/)
 
-## Tech stack
-
-- **UI:** [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/) (Material 3)
-- **Database:** [Room](https://developer.android.com/kotlin/multiplatform/room) (KMP), for note metadata such as colors, pins and labels
-- **Dependency injection:** [Koin](https://insert-koin.io/)
-- **Navigation:** [Navigation 3](https://developer.android.com/jetpack/compose/navigation)
-- **Preferences:** [DataStore](https://developer.android.com/topic/libraries/architecture/datastore) (KMP)
-- **Concurrency:** [Kotlinx Coroutines](https://github.com/Kotlin/kotlinx.coroutines)
-- **Serialization:** [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization)
-- **Images:** [Coil 3](https://coil-kt.github.io/coil/) (KMP)
-- **Theming:** [Material Kolor](https://github.com/jordond/MaterialKolor)
-
-## Project structure
-
-- `shared/`: common UI (Compose), business logic and data layers (Room, DataStore).
-- `app/`: the Android entry point, widgets and resources.
-- `iosApp/`: the Xcode project and Swift entry point.
-- `webApp/`: the Wasm browser entry point for the [web demo](https://markor-five.vercel.app/).
-- `store-listing/`: Google Play screenshots and listing text (see below).
-- `branding/`: the Wordkeep icon master (`wordkeep-icon.svg`) and its 512 px Play icon. The Android adaptive icon in `app/src/main/res/drawable/ic_launcher_*.xml` draws the same artwork.
-- `metadata/`: legacy store metadata from Markor.
-
-## Building
-
-### Android
+## Quick start
 
 ```bash
+git clone https://github.com/bernaferrari/markor.git
+cd markor
 ./gradlew :app:installFlavorDefaultDebug
 ```
 
-### iOS
+## What you need
 
-1. Open `iosApp/iosApp.xcodeproj` in Xcode.
-2. Select a simulator or device.
-3. Click **Run**.
+| Tool | Version | Notes |
+| --- | --- | --- |
+| JDK | 17 or newer | Bytecode targets 17; CI uses Temurin 21 |
+| Gradle | 9.8.1 | Through `./gradlew` |
+| Android SDK | Platform 37 | `minSdk` 26 |
+| Xcode | Any with iOS 15 SDK or newer | iOS only; deployment target 15.0 |
+| Node.js | Optional | Gradle downloads its own for the web build; needed only for Screenshot Studio |
 
-Or build the framework from the command line:
+## Run it
+
+| Target | Command |
+| --- | --- |
+| Android | `./gradlew :app:installFlavorDefaultDebug` |
+| iOS | Open `iosApp/iosApp.xcodeproj` in Xcode and press Run (it calls `:shared:embedAndSignAppleFrameworkForXcode`) |
+| Web, dev server | `./gradlew :webApp:wasmJsBrowserDevelopmentRun` |
+| Web, production build | `./scripts/verify-web-deploy.sh --serve` (builds, checks the dist and serves it) |
+
+## Where things live
+
+| Path | What's there |
+| --- | --- |
+| `shared/` | All UI, data and logic. `commonMain` plus `androidMain`, `iosMain`, `wasmJsMain`, `jvmMain` |
+| `app/` | Android entry point and Glance widgets; flavors `flavorDefault`, `flavorGplay`, `flavorAtest` |
+| `app/src/storeCapture/` | Screenshot-only build type that seeds fictional notes |
+| `iosApp/` | Xcode project and Swift entry point |
+| `webApp/` | Wasm browser entry point, deployed to Vercel |
+| `scripts/` | Web deploy and verify scripts, Material Symbols generator |
+| `store-listing/` | Play screenshots, listing text and icon layers (`brand/`) |
+| `metadata/` | Legacy Markor changelogs and feature graphic |
+
+| Concern | Library |
+| --- | --- |
+| UI | Compose Multiplatform, Material 3, Material Kolor |
+| Storage | Room 3 (KMP) for note metadata, DataStore for preferences |
+| DI and navigation | Koin, Navigation 3 |
+| Other | Coroutines, Serialization, Coil 3, Glance |
+
+## Before you push
 
 ```bash
-./gradlew :shared:embedAndSignAppleFrameworkForXcode
+./gradlew :shared:wasmJsBrowserTest :webApp:wasmJsBrowserDistribution
+./scripts/verify-web-deploy.sh --skip-build
+./gradlew :shared:allTests :app:testFlavorDefaultDebugUnitTest
 ```
 
-### Web
+The only CI is [deploy-web-vercel.yml](../.github/workflows/deploy-web-vercel.yml): it runs the first two lines on every push and pull request, then deploys `main` to production and same-repo PRs to a preview. Nothing in CI builds Android or iOS or runs their tests, so run the third line yourself (on a Mac it includes the iOS simulator tests).
 
-```bash
-./gradlew :webApp:wasmJsBrowserDevelopmentRun   # local dev server
-./gradlew :webApp:wasmJsBrowserDistribution     # production build
-```
+## Store screenshots and icon
 
-## Store screenshots
+[Screenshot Studio](../store-listing/studio/) lives in `store-listing/studio/`. It is synced from `~/Documents/screenshot-studio`, so never edit it here.
 
-The Play screenshots are real Android captures composed with Screenshot Studio (`store-listing/studio/`, synced from the shared studio; do not edit it here).
+- `storeCapture` is a debug-based build type (`com.bernaferrari.remarkor.storecapture`). Its `StoreCaptureActivity` seeds a private notebook with fictional notes. Build it with `./gradlew :app:assembleFlavorDefaultStoreCapture`.
+- `node store-listing/studio/recapture.cjs` builds that APK, captures every size on the capture emulator (`CAPTURE_SERIAL`, default `emulator-5578`, never a phone) and exports. Add a locale (`en-US`), `--profile phone`, `--no-build` or `--no-capture`. The scene tour it runs is `store-listing/capture-emulator.py`.
+- Export only: `PLAYWRIGHT_MODULE=… node store-listing/studio/export.cjs --locale en-US`. Live editor: `node store-listing/studio/server.cjs`.
+- Icons are SVG layers in `store-listing/brand/` (main), `brand/todo`, `quicknote` and `linkbox` (widget variants) and `brand/atest` (the `flavorAtest` icon), listed in `brand/icon.json`. Regenerate every target with `PLAYWRIGHT_MODULE=… node store-listing/studio/icon.cjs`. Don't edit the generated `res/` icons by hand.
 
-- `app/src/storeCapture/` is a capture-only build type (`com.bernaferrari.remarkor.storecapture`). Its `StoreCaptureActivity` seeds a private notebook with fictional notes on first launch. Production builds never include it.
-- `store-listing/capture-emulator.py` drives a dedicated emulator (never a personal phone) through each scene for phone, 7-inch and 10-inch tablets, with System UI demo mode, and writes `store-listing/<locale>/raw/<profile>/*.png` plus layout sidecars.
-- `store-listing/theme.css`, `theme.js`, `gallery.json` and `<locale>/copy.json` define the artwork.
+## Good to know
 
-```bash
-./gradlew :app:assembleFlavorDefaultStoreCapture
-python3 store-listing/capture-emulator.py --serial emulator-5570      # --profile phone, --locale de-DE
-node store-listing/studio/export.cjs --locale en-US
-node store-listing/studio/server.cjs 8790                              # live editor
-```
-
-Only `en-US` images are committed; other locales keep their words (`copy.json`, `listing.json`) in git and regenerate their images from the scripts.
-
-## Credits and license
-
-- **Original project:** [Markor](https://github.com/gsantner/markor) by Gregor Santner.
-- **License:** Apache License 2.0. See [LICENSE.txt](../LICENSE.txt).
+- The Gradle project is still named `Markor` and the package is `com.bernaferrari.remarkor`. Don't rename either: the package is the installed app id.
+- `flavorAtest` installs beside the normal app (`com.bernaferrari.remarkor_test`) with a date-based version code, so you can test without touching your real notes.
+- Release builds have no signing config in the repo. Sign locally and never commit a keystore.
+- Notes are plain files in app storage or a shared folder. Test with throwaway notes, and capture only on the disposable emulator.
+- Credits: a port of [Markor](https://github.com/gsantner/markor) by Gregor Santner. Licensed under Apache 2.0 ([LICENSE](../LICENSE)).

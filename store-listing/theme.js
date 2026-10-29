@@ -6,7 +6,7 @@ function brand(main) {
   const node = document.createElement('div');
   node.className = 'brand';
   node.dataset.checkBounds = '';
-  node.innerHTML = '<img src="../../branding/wordkeep-icon.svg" alt="">';
+  node.innerHTML = '<img src="../brand/icon.svg" alt="">';
   node.append(document.createTextNode('Wordkeep'));
   main.prepend(node);
 }
