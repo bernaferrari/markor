@@ -100,5 +100,5 @@ html[data-strip="first"] .glyph.seam-left,html[data-strip="last"] .glyph.seam-ri
 .readme .masthead .identity small{display:block;margin-top:34px;font-size:56px;font-weight:400}
 .readme .masthead .identity small em{background:linear-gradient(176deg,transparent 52%,var(--hl) 53%,var(--hl) 90%,transparent 91%);padding:0 .1em;margin:0 -.1em}
 .readme .masthead .identity::after{content:'~/Notes/Lisbon in May.md';display:block;margin-top:70px;padding-left:100px;line-height:48px;font:600 32px/48px Mono,monospace;color:#2b221980;letter-spacing:.02em}
-.readme .masthead .back{left:1500px;top:150px;width:800px;transform:rotate(3deg);z-index:2}
+.readme .masthead .back{left:1540px;top:56px;width:720px;transform:rotate(3deg);z-index:2}
 .readme .masthead .front{left:1150px;top:250px;width:440px;transform:rotate(-4deg);z-index:3}
