@@ -110,7 +110,10 @@
       "stack": false,
       "pair": false,
       "duo": false,
-      "drop": false
+      "drop": false,
+      "hero": {
+        "visible": 0.5
+      }
     }
   }
 }

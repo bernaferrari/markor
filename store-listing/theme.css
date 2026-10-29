@@ -88,3 +88,14 @@ html[data-strip="first"] .glyph.seam-left,html[data-strip="last"] .glyph.seam-ri
 .readme .compare-pairs .device-label{transform:translateY(calc(-100% - 22px));text-align:left;font:600 26px/1 Mono,monospace;letter-spacing:.08em;background:none}
 .readme .compare-pairs .device-label.before{color:#8a7f72}
 .readme .compare-pairs .device-label.after{color:var(--ink)}
+
+/* README name card: the icon and the name in serif ink, the tagline marked with the highlighter, three phones rising. */
+.readme .hero .identity{top:92px;color:var(--ink)}
+.readme .hero .identity img{width:156px;height:156px;border-radius:24%;box-shadow:0 18px 40px -18px #2b221966}
+.readme .hero .identity span{font-size:136px;font-weight:700;letter-spacing:-.025em}
+.readme .hero .identity small{font-size:46px;font-weight:400;opacity:.85}
+.readme .hero .identity small em{background:linear-gradient(176deg,transparent 52%,var(--hl) 53%,var(--hl) 90%,transparent 91%);padding:0 .1em;margin:0 -.1em}
+.readme .hero.named .left,.readme .hero.named .right{top:440px;width:520px}
+.readme .hero.named .left{left:300px;transform:rotate(-5deg)}
+.readme .hero.named .right{left:1580px;transform:rotate(5deg)}
+.readme .hero.named .center{top:380px}

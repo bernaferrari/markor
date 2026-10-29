@@ -42,5 +42,8 @@
   "readme-compare": {
     "title": "From Markor, *rewritten*",
     "body": "Same idea, plain text first. A whole new notebook around it."
+  },
+  "readme-hero": {
+    "tagline": "Every note, *a plain file.*"
   }
 }
