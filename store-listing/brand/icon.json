@@ -1,0 +1,55 @@
+{
+  "icons": [
+    {
+      "android": {
+        "res": "app/src/main/res"
+      },
+      "files": [
+        {
+          "path": "branding/wordkeep-icon.svg",
+          "shape": "square",
+          "scale": 0.667
+        },
+        {
+          "path": "branding/wordkeep-icon-512.png",
+          "size": 512,
+          "shape": "square",
+          "scale": 0.667
+        }
+      ]
+    },
+    {
+      "layers": "todo",
+      "android": {
+        "res": "app/src/main/res",
+        "name": "ic_launcher_todo",
+        "round": false
+      },
+      "monochrome": false
+    },
+    {
+      "layers": "quicknote",
+      "android": {
+        "res": "app/src/main/res",
+        "name": "ic_launcher_quicknote",
+        "round": false
+      },
+      "monochrome": false
+    },
+    {
+      "layers": "linkbox",
+      "android": {
+        "res": "app/src/main/res",
+        "name": "ic_launcher_linkbox",
+        "round": false
+      },
+      "monochrome": false
+    },
+    {
+      "layers": "atest",
+      "android": {
+        "res": "app/src/flavorAtest/res"
+      }
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108">
+  <!-- Imported from ic_launcher_foreground.xml. -->
+  <defs></defs>
+  <g transform="scale(1 1)"><path d="M38,27H62L74,39V77Q74,81 70,81H38Q34,81 34,77V31Q34,27 38,27Z" fill="#FBF3E4"/><path d="M62,27V35Q62,39 66,39H74Z" fill="#E3D3B5"/><path d="M39,59.5L69,58V67L39,68.5Z" fill="#F4B740"/><path d="M41,47L46.8,67L54,53.5L61.2,67L67,47" fill="none" stroke="#2B2219" stroke-width="5.6" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>
