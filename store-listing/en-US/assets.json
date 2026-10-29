@@ -7,7 +7,7 @@
         "slide": 0,
         "width": 1080,
         "height": 1920,
-        "bytes": 241059,
+        "bytes": 241111,
         "sources": [
           "raw/phone/home.png"
         ]
@@ -99,7 +99,7 @@
         "slide": 0,
         "width": 1200,
         "height": 1920,
-        "bytes": 295981,
+        "bytes": 296023,
         "sources": [
           "raw/tablet7/home.png"
         ]
@@ -157,7 +157,7 @@
         "slide": 0,
         "width": 1920,
         "height": 1200,
-        "bytes": 220086,
+        "bytes": 220092,
         "sources": [
           "raw/tablet10/home.png"
         ]
@@ -210,29 +210,29 @@
     ],
     "readme": [
       {
-        "file": "readme/before-after.jpg",
-        "feature": "readme-compare",
+        "file": "readme/big-screen.jpg",
+        "feature": "readme-spread",
         "slide": 0,
         "width": 2400,
         "height": 1260,
-        "bytes": 386036,
-        "sources": [
-          "raw/compare/markor-home.png",
-          "raw/compare/wordkeep-home.png",
-          "raw/compare/markor-editor.png",
-          "raw/compare/wordkeep-editor.png"
-        ]
-      },
-      {
-        "file": "readme/big-screen.jpg",
-        "feature": "readme-spread",
-        "slide": 1,
-        "width": 2400,
-        "height": 1260,
-        "bytes": 292654,
+        "bytes": 292097,
         "sources": [
           "raw/tablet10/home.png",
           "raw/phone/preview.png"
+        ]
+      },
+      {
+        "file": "readme/before-after.jpg",
+        "feature": "readme-compare",
+        "slide": 1,
+        "width": 2400,
+        "height": 1260,
+        "bytes": 404162,
+        "sources": [
+          "raw/compare/markor-home.png",
+          "raw/phone/home.png",
+          "raw/compare/markor-editor.png",
+          "raw/phone/editor.png"
         ]
       }
     ]
