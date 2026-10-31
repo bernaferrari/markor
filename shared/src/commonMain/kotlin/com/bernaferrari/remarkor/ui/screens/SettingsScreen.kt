@@ -2,6 +2,7 @@ package com.bernaferrari.remarkor.ui.screens
 
 import markor.shared.generated.resources.based_on_markor
 import markor.shared.generated.resources.version_with_arg
+import markor.shared.generated.resources.privacy_policy
 import markor.shared.generated.resources.view_on_github
 import markor.shared.generated.resources.about_tagline
 import markor.shared.generated.resources.app_name
@@ -328,7 +329,10 @@ fun SettingsScreen(
 
             // About Section
             SettingsSection(title = stringResource(Res.string.about)) {
-                AboutCard(onOpenRepository = { uriHandler.openUri(PROJECT_REPOSITORY_URL) })
+                AboutCard(
+                    onOpenRepository = { uriHandler.openUri(PROJECT_REPOSITORY_URL) },
+                    onOpenPrivacyPolicy = { uriHandler.openUri("$PROJECT_REPOSITORY_URL/blob/main/PRIVACY.md") },
+                )
             }
 
             // Keep final items above gesture/navigation area while preserving edge-to-edge.
@@ -340,14 +344,14 @@ fun SettingsScreen(
 
 private const val PROJECT_REPOSITORY_URL = "https://github.com/bernaferrari/markor"
 
-private const val APP_VERSION = "2.15.2"
+private const val APP_VERSION = "0.1"
 
 /**
  * One card instead of "Version" and "License" rows: who the app is, where the code lives,
  * and credit to the original project. The version is fine print, not a row of its own.
  */
 @Composable
-private fun AboutCard(onOpenRepository: () -> Unit) {
+private fun AboutCard(onOpenRepository: () -> Unit, onOpenPrivacyPolicy: () -> Unit) {
     val hapticHelper = rememberHapticHelper()
     Surface(
         shape = MaterialTheme.shapes.extraLarge,
@@ -414,6 +418,10 @@ private fun AboutCard(onOpenRepository: () -> Unit) {
                     stringResource(Res.string.view_on_github),
                     style = ButtonDefaults.textStyleFor(ButtonDefaults.MediumContainerHeight)
                 )
+            }
+
+            androidx.compose.material3.TextButton(onClick = onOpenPrivacyPolicy, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(Res.string.privacy_policy))
             }
 
             Text(

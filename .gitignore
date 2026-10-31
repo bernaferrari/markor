@@ -108,3 +108,9 @@ app/flavor*
 
 /.favorites.json
 /.vscode
+
+# Local release signing and Play upload staging
+/signing.properties
+*.jks
+*.keystore
+/store-listing/play-staging/

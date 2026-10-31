@@ -210,12 +210,24 @@
     ],
     "readme": [
       {
-        "file": "readme/big-screen.jpg",
-        "feature": "readme-spread",
+        "file": "readme/hero.jpg",
+        "feature": "readme-hero",
         "slide": 0,
         "width": 2400,
         "height": 1260,
-        "bytes": 292097,
+        "bytes": 327959,
+        "sources": [
+          "raw/tablet7/home.png",
+          "raw/phone/editor.png"
+        ]
+      },
+      {
+        "file": "readme/big-screen.jpg",
+        "feature": "readme-spread",
+        "slide": 1,
+        "width": 2400,
+        "height": 1260,
+        "bytes": 291690,
         "sources": [
           "raw/tablet10/home.png",
           "raw/phone/preview.png"
@@ -224,10 +236,10 @@
       {
         "file": "readme/before-after.jpg",
         "feature": "readme-compare",
-        "slide": 1,
+        "slide": 2,
         "width": 2400,
         "height": 1260,
-        "bytes": 404162,
+        "bytes": 404426,
         "sources": [
           "raw/compare/markor-home.png",
           "raw/phone/home.png",

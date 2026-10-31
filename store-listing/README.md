@@ -24,3 +24,7 @@ node store-listing/studio/export.cjs --locale en-US --kind readme --strict
 ```
 
 The original phone and tablet store artwork has its own gallery entries and can still be exported independently.
+
+## Play staging
+
+See [the release guide](../docs/PLAY_STORE.md). Run `node store-listing/render-feature.cjs` to render the 1024 × 500 feature graphic, then `node store-listing/prepare-play.mjs` to stage validated translated text and English images. Set `PLAYWRIGHT_MODULE` and `SHARP_MODULE` if those modules are installed outside this project. Staging never uploads.

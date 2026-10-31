@@ -74,6 +74,16 @@ The only CI is [deploy-web-vercel.yml](../.github/workflows/deploy-web-vercel.ym
 
 - The Gradle project is still named `Markor` and the package is `com.bernaferrari.remarkor`. Don't rename either: the package is the installed app id.
 - `flavorAtest` installs beside the normal app (`com.bernaferrari.remarkor_test`) with a date-based version code, so you can test without touching your real notes.
-- Release builds have no signing config in the repo. Sign locally and never commit a keystore.
+- Release builds read optional local signing properties; credentials and keystores stay outside Git. See Google Play release below.
 - Notes are plain files in app storage or a shared folder. Test with throwaway notes, and capture only on the disposable emulator.
 - Credits: a port of [Markor](https://github.com/gsantner/markor) by Gregor Santner. Licensed under Apache 2.0 ([LICENSE](../LICENSE)).
+
+## Google Play release
+
+See [PLAY_STORE.md](PLAY_STORE.md) for listing preparation and declarations. Release signing is optional for local compilation and is loaded from an ignored root `signing.properties`, or the file named by `WORDKEEP_SIGNING_PROPERTIES`. A signed release requires `storeFile`, `storePassword`, `keyAlias` and `keyPassword`; keep this file and the upload keystore outside Git.
+
+```sh
+WORDKEEP_SIGNING_PROPERTIES="$HOME/.local/share/wordkeep/release-signing/signing.properties" ./gradlew :app:bundleFlavorGplayRelease
+```
+
+The AAB is written to `app/build/outputs/bundle/flavorGplayRelease/`. Back up the upload keystore and credentials securely. The Play signing key and upload key are separate when using Google Play App Signing.

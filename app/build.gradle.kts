@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -11,7 +12,24 @@ plugins {
     alias(libs.plugins.koin.compiler)
 }
 
+val releaseSigningFile = rootProject.file(
+    providers.environmentVariable("WORDKEEP_SIGNING_PROPERTIES").orElse("signing.properties").get()
+)
+val releaseSigningProperties = Properties().apply {
+    if (releaseSigningFile.isFile) releaseSigningFile.inputStream().use { load(it) }
+}
+
 android {
+    signingConfigs {
+        if (releaseSigningFile.isFile) {
+            create("upload") {
+                storeFile = rootProject.file(requireNotNull(releaseSigningProperties.getProperty("storeFile")))
+                storePassword = requireNotNull(releaseSigningProperties.getProperty("storePassword"))
+                keyAlias = requireNotNull(releaseSigningProperties.getProperty("keyAlias"))
+                keyPassword = requireNotNull(releaseSigningProperties.getProperty("keyPassword"))
+            }
+        }
+    }
     compileSdk {
         version = release(37) { minorApiLevel = 2 }
     }
@@ -51,6 +69,7 @@ android {
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("upload")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(

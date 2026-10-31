@@ -49,6 +49,6 @@ Notes open right over your notebook on tablets, so you never lose your place.
 
 ## Private by design
 
-No account, no sign-in. Notes are plain Markdown and text files, kept in the app's private storage or in a shared Documents folder that any sync tool can reach. Licensed under [Apache 2.0](LICENSE).
+No account, no sign-in. Notes are plain Markdown and text files, kept in the app's private storage or in a shared Documents folder that any sync tool can reach. Read the [Privacy Policy](PRIVACY.md) for storage permissions, sharing and deletion. Licensed under [Apache 2.0](LICENSE).
 
 <sub>Building from source or contributing? See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).</sub>
