@@ -1,10 +1,10 @@
 {
-  "date": "2026-10-30",
+  "date": "2026-10-31",
   "package": "com.bernaferrari.remarkor",
   "appId": "4975952302249452990",
   "consoleUrl": "https://play.google.com/console/u/0/developers/7311974537967832535/app/4975952302249452990/publishing",
   "published": false,
-  "submittedForReview": false,
+  "submittedForReview": true,
   "listing": {
     "verifiedByFreshApiRead": true,
     "languages": 46,
@@ -48,21 +48,30 @@
     "financial features: none",
     "health features: none",
     "advertising ID: no",
-    "all files access: shared-notebook document management"
+    "all files access: shared-notebook document management",
+    "content ratings: IARC questionnaire completed with account-owner authorization"
   ],
   "permissionReview": {
     "allFilesAccess": "Declaration saved; Google approval remains pending review. Private mode requires no storage permission. SAF migration is a possible narrower implementation, not present in this release.",
     "videoProvided": false
   },
-  "remainingBlockers": [
-    "Content ratings questionnaire requires account-owner authorization to accept IARC Terms of Service; requested, not received."
-  ],
+  "remainingBlockers": [],
   "warnings": [
     "Google recommends native debug symbols; no native symbol archive was produced by the current dependency build."
   ],
   "nextSteps": [
-    "Accept IARC terms with user authorization and complete factual content-rating questionnaire.",
-    "Wait for quick checks, resolve any further findings, then submit changes for review.",
-    "Verify Google review outcome before claiming publication."
-  ]
+    "Wait for automatic quick checks and Google review, including all-files-access permission approval.",
+    "Resolve any findings from Google; verify actual publication before calling the app live."
+  ],
+  "submissionState": "Changes in review; automatic quick checks running before Google review",
+  "submittedChanges": 56,
+  "contentRatings": {
+    "Brazil": "All ages",
+    "North America": "Everyone",
+    "Europe": "PEGI 3",
+    "Germany": "USK: All ages",
+    "Rest of world": "3+",
+    "Russia": "3+",
+    "South Korea": "3+"
+  }
 }
