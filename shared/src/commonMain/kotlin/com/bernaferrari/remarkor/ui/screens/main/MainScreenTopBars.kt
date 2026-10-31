@@ -286,8 +286,8 @@ internal fun FilterTabRow(
                             else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                         },
                         colors = ToggleButtonDefaults.colors(
-                            checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            checkedContainerColor = MaterialTheme.colorScheme.primary,
+                            checkedContentColor = MaterialTheme.colorScheme.onPrimary,
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                             contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         ),

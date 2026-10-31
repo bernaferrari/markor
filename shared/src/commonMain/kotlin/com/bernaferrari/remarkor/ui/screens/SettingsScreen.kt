@@ -701,9 +701,9 @@ private fun StorageModeSettingItem(
                     },
                     shapes = ButtonGroupDefaults.connectedLeadingButtonShapes(),
                     colors = ToggleButtonDefaults.colors(
-                        checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        checkedContainerColor = MaterialTheme.colorScheme.primary,
+                        checkedContentColor = MaterialTheme.colorScheme.onPrimary,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     ),
                 ) {
@@ -729,9 +729,9 @@ private fun StorageModeSettingItem(
                     },
                     shapes = ButtonGroupDefaults.connectedTrailingButtonShapes(),
                     colors = ToggleButtonDefaults.colors(
-                        checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        checkedContainerColor = MaterialTheme.colorScheme.primary,
+                        checkedContentColor = MaterialTheme.colorScheme.onPrimary,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     ),
                 ) {
@@ -785,15 +785,17 @@ private fun ThemeModeSettingItem(
                         modeOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                         else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                     },
+                    // The family standard: the chosen mode solid in primary with a check, the others raised off the card.
                     colors = ToggleButtonDefaults.colors(
-                        checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        checkedContainerColor = MaterialTheme.colorScheme.primary,
+                        checkedContentColor = MaterialTheme.colorScheme.onPrimary,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     ),
+                    modifier = Modifier.heightIn(min = 48.dp),
                 ) {
                     Icon(
-                        imageVector = icon,
+                        imageVector = if (mode == selectedMode) MaterialSymbols.Filled.Check else icon,
                         contentDescription = null,
                         modifier = Modifier.size(ToggleButtonDefaults.IconSize),
                     )
