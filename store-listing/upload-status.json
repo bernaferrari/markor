@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-30",
+  "package": "com.bernaferrari.remarkor",
+  "appId": "4975952302249452990",
+  "consoleUrl": "https://play.google.com/console/u/0/developers/7311974537967832535/app/4975952302249452990/publishing",
+  "published": false,
+  "submittedForReview": false,
+  "listing": {
+    "verifiedByFreshApiRead": true,
+    "languages": 46,
+    "defaultArtworkLanguage": "en-US",
+    "images": {
+      "icon": 1,
+      "featureGraphic": 1,
+      "phoneScreenshots": 8,
+      "sevenInchScreenshots": 5,
+      "tenInchScreenshots": 5
+    }
+  },
+  "release": {
+    "name": "0.1",
+    "versionCode": 1,
+    "track": "production",
+    "savedToPublishingOverview": true,
+    "bundleSha256": "088ded0feeef74f065b234f6ae7c8a7b1d27e6e576d5fc0bf8a410ce83937730",
+    "bundleHashVerifiedByFreshApiRead": true,
+    "releaseNotes": [
+      "en-US",
+      "pt-BR",
+      "pt-PT"
+    ]
+  },
+  "availability": {
+    "countriesAndRegions": 177,
+    "restOfWorld": true
+  },
+  "category": "Productivity",
+  "tags": [
+    "Notebook"
+  ],
+  "targetAudience": "13 and older",
+  "declarationsSaved": [
+    "privacy policy",
+    "sign in details: unrestricted",
+    "ads: no",
+    "data safety: no reportable collection or sharing",
+    "government apps: no",
+    "financial features: none",
+    "health features: none",
+    "advertising ID: no",
+    "all files access: shared-notebook document management"
+  ],
+  "permissionReview": {
+    "allFilesAccess": "Declaration saved; Google approval remains pending review. Private mode requires no storage permission. SAF migration is a possible narrower implementation, not present in this release.",
+    "videoProvided": false
+  },
+  "remainingBlockers": [
+    "Content ratings questionnaire requires account-owner authorization to accept IARC Terms of Service; requested, not received."
+  ],
+  "warnings": [
+    "Google recommends native debug symbols; no native symbol archive was produced by the current dependency build."
+  ],
+  "nextSteps": [
+    "Accept IARC terms with user authorization and complete factual content-rating questionnaire.",
+    "Wait for quick checks, resolve any further findings, then submit changes for review.",
+    "Verify Google review outcome before claiming publication."
+  ]
+}

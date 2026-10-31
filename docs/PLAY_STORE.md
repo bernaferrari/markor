@@ -39,3 +39,9 @@ Policy references: [All files access](https://support.google.com/googleplay/andr
 Signing credentials are local and excluded from Git. See DEVELOPMENT.md for the signed AAB build command. Verify the AAB signature and merged release permissions before uploading it. Never upload a capture build or the test flavor.
 
 Creating the Console app requires the account owner's confirmation of Developer Program Policies and US export compliance. App signing, permissions review, content rating, Data safety, target audience, country availability and the final production submission must be verified in Console before calling the app ready. Build success alone does not establish policy approval or publication.
+
+## Console staging status (2026-10-30)
+
+Wordkeep has been created in Play Console (app ID `4975952302249452990`). All 46 translated listings and the 20 English images (icon, feature graphic, 18 screenshots) were committed and verified through a fresh API read, including SHA-256 checks. The signed 0.1 / version code 1 bundle was uploaded and its original hash verified. Production release, English/Portuguese release notes, 177 countries plus rest of world, category and app-content declarations are saved in Publishing overview.
+
+Nothing has been submitted for review or published. The current publishing blocker is the content-rating questionnaire: accepting the separate IARC Terms of Service requires the account owner's confirmation. All-files-access declaration is saved truthfully, without a demo-video link; saving it is not Google policy approval. Release validation also recommends native debug symbols. See `store-listing/upload-status.json` for the recorded state.
